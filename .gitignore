@@ -39,3 +39,4 @@ packages/db/prisma/*.db-journal
 # Misc
 *.tsbuildinfo
 nul
+.github/workflows/
