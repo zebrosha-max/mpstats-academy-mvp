@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd E:Academy Courses )",
+      "Bash(dir:*)",
+      "Bash(xargs:*)",
+      "mcp__plugin_supabase_supabase__list_tables",
+      "Bash(pnpm db:generate:*)",
+      "Bash(pnpm db:push:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(npx prisma:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm typecheck:*)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "Bash(pnpm build)",
+      "Bash(pnpm dev)",
+      "Bash(timeout /t 10 /nobreak)",
+      "mcp__plugin_supabase_supabase__execute_sql",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\\\Users\\\\Zebrosha\\\\.claude\\\\plugins'' -Recurse -Filter ''*supabase*'' | Select-Object FullName\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\\\Users\\\\Zebrosha\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\supabase'' -Recurse | Select-Object FullName\")",
+      "mcp__plugin_supabase_supabase__list_organizations",
+      "mcp__plugin_supabase_supabase__get_organization",
+      "Bash(powershell -Command \"Remove-Item -Recurse -Force ''C:\\\\Users\\\\Zebrosha\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\supabase'' -ErrorAction SilentlyContinue; Write-Host ''Supabase plugin cache deleted''\")",
+      "mcp__plugin_supabase_supabase__get_project",
+      "Bash(npx turbo:*)",
+      "Bash(timeout /t 8 /nobreak)",
+      "Bash(cat:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill /F /PID 104036 & taskkill /F /PID 64204 & taskkill /F /PID 47972\")",
+      "Bash(cmd //c \"taskkill /F /PID 117032 & taskkill /F /PID 92916 & taskkill /F /PID 62656 & taskkill /F /PID 50224\")",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* MPSTATS Brand Theme (Light Mode) */
+
+    /* Background & Foreground */
+    --background: 210 20% 98%;          /* mp-gray-50: #F9FAFB */
+    --foreground: 222 47% 11%;          /* mp-gray-900: #111827 */
+
+    /* Card */
+    --card: 0 0% 100%;                  /* White */
+    --card-foreground: 222 47% 11%;     /* mp-gray-900 */
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary (MPSTATS Blue) */
+    --primary: 228 94% 57%;             /* mp-blue-500: #2C4FF8 */
+    --primary-foreground: 0 0% 100%;    /* White */
+
+    /* Secondary */
+    --secondary: 220 14% 96%;           /* mp-gray-100: #F3F4F6 */
+    --secondary-foreground: 218 20% 27%; /* mp-gray-700: #374151 */
+
+    /* Muted */
+    --muted: 220 14% 96%;               /* mp-gray-100 */
+    --muted-foreground: 220 9% 46%;     /* mp-gray-500: #6B7280 */
+
+    /* Accent (MPSTATS Green) */
+    --accent: 89 92% 51%;               /* mp-green-500: #87F50F */
+    --accent-foreground: 231 73% 12%;   /* mp-blue-900: #091032 */
+
+    /* Destructive (Red) */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success (MPSTATS Green) */
+    --success: 89 92% 51%;              /* mp-green-500 */
+    --success-foreground: 90 71% 8%;    /* Dark green */
+
+    /* Warning */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Featured (MPSTATS Pink) */
+    --featured: 330 100% 54%;           /* mp-pink-500: #FF168A */
+    --featured-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 220 13% 91%;              /* mp-gray-200: #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 228 94% 57%;                /* mp-blue-500 */
+
+    /* Radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* MPSTATS Brand Theme (Dark Mode) */
+    --background: 231 73% 12%;          /* mp-blue-900: #091032 */
+    --foreground: 210 20% 98%;          /* mp-gray-50 */
+
+    --card: 231 70% 23%;                /* mp-blue-800: #122063 */
+    --card-foreground: 210 20% 98%;
+
+    --popover: 231 70% 23%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 228 94% 67%;             /* Lighter blue for dark mode */
+    --primary-foreground: 231 73% 12%;
+
+    --secondary: 231 70% 23%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 231 70% 23%;
+    --muted-foreground: 220 13% 65%;
+
+    --accent: 89 92% 51%;
+    --accent-foreground: 231 73% 12%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+
+    --success: 89 92% 51%;
+    --success-foreground: 231 73% 12%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 231 73% 12%;
+
+    --featured: 330 100% 54%;
+    --featured-foreground: 0 0% 100%;
+
+    --border: 229 70% 36%;
+    --input: 229 70% 36%;
+    --ring: 228 94% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* MPSTATS Utility Classes */
+@layer utilities {
+  /* Text colors shortcuts */
+  .text-mp-primary {
+    @apply text-mp-blue-500;
+  }
+  .text-mp-success {
+    @apply text-mp-green-500;
+  }
+  .text-mp-featured {
+    @apply text-mp-pink-500;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-mp-accent-gradient bg-clip-text text-transparent;
+  }
+}
+
+/* ===== MPSTATS Animations ===== */
+@layer utilities {
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  /* Slide up animation */
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+
+  /* Slide in from left */
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+  }
+
+  /* Scale in animation */
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out forwards;
+  }
+
+  /* Pulse glow for CTAs */
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  /* Skeleton shimmer */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted) / 0.5) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(44, 79, 248, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(44, 79, 248, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== Page Transitions ===== */
+.page-transition {
+  @apply animate-fade-in;
+}
+
+/* ===== Card Hover States ===== */
+@layer components {
+  .card-interactive {
+    @apply transition-all duration-300 ease-out;
+    @apply hover:shadow-mp-card-hover hover:-translate-y-1;
+  }
+
+  .card-link {
+    @apply transition-all duration-200 ease-out cursor-pointer;
+    @apply hover:bg-mp-gray-50 hover:border-mp-blue-300;
+  }
+}
+
+/* ===== Focus States ===== */
+@layer base {
+  *:focus-visible {
+    @apply outline-none ring-2 ring-mp-blue-500 ring-offset-2 ring-offset-background;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    @apply outline-none ring-2 ring-mp-blue-500 ring-offset-2;
+  }
+}
+
+/* ===== Smooth Scrolling ===== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ===== Selection Color ===== */
+::selection {
+  background-color: hsl(228 94% 57% / 0.2);
+  color: hsl(228 94% 45%);
+}
+
+/* ===== Scrollbar Styling ===== */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}

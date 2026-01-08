@@ -1,0 +1,201 @@
+// MPSTATS Academy MVP - Prisma Schema
+// Database: Supabase PostgreSQL with pgvector
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [pgvector(map: "vector", schema: "extensions")]
+}
+
+// ============== USER PROFILE ==============
+// Auth is managed by Supabase, this is the extended profile
+
+model UserProfile {
+  id        String   @id // Matches Supabase auth.users.id
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  diagnosticSessions DiagnosticSession[]
+  skillProfile       SkillProfile?
+  learningPath       LearningPath?
+  chatMessages       ChatMessage[]
+}
+
+// ============== DIAGNOSTIC ==============
+
+enum DiagnosticStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum SkillCategory {
+  ANALYTICS
+  MARKETING
+  CONTENT
+  OPERATIONS
+  FINANCE
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model DiagnosticSession {
+  id              String           @id @default(cuid())
+  userId          String
+  status          DiagnosticStatus @default(IN_PROGRESS)
+  startedAt       DateTime         @default(now())
+  completedAt     DateTime?
+  currentQuestion Int              @default(0)
+
+  user    UserProfile        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers DiagnosticAnswer[]
+}
+
+model DiagnosticAnswer {
+  id            String        @id @default(cuid())
+  sessionId     String
+  questionId    String
+  answer        String
+  isCorrect     Boolean
+  difficulty    Difficulty
+  skillCategory SkillCategory
+  answeredAt    DateTime      @default(now())
+
+  session DiagnosticSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model SkillProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  analytics  Int      @default(0) // 0-100
+  marketing  Int      @default(0)
+  content    Int      @default(0)
+  operations Int      @default(0)
+  finance    Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============== LEARNING ==============
+
+model Course {
+  id          String   @id // course id from manifest: "01_analytics"
+  title       String
+  description String?
+  slug        String   @unique
+  imageUrl    String?
+  duration    Int      @default(0) // minutes, calculated from lessons
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  lessons Lesson[]
+}
+
+model Lesson {
+  id            String        @id // lesson id from manifest: "01_analytics_m01_start_001"
+  courseId      String
+  title         String
+  description   String?
+  videoUrl      String? // Kinescope embed URL (optional until configured)
+  videoId       String? // Kinescope video ID (for API)
+  duration      Int? // minutes (optional, from manifest)
+  order         Int           @default(0)
+  skillCategory SkillCategory
+  skillLevel    Difficulty    @default(MEDIUM)
+
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+  // ContentChunk связь через lessonId (lesson_id) без FK
+}
+
+enum LessonStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model LessonProgress {
+  id             String       @id @default(cuid())
+  pathId         String
+  lessonId       String
+  status         LessonStatus @default(NOT_STARTED)
+  watchedPercent Int          @default(0)
+  completedAt    DateTime?
+
+  path   LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  lesson Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([pathId, lessonId])
+}
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  generatedAt DateTime @default(now())
+  lessons     Json // ordered array of lessonIds with metadata
+
+  user     UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+}
+
+// ============== RAG ==============
+// Таблица content_chunk уже заполнена данными из E:\Academy Courses\
+// 5,291 chunks с embeddings (text-embedding-3-small, 1536 dims)
+
+model ContentChunk {
+  id            String                       @id // chunk_id: "01_analytics_m01_start_001_chunk_000"
+  lessonId      String                       @map("lesson_id")
+  content       String
+  embedding     Unsupported("vector(1536)")?
+  timecodeStart Int                          @map("timecode_start")
+  timecodeEnd   Int                          @map("timecode_end")
+  tokenCount    Int?                         @map("token_count")
+  metadata      Json?
+  createdAt     DateTime                     @default(now()) @map("created_at")
+
+  @@map("content_chunk")
+  @@index([lessonId])
+}
+
+// ============== CHAT ==============
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  userId    String
+  lessonId  String
+  role      MessageRole
+  content   String
+  createdAt DateTime    @default(now())
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, lessonId])
+}
+
+// ============== AI CACHE ==============
+
+model SummaryCache {
+  id        String   @id @default(cuid())
+  lessonId  String   @unique
+  summary   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
