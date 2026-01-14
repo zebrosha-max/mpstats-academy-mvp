@@ -39,4 +39,6 @@ packages/db/prisma/*.db-journal
 # Misc
 *.tsbuildinfo
 nul
-.github/workflows/
+
+# Auto Claude data directory
+.auto-claude/
