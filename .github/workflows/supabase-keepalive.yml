@@ -2,26 +2,43 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    - cron: '0 8 */5 * *'  # каждые 5 дней в 8:00 UTC
+    - cron: '0 8 */3 * *'  # каждые 3 дня в 8:00 UTC (безопасный интервал)
+    - cron: '0 20 */3 * *' # дублирующий ping в 20:00 UTC для надёжности
   workflow_dispatch:  # ручной запуск для теста
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase
+      - name: Ping Supabase (with retry)
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" \
-            "$SUPABASE_URL/rest/v1/" \
-            -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
-          echo "Response: $response"
-          if [ "$response" -eq 200 ]; then
-            echo "✅ Supabase is alive"
-          else
-            echo "❌ Ping failed with status $response"
-            exit 1
-          fi
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i of $MAX_RETRIES..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 30 \
+              --max-time 60 \
+              "$SUPABASE_URL/rest/v1/" \
+              -H "apikey: $SUPABASE_ANON_KEY" \
+              -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+
+            echo "Response: $response"
+
+            if [ "$response" -eq 200 ]; then
+              echo "✅ Supabase is alive"
+              exit 0
+            fi
+
+            if [ $i -lt $MAX_RETRIES ]; then
+              echo "⏳ Retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          echo "❌ Ping failed after $MAX_RETRIES attempts"
+          exit 1
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
