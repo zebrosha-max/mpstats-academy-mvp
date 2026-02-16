@@ -31,13 +31,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Dashboard показывает статистику на основе реальных DiagnosticSession и LessonProgress из БД
   4. Каждый урок принадлежит одной из SkillCategory (ANALYTICS, MARKETING, etc.) через lesson_id маппинг
   5. Если Supabase недоступна, приложение показывает graceful fallback вместо crash
-**Plans**: TBD
+**Plans:** 4 plans in 3 waves
 
 Plans:
-- [ ] 01-01: Seed script и DTO mapping layer
-- [ ] 01-02: Learning router migration (Prisma)
-- [ ] 01-03: Diagnostic router migration (Prisma)
-- [ ] 01-04: Profile router и dashboard migration
+- [ ] 01-01-PLAN.md — Seed scripts (manifest + AI classification) and shared utilities (ensureUserProfile, db-errors)
+- [ ] 01-02-PLAN.md — Learning router migration to Prisma + frontend updates
+- [ ] 01-03-PLAN.md — Diagnostic router migration to Prisma (session/answer/skillProfile persistence)
+- [ ] 01-04-PLAN.md — Profile router + dashboard migration with real stats + E2E verification
 
 ### Phase 2: AI Question Generation
 **Goal**: Диагностика использует AI-генерированные вопросы из реального контента уроков, а не фиксированный набор mock
