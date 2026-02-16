@@ -93,45 +93,45 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
-| DATA-05 | Phase 1 | Pending |
-| DATA-06 | Phase 1 | Pending |
-| DATA-07 | Phase 1 | Pending |
-| DATA-08 | Phase 1 | Pending |
-| AIGEN-01 | Phase 2 | Pending |
-| AIGEN-02 | Phase 2 | Pending |
-| AIGEN-03 | Phase 2 | Pending |
-| AIGEN-04 | Phase 2 | Pending |
-| AIGEN-05 | Phase 2 | Pending |
-| ACCESS-01 | Phase 3 | Pending |
-| ACCESS-02 | Phase 3 | Pending |
-| ACCESS-03 | Phase 3 | Pending |
-| ACCESS-04 | Phase 3 | Pending |
-| VIDEO-01 | Phase 4 | Pending |
-| VIDEO-02 | Phase 4 | Pending |
-| VIDEO-03 | Phase 4 | Pending |
-| VIDEO-04 | Phase 4 | Pending |
-| SEC-01 | Phase 5 | Pending |
-| SEC-02 | Phase 5 | Pending |
-| SEC-03 | Phase 5 | Pending |
-| SEC-04 | Phase 5 | Pending |
-| SEC-05 | Phase 5 | Pending |
-| DEPLOY-01 | Phase 6 | Pending |
-| DEPLOY-02 | Phase 6 | Pending |
-| DEPLOY-03 | Phase 6 | Pending |
-| DEPLOY-04 | Phase 6 | Pending |
-| DEPLOY-05 | Phase 6 | Pending |
-| DEPLOY-06 | Phase 6 | Pending |
-| DEPLOY-07 | Phase 6 | Pending |
+| DATA-01 | Phase 1: Data Foundation | Pending |
+| DATA-02 | Phase 1: Data Foundation | Pending |
+| DATA-03 | Phase 1: Data Foundation | Pending |
+| DATA-04 | Phase 1: Data Foundation | Pending |
+| DATA-05 | Phase 1: Data Foundation | Pending |
+| DATA-06 | Phase 1: Data Foundation | Pending |
+| DATA-07 | Phase 1: Data Foundation | Pending |
+| DATA-08 | Phase 1: Data Foundation | Pending |
+| AIGEN-01 | Phase 2: AI Question Generation | Pending |
+| AIGEN-02 | Phase 2: AI Question Generation | Pending |
+| AIGEN-03 | Phase 2: AI Question Generation | Pending |
+| AIGEN-04 | Phase 2: AI Question Generation | Pending |
+| AIGEN-05 | Phase 2: AI Question Generation | Pending |
+| VIDEO-01 | Phase 3: Video Integration | Pending |
+| VIDEO-02 | Phase 3: Video Integration | Pending |
+| VIDEO-03 | Phase 3: Video Integration | Pending |
+| VIDEO-04 | Phase 3: Video Integration | Pending |
+| ACCESS-01 | Phase 4: Access Control | Pending |
+| ACCESS-02 | Phase 4: Access Control | Pending |
+| ACCESS-03 | Phase 4: Access Control | Pending |
+| ACCESS-04 | Phase 4: Access Control | Pending |
+| SEC-01 | Phase 5: Security Hardening | Pending |
+| SEC-02 | Phase 5: Security Hardening | Pending |
+| SEC-03 | Phase 5: Security Hardening | Pending |
+| SEC-04 | Phase 5: Security Hardening | Pending |
+| SEC-05 | Phase 5: Security Hardening | Pending |
+| DEPLOY-01 | Phase 6: Production Deploy | Pending |
+| DEPLOY-02 | Phase 6: Production Deploy | Pending |
+| DEPLOY-03 | Phase 6: Production Deploy | Pending |
+| DEPLOY-04 | Phase 6: Production Deploy | Pending |
+| DEPLOY-05 | Phase 6: Production Deploy | Pending |
+| DEPLOY-06 | Phase 6: Production Deploy | Pending |
+| DEPLOY-07 | Phase 6: Production Deploy | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
 - Mapped to phases: 33
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-16*
-*Last updated: 2026-02-16 after initial definition*
+*Last updated: 2026-02-16 after roadmap creation*
