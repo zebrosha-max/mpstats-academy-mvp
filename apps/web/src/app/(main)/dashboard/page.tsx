@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 import { LessonCard } from '@/components/learning/LessonCard';
+import { DatabaseError } from '@/components/shared/DatabaseError';
 import { trpc } from '@/lib/trpc/client';
 
 const formatTimeAgo = (date: Date | null) => {
@@ -48,9 +48,25 @@ const ACTIVITY_ICONS: Record<string, JSX.Element> = {
 
 export default function DashboardPage() {
   const { data: profile } = trpc.profile.get.useQuery();
-  const { data: dashboard, isLoading } = trpc.profile.getDashboard.useQuery();
+  const { data: dashboard, isLoading, error } = trpc.profile.getDashboard.useQuery();
 
   const name = profile?.name || 'Пользователь';
+
+  if (error) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-display-sm text-mp-gray-900">
+            Привет, {name}!
+          </h1>
+          <p className="text-body text-mp-gray-500 mt-1">
+            Добро пожаловать в MPSTATS Academy
+          </p>
+        </div>
+        <DatabaseError error={{ message: error.message }} />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -246,7 +262,10 @@ export default function DashboardPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>
-                    <p className="text-body-sm text-mp-gray-500">Пройдите диагностику</p>
+                    <p className="text-body-sm text-mp-gray-500 mb-3">Пройдите диагностику для оценки навыков</p>
+                    <Link href="/diagnostic">
+                      <Button size="sm">Начать диагностику</Button>
+                    </Link>
                   </div>
                 </div>
               )}
