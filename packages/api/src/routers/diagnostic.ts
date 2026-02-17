@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
-import { getBalancedQuestions } from '../mocks/questions';
+import { getBalancedQuestions, getMockQuestionsForCategory } from '../mocks/questions';
+import { generateDiagnosticQuestions } from '@mpstats/ai';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
 import type { PrismaClient } from '@mpstats/db';
@@ -32,6 +33,24 @@ const activeSessionQuestions =
   ((globalThis as any).__activeSessionQuestions as Map<string, ActiveSessionData>) ||
   new Map<string, ActiveSessionData>();
 (globalThis as any).__activeSessionQuestions = activeSessionQuestions;
+
+// ============== RATE LIMITER ==============
+// Simple sliding window rate limiter for question generation (50 req/hour per user)
+
+const generationRateLimits =
+  ((globalThis as any).__generationRateLimits as Map<string, number[]>) ||
+  new Map<string, number[]>();
+(globalThis as any).__generationRateLimits = generationRateLimits;
+
+function checkRateLimit(userId: string, maxRequests: number = 50, windowMs: number = 3600000): boolean {
+  const now = Date.now();
+  const timestamps = generationRateLimits.get(userId) || [];
+  const recent = timestamps.filter(t => now - t < windowMs);
+  if (recent.length >= maxRequests) return false;
+  recent.push(now);
+  generationRateLimits.set(userId, recent);
+  return true;
+}
 
 // ============== HELPER FUNCTIONS ==============
 
@@ -217,8 +236,26 @@ export const diagnosticRouter = router({
       // Note: stale entries in activeSessionQuestions are harmless
       // and will be cleaned up when their sessions are accessed next
 
-      // Generate balanced questions (3 per category = 15 total)
-      const questions = getBalancedQuestions(QUESTIONS_PER_SESSION);
+      // Rate limit check before any LLM call
+      if (!checkRateLimit(ctx.user.id)) {
+        throw new TRPCError({
+          code: 'TOO_MANY_REQUESTS',
+          message: 'Слишком много запросов на диагностику. Попробуйте через час.',
+        });
+      }
+
+      // Generate questions with AI, fallback to mock
+      let questions: DiagnosticQuestion[];
+      try {
+        questions = await generateDiagnosticQuestions(
+          (category, count) => getMockQuestionsForCategory(category, count)
+        );
+      } catch (error) {
+        // Complete fallback: if generateDiagnosticQuestions itself throws,
+        // use fully mock-based questions
+        console.error('AI question generation failed completely, using mock:', error);
+        questions = getBalancedQuestions(QUESTIONS_PER_SESSION);
+      }
 
       // Create session in DB
       const session = await ctx.prisma.diagnosticSession.create({
