@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 1 of 6 (Data Foundation)
-Plan: 3 of 4 in current phase
-Status: Executing
-Last activity: 2026-02-17 — Completed 01-03 (diagnostic router Prisma migration)
+Plan: 4 of 4 in current phase (CHECKPOINT — awaiting human verification)
+Status: Checkpoint
+Last activity: 2026-02-17 — 01-04 Tasks 1-2 complete, Task 3 checkpoint pending
 
-Progress: [███░░░░░░░] 12%
+Progress: [████░░░░░░] 15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 4 min
-- Total execution time: 0.2 hours
+- Total plans completed: 4 (01-04 pending checkpoint)
+- Average duration: 4.5 min
+- Total execution time: 0.3 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-foundation | 3 | 13 min | 4.3 min |
+| 01-data-foundation | 4 | 17 min | 4.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min)
-- Trend: Accelerating
+- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min), 01-04 (4 min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -54,6 +54,9 @@ Recent decisions affecting current work:
 - [01-03]: Active session questions in globalThis Map (not DB) — short-lived, no schema change
 - [01-03]: Server restart marks orphaned sessions as ABANDONED
 - [01-03]: Exported functions take PrismaClient as first parameter (not singleton)
+- [01-04]: Average score = mean of 5 skill axes (not per-diagnostic calculation)
+- [01-04]: longestStreak = 0 for MVP (full history scan deferred)
+- [01-04]: updateSettings kept as mock (no Settings model in schema)
 
 ### Pending Todos
 
@@ -69,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 01-03-PLAN.md
-Resume file: .planning/phases/01-data-foundation/01-03-SUMMARY.md
+Stopped at: 01-04-PLAN.md Task 3 checkpoint (human-verify)
+Resume file: .planning/phases/01-data-foundation/01-04-SUMMARY.md
