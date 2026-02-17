@@ -19,6 +19,8 @@ export default function DiagnosticSessionPage() {
     explanation: string;
   } | null>(null);
 
+  const [showSlowHint, setShowSlowHint] = useState(false);
+
   const { data: sessionState, refetch, isLoading } = trpc.diagnostic.getSessionState.useQuery(
     { sessionId: sessionId! },
     { enabled: !!sessionId }
@@ -72,6 +74,16 @@ export default function DiagnosticSessionPage() {
     return null;
   }
 
+  // Show slow hint after 3 seconds of loading
+  useEffect(() => {
+    if (!isLoading) {
+      setShowSlowHint(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowSlowHint(true), 3000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto">
@@ -81,7 +93,17 @@ export default function DiagnosticSessionPage() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
-            <p className="mt-4 text-body text-mp-gray-500">Загрузка вопроса...</p>
+            <p className="mt-4 text-body font-medium text-mp-gray-700 animate-pulse">
+              Готовим вопросы...
+            </p>
+            <p className="mt-2 text-body-sm text-mp-gray-400">
+              AI подбирает вопросы на основе учебных материалов
+            </p>
+            {showSlowHint && (
+              <p className="mt-2 text-body-sm text-mp-gray-400 animate-fade-in">
+                Это может занять несколько секунд...
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
