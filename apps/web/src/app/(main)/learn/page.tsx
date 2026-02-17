@@ -25,15 +25,35 @@ const STATUS_FILTERS = [
   { value: 'COMPLETED', label: 'Завершённые' },
 ];
 
+const INITIAL_LESSONS_SHOWN = 5;
+
+function isDatabaseUnavailable(errorMessage: string): boolean {
+  return errorMessage === 'DATABASE_UNAVAILABLE' || errorMessage.includes('DATABASE_UNAVAILABLE');
+}
+
 export default function LearnPage() {
   const [categoryFilter, setCategoryFilter] = useState<SkillCategory | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  const [viewMode, setViewMode] = useState<'path' | 'courses'>('path');
+  const [viewMode, setViewMode] = useState<'path' | 'courses'>('courses');
+  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
 
-  const { data: courses, isLoading: coursesLoading } = trpc.learning.getCourses.useQuery();
-  const { data: path, isLoading: pathLoading } = trpc.learning.getPath.useQuery();
+  const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
+  const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
 
   const isLoading = coursesLoading || pathLoading;
+  const error = coursesError || pathError;
+
+  const toggleCourseExpanded = (courseId: string) => {
+    setExpandedCourses((prev) => {
+      const next = new Set(prev);
+      if (next.has(courseId)) {
+        next.delete(courseId);
+      } else {
+        next.add(courseId);
+      }
+      return next;
+    });
+  };
 
   // Filter lessons
   const filteredLessons = path?.lessons.filter((lesson) => {
@@ -58,6 +78,34 @@ export default function LearnPage() {
             <div key={i} className="h-32 bg-mp-gray-200 rounded-xl animate-pulse" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    const isDbDown = isDatabaseUnavailable(error.message);
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="shadow-mp-card border-red-200">
+          <CardContent className="py-12 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-heading text-mp-gray-900 mb-2">
+              {isDbDown ? 'База данных недоступна' : 'Ошибка загрузки'}
+            </h2>
+            <p className="text-body text-mp-gray-500">
+              {isDbDown
+                ? 'Не удалось подключиться к базе данных. Попробуйте обновить страницу через несколько минут.'
+                : 'Произошла ошибка при загрузке курсов. Попробуйте обновить страницу.'}
+            </p>
+            <Button className="mt-4" onClick={() => window.location.reload()}>
+              Обновить страницу
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -171,44 +219,65 @@ export default function LearnPage() {
       ) : (
         /* Courses view */
         <div className="space-y-6">
-          {courses?.map((course) => (
-            <Card key={course.id} className="shadow-mp-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-heading">{course.title}</CardTitle>
-                    <CardDescription className="text-body-sm">{course.description}</CardDescription>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-display-sm font-bold text-mp-gray-900">
-                      {course.completedLessons}/{course.totalLessons}
+          {courses?.map((course) => {
+            const isExpanded = expandedCourses.has(course.id);
+            const visibleLessons = isExpanded
+              ? course.lessons
+              : course.lessons.slice(0, INITIAL_LESSONS_SHOWN);
+            const hiddenCount = course.lessons.length - INITIAL_LESSONS_SHOWN;
+
+            return (
+              <Card key={course.id} className="shadow-mp-card">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-heading">{course.title}</CardTitle>
+                      <CardDescription className="text-body-sm">{course.description}</CardDescription>
                     </div>
-                    <div className="text-body-sm text-mp-gray-500">уроков</div>
+                    <div className="text-right">
+                      <div className="text-display-sm font-bold text-mp-gray-900">
+                        {course.completedLessons}/{course.totalLessons}
+                      </div>
+                      <div className="text-body-sm text-mp-gray-500">уроков</div>
+                    </div>
                   </div>
-                </div>
-                {/* Course progress */}
-                <div className="mt-4">
-                  <div className="h-2 bg-mp-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-mp-green-500 rounded-full transition-all duration-500"
-                      style={{ width: `${course.progressPercent}%` }}
-                    />
+                  {/* Course progress */}
+                  <div className="mt-4">
+                    <div className="h-2 bg-mp-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-mp-green-500 rounded-full transition-all duration-500"
+                        style={{ width: `${course.progressPercent}%` }}
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3">
-                  {course.lessons.map((lesson) => (
-                    <LessonCard
-                      key={lesson.id}
-                      lesson={lesson}
-                      showCourse={false}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {visibleLessons.map((lesson) => (
+                      <LessonCard
+                        key={lesson.id}
+                        lesson={lesson}
+                        showCourse={false}
+                      />
+                    ))}
+                  </div>
+                  {hiddenCount > 0 && (
+                    <div className="mt-4 text-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleCourseExpanded(course.id)}
+                      >
+                        {isExpanded
+                          ? 'Скрыть'
+                          : `Показать все ${course.lessons.length} уроков`}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

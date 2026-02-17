@@ -45,7 +45,7 @@ export default function LessonPage() {
   const [chatInput, setChatInput] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading } = trpc.learning.getLesson.useQuery({ lessonId });
+  const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
 
   // Use AI router for summary
   const { data: summaryData, isLoading: summaryLoading, error: summaryError } = trpc.ai.getLessonSummary.useQuery(
@@ -124,6 +124,39 @@ export default function LessonPage() {
         <div className="h-8 bg-mp-gray-200 rounded-lg w-64 animate-pulse" />
         <div className="aspect-video bg-mp-gray-200 rounded-xl animate-pulse" />
         <div className="h-48 bg-mp-gray-200 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
+
+  if (lessonError) {
+    const isDbDown = lessonError.message === 'DATABASE_UNAVAILABLE' || lessonError.message.includes('DATABASE_UNAVAILABLE');
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card className="shadow-mp-card border-red-200">
+          <CardContent className="py-12 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-heading text-mp-gray-900 mb-2">
+              {isDbDown ? 'База данных недоступна' : 'Ошибка загрузки урока'}
+            </h2>
+            <p className="text-body text-mp-gray-500 mb-4">
+              {isDbDown
+                ? 'Не удалось подключиться к базе данных. Попробуйте позже.'
+                : 'Произошла ошибка при загрузке урока.'}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => router.push('/learn')}>
+                К списку уроков
+              </Button>
+              <Button onClick={() => window.location.reload()}>
+                Обновить
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
