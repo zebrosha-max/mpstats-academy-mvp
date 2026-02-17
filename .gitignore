@@ -40,5 +40,8 @@ packages/db/prisma/*.db-journal
 *.tsbuildinfo
 nul
 
+# Seed script cache
+scripts/seed/classification-results.json
+
 # Auto Claude data directory
 .auto-claude/
