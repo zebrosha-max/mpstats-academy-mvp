@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 1 of 6 (Data Foundation)
-Plan: 1 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: Executing
-Last activity: 2026-02-17 — Completed 01-01 (seed scripts + shared utilities)
+Last activity: 2026-02-17 — Completed 01-03 (diagnostic router Prisma migration)
 
-Progress: [██░░░░░░░░] 4%
+Progress: [███░░░░░░░] 12%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 6 min
-- Total execution time: 0.1 hours
+- Total plans completed: 2
+- Average duration: 5 min
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-foundation | 1 | 6 min | 6 min |
+| 01-data-foundation | 2 | 9 min | 4.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (6 min)
+- Last 5 plans: 01-01 (6 min), 01-03 (3 min)
 - Trend: Starting
 
 *Updated after each plan completion*
@@ -48,6 +48,9 @@ Recent decisions affecting current work:
 - [01-01]: COURSE_SKILL_MAP maps 6 courses to 5 categories (03_ai->CONTENT, 04_workshops->OPERATIONS, 05_ozon->MARKETING, 06_express->OPERATIONS)
 - [01-01]: API utils import from @mpstats/db, not @prisma/client directly
 - [01-01]: tsx added as root dev dependency for seed scripts
+- [01-03]: Active session questions in globalThis Map (not DB) — short-lived, no schema change
+- [01-03]: Server restart marks orphaned sessions as ABANDONED
+- [01-03]: Exported functions take PrismaClient as first parameter (not singleton)
 
 ### Pending Todos
 
@@ -63,5 +66,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-data-foundation/01-01-SUMMARY.md
+Stopped at: Completed 01-03-PLAN.md
+Resume file: .planning/phases/01-data-foundation/01-03-SUMMARY.md
