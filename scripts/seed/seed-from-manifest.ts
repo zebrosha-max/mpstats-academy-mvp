@@ -50,12 +50,42 @@ interface ManifestLesson {
   transcription_status: string;
 }
 
+// Some manifest entries are submodule wrappers instead of direct lessons
+interface ManifestSubmoduleEntry {
+  submodule: {
+    id: string;
+    folder: string;
+    title_original: string;
+    order: number;
+    lessons: ManifestLesson[];
+  };
+}
+
+type ManifestModuleEntry = ManifestLesson | ManifestSubmoduleEntry;
+
 interface ManifestModule {
   id: string;
   folder: string;
   title_original: string;
   order: number;
-  lessons: ManifestLesson[];
+  lessons: ManifestModuleEntry[];
+}
+
+function isSubmoduleEntry(entry: ManifestModuleEntry): entry is ManifestSubmoduleEntry {
+  return 'submodule' in entry;
+}
+
+/** Flatten module entries — extract lessons from submodule wrappers */
+function flattenLessons(entries: ManifestModuleEntry[]): ManifestLesson[] {
+  const result: ManifestLesson[] = [];
+  for (const entry of entries) {
+    if (isSubmoduleEntry(entry)) {
+      result.push(...entry.submodule.lessons);
+    } else {
+      result.push(entry);
+    }
+  }
+  return result;
 }
 
 interface ManifestCourse {
@@ -142,9 +172,10 @@ async function seedFromManifest() {
     }
     coursesProcessed++;
 
-    // Обрабатываем модули и уроки
+    // Обрабатываем модули и уроки (flatten submodules)
     for (const module of course.modules) {
-      for (const lesson of module.lessons) {
+      const lessons = flattenLessons(module.lessons);
+      for (const lesson of lessons) {
         const durationMinutes = lesson.duration_seconds
           ? Math.ceil(lesson.duration_seconds / 60)
           : null;

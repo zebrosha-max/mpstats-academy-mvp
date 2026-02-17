@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 1: Data Foundation
+**Current focus:** Phase 2: AI Question Generation
 
 ## Current Position
 
-Phase: 1 of 6 (Data Foundation)
-Plan: 4 of 4 in current phase (CHECKPOINT — awaiting human verification)
-Status: Checkpoint
-Last activity: 2026-02-17 — 01-04 Tasks 1-2 complete, Task 3 checkpoint pending
+Phase: 2 of 6 (AI Question Generation)
+Plan: 0 of 2 in current phase
+Status: Ready to plan
+Last activity: 2026-02-17 — Phase 1 complete (verified, human approved)
 
-Progress: [████░░░░░░] 15%
+Progress: [██░░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4 (01-04 pending checkpoint)
+- Total plans completed: 4
 - Average duration: 4.5 min
 - Total execution time: 0.3 hours
 
@@ -67,10 +67,10 @@ None yet.
 - Kinescope videoId data needed from content team (blocks Phase 3 VIDEO-02)
 - Domain name for production SSL not confirmed (blocks Phase 6 DEPLOY-03)
 - SkillCategory enum has 5 values but 6 courses exist — RESOLVED in 01-01 (COURSE_SKILL_MAP)
-- DATABASE_URL credentials need updating — seed scripts ready but cannot connect to Supabase
+- DATABASE_URL credentials RESOLVED — host changed from aws-0-eu-central-1 to aws-1-eu-west-1, DIRECT_URL switched to session pooler
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: 01-04-PLAN.md Task 3 checkpoint (human-verify)
-Resume file: .planning/phases/01-data-foundation/01-04-SUMMARY.md
+Stopped at: Phase 1 complete, ready for Phase 2
+Resume file: .planning/ROADMAP.md

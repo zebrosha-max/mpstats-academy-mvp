@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Data Foundation** - Seed реальных курсов/уроков и миграция трёх роутеров с mock на Prisma
+- [x] **Phase 1: Data Foundation** - Seed реальных курсов/уроков и миграция трёх роутеров с mock на Prisma (completed 2026-02-17)
 - [ ] **Phase 2: AI Question Generation** - Генерация диагностических вопросов из RAG chunks вместо mock
 - [ ] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
@@ -34,10 +34,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 4 plans in 3 waves
 
 Plans:
-- [ ] 01-01-PLAN.md — Seed scripts (manifest + AI classification) and shared utilities (ensureUserProfile, db-errors)
-- [ ] 01-02-PLAN.md — Learning router migration to Prisma + frontend updates
-- [ ] 01-03-PLAN.md — Diagnostic router migration to Prisma (session/answer/skillProfile persistence)
-- [ ] 01-04-PLAN.md — Profile router + dashboard migration with real stats + E2E verification
+- [x] 01-01-PLAN.md — Seed scripts (manifest + AI classification) and shared utilities (ensureUserProfile, db-errors)
+- [x] 01-02-PLAN.md — Learning router migration to Prisma + frontend updates
+- [x] 01-03-PLAN.md — Diagnostic router migration to Prisma (session/answer/skillProfile persistence)
+- [x] 01-04-PLAN.md — Profile router + dashboard migration with real stats + E2E verification
 
 ### Phase 2: AI Question Generation
 **Goal**: Диагностика использует AI-генерированные вопросы из реального контента уроков, а не фиксированный набор mock
@@ -123,7 +123,7 @@ Note: Phases 2 and 3 can execute in parallel after Phase 1.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Foundation | 0/4 | Not started | - |
+| 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
 | 2. AI Question Generation | 0/2 | Not started | - |
 | 3. Video Integration | 0/2 | Not started | - |
 | 4. Access Control | 0/1 | Not started | - |
