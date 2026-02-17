@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 2: AI Question Generation
+**Current focus:** Phase 2: AI Question Generation -- COMPLETE
 
 ## Current Position
 
-Phase: 2 of 6 (AI Question Generation)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-17 — Plan 02-01 complete (AI question generation service)
+Phase: 2 of 6 (AI Question Generation) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-17 — Plan 02-02 complete (diagnostic router integration)
 
-Progress: [███░░░░░░░] 21%
+Progress: [████░░░░░░] 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 5.4 min
-- Total execution time: 0.45 hours
+- Total plans completed: 6
+- Average duration: 5.0 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-data-foundation | 4 | 17 min | 4.3 min |
-| 02-ai-question-generation | 1 | 10 min | 10 min |
+| 02-ai-question-generation | 2 | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min), 01-04 (4 min), 02-01 (10 min)
-- Trend: Stable (02-01 longer due to 100-question expansion)
+- Last 5 plans: 01-02 (4 min), 01-03 (3 min), 01-04 (4 min), 02-01 (10 min), 02-02 (2 min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -62,6 +62,8 @@ Recent decisions affecting current work:
 - [02-01]: FINANCE category (empty courses) always uses mock fallback
 - [02-01]: Options shuffled after LLM generation to avoid correctIndex bias
 - [02-01]: @mpstats/shared added as workspace dep to @mpstats/ai
+- [02-02]: Rate limiter stored in globalThis Map (same pattern as activeSessionQuestions)
+- [02-02]: Triple fallback: AI per-category -> mock per-category -> full mock (getBalancedQuestions)
 
 ### Pending Todos
 
@@ -77,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 02-01-PLAN.md (AI question generation service)
-Resume file: .planning/phases/02-ai-question-generation/02-02-PLAN.md
+Stopped at: Completed 02-02-PLAN.md (Phase 02 complete - diagnostic router integration)
+Resume file: Next phase (03)
