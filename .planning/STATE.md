@@ -10,28 +10,29 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 2 of 6 (AI Question Generation)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-02-17 — Phase 1 complete (verified, human approved)
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-17 — Plan 02-01 complete (AI question generation service)
 
-Progress: [██░░░░░░░░] 17%
+Progress: [███░░░░░░░] 21%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 4.5 min
-- Total execution time: 0.3 hours
+- Total plans completed: 5
+- Average duration: 5.4 min
+- Total execution time: 0.45 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-data-foundation | 4 | 17 min | 4.3 min |
+| 02-ai-question-generation | 1 | 10 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min), 01-04 (4 min)
-- Trend: Stable
+- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min), 01-04 (4 min), 02-01 (10 min)
+- Trend: Stable (02-01 longer due to 100-question expansion)
 
 *Updated after each plan completion*
 
@@ -57,6 +58,10 @@ Recent decisions affecting current work:
 - [01-04]: Average score = mean of 5 skill axes (not per-diagnostic calculation)
 - [01-04]: longestStreak = 0 for MVP (full history scan deferred)
 - [01-04]: updateSettings kept as mock (no Settings model in schema)
+- [02-01]: question-generator accepts fallbackFn callback to avoid circular dep with @mpstats/api
+- [02-01]: FINANCE category (empty courses) always uses mock fallback
+- [02-01]: Options shuffled after LLM generation to avoid correctIndex bias
+- [02-01]: @mpstats/shared added as workspace dep to @mpstats/ai
 
 ### Pending Todos
 
@@ -72,5 +77,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 1 complete, ready for Phase 2
-Resume file: .planning/ROADMAP.md
+Stopped at: Completed 02-01-PLAN.md (AI question generation service)
+Resume file: .planning/phases/02-ai-question-generation/02-02-PLAN.md
