@@ -19,19 +19,19 @@ Progress: [███░░░░░░░] 12%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 5 min
-- Total execution time: 0.15 hours
+- Total plans completed: 3
+- Average duration: 4 min
+- Total execution time: 0.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-foundation | 2 | 9 min | 4.5 min |
+| 01-data-foundation | 3 | 13 min | 4.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (6 min), 01-03 (3 min)
-- Trend: Starting
+- Last 5 plans: 01-01 (6 min), 01-02 (4 min), 01-03 (3 min)
+- Trend: Accelerating
 
 *Updated after each plan completion*
 
@@ -48,6 +48,9 @@ Recent decisions affecting current work:
 - [01-01]: COURSE_SKILL_MAP maps 6 courses to 5 categories (03_ai->CONTENT, 04_workshops->OPERATIONS, 05_ozon->MARKETING, 06_express->OPERATIONS)
 - [01-01]: API utils import from @mpstats/db, not @prisma/client directly
 - [01-01]: tsx added as root dev dependency for seed scripts
+- [01-02]: Removed getLessonSummary from learning router (already handled by AI router)
+- [01-02]: Default learn view changed from 'path' to 'courses' for 405-lesson scale
+- [01-02]: Course lessons collapsed to first 5 with expand button
 - [01-03]: Active session questions in globalThis Map (not DB) — short-lived, no schema change
 - [01-03]: Server restart marks orphaned sessions as ABANDONED
 - [01-03]: Exported functions take PrismaClient as first parameter (not singleton)
