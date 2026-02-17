@@ -48,11 +48,11 @@ Plans:
   2. Каждый вопрос имеет 4 варианта ответа, 1 правильный, и привязан к SkillCategory
   3. Если LLM недоступен или timeout 10s, диагностика работает с fallback mock вопросами
   4. Генерация вопросов ограничена 50 req/hour
-**Plans**: TBD
+**Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 02-01: Question generator service и validation pipeline
-- [ ] 02-02: Integration с diagnostic router и fallback logic
+- [ ] 02-01-PLAN.md — Question generator service, Zod/JSON schema validation, 100-question mock bank
+- [ ] 02-02-PLAN.md — Integration with diagnostic router, rate limiting, fallback logic, loading UI
 
 ### Phase 3: Video Integration
 **Goal**: Пользователь смотрит реальные видеоуроки через Kinescope и может переходить к конкретным моментам по таймкодам из RAG
