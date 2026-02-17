@@ -21,7 +21,7 @@ export const profileRouter = router({
     }
 
     // Return profile with real skill data for this user (no fake data)
-    const latestProfile = getLatestSkillProfile(ctx.user.id);
+    const latestProfile = await getLatestSkillProfile(ctx.prisma, ctx.user.id);
     return {
       id: ctx.user.id,
       email: ctx.user.email,
@@ -36,14 +36,14 @@ export const profileRouter = router({
   // Get dashboard data
   getDashboard: protectedProcedure.query(async ({ ctx }): Promise<DashboardData> => {
     // Use real skill profile from last diagnostic if available for this user
-    const realSkillProfile = getLatestSkillProfile(ctx.user.id);
+    const realSkillProfile = await getLatestSkillProfile(ctx.prisma, ctx.user.id);
     return getMockDashboardData(ctx.user.id, realSkillProfile);
   }),
 
   // Get skill profile for current user
   getSkillProfile: protectedProcedure.query(async ({ ctx }): Promise<SkillProfile | null> => {
     // First check for real session data for this user
-    const latestProfile = getLatestSkillProfile(ctx.user.id);
+    const latestProfile = await getLatestSkillProfile(ctx.prisma, ctx.user.id);
     if (latestProfile) {
       return latestProfile;
     }
