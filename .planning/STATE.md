@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 2: AI Question Generation -- COMPLETE
+**Current focus:** Phase 3: Video Integration -- Plan 01 complete
 
 ## Current Position
 
-Phase: 2 of 6 (AI Question Generation) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-17 — Plan 02-02 complete (diagnostic router integration)
+Phase: 3 of 6 (Video Integration)
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-18 — Plan 03-01 complete (Kinescope player + timecode seek)
 
-Progress: [████░░░░░░] 29%
+Progress: [█████░░░░░] 38%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 5.0 min
+- Total plans completed: 7
+- Average duration: 4.6 min
 - Total execution time: 0.5 hours
 
 **By Phase:**
@@ -29,9 +29,10 @@ Progress: [████░░░░░░] 29%
 |-------|-------|-------|----------|
 | 01-data-foundation | 4 | 17 min | 4.3 min |
 | 02-ai-question-generation | 2 | 12 min | 6 min |
+| 03-video-integration | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (4 min), 01-03 (3 min), 01-04 (4 min), 02-01 (10 min), 02-02 (2 min)
+- Last 5 plans: 01-03 (3 min), 01-04 (4 min), 02-01 (10 min), 02-02 (2 min), 03-01 (3 min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - [02-01]: @mpstats/shared added as workspace dep to @mpstats/ai
 - [02-02]: Rate limiter stored in globalThis Map (same pattern as activeSessionQuestions)
 - [02-02]: Triple fallback: AI per-category -> mock per-category -> full mock (getBalancedQuestions)
+- [03-01]: Cast dynamic() to original type for class component ref support
+- [03-01]: seekTo + play on timecode click for intuitive UX
+- [03-01]: Disabled timecodes shown as grayed badges (not hidden) when no videoId
 
 ### Pending Todos
 
@@ -78,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 02-02-PLAN.md (Phase 02 complete - diagnostic router integration)
-Resume file: Next phase (03)
+Last session: 2026-02-18
+Stopped at: Completed 03-01-PLAN.md (Kinescope player + timecode seek)
+Resume file: .planning/phases/03-video-integration/03-02-PLAN.md
