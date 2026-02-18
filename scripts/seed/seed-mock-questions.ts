@@ -79,10 +79,10 @@ const CATEGORY_LABELS: Record<SkillCategory, string> = {
 // ── Zod schema ────────────────────────────────────────────────────
 
 const questionSchema = z.object({
-  question: z.string().min(10).max(500),
-  options: z.array(z.string().min(1).max(300)).length(4),
+  question: z.string().min(10),
+  options: z.array(z.string().min(1)).length(4),
   correctIndex: z.number().int().min(0).max(3),
-  explanation: z.string().min(10).max(500),
+  explanation: z.string().min(10),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
 });
 
@@ -104,14 +104,14 @@ const questionJsonSchema = {
         additionalProperties: false,
         required: ['question', 'options', 'correctIndex', 'explanation', 'difficulty'],
         properties: {
-          question: { type: 'string' as const, minLength: 10, maxLength: 500 },
+          question: { type: 'string' as const },
           options: {
             type: 'array' as const,
-            items: { type: 'string' as const, minLength: 1, maxLength: 300 },
+            items: { type: 'string' as const },
             minItems: 4, maxItems: 4,
           },
           correctIndex: { type: 'integer' as const, minimum: 0, maximum: 3 },
-          explanation: { type: 'string' as const, minLength: 10, maxLength: 500 },
+          explanation: { type: 'string' as const },
           difficulty: { type: 'string' as const, enum: ['EASY', 'MEDIUM', 'HARD'] },
         },
       },
@@ -185,7 +185,8 @@ interface GeneratedQuestion {
 async function generateQuestionsForCategory(
   openrouter: OpenAI,
   category: SkillCategory,
-  chunks: string[]
+  chunks: string[],
+  count: number = QUESTIONS_PER_CATEGORY
 ): Promise<GeneratedQuestion[]> {
   const hasChunks = chunks.length > 0;
   const contextBlock = hasChunks
@@ -196,17 +197,25 @@ async function generateQuestionsForCategory(
     ? `\nТема: ${CATEGORY_LABELS[category]}. Генерируй вопросы на основе общих знаний о финансах маркетплейсов: unit-экономика, ROI, маржинальность, комиссии, налоги, cash flow, точка безубыточности.`
     : '';
 
-  const systemPrompt = `Ты — AI-генератор тестовых вопросов для образовательной платформы MPSTATS Academy (маркетплейсы).
+  const systemPrompt = `Ты — AI-генератор тестовых вопросов для образовательной платформы MPSTATS Academy (маркетплейсы Ozon, Wildberries).
 
-Создай ровно ${QUESTIONS_PER_CATEGORY} вопросов с множественным выбором по категории "${CATEGORY_LABELS[category]}".
+Создай ровно ${count} вопросов с множественным выбором по категории "${CATEGORY_LABELS[category]}".
 
 Требования:
 - 70% практических кейсов (ситуации, расчёты, решения), 30% теория/понятия/метрики
 - Каждый вопрос: РОВНО 4 варианта ответа, 1 правильный (correctIndex 0-3)
-- Микс сложности: ~7 EASY, ~7 MEDIUM, ~6 HARD
+- Микс сложности: EASY, MEDIUM, HARD
 - Язык: русский
 - Все вопросы уникальны и проверяют разные аспекты
-- explanation объясняет почему ответ верен${categorySpecific}
+- explanation КРАТКО (1-2 предложения) объясняет почему ответ верен${categorySpecific}
+
+ЗАПРЕЩЕНО генерировать вопросы:
+- Про мнения, советы или рекомендации конкретных преподавателей/спикеров
+- Про доступ к инструментам, VPN, регистрацию в сервисах
+- Про организационные вопросы обучения
+- Не относящиеся к практическим навыкам работы на маркетплейсах
+
+Каждый вопрос должен проверять КОНКРЕТНЫЙ НАВЫК или ЗНАНИЕ, применимое в работе селлера.
 
 Формат: JSON { "questions": [...] }`;
 
@@ -218,8 +227,8 @@ async function generateQuestionsForCategory(
         {
           role: 'user',
           content: hasChunks
-            ? `Сгенерируй ${QUESTIONS_PER_CATEGORY} вопросов на основе контекста.${contextBlock}`
-            : `Сгенерируй ${QUESTIONS_PER_CATEGORY} вопросов по теме "${CATEGORY_LABELS[category]}".`,
+            ? `Сгенерируй ${count} вопросов на основе контекста.${contextBlock}`
+            : `Сгенерируй ${count} вопросов по теме "${CATEGORY_LABELS[category]}".`,
         },
       ],
       temperature: 0.7,
@@ -338,16 +347,27 @@ async function main() {
     console.log(`  Fetched ${chunks.length} chunks for context`);
 
     try {
-      const questions = await generateQuestionsForCategory(openrouter, category, chunks);
-      console.log(`  Generated ${questions.length} questions`);
+      // Split into batches of 10 to avoid LLM output truncation
+      const BATCH_SIZE = 10;
+      const batches = Math.ceil(QUESTIONS_PER_CATEGORY / BATCH_SIZE);
+      const allBatchQuestions: GeneratedQuestion[] = [];
+
+      for (let batch = 0; batch < batches; batch++) {
+        const batchCount = Math.min(BATCH_SIZE, QUESTIONS_PER_CATEGORY - allBatchQuestions.length);
+        console.log(`  Batch ${batch + 1}/${batches} (${batchCount} questions)...`);
+        const batchQuestions = await generateQuestionsForCategory(openrouter, category, chunks, batchCount);
+        allBatchQuestions.push(...batchQuestions);
+      }
+
+      console.log(`  Generated ${allBatchQuestions.length} questions`);
 
       // Validate difficulty distribution
-      const easy = questions.filter((q) => q.difficulty === 'EASY').length;
-      const medium = questions.filter((q) => q.difficulty === 'MEDIUM').length;
-      const hard = questions.filter((q) => q.difficulty === 'HARD').length;
+      const easy = allBatchQuestions.filter((q) => q.difficulty === 'EASY').length;
+      const medium = allBatchQuestions.filter((q) => q.difficulty === 'MEDIUM').length;
+      const hard = allBatchQuestions.filter((q) => q.difficulty === 'HARD').length;
       console.log(`  Difficulty: EASY=${easy}, MEDIUM=${medium}, HARD=${hard}`);
 
-      allQuestions.push({ category, questions });
+      allQuestions.push({ category, questions: allBatchQuestions });
     } catch (err) {
       console.error(`  FAILED for ${category}:`, err instanceof Error ? err.message : err);
       console.error(`  Skipping ${category} — run again or add manually.`);
