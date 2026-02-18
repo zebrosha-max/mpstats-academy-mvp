@@ -1,0 +1,3674 @@
+{
+  "generated": "2026-02-18T09:08:50.080Z",
+  "basePath": "E:\\Academy Courses",
+  "manifestPath": "E:/Academy Courses/manifest.json",
+  "matched": [
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m00_bonus_autobidder\\bidder._poshagovaya_nastroika..mp4",
+      "lessonId": "01_analytics_m00_bonus_autobidder_001",
+      "title": "Биддер. Пошаговая настройка.",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 522.12,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m01_start\\001_kak_proyti_kurs_s_maksimalnym_rezultatom.mp4",
+      "lessonId": "01_analytics_m01_start_001",
+      "title": "1. Как пройти курс с максимальным результатом",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 360.07,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m01_start\\002_dlya_chego_nuzhna_analitika_dlya_biznesa_na_mp.mp4",
+      "lessonId": "01_analytics_m01_start_002",
+      "title": "2. Для чего нужна аналитика для бизнеса на МП",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 294.7,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m01_start\\003_dorozhnaya_karta_kursa.mov",
+      "lessonId": "01_analytics_m01_start_003",
+      "title": "3. Дорожная карта курса",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 472,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\001_yunit_ekonomika_pogruzhenie.mp4",
+      "lessonId": "01_analytics_m02_economics_001",
+      "title": "1. Юнит-экономика погружение",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 331.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_1_yunit_ekonomika_wb_rabota_s_tablitsey_1.mp4",
+      "lessonId": "01_analytics_m02_economics_002",
+      "title": "2.1 🆕 Юнит-экономика WB_ работа с таблицей 1",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 582.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_2_yunit_ekonomika_wb_rabota_s_tablitsey_2.mp4",
+      "lessonId": "01_analytics_m02_economics_003",
+      "title": "2.2 🆕 Юнит-экономика WB_ работа с таблицей 2",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 315.71,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_3_yunit_ekonomika_wb_rabota_s_tablitsey_3.mp4",
+      "lessonId": "01_analytics_m02_economics_004",
+      "title": "2.3 🆕 Юнит-экономика WB_ работа с таблицей 3",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 197.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_4_yunit_ekonomika_wb_rabota_s_tablitsey_4.mp4",
+      "lessonId": "01_analytics_m02_economics_005",
+      "title": "2.4 🆕 Юнит-экономика WB_ работа с таблицей 4",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 386.8,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_5_yunit_ekonomika_wb_rabota_s_tablitsey_5.mp4",
+      "lessonId": "01_analytics_m02_economics_006",
+      "title": "2.5 🆕 Юнит-экономика WB_ работа с таблицей 5",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 242.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_6_yunit_ekonomika_wb_rabota_s_tablitsey_6.mp4",
+      "lessonId": "01_analytics_m02_economics_007",
+      "title": "2.6 🆕 Юнит-экономика WB_ работа с таблицей 6",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 468.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\002_7_yunit_ekonomika_wb_rabota_s_tablitsey_7.mp4",
+      "lessonId": "01_analytics_m02_economics_008",
+      "title": "2.7 🆕 Юнит-экономика WB_ работа с таблицей 7",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 606.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\003_1_yunit_ekonomika_ozon_1.mp4",
+      "lessonId": "01_analytics_m02_economics_009",
+      "title": "3.1 🆕 Юнит-экономика Ozon 1",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 434.09,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\003_2_yunit_ekonomika_ozon_2.mp4",
+      "lessonId": "01_analytics_m02_economics_010",
+      "title": "3.2 🆕 Юнит-экономика Ozon 2",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 397.62,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\003_3_yunit_ekonomika_ozon_3.mp4",
+      "lessonId": "01_analytics_m02_economics_011",
+      "title": "3.3 🆕 Юнит-экономика Ozon 3",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 515.42,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\004_tipy_tsenovyh_segmentov_na_marketpleisah_kak_opred.mp4",
+      "lessonId": "01_analytics_m02_economics_012",
+      "title": "4. Типы ценовых сегментов на маркетплейсах как определить свой",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 434.24,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\006_1_analiz_uslovii_aktsii_kak_prinyat_reshenie_o_zap.mp4",
+      "lessonId": "01_analytics_m02_economics_013",
+      "title": "6.1  Анализ условий акций как принять решение о запуске",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 192.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\006_2_analiz_uslovii_aktsii_kak_prinyat_reshenie_o_zap.mp4",
+      "lessonId": "01_analytics_m02_economics_014",
+      "title": "6.2 Анализ условий акций как принять решение о запуске",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 351.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m02_economics\\3_analiz_uslovii_aktsii_kak_prinyat_reshenie_o_zap.mp4",
+      "lessonId": "01_analytics_m02_economics_015",
+      "title": "3 Анализ условий акций как принять решение о запуске",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 407.83,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\001_1_tipy_konkurentsii_chast_1_lektsiya.mp4",
+      "lessonId": "01_analytics_m03_competitors_001",
+      "title": "1.1 Типы конкуренции - часть 1 - лекция",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 150.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\001_2_tipy_konkurentsii_kak_ponyat_kto_moi_konkurent.mp4",
+      "lessonId": "01_analytics_m03_competitors_002",
+      "title": "1.2 Типы конкуренции как понять, кто мой конкурент",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 280.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\001_3_tipy_konkurentsii._praktika.mp4",
+      "lessonId": "01_analytics_m03_competitors_003",
+      "title": "1.3 Типы конкуренции. Практика",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 187.55,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\002_emkost_tovara_kak_opredelit_potentsial.mp4",
+      "lessonId": "01_analytics_m03_competitors_004",
+      "title": "2. Емкость товара  как определить потенциал",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 164.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\003_praktika_schitaem_emkost_tovara.mp4",
+      "lessonId": "01_analytics_m03_competitors_005",
+      "title": "3. Практика считаем емкость товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 790.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\004_konkurentnyi_analiz_zachem_nuzhen_i_kak_provodit.mp4",
+      "lessonId": "01_analytics_m03_competitors_006",
+      "title": "4. Конкурентный анализ зачем нужен и как проводить",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 366.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_1_instrumenty_konkurentnogo_analiza_1.mp4",
+      "lessonId": "01_analytics_m03_competitors_007",
+      "title": "5.1 Инструменты конкурентного анализа 1",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 177.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_2_instrumenty_konkurentnogo_analiza_2.mp4",
+      "lessonId": "01_analytics_m03_competitors_008",
+      "title": "5.2 Инструменты конкурентного анализа 2",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 257.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_3_instrumenty_konkurentnogo_analiza_3.mp4",
+      "lessonId": "01_analytics_m03_competitors_009",
+      "title": "5.3 Инструменты конкурентного анализа 3",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 695.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_4_instrumenty_konkurentnogo_analiza_4.mp4",
+      "lessonId": "01_analytics_m03_competitors_010",
+      "title": "5.4 Инструменты конкурентного анализа 4",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 446.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_5_instrumenty_konkurentnogo_analiza_5.mp4",
+      "lessonId": "01_analytics_m03_competitors_011",
+      "title": "5.5 Инструменты конкурентного анализа 5",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 109.57,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_6_instrumenty_konkurentnogo_analiza_6.mp4",
+      "lessonId": "01_analytics_m03_competitors_012",
+      "title": "5.6 Инструменты конкурентного анализа 6",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 37.67,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\005_7_instrumenty_konkurentnogo_analiza_7.mp4",
+      "lessonId": "01_analytics_m03_competitors_013",
+      "title": "5.7 Инструменты конкурентного анализа 7",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 162.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m03_competitors\\006_doli_rynka_analiz_ezhednevnyh_prodazh.mp4",
+      "lessonId": "01_analytics_m03_competitors_014",
+      "title": "6. Доли рынка анализ ежедневных продаж",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 409.35,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\001_tipichnye_oshibki_pri_vybore_tovara.mp4",
+      "lessonId": "01_analytics_m04_product_selection_001",
+      "title": "1. Типичные ошибки при выборе товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 287.19,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\002_vybiraem_tsel_zapuska_pod_svoi_byudzhet_opyt_i_res.mp4",
+      "lessonId": "01_analytics_m04_product_selection_002",
+      "title": "2. Выбираем цель запуска под свой бюджет, опыт и ресурсы",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 304.15,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\003_2_analiz_tovarnoy_matritsy._praktika.mp4",
+      "lessonId": "01_analytics_m04_product_selection_003",
+      "title": "3.2 Анализ товарной матрицы. Практика",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 1498.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\003_3_poisk_ovoy_kategorii._opredelyaem_vvodnye.mp4",
+      "lessonId": "01_analytics_m04_product_selection_004",
+      "title": "3.3 Поиск овой категории. Определяем вводные",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 213.87,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\004_1_brendy_i_tsenovaya_segmentatsiya.mov",
+      "lessonId": "01_analytics_m04_product_selection_005",
+      "title": "4.1 Бренды и ценовая сегментация",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 348.41,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\004_2_silnaya_kartochka_kontent_konkurenty_i_otzyvy.mp4",
+      "lessonId": "01_analytics_m04_product_selection_006",
+      "title": "4.2 Сильная карточка_контент, конкуренты и отзывы",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 1109.58,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\004_4_skorost_dostavki_i_ee_vliyanie_na_prodvizhenie.mp4",
+      "lessonId": "01_analytics_m04_product_selection_007",
+      "title": "4.4 Скорость доставки и ее влияние на продвижение",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 531.42,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\005_sezonnost_sprosa_kogda_vhodit_v_nishu.mp4",
+      "lessonId": "01_analytics_m04_product_selection_008",
+      "title": "5. Сезонность спроса когда входить в нишу",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 774.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\006_vyyavlyaem_biznes_riski_tovara.mp4",
+      "lessonId": "01_analytics_m04_product_selection_009",
+      "title": "6. Выявляем бизнес-риски товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 795.76,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\007_rasschityvaem_neobhodimyi_obem_partii_dlya_pervoi.mp4",
+      "lessonId": "01_analytics_m04_product_selection_010",
+      "title": "7. Рассчитываем необходимый объем партии для первой закупки",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 508.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\008_finalnaya_diagnostika_podhodit_li_vam_nisha.mp4",
+      "lessonId": "01_analytics_m04_product_selection_011",
+      "title": "8. Финальная диагностика подходит ли вам ниша",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 946.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\009_zhiznennyi_tsikl_tovara_ot_starta_do_maksimalnyh_p.mp4",
+      "lessonId": "01_analytics_m04_product_selection_012",
+      "title": "9. Жизненный цикл товара от старта до максимальных продаж",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 233.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\010_1_analiz_tsa_i_modifikatsiya_tovara.mp4",
+      "lessonId": "01_analytics_m04_product_selection_013",
+      "title": "10.1 Анализ ЦА и модификация товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 339.54,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\010_2_analiz_tsa_i_modifikatsiya_tovara.mp4",
+      "lessonId": "01_analytics_m04_product_selection_014",
+      "title": "10.2 Анализ ЦА и модификация товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 621.77,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\010_3_analiz_tsa_i_modifikatsiya_tovara.mp4",
+      "lessonId": "01_analytics_m04_product_selection_015",
+      "title": "10.3  Анализ ЦА и модификация товара",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 632.72,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\1_kriterii_otbora_kategoriy_tovara_i_analiz_nish_k.mp4",
+      "lessonId": "01_analytics_m04_product_selection_016",
+      "title": "1 Критерии отбора категорий товара и анализ ниш как выбрать перспективные ниши",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 334.09,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\1_vybor_konkretnyh_produktov.mp4",
+      "lessonId": "01_analytics_m04_product_selection_017",
+      "title": "1 Выбор конкретных продуктов",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 841.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\2_kriterii_otbora_kategorii_tovara_i_analiz_nish.mp4",
+      "lessonId": "01_analytics_m04_product_selection_018",
+      "title": "2 Критерии отбора категорий товара и анализ ниш",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 90.94,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\2_vybor_konkretnyh_produktov.mp4",
+      "lessonId": "01_analytics_m04_product_selection_019",
+      "title": "2 Выбор конкретных продуктов",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 1082.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\3_kriterii_otbora_kategorii_tovara_i_analiz_nish.mp4",
+      "lessonId": "01_analytics_m04_product_selection_020",
+      "title": "3 Критерии отбора категорий товара и анализ ниш",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 146.48,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\3_vybor_konkretnyh_produktov.mp4",
+      "lessonId": "01_analytics_m04_product_selection_021",
+      "title": "3 Выбор конкретных продуктов",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 621.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\aktsii_i_ih_vliyanie_na_prodvizhenie.mp4",
+      "lessonId": "01_analytics_m04_product_selection_022",
+      "title": "Акции и их влияние на продвижение",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 556.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\ischem_potentsialno_interesnye_kategorii.mp4",
+      "lessonId": "01_analytics_m04_product_selection_023",
+      "title": "Ищем потенциально интересные категории",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 180.44,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m04_product_selection\\silnaya_kartochka_uchimsya_u_konkurentov.mp4",
+      "lessonId": "01_analytics_m04_product_selection_024",
+      "title": "Сильная карточка учимся у конкурентов",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 599.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\001_obrabotka_dannyh_s_pomoschyu_abc_xyz_analiza.mp4",
+      "lessonId": "01_analytics_m05_assortment_001",
+      "title": "1. Обработка данных с помощью ABC_XYZ-анализа",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 1077.13,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\001_vnutrennyaya_analitika_mp.mp4",
+      "lessonId": "01_analytics_m05_assortment_002",
+      "title": "1. Внутренняя аналитика МП",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 305.68,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\002_planirovanie_prodazh_i_logistiki.mp4",
+      "lessonId": "01_analytics_m05_assortment_003",
+      "title": "2. Планирование продаж и логистики",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 535.91,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\002_vnutrennyaya_analitika_mp.mp4",
+      "lessonId": "01_analytics_m05_assortment_004",
+      "title": "2. Внутренняя аналитика МП",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 363.78,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\1_planirovanie_prodazh_i_logistiki.mp4",
+      "lessonId": "01_analytics_m05_assortment_005",
+      "title": "1  Планирование продаж и логистики",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 387.65,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\1_rabota_s_fokusnymi_tovarami_i_analiz_konversii.mp4",
+      "lessonId": "01_analytics_m05_assortment_006",
+      "title": "1 Работа с фокусными товарами и анализ конверсий",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 653.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\1_strategicheskoe_planirovanie.mp4",
+      "lessonId": "01_analytics_m05_assortment_007",
+      "title": "1 Стратегическое планирование",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 169.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\2_obrabotka_dannyh_s_pomoschyu_abc_xyz_analiza.mp4",
+      "lessonId": "01_analytics_m05_assortment_008",
+      "title": "2 Обработка данных с помощью ABC_XYZ-анализа",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 586.87,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\2_rabota_s_fokusnymi_tovarami_i_analiz_konversii.mp4",
+      "lessonId": "01_analytics_m05_assortment_009",
+      "title": "2 Работа с фокусными товарами и анализ конверсий",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 442.46,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\2_strategicheskoe_planirovanie.mp4",
+      "lessonId": "01_analytics_m05_assortment_010",
+      "title": "2 Стратегическое планирование",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 131.83,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\3_planirovanie_prodazh_i_logistiki.mp4",
+      "lessonId": "01_analytics_m05_assortment_011",
+      "title": "3 Планирование продаж и логистики",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 131.83,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\3_rabota_s_fokusnymi_tovarami_i_analiz_konversii.mp4",
+      "lessonId": "01_analytics_m05_assortment_012",
+      "title": "3 Работа с фокусными товарами и анализ конверсий",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 246.54,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\3_strategicheskoe_planirovanie.mp4",
+      "lessonId": "01_analytics_m05_assortment_013",
+      "title": "3 Стратегическое планирование",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 180.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\4_rabota_s_fokusnymi_tovarami_i_analiz_konversii.mp4",
+      "lessonId": "01_analytics_m05_assortment_014",
+      "title": "4 Работа с фокусными товарами и анализ конверсий",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 169.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\4_strategicheskoe_planirovanie.mp4",
+      "lessonId": "01_analytics_m05_assortment_015",
+      "title": "4 Стратегическое планирование",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 387.65,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m05_assortment\\5_rabota_s_fokusnymi_tovarami_i_analiz_konversii.mp4",
+      "lessonId": "01_analytics_m05_assortment_016",
+      "title": "5 Работа с фокусными товарами и анализ конверсий",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 180.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\1_seo_optimizatsiya.mp4",
+      "lessonId": "01_analytics_m06_traffic_001",
+      "title": "1 SEO-оптимизация",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 173.44,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\2_seo_optimizatsiya.mp4",
+      "lessonId": "01_analytics_m06_traffic_002",
+      "title": "2 SEO-оптимизация",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 156.76,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\3_seo_optimizatsiya.mp4",
+      "lessonId": "01_analytics_m06_traffic_003",
+      "title": "3 SEO-оптимизация",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 145.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\4_seo_optimizatsiya.mp4",
+      "lessonId": "01_analytics_m06_traffic_004",
+      "title": "4 SEO-оптимизация",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 1016.8,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\metriki_reklamnoi_kampanii_i_analiz_ee_effektivnos.mov",
+      "lessonId": "01_analytics_m06_traffic_005",
+      "title": "Метрики рекламной кампании и анализ ее эффективности 1",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 148.33,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\metriki_reklamnoi_kampanii_i_analiz_ee_effektivnos.mp4",
+      "lessonId": "01_analytics_m06_traffic_006",
+      "title": "Метрики рекламной кампании и анализ ее эффективности 5",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 669.91,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\metriki_reklamnoi_kampanii_i_analiz_ee_effektivnos_1.mp4",
+      "lessonId": "01_analytics_m06_traffic_007",
+      "title": "Метрики рекламной кампании и анализ ее эффективности 3",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 145.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\metriki_reklamnoi_kampanii_i_analiz_ee_effektivnos_2.mp4",
+      "lessonId": "01_analytics_m06_traffic_008",
+      "title": "Метрики рекламной кампании и анализ ее эффективности 4",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 150.23,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\01_analytics\\m06_traffic\\metriki_reklamnoi_kampanii_i_analiz_ee_effektivnos_3.mp4",
+      "lessonId": "01_analytics_m06_traffic_009",
+      "title": "Метрики рекламной кампании и анализ ее эффективности 5",
+      "courseId": "01_analytics",
+      "fileExists": true,
+      "fileSizeMB": 310.18,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\001_1_ii_dlya_kreativov_i_seo_tekstov.mov",
+      "lessonId": "02_ads_m00_bonus_ai_external_001",
+      "title": "1.1 ИИ для креативов и SEO-текстов",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 2266.98,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\001_2_seo_yadro_za_7_minut_klyuchi_chastotnost.mp4",
+      "lessonId": "02_ads_m00_bonus_ai_external_002",
+      "title": "1.2 SEO-ядро за 7 минут Ключи + Частотность",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 1940.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\002_1_obyazatelnaya_i_neobyazatelnaya_markirovka_rekla.mp4",
+      "lessonId": "02_ads_m00_bonus_ai_external_003",
+      "title": "2.1 Обязательная и необязательная маркировка рекламы",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 184.43,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\002_2_formaty_sotrudnichestva_s_blogerami.mp4",
+      "lessonId": "02_ads_m00_bonus_ai_external_004",
+      "title": "2.2 Форматы сотрудничества с блогерами",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 239,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\002_3_kak_iskat_blogerov_ruchnoy_poisk.mp4",
+      "lessonId": "02_ads_m00_bonus_ai_external_005",
+      "title": "2.3 Как искать блогеров - ручной поиск",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 182.4,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_bonus_ai_external\\002_4_sozdanie_tz_dlya_blogera.mp4",
+      "lessonId": "02_ads_m00_bonus_ai_external_006",
+      "title": "2.4 Создание ТЗ для блогера",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 174.13,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_updates\\001_ob_izmeneniyah_na_wb_s_vitaliem_fil.mp4",
+      "lessonId": "02_ads_m00_updates_001",
+      "title": "1. Об изменениях на WB с Виталием Филь",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 1495.93,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m00_updates\\002_chto_novogo_na_wildberries.mp4",
+      "lessonId": "02_ads_m00_updates_002",
+      "title": "2. Что нового на Wildberries",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 248.64,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m01_prep\\001_pochemu_wb_ne_pokazyvaet_vashu_kartochku.mp4",
+      "lessonId": "02_ads_m01_prep_001",
+      "title": "1. Почему WB не показывает вашу карточку",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 262.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m01_prep\\002_analiz_vneshney_sredy_stoit_li_reklamirovat_moy_to.mp4",
+      "lessonId": "02_ads_m01_prep_002",
+      "title": "2. Анализ внешней среды стоит ли рекламировать мой товар",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 723.79,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m01_prep\\003_ischem_slabye_mesta_tovara.mp4",
+      "lessonId": "02_ads_m01_prep_003",
+      "title": "3. Ищем слабые места товара",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 393.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m01_prep\\004_1_praktika_zapolnyaem_chek_list_na_primere_futbolo.mp4",
+      "lessonId": "02_ads_m01_prep_004",
+      "title": "4.1 Практика заполняем чек-лист на примере футболок",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 418.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m01_prep\\004_chek_list_podgotovki_tovara_k_reklame.mp4",
+      "lessonId": "02_ads_m01_prep_005",
+      "title": "4. Чек-лист подготовки товара к рекламе",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 119.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\001_kak_kartochka_popadaet_v_vydachu.mp4",
+      "lessonId": "02_ads_m02_top_001",
+      "title": "1. Как карточка попадает в выдачу",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 595.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\002_prevraschaem_spisok_klyuchey_v_yadro_kotoroe_proda.mp4",
+      "lessonId": "02_ads_m02_top_002",
+      "title": "2. Превращаем список ключей в ядро, которое продаёт",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 824.74,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\003_sobiraem_yadro_dlya_pervoy_kartochki_na_wb.mp4",
+      "lessonId": "02_ads_m02_top_003",
+      "title": "3. Собираем ядро для первой карточки на WB",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 857.29,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\004_kak_obnovit_kartochku_i_ostatsya_v_tope.mp4",
+      "lessonId": "02_ads_m02_top_004",
+      "title": "4. Как обновить карточку и остаться в ТОПе",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 177.66,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\005_kak_nayti_nedorabotki_v_kartochke_i_podnyat_prodaz.mp4",
+      "lessonId": "02_ads_m02_top_005",
+      "title": "5. Как найти недоработки в карточке и поднять продажи",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 590.9,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\006_kak_masshtabirovat_topovuyu_kartochku.mp4",
+      "lessonId": "02_ads_m02_top_006",
+      "title": "6. Как масштабировать ТОПовую карточку",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 709.1,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m02_top\\007_vybiraem_strategiyu_seo.mp4",
+      "lessonId": "02_ads_m02_top_007",
+      "title": "7. Выбираем стратегию SEO",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 187.87,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\001_kak_ponimat_tselevuyu_auditoriyu.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_001",
+      "title": "1. Как понимать целевую аудиторию",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 282.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\002_kak_provodit_issledovanie_tsa.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_002",
+      "title": "2. Как проводить исследование ЦА",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 288.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\003_ispravlyaem_kontentnuyu_voronku._foto.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_003",
+      "title": "3. Исправляем контентную воронку. Фото",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 775.11,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\004_ispravlyaem_kontentnuyu_voronku._video.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_004",
+      "title": "4. Исправляем контентную воронку. Видео",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 406.08,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\005_1_diagnostiruem_problemy_v_voronke.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_005",
+      "title": "5.1 Диагностируем проблемы в воронке",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 383.99,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\005_2_podvedenie_itogov_i_domashnee_zadanie.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_006",
+      "title": "5.2 Подведение итогов и домашнее задание",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 33.48,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\006_1_chto_takoe_ab_testy_zachem_oni_nuzhny_i_kak_ih_p.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_007",
+      "title": "6.1 Что такое AB-тесты, зачем они нужны и как их проводить",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 110.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\006_2_dzhem_provodim_ab_testy.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_008",
+      "title": "6.2 Джем проводим AB-тесты",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 140.17,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m03_visual_ctr\\006_3_marpla_provodim_ab_testy.mp4",
+      "lessonId": "02_ads_m03_visual_ctr_009",
+      "title": "6.3 Marpla проводим AB-тесты",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 97.07,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\002_yunit_ekonomika_pogruzhenie.mp4",
+      "lessonId": "02_ads_m04_ads_economics_001",
+      "title": "2. Юнит-экономика погружение",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 331.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_1_unit_ekonomika_po_sku.mp4",
+      "lessonId": "02_ads_m04_ads_economics_002",
+      "title": "3.1 Unit-экономика по SKU",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 582.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_2_1_chast._zapolnyaem_vvodnye_dannye_po_tovaru_i_p.mp4",
+      "lessonId": "02_ads_m04_ads_economics_003",
+      "title": "3.2 1️ часть. Заполняем Вводные данные по товару и Переменные расходы",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 315.71,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_3_2_chast._zapolnyaem_tsenoobrazovanie_gabarity_to.mp4",
+      "lessonId": "02_ads_m04_ads_economics_004",
+      "title": "3.3 2 часть. Заполняем «Ценообразование», «Габариты товара»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 197.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_3_3_chast_zapolnyaem_parametry_prodavtsa_i_vnutren.mp4",
+      "lessonId": "02_ads_m04_ads_economics_005",
+      "title": "3.3 3️ часть Заполняем «Параметры продавца» и «Внутренний маркетинг»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 386.8,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_4_4_chast_zapolnyaem_rashody_marketpleysa_na_edini.mp4",
+      "lessonId": "02_ads_m04_ads_economics_006",
+      "title": "3.4 4️ часть Заполняем «Расходы маркетплейса на единицу», «Расходы маркетплейса на партию», «Постоянные расходы», «Административные расходы»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 242.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_5_5_zapolnyaem_kommercheskie_rashody_nalog.mp4",
+      "lessonId": "02_ads_m04_ads_economics_007",
+      "title": "3.5 5️  Заполняем «Коммерческие расходы», «Налог»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 468.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\003_6_6_chast._itogi_oborachivaemost.mp4",
+      "lessonId": "02_ads_m04_ads_economics_008",
+      "title": "3.6 6️ часть. Итоги, Оборачиваемость",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 606.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\004_1_pochemu_reklama_est_pribyl_i_kak_eto_ispravit.mp4",
+      "lessonId": "02_ads_m04_ads_economics_009",
+      "title": "4.1 Почему реклама «ест» прибыль и как это исправить",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 159.93,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\004_2_kak_splanirovat_byudzhet_chtoby_reklama_okupalas.mp4",
+      "lessonId": "02_ads_m04_ads_economics_010",
+      "title": "4.2 Как спланировать бюджет, чтобы реклама окупалась",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 381.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m04_ads_economics\\004_3_kogda_reklama_realno_vygodna_delaem_vyvody_po_ts.mp4",
+      "lessonId": "02_ads_m04_ads_economics_011",
+      "title": "4.3 Когда реклама реально выгодна делаем выводы по цифрам",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 95.79,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\001_polki_i_mehaniki_vydachi.mp4",
+      "lessonId": "02_ads_m05_tools_001",
+      "title": "1. Полки и механики выдачи",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 609.35,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\002_1_edinaya_stavka.mp4",
+      "lessonId": "02_ads_m05_tools_002",
+      "title": "2.1 Единая ставка",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 418.55,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\002_2_skrinkast_praktikum_po_edinoy_stavke.mp4",
+      "lessonId": "02_ads_m05_tools_003",
+      "title": "2.2 Скринкаст-практикум по «Единой ставке»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 63.5,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\002_3_chistka_neeffektivnyh_zaprosov.mp4",
+      "lessonId": "02_ads_m05_tools_004",
+      "title": "2.3 Чистка неэффективных запросов",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 150.38,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\003_1_ruchnaya_stavka.mp4",
+      "lessonId": "02_ads_m05_tools_005",
+      "title": "3.1 Ручная ставка",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 159.29,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\003_2_skrinkast_praktikum_po_ruchnoy_stavke.mp4",
+      "lessonId": "02_ads_m05_tools_006",
+      "title": "3.2 Скринкаст-практикум по «Ручной ставке»",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 393.05,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m05_tools\\004_wb_media_i_spetsformaty.mp4",
+      "lessonId": "02_ads_m05_tools_007",
+      "title": "4. WB-Медиа и спецформаты",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 526.58,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\001_1_podgotovka_kartochki_k_prodvizheniyu.mp4",
+      "lessonId": "02_ads_m06_strategies_001",
+      "title": "1.1 Подготовка карточки к продвижению",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 129.71,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\001_2_reklamnaya_strategiya_dlya_novinok.mp4",
+      "lessonId": "02_ads_m06_strategies_002",
+      "title": "1.2 Рекламная стратегия для новинок",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 508.7,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\001_3_edinaya_stavka_vs_ruchnaya_stavka.mp4",
+      "lessonId": "02_ads_m06_strategies_003",
+      "title": "1.3 Единая ставка vs Ручная ставка",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 294.72,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\001_4_kak_otsenit_effektivnost_rk_i_kogda_menyat_strat.mp4",
+      "lessonId": "02_ads_m06_strategies_004",
+      "title": "1.4 Как оценить эффективность РК и когда менять стратегию",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 108.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\001_5_finalno_shagi_dlya_vyvoda_novinki_v_top.mp4",
+      "lessonId": "02_ads_m06_strategies_005",
+      "title": "1.5 Финально шаги для вывода новинки в топ",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 127.91,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\002_1_u_vas_lokomotiv_kak_uderzhatsya_na_pozitsii.mp4",
+      "lessonId": "02_ads_m06_strategies_006",
+      "title": "2.1 У вас локомотив как удержаться на позиции",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 153.78,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\002_2_reklamnaya_strategiya_dlya_lokomotivov.mp4",
+      "lessonId": "02_ads_m06_strategies_007",
+      "title": "2.2 Рекламная стратегия для локомотивов",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 193.69,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\002_3_optimiziruem_drugie_rashody.mp4",
+      "lessonId": "02_ads_m06_strategies_008",
+      "title": "2.3 Оптимизируем другие расходы",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 69.72,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\002_4_skleyki_i_dubl_kartochki.mp4",
+      "lessonId": "02_ads_m06_strategies_009",
+      "title": "2.4 Склейки и дубль-карточки",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 217.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\003_1_opredelyaem_sezonnost_tovara.mp4",
+      "lessonId": "02_ads_m06_strategies_010",
+      "title": "3.1 Определяем сезонность товара",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 299.56,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\003_2_kak_podgotovitsya_k_sezonu_i_vyvesti_tovar.mp4",
+      "lessonId": "02_ads_m06_strategies_011",
+      "title": "3.2 Как подготовиться к сезону и вывести товар",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 213.77,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\003_3_reklamnaya_strategiya_dlya_sezonnogo_tovara.mp4",
+      "lessonId": "02_ads_m06_strategies_012",
+      "title": "3.3 Рекламная стратегия для сезонного товара",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 61.36,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\003_4_kak_deystvovat_posle_zapuska_reklamy.mp4",
+      "lessonId": "02_ads_m06_strategies_013",
+      "title": "3.4 Как действовать после запуска рекламы",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 76.29,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m06_strategies\\004_chto_delat_s_nelikvidom.mp4",
+      "lessonId": "02_ads_m06_strategies_014",
+      "title": "4. Что делать с неликвидом",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 146.92,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m07_optimization\\001_kak_ustroen_analiz_reklamy_ot_vygruzki_do_resheniy.mp4",
+      "lessonId": "02_ads_m07_optimization_001",
+      "title": "1. Как устроен анализ рекламы от выгрузки до решения",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 117.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m07_optimization\\002_sistema_analiza_reklamy_kak_nahodit_slabye_mesta_i.mp4",
+      "lessonId": "02_ads_m07_optimization_002",
+      "title": "2. Система анализа рекламы как находить слабые места и точки роста",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 101.38,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m07_optimization\\003_kak_prinimat_resheniya_i_formulirovat_gipotezy.mp4",
+      "lessonId": "02_ads_m07_optimization_003",
+      "title": "3. Как принимать решения и формулировать гипотезы",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 166.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m07_optimization\\004_optimizatsiya_kampaniy_na_osnove_dannyh_chto_menya.mp4",
+      "lessonId": "02_ads_m07_optimization_004",
+      "title": "4. Оптимизация кампаний на основе данных что менять в рекламе и почему",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 121.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m07_optimization\\005_ruka_na_pulse_vash_avtonomnyy_analitik_wb.mp4",
+      "lessonId": "02_ads_m07_optimization_005",
+      "title": "5. Рука на пульсе ваш автономный аналитик WB",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 289.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\02_ads\\m08_autobidder\\001_avtobidder_poshagovaya_nastroyka.mp4",
+      "lessonId": "02_ads_m08_autobidder_001",
+      "title": "1. Автобиддер пошаговая настройка",
+      "courseId": "02_ads",
+      "fileExists": true,
+      "fileSizeMB": 92.62,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\001_1_vvedenie_20_chasov_v_nedelyu_vasha_novaya_norma.mp4",
+      "lessonId": "03_ai_m01_intro_001",
+      "title": "1.1 Введение_ 20+ часов в неделю — ваша новая норма",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 488.92,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\001_2_chto_poleznogo_mozhno_nayti_vnutri_urokov.mov",
+      "lessonId": "03_ai_m01_intro_002",
+      "title": "1.2 Что полезного можно найти внутри уроков",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 167.55,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\002_1_instrumenty_besplatnye_vs_platnye._vpn_risk_ili.mp4",
+      "lessonId": "03_ai_m01_intro_003",
+      "title": "2.1 Инструменты_ Бесплатные vs Платные. VPN_ Риск или необходимость_",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 379.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\002_1_ustanovka_i_nastroyka_platnyh_vpn.mp4",
+      "lessonId": "03_ai_m01_intro_004",
+      "title": "2.3.1 Установка и настройка платных VPN",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 27.5,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\002_2_besplatnyy_vpn_ustanovka_rasshireniya.mp4",
+      "lessonId": "03_ai_m01_intro_005",
+      "title": "2.2 Бесплатный VPN_ установка расширения",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 12.5,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\002_3_ustanovka_i_nastroyka_platnyh_vpn.mp4",
+      "lessonId": "03_ai_m01_intro_006",
+      "title": "2.3 Установка и настройка платных VPN",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 36.13,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\003_1_bezopasnye_sposoby_oplaty_servisov_neyrosetey.mp4",
+      "lessonId": "03_ai_m01_intro_007",
+      "title": "3.3.1  Безопасные способы оплаты сервисов нейросетей",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 48.3,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\003_1_neyrolikbez_chatgpt_kandinsky_i_drugie_zveri.mp4",
+      "lessonId": "03_ai_m01_intro_008",
+      "title": "3.1 НейроЛикбез_ ChatGPT, Kandinsky и другие _звери_",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 264.06,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\003_2_kak_oplatit_neyroseti_v_2026_godu.mp4",
+      "lessonId": "03_ai_m01_intro_009",
+      "title": "3.2 Как оплатить нейросети в 2026 году",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 65.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\003_3_bezopasnye_sposoby_oplaty_servisov_neyrosetey.mp4",
+      "lessonId": "03_ai_m01_intro_010",
+      "title": "3.3 Безопасные способы оплаты сервисов нейросетей",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 139.1,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\004_nastroyka_chatgpt_pod_svoi_zadachi.mp4",
+      "lessonId": "03_ai_m01_intro_011",
+      "title": "4. Настройка ChatGPT под свои задачи",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 571.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\005_magiya_promtov_kak_neyroset_poymet_zadachu.mp4",
+      "lessonId": "03_ai_m01_intro_012",
+      "title": "5. Магия Промтов_ Как нейросеть поймет задачу ",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 100.24,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\006_biblioteka_promtov_s_kuratorom.mp4",
+      "lessonId": "03_ai_m01_intro_013",
+      "title": "6.Библиотека промтов (с куратором)",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 165.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\006_konstruktor_promtov_dlya_samost.mp4",
+      "lessonId": "03_ai_m01_intro_014",
+      "title": "6. Конструктор промтов (для самост)",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 121.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m01_intro\\007_layfhaki_tochnyh_zaprosov_k_neyroseti_validatsiya.mp4",
+      "lessonId": "03_ai_m01_intro_015",
+      "title": "7. Лайфхаки точных запросов к нейросети_ валидация и контроль качества",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 126.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\001_1_s_chego_nachinaetsya_analiz_sobiraem_gruppu_konk.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_001",
+      "title": "1.1 С чего начинается анализ_ собираем группу конкурентов в MPSTATS",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 129.7,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\001_2_pishem_promt_dlya_analiza_konkurentov_kotoryy_po.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_002",
+      "title": "1.2 Пишем промт для анализа конкурентов, который понимет нейросеть",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 507.55,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\001_3_proveryaem_ii_gde_neyroset_oshibaetsya_i_kak_izv.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_003",
+      "title": "1.3 Проверяем ИИ_ где нейросеть ошибается и как извлечь из этого пользу",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 299.68,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\002_1_s_chego_nachat_gotovim_dannye_dlya_analiza_audit.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_004",
+      "title": "2.1 С чего начать_ готовим данные для анализа аудитории",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 86.08,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\002_2_kak_zadavat_voprosy_chtoby_ponyat_klienta_gotovi.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_005",
+      "title": "2.2 Как задавать вопросы, чтобы понять клиента_ готовим промт для анализа ЦА",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 455.7,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\002_3_analiz_tsa_s_gpt_i_perplexity_poluchaem_i_prover.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_006",
+      "title": "2.3 Анализ ЦА с GPT и Perplexity_ получаем и проверяем инсайты",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 369.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\003_1_metod_bol_motivatsiya_i_barer_kak_izvlech_smysly.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_007",
+      "title": "3.1 Метод «Боль, мотивация и барьер»_ как извлечь смыслы из отзывов",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 450.04,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\003_2_metod_jtbd_tovar_reshaet_zadachu_pokupatelya.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_008",
+      "title": "3.2 Метод JTBD_ товар решает задачу покупателя",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 244.64,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m02_neuroanalytics\\003_3_metod_tone_of_voice_kak_zvuchit_vash_brend_v_gla.mp4",
+      "lessonId": "03_ai_m02_neuroanalytics_009",
+      "title": "3.3 Метод Tone of Voice_ как звучит ваш бренд в глазах клиента",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 326.76,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\003_1_foto_s_kotoryh_vse_nachinaetsya_gotovim_ishodnik.mp4",
+      "lessonId": "03_ai_m03_visual_001",
+      "title": "3.1 Фото, с которых все начинается_ готовим исходники для нейросети",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 195.41,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\003_2_fon_za_minutu_bystrye_resheniya_v_weshop.mp4",
+      "lessonId": "03_ai_m03_visual_002",
+      "title": "3.2 Фон за минуту_ быстрые решения в WeShop",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 235.7,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\003_3_krea_ai_pod_kontrolem_sozdaem_realistichnye_stse.mp4",
+      "lessonId": "03_ai_m03_visual_003",
+      "title": "3.3 Krea AI под контролем_ создаем реалистичные сцены с помощью промтов",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 506.74,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\003_4_nano_banana_tochechnaya_dorabotka_foto_pryamo_v.mp4",
+      "lessonId": "03_ai_m03_visual_004",
+      "title": "3.4 Nano Banana_ точечная доработка фото прямо в Krea AI",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 266.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\004_1_foto_kotorye_sadyatsya_kak_podgotovit_ishodniki.mp4",
+      "lessonId": "03_ai_m03_visual_005",
+      "title": "4.1 Фото, которые «садятся»_ как подготовить исходники для генерации одежды",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 79.52,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\004_2_weshop_bystraya_primerka_odezhdy_na_modelyah.mp4",
+      "lessonId": "03_ai_m03_visual_006",
+      "title": "4.2 WeShop_ быстрая примерка одежды на моделях",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 143.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\004_3_nano_banana_v_krea_ai_dorabatyvaem_detali_i_tsve.mp4",
+      "lessonId": "03_ai_m03_visual_007",
+      "title": "4.3 Nano Banana в Krea AI_ дорабатываем детали и цвета",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 155.2,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\004_4_krea_ai_sozdaem_modeley_s_nulya_bez_ishodnikov.mp4",
+      "lessonId": "03_ai_m03_visual_008",
+      "title": "4.4 Krea AI_ создаем моделей с нуля без исходников",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 871.59,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\005_1_kak_sdelat_infografiku_kotoraya_prodaet.mp4",
+      "lessonId": "03_ai_m03_visual_009",
+      "title": "5.1 Как сделать инфографику, которая продает",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 216.09,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\005_2_infografika_dlya_novogo_tovara_sozdaem_s_nulya.mp4",
+      "lessonId": "03_ai_m03_visual_010",
+      "title": "5.2 Инфографика для нового товара_ создаем с нуля",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 661.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\005_3_kontent_master_marketpleysov_kak_uluchshit_staru.mp4",
+      "lessonId": "03_ai_m03_visual_011",
+      "title": "5.3 Контент-мастер маркетплейсов_ как улучшить старую инфографику",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 604.67,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\005_4_kak_testirovat_i_obnovlyat_infografiku.mp4",
+      "lessonId": "03_ai_m03_visual_012",
+      "title": "5.4 Как тестировать и обновлять инфографику",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 105.52,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\006_1_chatgpt_ikonki_i_shemy_dlya_infografiki.mp4",
+      "lessonId": "03_ai_m03_visual_013",
+      "title": "6.1 ChatGPT_ иконки и схемы для инфографики",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 137.91,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\006_2_chatgpt_bannery_i_vizualnye_bloki_dlya_kartochek.mp4",
+      "lessonId": "03_ai_m03_visual_014",
+      "title": "6.2 ChatGPT_ баннеры и визуальные блоки для карточек",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 476.72,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m03_visual\\007_1_kak_sostavit_tz_dizayneru_struktura_oshibki_i_ch.mp4",
+      "lessonId": "03_ai_m03_visual_015",
+      "title": "7.1 Как составить ТЗ дизайнеру_ структура, ошибки и чек-лист",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 140.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\001_video_samostoyatelno_stsenariy.mp4",
+      "lessonId": "03_ai_m04_neurovideo_001",
+      "title": "1. Видео самостоятельно сценарий",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 117.12,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\002_videooblozhki.mp4",
+      "lessonId": "03_ai_m04_neurovideo_002",
+      "title": "2. Видеообложки",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 127.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\003_delaem_raskradrovku_k_stsenariyu.mp4",
+      "lessonId": "03_ai_m04_neurovideo_003",
+      "title": "3. Делаем раскрадровку к сценарию",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 70.07,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\004_referensy_modeley_i_lokatsiy_dlya_buduschego_video.mp4",
+      "lessonId": "03_ai_m04_neurovideo_004",
+      "title": "4. Референсы моделей и локаций для будущего видео",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 82.26,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\005_1_generiruem_pervuyu_stsenu_v_runway.mp4",
+      "lessonId": "03_ai_m04_neurovideo_005",
+      "title": "5.1 Генерируем первую сцену в Runway",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 163.5,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\005_2_kak_oformit_podpisku_na_runway_i_drugie_instrume.mp4",
+      "lessonId": "03_ai_m04_neurovideo_006",
+      "title": "5.2 Как оформить подписку на Runway и другие инструменты со скидкой",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 162.5,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\006_1_obrabatyvaem_stsenu_v_photoshop.mp4",
+      "lessonId": "03_ai_m04_neurovideo_007",
+      "title": "6.1 Обрабатываем сцену в Photoshop",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 44.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\006_2_kak_poluchit_dostup_k_photoshop_so_skidkoy.mp4",
+      "lessonId": "03_ai_m04_neurovideo_008",
+      "title": "6.2 Как получить доступ к Photoshop со скидкой",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 31.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\007_animatsiya_stsen_v_klingai.mp4",
+      "lessonId": "03_ai_m04_neurovideo_009",
+      "title": "7.  Анимация сцен в KlingAI",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 423.6,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\008_zvuki_dlya_video_iz_fonoteki_youtube.mp4",
+      "lessonId": "03_ai_m04_neurovideo_010",
+      "title": "8. Звуки для видео из фонотеки YouTube",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 29.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\009_kompiliruem_video_v_capcut.mp4",
+      "lessonId": "03_ai_m04_neurovideo_011",
+      "title": "9. Компилируем видео в CapCut",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 157.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m04_neurovideo\\010_generiruem_video_v_veo3.mp4",
+      "lessonId": "03_ai_m04_neurovideo_012",
+      "title": "10. Генерируем видео в VEO3",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 279.84,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\001_kak_sobirat_seo_dlya_novoy_kartochki_s_pomoschyu_n.mp4",
+      "lessonId": "03_ai_m05_neurotexts_001",
+      "title": "1. Как собирать SEO для новой карточки с помощью нейросети",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 210.74,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\002_mpstats_chatgpt_kak_sobrat_silnye_klyuchi_i_chasto.mp4",
+      "lessonId": "03_ai_m05_neurotexts_002",
+      "title": "2. MPSTATS + ChatGPT — как собрать сильные ключи и частотность без рутины",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 725.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\003_assistent_chatgpt_prevraschaem_klyuchevye_slova_v.mp4",
+      "lessonId": "03_ai_m05_neurotexts_003",
+      "title": "3. Ассистент ChatGPT — превращаем ключевые слова в готовое SEO-описание",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 375.32,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\004_kak_pravilno_proverit_seo_i_dorabotat_opisanie_za.mp4",
+      "lessonId": "03_ai_m05_neurotexts_004",
+      "title": "4. Как правильно проверить SEO и доработать описание за пару итераций",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 273.92,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\005_1_kak_usilit_suschestvuyuschee_seo_dorabatyvaem_ka.mp4",
+      "lessonId": "03_ai_m05_neurotexts_005",
+      "title": "5.1 Как усилить существующее SEO — дорабатываем карточку за 10 минут",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 316.28,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\005_2_kak_izbezhat_chastyh_oshibok_v_napisanii_seo_s_p.mp4",
+      "lessonId": "03_ai_m05_neurotexts_006",
+      "title": "5.2 Как избежать частых ошибок в написании SEO с помощью нейросети и итоги",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 73.3,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\006_neyroset_v_rabote_s_otzyvami_podgotavlivaem_dannye.mp4",
+      "lessonId": "03_ai_m05_neurotexts_007",
+      "title": "6. Нейросеть в работе с отзывами — подготавливаем данные и убираем рутину",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 249.97,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\007_1_generiruem_otvety_na_otzyvy_s_gpt_sozdaem_promty.mp4",
+      "lessonId": "03_ai_m05_neurotexts_008",
+      "title": "7.1 Генерируем ответы на отзывы с GPT — создаём промты, стили и форматы ответов",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 760.71,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m05_neurotexts\\007_2_kak_rabotat_s_shablonami_otvetov_kontroliruem_ne.mp4",
+      "lessonId": "03_ai_m05_neurotexts_009",
+      "title": "7.2 Как работать с шаблонами ответов — контролируем нейросеть и избегаем ошибок",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 134,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\001_ai_analiz_reklamy_kak_bystro_nahodit_prosadki_i_fo.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_001",
+      "title": "1. AI-анализ рекламы как быстро находить просадки и формировать решения",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 178.57,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\002_praktika_na_wb_analiz_biddera_mpstats_s_pomoschyu.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_002",
+      "title": "2. Практика на WB анализ биддера MPSTATS с помощью ассистента «Аналитик маркетплейсов»",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 225.2,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\003_podgotovka_dannyh_ozon_kakie_vygruzki_nuzhny_dlya.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_003",
+      "title": "3. Подготовка данных Ozon какие выгрузки нужны для AI-анализа рекламы",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 250.06,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\004_analiz_reklamnyh_otchetov_ozon_s_assistentom_marke.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_004",
+      "title": "4. Анализ рекламных отчетов Ozon с ассистентом «Маркетолог маркетплейсов»",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 225.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\005_analitika_avtobiddera_mpstats_na_wb_rabota_s_otche.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_005",
+      "title": "5. Аналитика автобиддера MPSTATS на WB работа с отчетами и оценка рекомендаций AI",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 281.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\006_1_vozmozhnosti_gpt_v_analitike_kakie_protsessy_moz.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_006",
+      "title": "6.1 Возможности GPT в аналитике какие процессы можно автоматизировать",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 35.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\006_2_analiz_rk_s_gpt_bez_assistentov_sozdaem_rasshire.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_007",
+      "title": "6.2 Анализ РК с GPT без ассистентов создаем расширенный промт",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 221.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m06_neuro_ads\\007_kontrol_kachestva_proveryaem_analiz_gpt_ustranyaem.mp4",
+      "lessonId": "03_ai_m06_neuro_ads_008",
+      "title": "7. Контроль качества проверяем анализ GPT, устраняем ошибки и дорабатываем промт",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 208.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\001_strategiya_vybora_nishi_kak_provodit_analiz_s_pomo.mp4",
+      "lessonId": "03_ai_m07_neuroscout_001",
+      "title": "1. Стратегия выбора ниши как проводить анализ с помощью нейросети",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 111.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\002_1_pervichnyy_analiz_nishi_gipotezy_po_ankete_selle.mp4",
+      "lessonId": "03_ai_m07_neuroscout_002",
+      "title": "2.1 Первичный анализ ниши гипотезы по анкете селлера",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 256.41,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\002_2_proverka_gipotezy_i_poisk_podnishi_v_mpstats.mp4",
+      "lessonId": "03_ai_m07_neuroscout_003",
+      "title": "2.2 Проверка гипотезы и поиск подниши в MPSTATS",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 369.07,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\002_3_detalnaya_proverka_podnishi_dostovernost_i_fakti.mp4",
+      "lessonId": "03_ai_m07_neuroscout_004",
+      "title": "2.3 Детальная проверка подниши достоверность и фактические данные",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 390.47,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\003_1_proverka_poiskovyh_zaprosov.mp4",
+      "lessonId": "03_ai_m07_neuroscout_005",
+      "title": "3.1 Проверка поисковых запросов",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 209.52,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\003_2_chek_list_dlya_prinyatiya_resheniya.mp4",
+      "lessonId": "03_ai_m07_neuroscout_006",
+      "title": "3.2 Чек-лист для принятия решения",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 93.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\003_3_uglublennyy_analiz_dopolnitelnye_vozmozhnosti.mp4",
+      "lessonId": "03_ai_m07_neuroscout_007",
+      "title": "3.3 Углубленный анализ (дополнительные возможности)",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 346.74,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\004_1_profil_pokupatelya_wildberries.mp4",
+      "lessonId": "03_ai_m07_neuroscout_008",
+      "title": "4.1 Профиль покупателя Wildberries",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 506.1,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\004_2_kak_skachat_otzyvy_na_ozon_s_pomoschyu_skriptov.mp4",
+      "lessonId": "03_ai_m07_neuroscout_009",
+      "title": "4.2 Как скачать отзывы на Ozon с помощью скриптов",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 123.19,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\005_1_kakie_dannye_nuzhny_i_pervichnyy_analiz.mp4",
+      "lessonId": "03_ai_m07_neuroscout_010",
+      "title": "5.1 Какие данные нужны и первичный анализ",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 344.56,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\005_2_proverka_gipotezy_po_analitike_ozon.mp4",
+      "lessonId": "03_ai_m07_neuroscout_011",
+      "title": "5.2 Проверка гипотезы по аналитике Ozon",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 266.85,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\006_1_prinyatie_resheniya_validatsiya_nishi_i_avatary.mp4",
+      "lessonId": "03_ai_m07_neuroscout_012",
+      "title": "6.1 Принятие решения валидация ниши и аватары на Ozon",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 127.09,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\006_2_finaliziruem_zaprosy_po_nishe.mp4",
+      "lessonId": "03_ai_m07_neuroscout_013",
+      "title": "6.2 Финализируем запросы по нише",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 285.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m07_neuroscout\\006_3_portret_pokupatelya_ozon_cherez_otchet_portret_p.mp4",
+      "lessonId": "03_ai_m07_neuroscout_014",
+      "title": "6.3 Портрет покупателя Ozon (через отчет «Портрет покупателя»)",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 225.53,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\001_neyroassistent_sozdaem_svoego_pomoschnika.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_001",
+      "title": "1. Нейроассистент создаём своего помощника",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 203.61,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\002_anatomiya_gpt_assistenta_iz_chego_on_sostoit.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_002",
+      "title": "2. Анатомия GPT-ассистента из чего он состоит",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 103.59,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\003_bystryy_start_biblioteka_agentov_pod_mp_zadachi.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_003",
+      "title": "3. Быстрый старт Библиотека агентов под MП-задачи",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 96.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\005_1_assistenty_dlya_orgvoprosov_i_komandnoy_raboty.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_004",
+      "title": "5.1 Ассистенты для оргвопросов и командной работы",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 148.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\005_2_finalnaya_praktika_po_sozdaniyu_neyroassistenta.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_005",
+      "title": "5.2 Финальная практика по созданию НейроАссистента",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 15.9,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m08_neurointegrator\\4_sobiraem_assistenta_pod_zadachu_ot_tseli_do_inst.mp4",
+      "lessonId": "03_ai_m08_neurointegrator_006",
+      "title": "4 Собираем ассистента под задачу от цели до инструкций",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 407.95,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m09_neuroassistant\\001_kak_rabotayut_neyroseti_v_servise_analitiki_mpstat.mp4",
+      "lessonId": "03_ai_m09_neuroassistant_001",
+      "title": "1. Как работают нейросети в сервисе аналитики MPSTATS",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 83.46,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m09_neuroassistant\\002_avtootvety_loyalnost_klientov_na_avtopilote.mp4",
+      "lessonId": "03_ai_m09_neuroassistant_002",
+      "title": "2. Автоответы Лояльность клиентов на автопилоте",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 413.46,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m09_neuroassistant\\003_auditor_sku_360_polnyy_audit_kartochki_za_7_minu.mp4",
+      "lessonId": "03_ai_m09_neuroassistant_003",
+      "title": "3. Аудитор SKU 360 Полный аудит карточки за 7 мину",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 692.67,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\03_ai\\m09_neuroassistant\\004_vneshnyaya_analitika.mp4",
+      "lessonId": "03_ai_m09_neuroassistant_004",
+      "title": "4. внешняя аналитика",
+      "courseId": "03_ai",
+      "fileExists": true,
+      "fileSizeMB": 314.85,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w01_feb_ads\\den_1.mp4",
+      "lessonId": "04_workshops_w01_feb_ads_001",
+      "title": "День 1",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2817.49,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w01_feb_ads\\den_2.mp4",
+      "lessonId": "04_workshops_w01_feb_ads_002",
+      "title": "День 2",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 4574.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w01_feb_ads\\den_3.mp4",
+      "lessonId": "04_workshops_w01_feb_ads_003",
+      "title": "День 3",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 5022.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w02_mar_detox\\den_1._filtr_oshibok_kak_konversii_pokazhut_pochem.mp4",
+      "lessonId": "04_workshops_w02_mar_detox_001",
+      "title": "День 1. Фильтр ошибок как конверсии покажут, почему ты не зарабатываешь",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 4354.62,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w02_mar_detox\\den_2._kak_vystroit_plan_rosta_na_god.mp4",
+      "lessonId": "04_workshops_w02_mar_detox_002",
+      "title": "День 2. Как выстроить план роста на год",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2042.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w02_mar_detox\\den_3._den_iz_zhizni_uspeshnogo_sellera.mp4",
+      "lessonId": "04_workshops_w02_mar_detox_003",
+      "title": "День 3. День из жизни успешного селлера",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2899.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w03_apr_growth\\den_2._reklama_na_ozon_5_tochek_rosta.mp4",
+      "lessonId": "04_workshops_w03_apr_growth_001",
+      "title": "День 2. Реклама на OZON 5 точек роста",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 6317.8,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w04_may_navigator\\001_den_1._na_shag_vperedi_kak_otstroitsya_ot_konkuren.mp4",
+      "lessonId": "04_workshops_w04_may_navigator_001",
+      "title": "1. День 1. На шаг впереди как отстроиться от конкурентов и удержать позиции на Wildberries",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 820.69,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w04_may_navigator\\002_den_2._reklama_s_umom_na_ozon_kogda_tvoy_byudzhet.mp4",
+      "lessonId": "04_workshops_w04_may_navigator_002",
+      "title": "2. День 2. Реклама с умом на OZON когда твой бюджет работает",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 686.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w04_may_navigator\\003_den_3._vse_chto_vliyaet_na_prodazhi_na_wb_i_ozon_k.mp4",
+      "lessonId": "04_workshops_w04_may_navigator_003",
+      "title": "3. День 3. Все, что влияет на продажи на WB и OZON карточка под микроскопом",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 1250.42,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w05_jun_seo\\001_den_1._seo_kak_u_profi_ot_nulya_do_gotovoy_kartoch.mp4",
+      "lessonId": "04_workshops_w05_jun_seo_001",
+      "title": "1. День 1. SEO, как у профи от нуля до готовой карточки",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 4725.9,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w05_jun_seo\\002_den_2._reklamnyy_rentgen_analiziruem_usilivaem_pro.mp4",
+      "lessonId": "04_workshops_w05_jun_seo_002",
+      "title": "2. День 2. Рекламный рентген анализируем - усиливаем продажи",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 5237.44,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w06_jul_q4\\001_den_1._uspeh_v_q4_rukovodstvo_dlya_pikovogo_sezona.mp4",
+      "lessonId": "04_workshops_w06_jul_q4_001",
+      "title": "1. День 1. Успех в Q4 руководство для пикового сезона",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2026.31,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w06_jul_q4\\002_den_2._uspeh_v_q4_rukovodstvo_dlya_pikovogo_sezona.mp4",
+      "lessonId": "04_workshops_w06_jul_q4_002",
+      "title": "2. День 2. Успех в Q4 руководство для пикового сезона",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 3755.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w07_aug_ai\\001_den_1._kontent_za_odin_den_kak_neyroseti_ekonomyat.mp4",
+      "lessonId": "04_workshops_w07_aug_ai_001",
+      "title": "1. День 1. Контент за один день как нейросети экономят время и деньги селлера",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2530.19,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w07_aug_ai\\002_den_2._neiroseti_dlya_marketpleisov.mp4",
+      "lessonId": "04_workshops_w07_aug_ai_002",
+      "title": "2. День 2. Нейросети для маркетплейсов",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2411.27,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w08_sep_100days\\001_den_1._fundament_podgotovki_k_q4_kak_zalozhit_osno.mp4",
+      "lessonId": "04_workshops_w08_sep_100days_001",
+      "title": "1. День 1. Фундамент подготовки к Q4 как заложить основу больших продаж",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2628.15,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w08_sep_100days\\002_den_2._upravlenie_rostom_ot_reklamy_do_vyhoda_iz_q.mp4",
+      "lessonId": "04_workshops_w08_sep_100days_002",
+      "title": "2. День 2. Управление ростом от рекламы до выхода из Q4",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2579.89,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w09_oct_ai2\\002_2_den._neyroseti_2.0.mp4",
+      "lessonId": "04_workshops_w09_oct_ai2_001",
+      "title": "2. 2 день. Нейросети 2.0",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2032.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w09_oct_ai2\\1._1_den._kontent_kotoryy_prodaet.mp4",
+      "lessonId": "04_workshops_w09_oct_ai2_002",
+      "title": "1️. 1 День. Контент, который продает",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2349.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w10_nov_crisis\\001_den_1._massovyy_tovar_fundament_stabilnyh_prodazh.mp4",
+      "lessonId": "04_workshops_w10_nov_crisis_001",
+      "title": "1. День 1. Массовый товар фундамент стабильных продаж",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2599.43,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w10_nov_crisis\\002_den_2._antikrizis_sutochnye_skachki_reklama_i_shem.mp4",
+      "lessonId": "04_workshops_w10_nov_crisis_002",
+      "title": "2. День 2. Антикризис суточные скачки, реклама и схемы доставки",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2492.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w11_dec_fails\\001_den_1._strategicheskie_oshibki_tovar_postavka_i_ts.mp4",
+      "lessonId": "04_workshops_w11_dec_fails_001",
+      "title": "1. День 1. Стратегические ошибки товар, поставка и цена решений",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 2082.44,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\04_workshops\\w11_dec_fails\\002_den_2._metriki_reklama_i_skrytye_poteri.mp4",
+      "lessonId": "04_workshops_w11_dec_fails_002",
+      "title": "2. День 2. Метрики, реклама и скрытые потери",
+      "courseId": "04_workshops",
+      "fileExists": true,
+      "fileSizeMB": 1581.83,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\000_kak_rabotat_s_bazoy_znaniy.mov",
+      "lessonId": "05_ozon_m00_knowledge_base_001",
+      "title": "0. Как работать с Базой знаний",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 121.41,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\001_kak_vybrat_shemu_prodazh.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_002",
+      "title": "1. Как выбрать схему продаж",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 734.54,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\002_registratsiya_na_ozon_seller.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_003",
+      "title": "2. Регистрация на OZON Seller",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 463.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\003_nyuansy_ozon_i_obzor_kabineta.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_004",
+      "title": "3. Нюансы OZON и обзор кабинета",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 898.93,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\004_podbor_tovara_dlya_starta_na_ozon.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_005",
+      "title": "4. Подбор товара для старта на OZON",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 795.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\005_1_chast_1_vybor_postavschika.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_006",
+      "title": "5.1 Часть 1 Выбор поставщика",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 416.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\005_2_chast_2_assortiment.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_007",
+      "title": "5.2 Часть 2 Ассортимент",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 118.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\006_markirovka_tovara.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_008",
+      "title": "6. Маркировка товара",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 388.56,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\007_upakovka_tovara.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_009",
+      "title": "7. Упаковка товара",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 613.95,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\008_logistika.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_010",
+      "title": "8. Логистика",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 416.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\009_kross_doking.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_011",
+      "title": "9. Кросс-докинг",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 244.13,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\010_1_chast_1._osobennosti_postavki_po_sisteme_fbo.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_012",
+      "title": "10.1 Часть 1. Особенности поставки по системе FBO",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 325.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\010_2_chast_2._sozdanie_postavki_na_praktike_skrinkast.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_013",
+      "title": "10.2 Часть 2. Создание поставки на практике скринкаст",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 226.41,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\011_1_chast_1._osobennosti_postavki_tovara_po_sheme_fb.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_014",
+      "title": "11.1 Часть 1. Особенности поставки товара по схеме FBS",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 227.53,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\011_2_chast_2._sozdanie_postavki_na_praktike_skrinkast.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_015",
+      "title": "11.2 Часть 2.  Создание поставки на практике скринкаст",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 510.62,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\012_realfbs_kak_prodavat_na_ozon_so_svoey_dostavkoy.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_016",
+      "title": "12. RealFBS как продавать на Ozon со своей доставкой",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 402.59,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\013_super_tovary.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_017",
+      "title": "13. Super-товары",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 356.68,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m00_knowledge_base\\014_kak_rabotat_s_vozvratami.mp4",
+      "lessonId": "05_ozon_m00_knowledge_base_018",
+      "title": "14. Как работать с возвратами",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 523.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\001_rashody_na_ozon.mp4",
+      "lessonId": "05_ozon_m01_economics_001",
+      "title": "1. Расходы на Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 136.71,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\002_1_kak_poschitat_planovuyu_yunit_ekonomiku.mp4",
+      "lessonId": "05_ozon_m01_economics_002",
+      "title": "2.1 Как посчитать плановую юнит-экономику",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 1461.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\002_2_kak_poschitat_planovuyu_yunit_ekonomiku.mp4",
+      "lessonId": "05_ozon_m01_economics_003",
+      "title": "2.2 Как посчитать плановую юнит-экономику",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 50.53,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\002_3_kak_poschitat_planovuyu_yunit_ekonomiku.mp4",
+      "lessonId": "05_ozon_m01_economics_004",
+      "title": "2.3 Как посчитать плановую юнит-экономику",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 75.89,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\003_logistika._optimizatsiya_rashodov.mp4",
+      "lessonId": "05_ozon_m01_economics_005",
+      "title": "3. Логистика. Оптимизация расходов",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 261.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\004_strategii_raspredeleniya_tovarov_po_klasteram.mp4",
+      "lessonId": "05_ozon_m01_economics_006",
+      "title": "4. Стратегии распределения товаров по кластерам",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 256.56,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\005_monitoring_stoimosti_razmescheniya_tovarov_na_skla.mp4",
+      "lessonId": "05_ozon_m01_economics_007",
+      "title": "5. Мониторинг стоимости размещения товаров на складах Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 222.3,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\006_kak_poschitat_fakticheskuyu_yunit_ekonomiku.mp4",
+      "lessonId": "05_ozon_m01_economics_008",
+      "title": "6. Как посчитать фактическую юнит-экономику",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 349.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m01_economics\\007_efir_vopros_otvet_s_aleksandrom_dogaevym.mov",
+      "lessonId": "05_ozon_m01_economics_009",
+      "title": "7. Эфир вопрос-ответ с Александром Догаевым",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 1073.77,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\001_pokupatelskoe_povedenie_na_ozon.mp4",
+      "lessonId": "05_ozon_m02_product_card_001",
+      "title": "1. Покупательское поведение на Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 251.06,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\002_vizual_kartochki_tovara_i_dopolnitelnye_vidy_konte.mp4",
+      "lessonId": "05_ozon_m02_product_card_002",
+      "title": "2. Визуал карточки товара и дополнительные виды контента",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 494.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\003_vliyanie_vizualov_na_konversii_kartochki.mov",
+      "lessonId": "05_ozon_m02_product_card_003",
+      "title": "3. Влияние визуалов на конверсии карточки",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 418.57,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\004_kak_usilit_svoi_pozitsii_v_poiske._printsipy_postr.mp4",
+      "lessonId": "05_ozon_m02_product_card_004",
+      "title": "4. Как усилить свои позиции в поиске. Принципы построения SEO",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 1207.77,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\005_1_kak_sozdat_kartochku_tovara.mp4",
+      "lessonId": "05_ozon_m02_product_card_005",
+      "title": "5.1 Как создать карточку товара",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 312.17,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\005_2_kak_vybrat_kategoriyu_tovara_s_pomoschyu_ii.mp4",
+      "lessonId": "05_ozon_m02_product_card_006",
+      "title": "5.2 Как выбрать категорию товара с помощью ИИ",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 409.35,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\006_kontent_reyting.mp4",
+      "lessonId": "05_ozon_m02_product_card_007",
+      "title": "6. Контент-рейтинг",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 90.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\007_kak_obedinyat_kartochki_tovarov.mp4",
+      "lessonId": "05_ozon_m02_product_card_008",
+      "title": "7. Как объединять карточки товаров",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 362.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m02_product_card\\008_rich_kontent.mp4",
+      "lessonId": "05_ozon_m02_product_card_009",
+      "title": "8. Рич-контент",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 469.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\001_voronka_prodazh.mp4",
+      "lessonId": "05_ozon_m03_promotion_001",
+      "title": "1. Воронка продаж",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 962.08,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\002_poiskovaya_vydacha_ozon.mp4",
+      "lessonId": "05_ozon_m03_promotion_002",
+      "title": "2. Поисковая выдача Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 713.44,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\003_reyting_prodavtsa.mp4",
+      "lessonId": "05_ozon_m03_promotion_003",
+      "title": "3. Рейтинг продавца",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 139.65,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\004_otvety_na_otzyvy.mp4",
+      "lessonId": "05_ozon_m03_promotion_004",
+      "title": "4. Ответы на отзывы",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 628.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\005_otzyvy_za_bally.mp4",
+      "lessonId": "05_ozon_m03_promotion_005",
+      "title": "5. Отзывы за баллы",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 202.18,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\006_indeks_tsen.mov",
+      "lessonId": "05_ozon_m03_promotion_006",
+      "title": "6. Индекс цен",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 335.99,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\007_bonusy_prodavtsa.mp4",
+      "lessonId": "05_ozon_m03_promotion_007",
+      "title": "7. Бонусы продавца",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 293.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\008_zvezdnye_tovary.mp4",
+      "lessonId": "05_ozon_m03_promotion_008",
+      "title": "8. Звездные товары",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 297.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\009_prodvizhenie_brendov.mp4",
+      "lessonId": "05_ozon_m03_promotion_009",
+      "title": "9. Продвижение брендов",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 205.11,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\010_samovykupy.mp4",
+      "lessonId": "05_ozon_m03_promotion_010",
+      "title": "10. Самовыкупы",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 312.63,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\011_rassylka_bonusov.mp4",
+      "lessonId": "05_ozon_m03_promotion_011",
+      "title": "11. Рассылка бонусов",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 337.52,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\012_vitrina_magazina.mp4",
+      "lessonId": "05_ozon_m03_promotion_012",
+      "title": "12. Витрина магазина",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 367.83,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\013_aktsii_i_rasprodazhi.mp4",
+      "lessonId": "05_ozon_m03_promotion_013",
+      "title": "13. Акции и распродажи",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 552.05,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\014_uchastie_v_globalnyh_aktsiyah.mp4",
+      "lessonId": "05_ozon_m03_promotion_014",
+      "title": "14. Участие в глобальных акциях",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 428.62,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m03_promotion\\015_kak_sozdat_sobstvennuyu_aktsiyu.mp4",
+      "lessonId": "05_ozon_m03_promotion_015",
+      "title": "15. Как создать собственную акцию",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 373.93,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\001_instrumenty_analitiki_ozon.mp4",
+      "lessonId": "05_ozon_m04_analytics_001",
+      "title": "1. Инструменты аналитики Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 687.97,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\002_poiskovye_zaprosy.mp4",
+      "lessonId": "05_ozon_m04_analytics_002",
+      "title": "2. Поисковые запросы",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 406.91,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\003_populyarnye_tovary.mp4",
+      "lessonId": "05_ozon_m04_analytics_003",
+      "title": "3. Популярные товары",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 312.57,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\004_1_sravnenie_kategorii.mp4",
+      "lessonId": "05_ozon_m04_analytics_004",
+      "title": "4.1 Сравнение категорий",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 183.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\004_2_analiz_kategorii_s_pomoschyu_mpstats_i_wordstat.mp4",
+      "lessonId": "05_ozon_m04_analytics_005",
+      "title": "4.2 Анализ категории с помощью MPSTATS и WordStat",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 107.6,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\005_grafiki.mp4",
+      "lessonId": "05_ozon_m04_analytics_006",
+      "title": "5. Графики",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 335.19,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\006_tovary_v_poiske.mp4",
+      "lessonId": "05_ozon_m04_analytics_007",
+      "title": "6. Товары в поиске",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 753.79,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\007_konkurentnaya_pozitsiya.mp4",
+      "lessonId": "05_ozon_m04_analytics_008",
+      "title": "7. Конкурентная позиция",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 173.97,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\008_voronka_prodazh.mp4",
+      "lessonId": "05_ozon_m04_analytics_009",
+      "title": "8. Воронка продаж",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 120.64,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\009_geografiya_prodazh.mp4",
+      "lessonId": "05_ozon_m04_analytics_010",
+      "title": "9. География продаж",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 865.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\010_test_tsen_ozon.mp4",
+      "lessonId": "05_ozon_m04_analytics_011",
+      "title": "10. Тест цен Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 114.15,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\011_provedenie_ab_testov.mp4",
+      "lessonId": "05_ozon_m04_analytics_012",
+      "title": "11. Проведение аб-тестов",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 208.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\012_analiz_konkurentov.mp4",
+      "lessonId": "05_ozon_m04_analytics_013",
+      "title": "12. Анализ конкурентов",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 990.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m04_analytics\\013_efir_vopros_otvet_s_andreem_kotylko.mov",
+      "lessonId": "05_ozon_m04_analytics_014",
+      "title": "13. Эфир вопрос-ответ с Андреем Котылко",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 1290,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\001_vidy_reklamy_na_ozon.mp4",
+      "lessonId": "05_ozon_m05_ads_001",
+      "title": "1. Виды рекламы на Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 613.98,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\002_reklamnye_strategii.mp4",
+      "lessonId": "05_ozon_m05_ads_002",
+      "title": "2. Рекламные стратегии",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 154.59,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\003_trafarety.mp4",
+      "lessonId": "05_ozon_m05_ads_003",
+      "title": "3. Трафареты",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 713.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\004_oplata_za_zakaz.mp4",
+      "lessonId": "05_ozon_m05_ads_004",
+      "title": "4. Оплата за заказ",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 313.87,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\005_vyvod_v_top.mp4",
+      "lessonId": "05_ozon_m05_ads_005",
+      "title": "5. Вывод в топ",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 822.13,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\006_analiz_effektivnosti_zapuschennyh_reklamnyh_kampan.mp4",
+      "lessonId": "05_ozon_m05_ads_006",
+      "title": "6. Анализ эффективности запущенных рекламных кампаний",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 269.64,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m05_ads\\007_mediynaya_reklama.mov",
+      "lessonId": "05_ozon_m05_ads_007",
+      "title": "7. Медийная реклама",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 286.8,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m06_finance\\001_kak_ozon_platit_prodavtsam.mp4",
+      "lessonId": "05_ozon_m06_finance_001",
+      "title": "1. Как Ozon платит продавцам",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 229.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m06_finance\\002_finansovye_otchety.mp4",
+      "lessonId": "05_ozon_m06_finance_002",
+      "title": "2. Финансовые отчеты",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 250.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m06_finance\\003_zakryvayuschie_dokumenty.mp4",
+      "lessonId": "05_ozon_m06_finance_003",
+      "title": "3. Закрывающие документы",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 164.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\05_ozon\\m07_external_ads\\001_vneshniy_trafik_ot_blogerov_na_ozon.mp4",
+      "lessonId": "05_ozon_m07_external_ads_001",
+      "title": "1. Внешний трафик от блогеров на Ozon",
+      "courseId": "05_ozon",
+      "fileExists": true,
+      "fileSizeMB": 423.89,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c01_ai_content\\m01_content\\001_kontent_kotoryy_prodaet.mp4",
+      "lessonId": "06_express_c01_ai_content_m01_content_001",
+      "title": "1. Контент, который продает",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 1903.66,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c01_ai_content\\m02_video\\001_video_i_reklama_s_umom.mp4",
+      "lessonId": "06_express_c01_ai_content_m02_video_002",
+      "title": "1. Видео и реклама с умом",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 1785.27,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c01_ai_content\\m03_prompts\\001_magiya_promtov_kak_neyroset_poymet_zadachu.mp4",
+      "lessonId": "06_express_c01_ai_content_m03_prompts_003",
+      "title": "1. Магия Промтов Как нейросеть поймет задачу",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 100.24,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c01_ai_content\\m03_prompts\\002_layfhaki_tochnyh_zaprosov_k_neyroseti_validatsiya.mp4",
+      "lessonId": "06_express_c01_ai_content_m03_prompts_004",
+      "title": "2. Лайфхаки точных запросов к нейросети валидация и контроль качества",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 126.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\001_kak_kartochka_popadaet_v_vydachu.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_001",
+      "title": "1. Как карточка попадает в выдачу",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 595.51,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\002_proverka_gruppy_zaprosov.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_002",
+      "title": "2. Проверка группы запросов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 14.07,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\003_unikalnye_slova.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_003",
+      "title": "3. Уникальные слова",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 15.95,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\004_trendovye_zaprosy.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_004",
+      "title": "4. Трендовые запросы",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 72.58,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\005_rasshirenie_zaprosov.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_005",
+      "title": "5. Расширение запросов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 105.06,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\006_prevraschaem_spisok_klyuchey_v_yadro_kotoroe_proda.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_006",
+      "title": "6. Превращаем список ключей в ядро, которое продаёт",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 892.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m01_search\\007_prioritetnost_skladov_i_kak_oni_vliyayut_na_vidimo.mp4",
+      "lessonId": "06_express_c02_seo_m01_search_007",
+      "title": "7. Приоритетность складов и как они влияют на видимость карточки",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 68.52,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m02_keywords\\001_opisanie_kartochki.mp4",
+      "lessonId": "06_express_c02_seo_m02_keywords_008",
+      "title": "1. Описание карточки",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 1348.15,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m02_keywords\\002_harakteristiki.mp4",
+      "lessonId": "06_express_c02_seo_m02_keywords_009",
+      "title": "2. Характеристики",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 486.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m02_keywords\\003_generator_opisaniya_ai.mp4",
+      "lessonId": "06_express_c02_seo_m02_keywords_010",
+      "title": "3. Генератор описания AI",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 9.43,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m02_keywords\\004_zagolovok.mp4",
+      "lessonId": "06_express_c02_seo_m02_keywords_011",
+      "title": "4. Заголовок",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 163.94,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m03_launch\\001_sobiraem_yadro_dlya_pervoy_kartochki_na_wb.mp4",
+      "lessonId": "06_express_c02_seo_m03_launch_012",
+      "title": "1. Собираем ядро для первой карточки на WB",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 922.54,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m03_launch\\002_kak_obnovit_kartochku_i_ostatsya_v_tope.mp4",
+      "lessonId": "06_express_c02_seo_m03_launch_013",
+      "title": "2. Как обновить карточку и остаться в ТОПе",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 177.66,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m03_launch\\003_monitoring_pozitsiy.mp4",
+      "lessonId": "06_express_c02_seo_m03_launch_014",
+      "title": "3. Мониторинг позиций",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 41.23,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m03_launch\\004_sravnenie_grupp_sku.mp4",
+      "lessonId": "06_express_c02_seo_m03_launch_015",
+      "title": "4. Сравнение групп SKU",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 34.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m04_strategies\\001_kak_nayti_nedorabotki_v_kartochke_i_podnyat_prodaz.mp4",
+      "lessonId": "06_express_c02_seo_m04_strategies_016",
+      "title": "1. Как найти недоработки в карточке и поднять продажи",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 590.9,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m04_strategies\\002_kak_masshtabirovat_topovuyu_kartochku.mp4",
+      "lessonId": "06_express_c02_seo_m04_strategies_017",
+      "title": "2. Как масштабировать ТОПовую карточку",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 759.82,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c02_seo\\m04_strategies\\003_vybiraem_strategiyu_seo.mp4",
+      "lessonId": "06_express_c02_seo_m04_strategies_018",
+      "title": "3. Выбираем стратегию SEO",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 187.87,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m01_types\\001_tipy_konkurentsii_kak_ponyat_kto_moy_konkurent.mp4",
+      "lessonId": "06_express_c03_competitors_m01_types_001",
+      "title": "1. Типы конкуренции как понять, кто мой конкурент",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 739.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m01_types\\002_emkost_tovara_kak_opredelit_potentsial.mp4",
+      "lessonId": "06_express_c03_competitors_m01_types_002",
+      "title": "2. Емкость товара как определить потенциал",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 164.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m01_types\\003_praktika_schitaem_emkost_tovara.mp4",
+      "lessonId": "06_express_c03_competitors_m01_types_003",
+      "title": "3. Практика считаем емкость товара",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 790.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\001_instrumenty_konkurentnogo_analiza._stavim_tsel.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_004",
+      "title": "1. Инструменты конкурентного анализа. Ставим цель",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 177.45,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\002_analiz_nishi.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_005",
+      "title": "2. Анализ ниши",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 257.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\003_analiz_prodavtsa_magazina.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_006",
+      "title": "3. Анализ продавца, магазина",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 695.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\004_detalnyy_analiz_konkurentov.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_007",
+      "title": "4. Детальный анализ конкурентов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 446.21,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\005_1_shag_1._podgotovka_fayla_dlya_raboty_s_ii.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_008",
+      "title": "5.1 Шаг 1️⃣.  Подготовка файла для работы с ИИ",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 37.67,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\005_2_shag_2._rabota_s_otzyvami_s_pomoschyu_ii.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_009",
+      "title": "5.2 Шаг 2️⃣. Работа с отзывами с помощью ИИ",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 109.57,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m02_why_choose\\006_swot_analiz.mp4",
+      "lessonId": "06_express_c03_competitors_m02_why_choose_010",
+      "title": "6. SWOT-анализ",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 162.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m03_profit\\001_doli_rynka_analiz_ezhednevnyh_prodazh.mp4",
+      "lessonId": "06_express_c03_competitors_m03_profit_011",
+      "title": "1. Доли рынка анализ ежедневных продаж",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 409.35,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m03_profit\\002_tsenoobrazovanie.mp4",
+      "lessonId": "06_express_c03_competitors_m03_profit_012",
+      "title": "2. Ценообразование",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 112.16,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m04_attract\\001_silnaya_kartochka_uchimsya_u_konkurentov.mp4",
+      "lessonId": "06_express_c03_competitors_m04_attract_013",
+      "title": "1. Сильная карточка учимся у конкурентов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 599.75,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m04_attract\\002_analiz_prodvizheniya_konkurentov.mp4",
+      "lessonId": "06_express_c03_competitors_m04_attract_014",
+      "title": "2. Анализ продвижения конкурентов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 916.01,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m04_attract\\003_geografiya_zakazov.mp4",
+      "lessonId": "06_express_c03_competitors_m04_attract_015",
+      "title": "3. География заказов",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 296.22,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c03_competitors\\m05_analytics_strategy\\001_dekompozitsiya_tseli_kak_osnova_strategii_rosta.mp4",
+      "lessonId": "06_express_c03_competitors_m05_analytics_strategy_016",
+      "title": "1. Декомпозиция цели как основа стратегии роста",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 2352.95,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\001_pogruzhenie.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_001",
+      "title": "1. 👉🏻 ПОГРУЖЕНИЕ 👈🏻",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 69.31,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\002_1_navigatsiya_vnutri_kursa.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_002",
+      "title": "2.1 Навигация внутри курса",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 20.8,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\002_2_videouroki.mov",
+      "lessonId": "06_express_c04_product_choice_m01_start_003",
+      "title": "2.2 Видеоуроки",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 28.65,
+      "extension": ".mov"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\002_3_materialy_i_vneshnie_ssylki.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_004",
+      "title": "2.3 Материалы и внешние ссылки",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 10.14,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\003_tipichnye_oshibki_pri_vybore_tovara.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_005",
+      "title": "3. Типичные ошибки при выборе товара",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 287.19,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\004_vybiraem_tsel_zapuska_pod_svoy_byudzhet_opyt_i_res.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_006",
+      "title": "4. Выбираем цель запуска под свой бюджет, опыт и ресурсы",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 304.15,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\005_1_chast._analiz_kategorii_dlya_deystvuyuschey_tova.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_007",
+      "title": "5. 1 часть. Анализ категории для действующей товарной матрицы",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 718.96,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m01_start\\006_poisk_novoy_kategorii._opredelyaem_vashi_vvodnye.mp4",
+      "lessonId": "06_express_c04_product_choice_m01_start_008",
+      "title": "6. Поиск новой категории. Определяем ваши вводные",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 90.94,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m02_categories\\001_ischem_potentsialno_interesnye_kategorii_i_analizi.mp4",
+      "lessonId": "06_express_c04_product_choice_m02_categories_009",
+      "title": "1. Ищем потенциально интересные категории и анализируем показатели",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 146.48,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m02_categories\\002_tipy_konkurentsii_kak_ponyat_kto_moy_konkurent.mp4",
+      "lessonId": "06_express_c04_product_choice_m02_categories_010",
+      "title": "2. Типы конкуренции как понять, кто мой конкурент",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 739.03,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m02_categories\\003_emkost_tovara_kak_opredelit_potentsial.mp4",
+      "lessonId": "06_express_c04_product_choice_m02_categories_011",
+      "title": "3. Емкость товара как определить потенциал",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 164.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m02_categories\\004_praktika_schitaem_emkost_tovara.mp4",
+      "lessonId": "06_express_c04_product_choice_m02_categories_012",
+      "title": "4. Практика считаем емкость товара",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 790.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m02_categories\\005_doli_rynka_analiz_ezhednevnyh_prodazh.mp4",
+      "lessonId": "06_express_c04_product_choice_m02_categories_013",
+      "title": "5. Доли рынка анализ ежедневных продаж",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 409.35,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\001_1_chast._analiz_tovara._brendy_trendy_i_tsenovaya.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_014",
+      "title": "1. 1 часть. Анализ товара. Бренды, тренды и ценовая сегментация",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 841.33,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\002_kontent_konkurenty_i_otzyvy.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_015",
+      "title": "2. Контент, конкуренты и отзывы",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 1082.88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\003_raskladka_po_skladam_aktsii_prodvizhenie.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_016",
+      "title": "3. Раскладка по складам, акции, продвижение",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 621.81,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\004_sezonnost_sprosa_kogda_vhodit_v_nishu.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_017",
+      "title": "4. Сезонность спроса когда входить в нишу",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 774.73,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\005_3_sposoba_vybora_nishi.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_018",
+      "title": "5. 3 способа выбора ниши",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 2550.9,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\006_vybor_tovarnoy_pozitsii.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_019",
+      "title": "6. Выбор товарной позиции",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 1662.34,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\007_vyyavlyaem_biznes_riski_tovara.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_020",
+      "title": "7. Выявляем бизнес-риски товара",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 795.76,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m03_validation\\008_rasschityvaem_neobhodimyy_obem_partii_dlya_pervoy.mp4",
+      "lessonId": "06_express_c04_product_choice_m03_validation_021",
+      "title": "8. Рассчитываем необходимый объем партии для первой закупки",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 508.86,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m04_launch_plan\\001_finalnaya_diagnostika_podhodit_li_vam_nisha.mp4",
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_022",
+      "title": "1.1. Финальная диагностика подходит ли вам ниша",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 946.25,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m04_launch_plan\\001_otkroyte_dostup_skriptam_v_tablitse_finalnyy_chek.mp4",
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_023",
+      "title": "1.2. Откройте доступ скриптам в таблице Финальный чек-лист",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 19.37,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m04_launch_plan\\002_zhiznennyy_tsikl_tovara_ot_starta_do_maksimalnyh_p.mp4",
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_024",
+      "title": "2. Жизненный цикл товара от старта до максимальных продаж",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 233.02,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m04_launch_plan\\003_sostavlyaem_plan_zapuska_vybrannogo_tovara.mp4",
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_025",
+      "title": "3. Составляем план запуска выбранного товара",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 287.18,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:\\Academy Courses\\06_express\\c04_product_choice\\m04_launch_plan\\004_kak_prezentovat_tovar_selleru_partneru_investoru_i.mp4",
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_026",
+      "title": "4. Как презентовать товар селлеру, партнеру, инвестору или заказчику",
+      "courseId": "06_express",
+      "fileExists": true,
+      "fileSizeMB": 190.22,
+      "extension": ".mp4"
+    }
+  ],
+  "unmatched": [],
+  "stats": {
+    "total": 405,
+    "matched": 405,
+    "unmatched": 0,
+    "filesExist": 405,
+    "filesMissing": 0,
+    "totalSizeMB": 217271.03,
+    "alreadyHaveVideoId": 0,
+    "byExtension": {
+      ".mp4": 393,
+      ".mov": 12
+    },
+    "byCourse": {
+      "01_analytics": 82,
+      "02_ads": 67,
+      "03_ai": 92,
+      "04_workshops": 24,
+      "05_ozon": 76,
+      "06_express": 64
+    }
+  }
+}
