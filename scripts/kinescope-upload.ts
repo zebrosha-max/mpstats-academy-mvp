@@ -16,17 +16,23 @@
  *   DATABASE_URL          - Prisma connection string (already in .env)
  */
 
+import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { randomUUID } from 'crypto';
+
+// Load env from apps/web/.env (scripts run from monorepo root)
+config({ path: path.resolve(__dirname, '../apps/web/.env') });
 
 // ============== CONFIG ==============
 
 const KINESCOPE_API_KEY = process.env.KINESCOPE_API_KEY;
 const KINESCOPE_PROJECT_ID = process.env.KINESCOPE_PROJECT_ID;
+const KINESCOPE_WORKSPACE_ID = process.env.KINESCOPE_WORKSPACE_ID || 'fe0bcafb-8b2f-4e7d-b043-ca5afc445504';
 
-// Kinescope upload endpoint
-const UPLOAD_URL = 'https://upload.new.video';
+// Kinescope TUS upload endpoint (two-step: init → upload)
+const INIT_URL = 'https://eu-ams-uploader.kinescope.io/v2/init';
 
 // Retry config
 const MAX_RETRIES = 3;
@@ -102,21 +108,24 @@ function saveProgress(progress: UploadProgress): void {
 }
 
 /**
- * Upload a single video to Kinescope API
+ * Encode a string to base64 (for TUS Upload-Metadata header)
+ */
+function toBase64(str: string): string {
+  return Buffer.from(str).toString('base64');
+}
+
+/**
+ * Upload a single video to Kinescope via TUS protocol (two-step)
  *
- * Uses multipart form upload to https://upload.new.video
- * Returns the Kinescope video ID from the response.
+ * Step 1: POST to /v2/init with TUS headers + Upload-Metadata → get upload URL
+ * Step 2: PATCH to /v2/upload/{id} with file body → upload complete
  *
- * NOTE: Kinescope API response format has MEDIUM confidence from research.
- * The script logs the full response for the first upload so the user
- * can verify the videoId field name.
- *
- * // TODO: verify response.data.id is the correct videoId field after first upload test
+ * Returns the Kinescope video ID (init_id from metadata).
  */
 async function uploadToKinescope(
   filePath: string,
   title: string,
-  isFirstUpload: boolean,
+  _isFirstUpload: boolean,
 ): Promise<string> {
   if (!KINESCOPE_API_KEY || !KINESCOPE_PROJECT_ID) {
     throw new Error(
@@ -124,57 +133,79 @@ async function uploadToKinescope(
     );
   }
 
-  // Read file as buffer for upload
-  const fileBuffer = fs.readFileSync(filePath);
+  const fileSize = fs.statSync(filePath).size;
   const fileName = path.basename(filePath);
+  const titleWithoutExt = path.basename(filePath, path.extname(filePath));
+  const initId = randomUUID();
 
-  // Build multipart form data manually using standard FormData
-  const formData = new FormData();
-  const blob = new Blob([fileBuffer], { type: 'video/mp4' });
-  formData.append('video', blob, fileName);
-  formData.append('title', title);
-  formData.append('project_id', KINESCOPE_PROJECT_ID);
+  // Build Upload-Metadata header (TUS spec: key base64value,key base64value)
+  const metadata = [
+    `parent_id ${toBase64(KINESCOPE_PROJECT_ID)}`,
+    `init_id ${toBase64(initId)}`,
+    `type ${toBase64('video')}`,
+    `title ${toBase64(title || titleWithoutExt)}`,
+    `filename ${toBase64(fileName)}`,
+    `filesize ${toBase64(String(fileSize))}`,
+  ].join(',');
+
+  const commonHeaders: Record<string, string> = {
+    'Tus-Resumable': '1.0.0',
+    'X-Workspace-ID': KINESCOPE_WORKSPACE_ID,
+    Authorization: `Bearer ${KINESCOPE_API_KEY}`,
+  };
+
+  // Step 1: Init upload (POST, no body)
+  const initResponse = await fetch(INIT_URL, {
+    method: 'POST',
+    headers: {
+      ...commonHeaders,
+      'Upload-Length': String(fileSize),
+      'Upload-Metadata': metadata,
+    },
+  });
+
+  if (!initResponse.ok) {
+    const errorText = await initResponse.text();
+    throw new Error(`Init failed HTTP ${initResponse.status}: ${errorText}`);
+  }
+
+  // Get upload URL from Location header
+  const uploadUrl = initResponse.headers.get('Location');
+  if (!uploadUrl) {
+    throw new Error('No Location header in init response');
+  }
+
+  console.log(`  Init OK → upload URL received`);
+
+  // Step 2: Upload file (PATCH with binary body)
+  const fileBuffer = fs.readFileSync(filePath);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
 
   try {
-    const response = await fetch(UPLOAD_URL, {
-      method: 'POST',
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PATCH',
       headers: {
-        Authorization: `Bearer ${KINESCOPE_API_KEY}`,
+        ...commonHeaders,
+        'Upload-Offset': '0',
+        'Content-Type': 'application/offset+octet-stream',
       },
-      body: formData,
+      body: fileBuffer,
       signal: controller.signal,
     });
 
     clearTimeout(timeout);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Upload failed HTTP ${uploadResponse.status}: ${errorText}`);
     }
 
-    const data = await response.json();
+    console.log(`  Upload complete (${(fileSize / 1024 / 1024).toFixed(1)} MB)`);
 
-    // Log full response for the first upload to verify field names
-    if (isFirstUpload) {
-      console.log('\n  [FIRST UPLOAD] Full API response:');
-      console.log(JSON.stringify(data, null, 2));
-      console.log('  Verify that the videoId field is correct above.\n');
-    }
-
-    // Try common response patterns for video ID
-    // Kinescope API may return: { data: { id: "..." } } or { id: "..." } or { video_id: "..." }
-    const videoId =
-      data?.data?.id || data?.id || data?.video_id || data?.data?.video_id;
-
-    if (!videoId) {
-      console.error('  [WARN] Could not extract videoId from response:', JSON.stringify(data));
-      throw new Error('videoId not found in API response');
-    }
-
-    return videoId;
+    // The video ID is the init_id we generated
+    return initId;
   } catch (error: any) {
     clearTimeout(timeout);
     if (error.name === 'AbortError') {
