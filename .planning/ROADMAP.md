@@ -62,11 +62,11 @@ Plans:
   1. На странице урока воспроизводится реальное Kinescope видео (не placeholder)
   2. Клик по таймкоду в RAG summary/chat перематывает видео к нужному моменту
   3. Если videoId отсутствует у урока, показывается информативный placeholder
-**Plans**: TBD
+**Plans:** 2 plans in 1 wave
 
 Plans:
-- [ ] 03-01: Kinescope SDK integration и videoId mapping
-- [ ] 03-02: Timecode seek из RAG citations
+- [ ] 03-01-PLAN.md — Kinescope React player, TimecodeLink component, lesson page integration
+- [ ] 03-02-PLAN.md — Bulk upload scripts (mapping + upload) and Kinescope setup guide
 
 ### Phase 4: Access Control & Personalization
 **Goal**: Пользователь проходит диагностику прежде чем получить доступ к видео, и видит персонализированный трек обучения
