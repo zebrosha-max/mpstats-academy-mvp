@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 3: Video Integration -- Plan 01 complete
+**Current focus:** Phase 3: Video Integration -- COMPLETE
 
 ## Current Position
 
-Phase: 3 of 6 (Video Integration)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-02-18 — Plan 03-01 complete (Kinescope player + timecode seek)
+Phase: 3 of 6 (Video Integration) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-02-18 — Plan 03-02 complete (Kinescope upload infrastructure)
 
-Progress: [█████░░░░░] 38%
+Progress: [██████░░░░] 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 4.6 min
-- Total execution time: 0.5 hours
+- Total plans completed: 8
+- Average duration: 5.0 min
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [█████░░░░░] 38%
 |-------|-------|-------|----------|
 | 01-data-foundation | 4 | 17 min | 4.3 min |
 | 02-ai-question-generation | 2 | 12 min | 6 min |
-| 03-video-integration | 1 | 3 min | 3 min |
+| 03-video-integration | 2 | 38 min | 19 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (3 min), 01-04 (4 min), 02-01 (10 min), 02-02 (2 min), 03-01 (3 min)
+- Last 5 plans: 01-04 (4 min), 02-01 (10 min), 02-02 (2 min), 03-01 (3 min), 03-02 (35 min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -68,6 +68,9 @@ Recent decisions affecting current work:
 - [03-01]: Cast dynamic() to original type for class component ref support
 - [03-01]: seekTo + play on timecode click for intuitive UX
 - [03-01]: Disabled timecodes shown as grayed badges (not hidden) when no videoId
+- [03-02]: Used manifest.json as mapping source — 100% match rate (405/405 videos)
+- [03-02]: Native fetch + FormData for upload instead of form-data package
+- [03-02]: Progress file (kinescope-upload-progress.json) for resume on re-run
 
 ### Pending Todos
 
@@ -75,7 +78,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Kinescope videoId data needed from content team (blocks Phase 3 VIDEO-02)
+- Kinescope videoId data needed from content team — RESOLVED: upload scripts ready, user setting up Kinescope account
 - Domain name for production SSL not confirmed (blocks Phase 6 DEPLOY-03)
 - SkillCategory enum has 5 values but 6 courses exist — RESOLVED in 01-01 (COURSE_SKILL_MAP)
 - DATABASE_URL credentials RESOLVED — host changed from aws-0-eu-central-1 to aws-1-eu-west-1, DIRECT_URL switched to session pooler
@@ -83,5 +86,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 03-01-PLAN.md (Kinescope player + timecode seek)
-Resume file: .planning/phases/03-video-integration/03-02-PLAN.md
+Stopped at: Completed 03-02-PLAN.md (Phase 03 complete - Kinescope upload infrastructure)
+Resume file: Next phase (04)
