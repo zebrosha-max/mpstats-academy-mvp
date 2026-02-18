@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Foundation** - Seed реальных курсов/уроков и миграция трёх роутеров с mock на Prisma (completed 2026-02-17)
 - [ ] **Phase 2: AI Question Generation** - Генерация диагностических вопросов из RAG chunks вместо mock
-- [ ] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам
+- [x] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам (completed 2026-02-18)
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
 - [ ] **Phase 6: Production Deploy** - Standalone build, PM2, Nginx, SSL на VPS
@@ -62,7 +62,7 @@ Plans:
   1. На странице урока воспроизводится реальное Kinescope видео (не placeholder)
   2. Клик по таймкоду в RAG summary/chat перематывает видео к нужному моменту
   3. Если videoId отсутствует у урока, показывается информативный placeholder
-**Plans:** 2 plans in 1 wave
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 03-01-PLAN.md — Kinescope React player, TimecodeLink component, lesson page integration
@@ -125,7 +125,7 @@ Note: Phases 2 and 3 can execute in parallel after Phase 1.
 |-------|----------------|--------|-----------|
 | 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
 | 2. AI Question Generation | 0/2 | Not started | - |
-| 3. Video Integration | 0/2 | Not started | - |
+| 3. Video Integration | 0/2 | Complete    | 2026-02-18 |
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 6. Production Deploy | 0/3 | Not started | - |
