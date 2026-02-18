@@ -15,6 +15,7 @@
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
+    "@kinescope/react-kinescope-player": "^0.5.4",
     "@mpstats/api": "workspace:*",
     "@mpstats/db": "workspace:*",
     "@mpstats/shared": "workspace:*",
