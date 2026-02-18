@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { VideoPlayer, type PlayerHandle } from '@/components/video/KinescopePlayer';
+import { TimecodeLink } from '@/components/video/TimecodeLink';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +34,8 @@ interface ChatMessage {
     id: string;
     timecodeFormatted: string;
     content: string;
+    timecode_start: number;
+    timecode_end: number;
   }>;
 }
 
@@ -44,6 +48,13 @@ export default function LessonPage() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<PlayerHandle>(null);
+
+  const handleTimecodeClick = (seconds: number) => {
+    playerRef.current?.seekTo(seconds);
+    // Scroll to player on mobile (player may be above fold)
+    document.getElementById('video-player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
 
   const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
 
@@ -215,26 +226,12 @@ export default function LessonPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Video section */}
         <div className="lg:col-span-2 space-y-4">
-          {/* Video player placeholder */}
-          <Card className="overflow-hidden shadow-mp-card">
-            <div className="aspect-video bg-mp-gray-900 flex items-center justify-center">
-              {lesson.videoId ? (
-                <iframe
-                  src={`https://kinescope.io/embed/${lesson.videoId}`}
-                  className="w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <div className="text-center text-mp-gray-400">
-                  <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-body">Видео будет доступно после подключения Kinescope</p>
-                </div>
-              )}
-            </div>
+          {/* Video player */}
+          <Card id="video-player" className="overflow-hidden shadow-mp-card">
+            <VideoPlayer
+              ref={playerRef}
+              videoId={lesson.videoId}
+            />
           </Card>
 
           {/* Lesson info */}
@@ -395,7 +392,12 @@ export default function LessonPage() {
                           {summaryData.sources.slice(0, 5).map((source, idx) => (
                             <div key={source.id} className="flex items-start gap-2 text-xs">
                               <span className="text-mp-blue-600 font-medium">[{idx + 1}]</span>
-                              <span className="text-mp-gray-500">{source.timecodeFormatted}</span>
+                              <TimecodeLink
+                                startSeconds={source.timecode_start}
+                                formattedTime={source.timecodeFormatted}
+                                onSeek={handleTimecodeClick}
+                                disabled={!lesson.videoId}
+                              />
                             </div>
                           ))}
                         </div>
@@ -461,8 +463,14 @@ export default function LessonPage() {
                             <p className="text-xs text-mp-gray-500">Источники:</p>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {msg.sources.map((src, i) => (
-                                <span key={src.id} className="text-xs text-mp-blue-600 bg-mp-blue-50 px-1.5 py-0.5 rounded">
-                                  [{i+1}] {src.timecodeFormatted}
+                                <span key={src.id} className="inline-flex items-center gap-1 text-xs">
+                                  <span className="text-mp-blue-600 font-medium">[{i+1}]</span>
+                                  <TimecodeLink
+                                    startSeconds={src.timecode_start}
+                                    formattedTime={src.timecodeFormatted}
+                                    onSeek={handleTimecodeClick}
+                                    disabled={!lesson.videoId}
+                                  />
                                 </span>
                               ))}
                             </div>
