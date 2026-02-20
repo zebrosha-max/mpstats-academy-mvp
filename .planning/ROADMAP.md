@@ -109,7 +109,7 @@ Plans:
   2. Docker Engine + Compose, Nginx установлены и работают на VPS
   3. Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH
   4. Cloudflare Tunnel работает и проксирует HTTPS трафик через Nginx на localhost:3000
-**Plans:** 2 plans in 2 waves
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 05.1-01-PLAN.md — VPS audit + Docker/Nginx/UFW/fail2ban setup + Dockerfile/docker-compose.yml

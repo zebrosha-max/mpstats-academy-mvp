@@ -36,6 +36,7 @@ Progress: [██████░░░░] 43%
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase 05.1-vps-infrastructure-setup P01 | 12 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [03-02]: Used manifest.json as mapping source — 100% match rate (405/405 videos)
 - [03-02]: Native fetch + FormData for upload instead of form-data package
 - [03-02]: Progress file (kinescope-upload-progress.json) for resume on re-run
+- [Phase 05.1-01]: VPS already pre-configured: Docker/Nginx/UFW/fail2ban verified rather than installed
+- [Phase 05.1-01]: Docker port binding 127.0.0.1:3000:3000 — port 3000 not exposed externally, Nginx+Cloudflare handle ingress
+- [Phase 05.1-01]: turbo prune @mpstats/web --docker + outputFileTracingRoot for monorepo standalone Next.js build
 
 ### Roadmap Evolution
 
