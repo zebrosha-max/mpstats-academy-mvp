@@ -17,7 +17,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам (completed 2026-02-18)
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
-- [ ] **Phase 6: Production Deploy** - Standalone build, PM2, Nginx, SSL на VPS
+- [ ] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED)
+- [ ] **Phase 6: Production Deploy** - Standalone build, PM2, ngrok на VPS 89.208.106.208
 
 ## Phase Details
 
@@ -98,9 +99,25 @@ Plans:
 - [ ] 05-01: Protected procedures и rate limiting
 - [ ] 05-02: Sanitization, error boundaries, server-only enforcement
 
+### Phase 05.1: VPS Infrastructure Setup (INSERTED)
+
+**Goal:** VPS 89.208.106.208 подготовлен для деплоя MAAL: Docker + Nginx + UFW/fail2ban установлены, Cloudflare Tunnel для временного домена с HTTPS
+**Depends on:** Phase 5 (безопасность перед деплоем)
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
+**Success Criteria** (what must be TRUE):
+  1. SSH подключение к 89.208.106.208 работает через deploy пользователя
+  2. Docker Engine + Compose, Nginx установлены и работают на VPS
+  3. Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH
+  4. Cloudflare Tunnel работает и проксирует HTTPS трафик через Nginx на localhost:3000
+**Plans:** 2 plans in 2 waves
+
+Plans:
+- [ ] 05.1-01-PLAN.md — VPS audit + Docker/Nginx/UFW/fail2ban setup + Dockerfile/docker-compose.yml
+- [ ] 05.1-02-PLAN.md — Cloudflare Named Tunnel setup + HTTPS verification
+
 ### Phase 6: Production Deploy
-**Goal**: Приложение доступно в интернете по HTTPS, работает стабильно под PM2 с мониторингом
-**Depends on**: Phase 1, Phase 5 (данные + безопасность обязательны до деплоя)
+**Goal**: Приложение задеплоено на VPS 89.208.106.208, доступно через ngrok (временно), работает стабильно под PM2
+**Depends on**: Phase 1, Phase 5, Phase 5.1 (данные + безопасность + инфраструктура)
 **Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, DEPLOY-05, DEPLOY-06, DEPLOY-07
 **Success Criteria** (what must be TRUE):
   1. Пользователь открывает production URL по HTTPS и видит landing page
@@ -118,8 +135,9 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6
 Note: Phases 2 and 3 can execute in parallel after Phase 1.
+Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -128,4 +146,5 @@ Note: Phases 2 and 3 can execute in parallel after Phase 1.
 | 3. Video Integration | 0/2 | Complete    | 2026-02-18 |
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
+| 5.1 VPS Infrastructure | 0/2 | Not started | - |
 | 6. Production Deploy | 0/3 | Not started | - |
