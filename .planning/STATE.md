@@ -72,6 +72,10 @@ Recent decisions affecting current work:
 - [03-02]: Native fetch + FormData for upload instead of form-data package
 - [03-02]: Progress file (kinescope-upload-progress.json) for resume on re-run
 
+### Roadmap Evolution
+
+- Phase 5.1 inserted after Phase 5: VPS Infrastructure Setup (INSERTED) — deploy target changed from 79.137.197.90 to 89.208.106.208
+
 ### Pending Todos
 
 None yet.
@@ -85,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-18
-Stopped at: Completed 03-02-PLAN.md (Phase 03 complete - Kinescope upload infrastructure)
-Resume file: Next phase (04)
+Last session: 2026-02-20
+Stopped at: Phase 05.1 context gathered
+Resume file: .planning/phases/05.1-vps-infrastructure-setup/05.1-CONTEXT.md
