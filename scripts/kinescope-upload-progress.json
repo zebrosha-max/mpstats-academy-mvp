@@ -1,0 +1,3260 @@
+{
+  "startedAt": "2026-02-18T10:26:44.172Z",
+  "lastUpdated": "2026-02-20T21:43:40.288Z",
+  "uploaded": [
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 37.67,
+      "lessonId": "01_analytics_m03_competitors_012",
+      "videoId": "c7149e0d-bfab-4976-bf9e-dae7ccb57315",
+      "uploadedAt": "2026-02-18T11:05:08.063Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 90.94,
+      "lessonId": "01_analytics_m04_product_selection_018",
+      "videoId": "e04e2416-9596-4d01-b662-b4ddea30e777",
+      "uploadedAt": "2026-02-18T11:05:43.803Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 109.57,
+      "lessonId": "01_analytics_m03_competitors_011",
+      "videoId": "7c593362-ae2d-49c6-b4c7-c71c055c9de8",
+      "uploadedAt": "2026-02-18T11:06:44.206Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 131.83,
+      "lessonId": "01_analytics_m05_assortment_010",
+      "videoId": "3a0fcaad-262c-4249-ab30-9f51535d9b57",
+      "uploadedAt": "2026-02-18T11:07:10.422Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 131.83,
+      "lessonId": "01_analytics_m05_assortment_011",
+      "videoId": "f2a00fe2-880d-4477-aecd-7c5c7f06158b",
+      "uploadedAt": "2026-02-18T11:07:32.301Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 145.81,
+      "lessonId": "01_analytics_m06_traffic_003",
+      "videoId": "df85dd3f-4b4f-4ae2-8336-f9e9c68cab17",
+      "uploadedAt": "2026-02-18T11:07:57.464Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 145.81,
+      "lessonId": "01_analytics_m06_traffic_007",
+      "videoId": "f6b6f5d3-24d2-4687-9076-d207d8b0ebd0",
+      "uploadedAt": "2026-02-18T11:08:20.871Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 146.48,
+      "lessonId": "01_analytics_m04_product_selection_020",
+      "videoId": "7fd812f3-c180-44ed-9aa2-c56b24642fe3",
+      "uploadedAt": "2026-02-18T11:08:43.852Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 148.33,
+      "lessonId": "01_analytics_m06_traffic_005",
+      "videoId": "3fec978a-b5ae-40a1-a7d4-f10b66ac4c89",
+      "uploadedAt": "2026-02-18T11:09:07.915Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 150.23,
+      "lessonId": "01_analytics_m06_traffic_008",
+      "videoId": "009324d8-77c9-4f1e-9531-b0173dcdd43e",
+      "uploadedAt": "2026-02-18T11:09:34.209Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 150.34,
+      "lessonId": "01_analytics_m03_competitors_001",
+      "videoId": "559921cd-cceb-4ca3-ab77-5976673b45b7",
+      "uploadedAt": "2026-02-18T11:10:01.374Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 156.76,
+      "lessonId": "01_analytics_m06_traffic_002",
+      "videoId": "cdc88201-4dae-4266-8ed5-984b7e0ef120",
+      "uploadedAt": "2026-02-18T11:10:22.360Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 162.37,
+      "lessonId": "01_analytics_m03_competitors_013",
+      "videoId": "435fa129-2ffd-4fcc-adc2-294338e8008c",
+      "uploadedAt": "2026-02-18T11:10:51.088Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 164.33,
+      "lessonId": "01_analytics_m03_competitors_004",
+      "videoId": "8b26fc89-d666-4247-a339-4ef39c7d502b",
+      "uploadedAt": "2026-02-18T11:11:27.941Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 169.73,
+      "lessonId": "01_analytics_m05_assortment_007",
+      "videoId": "5ecb052e-4bb8-4798-8591-cdc80df028e0",
+      "uploadedAt": "2026-02-18T11:12:00.452Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 169.73,
+      "lessonId": "01_analytics_m05_assortment_014",
+      "videoId": "a496b59e-26bf-4983-b1a4-32beda5cfd70",
+      "uploadedAt": "2026-02-18T11:12:46.507Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 173.44,
+      "lessonId": "01_analytics_m06_traffic_001",
+      "videoId": "fcf695de-41fa-4fdc-a202-ca5f4c4aca5e",
+      "uploadedAt": "2026-02-18T11:13:35.487Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 177.45,
+      "lessonId": "01_analytics_m03_competitors_007",
+      "videoId": "edb99bcd-cbaa-4a1f-be07-da459a04a272",
+      "uploadedAt": "2026-02-18T11:14:12.392Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 180.01,
+      "lessonId": "01_analytics_m05_assortment_013",
+      "videoId": "2b9715da-cfa6-493f-8369-839f2de4fd7f",
+      "uploadedAt": "2026-02-18T11:14:38.361Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 180.01,
+      "lessonId": "01_analytics_m05_assortment_016",
+      "videoId": "d0972367-4576-48fd-afc0-30c87129d19c",
+      "uploadedAt": "2026-02-18T11:15:04.179Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 180.44,
+      "lessonId": "01_analytics_m04_product_selection_023",
+      "videoId": "83562872-e4be-4b51-baa1-c016a813b491",
+      "uploadedAt": "2026-02-18T11:15:34.792Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 187.55,
+      "lessonId": "01_analytics_m03_competitors_003",
+      "videoId": "b702c91e-43bd-4b6f-837b-6e59bf9dbb10",
+      "uploadedAt": "2026-02-18T11:16:07.316Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 192.25,
+      "lessonId": "01_analytics_m02_economics_013",
+      "videoId": "743d0887-e015-45ec-ac4a-70dbc87b5ada",
+      "uploadedAt": "2026-02-18T11:16:44.885Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 197.63,
+      "lessonId": "01_analytics_m02_economics_004",
+      "videoId": "ec19f4d2-1c70-4d68-9271-76e14cfc5bf1",
+      "uploadedAt": "2026-02-18T11:17:15.006Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 213.87,
+      "lessonId": "01_analytics_m04_product_selection_004",
+      "videoId": "c3283f6d-9741-4822-9393-758dd71b1e9a",
+      "uploadedAt": "2026-02-18T11:17:46.759Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 233.02,
+      "lessonId": "01_analytics_m04_product_selection_012",
+      "videoId": "02176407-3fa9-4d7e-a390-e08ca8a26702",
+      "uploadedAt": "2026-02-18T11:18:34.402Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 242.21,
+      "lessonId": "01_analytics_m02_economics_006",
+      "videoId": "162956ff-2ae3-4cb2-b5d7-506765ad6c55",
+      "uploadedAt": "2026-02-18T11:19:11.062Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 246.54,
+      "lessonId": "01_analytics_m05_assortment_012",
+      "videoId": "e830bb75-3179-4751-bdc2-c49d097449cf",
+      "uploadedAt": "2026-02-18T11:19:47.303Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 257.01,
+      "lessonId": "01_analytics_m03_competitors_008",
+      "videoId": "70648ec4-0f90-44b7-8b0f-946441e2170d",
+      "uploadedAt": "2026-02-18T11:20:41.612Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 280.73,
+      "lessonId": "01_analytics_m03_competitors_002",
+      "videoId": "dcb5fa18-5d5a-41f8-9b17-58369ffcae78",
+      "uploadedAt": "2026-02-18T11:21:22.472Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 287.19,
+      "lessonId": "01_analytics_m04_product_selection_001",
+      "videoId": "dfe1da79-da3f-45b1-b744-ccb3d6fc6181",
+      "uploadedAt": "2026-02-18T11:22:09.361Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 294.7,
+      "lessonId": "01_analytics_m01_start_002",
+      "videoId": "b2ddafab-e8a0-4a2c-91c7-a0c758ac4cad",
+      "uploadedAt": "2026-02-18T11:23:03.525Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 304.15,
+      "lessonId": "01_analytics_m04_product_selection_002",
+      "videoId": "32e86476-3f14-42f9-aad7-0864324598db",
+      "uploadedAt": "2026-02-18T11:24:11.514Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 305.68,
+      "lessonId": "01_analytics_m05_assortment_002",
+      "videoId": "994cbfef-f6a3-4799-94fa-81408a4404be",
+      "uploadedAt": "2026-02-18T11:25:03.335Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 310.18,
+      "lessonId": "01_analytics_m06_traffic_009",
+      "videoId": "46a163d8-ef70-462f-8a28-a94c5ce32e74",
+      "uploadedAt": "2026-02-18T11:26:14.186Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 315.71,
+      "lessonId": "01_analytics_m02_economics_003",
+      "videoId": "4bcde938-42c7-43dc-9ab6-bfccffcc1f5b",
+      "uploadedAt": "2026-02-18T11:27:06.207Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 331.75,
+      "lessonId": "01_analytics_m02_economics_001",
+      "videoId": "ecf6105e-bd5e-4907-b6f6-ce1640e227fe",
+      "uploadedAt": "2026-02-18T11:27:51.370Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 334.09,
+      "lessonId": "01_analytics_m04_product_selection_016",
+      "videoId": "3596f3e5-023b-4d32-829f-e623730bc1bb",
+      "uploadedAt": "2026-02-18T11:29:01.677Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 339.54,
+      "lessonId": "01_analytics_m04_product_selection_013",
+      "videoId": "c54d3a60-7489-45f2-96c3-d7c64369d700",
+      "uploadedAt": "2026-02-18T11:29:52.103Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 348.41,
+      "lessonId": "01_analytics_m04_product_selection_005",
+      "videoId": "f735e6e7-16fd-4c2c-9334-49fd3cda62f0",
+      "uploadedAt": "2026-02-18T11:30:57.027Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 351.25,
+      "lessonId": "01_analytics_m02_economics_014",
+      "videoId": "7206b9e1-db5f-433b-9729-457aafd1212a",
+      "uploadedAt": "2026-02-18T11:31:44.993Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 360.07,
+      "lessonId": "01_analytics_m01_start_001",
+      "videoId": "449d5d69-f6b4-4e6a-91bc-cc5af4651eb6",
+      "uploadedAt": "2026-02-18T11:32:50.053Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 363.78,
+      "lessonId": "01_analytics_m05_assortment_004",
+      "videoId": "215c4712-d456-4308-9aeb-fd0a69fdcb4c",
+      "uploadedAt": "2026-02-18T11:34:29.056Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 366.16,
+      "lessonId": "01_analytics_m03_competitors_006",
+      "videoId": "d2ea6d2e-328f-4183-84c2-38ee348e5124",
+      "uploadedAt": "2026-02-18T11:35:50.717Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 386.8,
+      "lessonId": "01_analytics_m02_economics_005",
+      "videoId": "69eea405-f32d-46e2-beb4-08e6bb03baea",
+      "uploadedAt": "2026-02-18T11:38:20.953Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 387.65,
+      "lessonId": "01_analytics_m05_assortment_005",
+      "videoId": "9ff8d683-741c-4a96-b294-76c6867a2c2a",
+      "uploadedAt": "2026-02-18T11:39:34.377Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 387.65,
+      "lessonId": "01_analytics_m05_assortment_015",
+      "videoId": "9b7fb653-d9f6-4219-a43d-9ddfb75061c7",
+      "uploadedAt": "2026-02-18T11:41:05.297Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 397.62,
+      "lessonId": "01_analytics_m02_economics_010",
+      "videoId": "e10bcd07-d9a3-437e-a393-d5ccdd972a2a",
+      "uploadedAt": "2026-02-18T11:42:30.284Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 407.83,
+      "lessonId": "01_analytics_m02_economics_015",
+      "videoId": "a23fe073-5ae5-4ecf-9983-75983ec277dd",
+      "uploadedAt": "2026-02-18T11:43:57.408Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 409.35,
+      "lessonId": "01_analytics_m03_competitors_014",
+      "videoId": "725e0640-c44e-4147-87fe-4fd44bf0b552",
+      "uploadedAt": "2026-02-18T11:45:08.290Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 434.09,
+      "lessonId": "01_analytics_m02_economics_009",
+      "videoId": "a42e8fbf-d46d-47ad-b8dd-e25213a0602a",
+      "uploadedAt": "2026-02-18T11:46:30.363Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 434.24,
+      "lessonId": "01_analytics_m02_economics_012",
+      "videoId": "867a027f-ebc6-4f5f-8281-222ba6f56b75",
+      "uploadedAt": "2026-02-18T11:48:05.400Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 442.46,
+      "lessonId": "01_analytics_m05_assortment_009",
+      "videoId": "66a34d03-c94e-4a83-867a-424c7c9c329d",
+      "uploadedAt": "2026-02-18T11:49:40.403Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 446.21,
+      "lessonId": "01_analytics_m03_competitors_010",
+      "videoId": "bbd7d1b0-ffa3-4d0e-9ce8-ec8565ef45ce",
+      "uploadedAt": "2026-02-18T11:51:34.412Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 468.22,
+      "lessonId": "01_analytics_m02_economics_007",
+      "videoId": "a880b617-f324-490a-bb54-d993aa40133d",
+      "uploadedAt": "2026-02-18T11:53:14.640Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 472,
+      "lessonId": "01_analytics_m01_start_003",
+      "videoId": "7dfbca1d-8d93-487a-a331-fab2540e970b",
+      "uploadedAt": "2026-02-18T11:54:56.350Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 508.86,
+      "lessonId": "01_analytics_m04_product_selection_010",
+      "videoId": "e45d9346-d548-469f-a177-13ff61076180",
+      "uploadedAt": "2026-02-18T11:56:52.937Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 515.42,
+      "lessonId": "01_analytics_m02_economics_011",
+      "videoId": "6ac5b158-4617-4864-ac38-e5ee13cf04dd",
+      "uploadedAt": "2026-02-18T11:59:00.429Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 531.42,
+      "lessonId": "01_analytics_m04_product_selection_007",
+      "videoId": "4c3e0669-856a-4cb5-91e1-7c44d490eaaf",
+      "uploadedAt": "2026-02-18T12:01:02.989Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 535.91,
+      "lessonId": "01_analytics_m05_assortment_003",
+      "videoId": "20ff11f6-c0f3-40ec-8e8f-ebcf1444ad6a",
+      "uploadedAt": "2026-02-18T12:03:23.991Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 556.22,
+      "lessonId": "01_analytics_m04_product_selection_022",
+      "videoId": "210161f2-235f-42aa-9d29-ff46ba0d012b",
+      "uploadedAt": "2026-02-18T12:05:39.999Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 582.02,
+      "lessonId": "01_analytics_m02_economics_002",
+      "videoId": "89bd4803-f24e-43cd-bca1-2fb67bd88397",
+      "uploadedAt": "2026-02-18T12:08:29.457Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 586.87,
+      "lessonId": "01_analytics_m05_assortment_008",
+      "videoId": "25315cdb-613a-4ed9-8f3e-323be51dcba6",
+      "uploadedAt": "2026-02-18T12:11:24.226Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 599.75,
+      "lessonId": "01_analytics_m04_product_selection_024",
+      "videoId": "cd6c487c-132c-496d-b61b-90cac09a9bb3",
+      "uploadedAt": "2026-02-18T12:13:38.216Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 606.16,
+      "lessonId": "01_analytics_m02_economics_008",
+      "videoId": "f7f30adb-c392-4c5e-ad95-4cd21785aff3",
+      "uploadedAt": "2026-02-18T12:16:45.459Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 621.77,
+      "lessonId": "01_analytics_m04_product_selection_014",
+      "videoId": "c5612337-d434-4ee5-ab00-0f348539f1ba",
+      "uploadedAt": "2026-02-18T12:19:36.472Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 621.81,
+      "lessonId": "01_analytics_m04_product_selection_021",
+      "videoId": "9b60e7a5-7a0b-47ce-a914-ef0fcd29c51f",
+      "uploadedAt": "2026-02-18T12:22:09.798Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 632.72,
+      "lessonId": "01_analytics_m04_product_selection_015",
+      "videoId": "7b58fa78-0083-4ff3-8e6e-4c9b4c60369d",
+      "uploadedAt": "2026-02-18T12:25:01.390Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 653.86,
+      "lessonId": "01_analytics_m05_assortment_006",
+      "videoId": "d224fd3a-d4b1-4ee0-8d2f-11f50accd4d8",
+      "uploadedAt": "2026-02-18T12:27:09.432Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 669.91,
+      "lessonId": "01_analytics_m06_traffic_006",
+      "videoId": "84fe6f67-c21f-4241-ad4c-816255ef8cae",
+      "uploadedAt": "2026-02-18T12:29:46.514Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 695.96,
+      "lessonId": "01_analytics_m03_competitors_009",
+      "videoId": "38c32bb7-a00f-4ea6-9fa2-618c7d06c14a",
+      "uploadedAt": "2026-02-18T12:32:19.139Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 774.73,
+      "lessonId": "01_analytics_m04_product_selection_008",
+      "videoId": "91e4f92f-317b-45fa-9fd0-eb7a1c6a9845",
+      "uploadedAt": "2026-02-18T12:34:46.181Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 790.88,
+      "lessonId": "01_analytics_m03_competitors_005",
+      "videoId": "4c2f3aed-5ad2-4be8-adc8-222b1895099e",
+      "uploadedAt": "2026-02-18T12:36:42.094Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 795.76,
+      "lessonId": "01_analytics_m04_product_selection_009",
+      "videoId": "a25e0355-72bd-4366-88e9-92b9071720d5",
+      "uploadedAt": "2026-02-18T12:39:31.004Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 841.33,
+      "lessonId": "01_analytics_m04_product_selection_017",
+      "videoId": "e8524ea1-b28a-4a2a-91c9-b9f1ef4fa169",
+      "uploadedAt": "2026-02-18T12:41:50.360Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 946.25,
+      "lessonId": "01_analytics_m04_product_selection_011",
+      "videoId": "64544725-d619-451e-8584-4ea178f99e81",
+      "uploadedAt": "2026-02-18T12:44:18.635Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 1016.8,
+      "lessonId": "01_analytics_m06_traffic_004",
+      "videoId": "799f2424-180a-4c1d-9bf5-23ed8c1efaad",
+      "uploadedAt": "2026-02-18T12:47:09.416Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 1077.13,
+      "lessonId": "01_analytics_m05_assortment_001",
+      "videoId": "da224f87-7dbe-4e11-95cb-13e25374756c",
+      "uploadedAt": "2026-02-18T12:50:46.991Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 1082.88,
+      "lessonId": "01_analytics_m04_product_selection_019",
+      "videoId": "7ffc1513-6625-47dd-9521-b468d917d49c",
+      "uploadedAt": "2026-02-18T12:53:38.233Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 1109.58,
+      "lessonId": "01_analytics_m04_product_selection_006",
+      "videoId": "10a43782-9873-4f1c-86ec-57ef7c1ab490",
+      "uploadedAt": "2026-02-18T12:56:54.659Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 1498.21,
+      "lessonId": "01_analytics_m04_product_selection_003",
+      "videoId": "707fb3ae-1174-4c0f-924b-9a7fb924fefa",
+      "uploadedAt": "2026-02-18T14:01:56.261Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 33.48,
+      "lessonId": "02_ads_m03_visual_ctr_006",
+      "videoId": "152e0336-0257-4d12-8fcf-758c9fa35950",
+      "uploadedAt": "2026-02-18T14:26:25.464Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 61.36,
+      "lessonId": "02_ads_m06_strategies_012",
+      "videoId": "aaa263d5-9c65-47c1-9a0c-7de16276d72c",
+      "uploadedAt": "2026-02-18T14:26:40.965Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 63.5,
+      "lessonId": "02_ads_m05_tools_003",
+      "videoId": "9f728252-968d-40ab-b2a6-788edcd60582",
+      "uploadedAt": "2026-02-18T14:26:55.981Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 69.72,
+      "lessonId": "02_ads_m06_strategies_008",
+      "videoId": "08be4139-a1c4-467a-9f4b-fc32a4602371",
+      "uploadedAt": "2026-02-18T14:27:12.238Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 76.29,
+      "lessonId": "02_ads_m06_strategies_013",
+      "videoId": "17feb6cb-e342-44ad-924d-5b604bf4717c",
+      "uploadedAt": "2026-02-18T14:27:31.885Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 92.62,
+      "lessonId": "02_ads_m08_autobidder_001",
+      "videoId": "10936007-3c94-476d-9403-9e95f7c49ffc",
+      "uploadedAt": "2026-02-18T14:27:57.239Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 95.79,
+      "lessonId": "02_ads_m04_ads_economics_011",
+      "videoId": "7cf0192b-a12f-42af-a4c8-0d8cd33119a4",
+      "uploadedAt": "2026-02-18T14:28:24.045Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 97.07,
+      "lessonId": "02_ads_m03_visual_ctr_009",
+      "videoId": "c5eff94b-f32f-4fec-a434-50332b262561",
+      "uploadedAt": "2026-02-18T14:28:48.322Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 101.38,
+      "lessonId": "02_ads_m07_optimization_002",
+      "videoId": "7c1806b3-7870-4541-a0b3-e91c28971b6f",
+      "uploadedAt": "2026-02-18T14:29:15.578Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 108.25,
+      "lessonId": "02_ads_m06_strategies_004",
+      "videoId": "cc5ec778-1241-47fc-a71e-604599ffb356",
+      "uploadedAt": "2026-02-18T14:29:46.825Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 110.03,
+      "lessonId": "02_ads_m03_visual_ctr_007",
+      "videoId": "83ead335-8b2e-45ef-bf65-590eb6792063",
+      "uploadedAt": "2026-02-18T14:30:12.755Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 117.22,
+      "lessonId": "02_ads_m07_optimization_001",
+      "videoId": "eb893d9f-36fb-4d65-824f-7293316e81ee",
+      "uploadedAt": "2026-02-18T14:30:43.024Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 119.63,
+      "lessonId": "02_ads_m01_prep_005",
+      "videoId": "36c95026-c4d0-41d1-9478-a6e46ee27319",
+      "uploadedAt": "2026-02-18T14:31:14.180Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 121.96,
+      "lessonId": "02_ads_m07_optimization_004",
+      "videoId": "597e2062-ca96-4589-8238-2e8bb96e8664",
+      "uploadedAt": "2026-02-18T14:31:39.207Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 127.91,
+      "lessonId": "02_ads_m06_strategies_005",
+      "videoId": "5654b6a0-acde-44d2-9e45-edd552dcf777",
+      "uploadedAt": "2026-02-18T14:32:11.406Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 129.71,
+      "lessonId": "02_ads_m06_strategies_001",
+      "videoId": "535abd97-4669-474c-a363-934849cf451b",
+      "uploadedAt": "2026-02-18T14:33:09.944Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 140.17,
+      "lessonId": "02_ads_m03_visual_ctr_008",
+      "videoId": "e896a958-5cd8-41d0-b941-b2bc3705269d",
+      "uploadedAt": "2026-02-18T14:33:38.468Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 146.92,
+      "lessonId": "02_ads_m06_strategies_014",
+      "videoId": "72163f12-62cf-4e55-9ba9-8810605f0910",
+      "uploadedAt": "2026-02-18T14:34:01.069Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 150.38,
+      "lessonId": "02_ads_m05_tools_004",
+      "videoId": "a3dbac77-9adc-4da3-bc92-afed158dacb7",
+      "uploadedAt": "2026-02-18T14:34:29.197Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 153.78,
+      "lessonId": "02_ads_m06_strategies_006",
+      "videoId": "5b7e0c8d-5d9f-4eb3-9c59-28f36e7924ca",
+      "uploadedAt": "2026-02-18T14:35:01.125Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 159.29,
+      "lessonId": "02_ads_m05_tools_005",
+      "videoId": "28f09790-e1ef-4ad1-ada5-57a87c48c8da",
+      "uploadedAt": "2026-02-18T14:35:26.524Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 159.93,
+      "lessonId": "02_ads_m04_ads_economics_009",
+      "videoId": "6c8db6f6-5524-410e-adc2-d883ae2f1a8f",
+      "uploadedAt": "2026-02-18T14:35:54.746Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 166.25,
+      "lessonId": "02_ads_m07_optimization_003",
+      "videoId": "319a113a-27fd-4dc1-9115-7c4a36a43379",
+      "uploadedAt": "2026-02-18T14:37:15.871Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 174.13,
+      "lessonId": "02_ads_m00_bonus_ai_external_006",
+      "videoId": "3ed02c11-a46d-468c-9f19-984c011ddcf9",
+      "uploadedAt": "2026-02-18T14:38:31.963Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 177.66,
+      "lessonId": "02_ads_m02_top_004",
+      "videoId": "f286d0c4-bf83-425f-a5d9-57c4f059523b",
+      "uploadedAt": "2026-02-18T14:39:16.336Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 182.4,
+      "lessonId": "02_ads_m00_bonus_ai_external_005",
+      "videoId": "4f889c15-710d-4ad6-9862-423213686fd2",
+      "uploadedAt": "2026-02-18T14:40:04.254Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 184.43,
+      "lessonId": "02_ads_m00_bonus_ai_external_003",
+      "videoId": "433d9068-7515-4591-bcdb-66ef29e99833",
+      "uploadedAt": "2026-02-18T14:40:57.078Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 187.87,
+      "lessonId": "02_ads_m02_top_007",
+      "videoId": "2f3fa3c4-3956-49fc-8d41-384c83be6359",
+      "uploadedAt": "2026-02-18T14:41:45.647Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 193.69,
+      "lessonId": "02_ads_m06_strategies_007",
+      "videoId": "ee35e6cd-febf-47b0-bdc9-4db16000b090",
+      "uploadedAt": "2026-02-18T14:42:22.005Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 197.63,
+      "lessonId": "02_ads_m04_ads_economics_004",
+      "videoId": "8085bfd7-91f6-44fb-9b09-addaa9b478e9",
+      "uploadedAt": "2026-02-18T14:42:56.864Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 213.77,
+      "lessonId": "02_ads_m06_strategies_011",
+      "videoId": "e01d88d4-e348-42ce-9530-e4eb7e76baac",
+      "uploadedAt": "2026-02-18T14:43:36.330Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 217.37,
+      "lessonId": "02_ads_m06_strategies_009",
+      "videoId": "26cf4ed6-b91e-4b19-aa42-c31725648e69",
+      "uploadedAt": "2026-02-18T14:44:08.618Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 239,
+      "lessonId": "02_ads_m00_bonus_ai_external_004",
+      "videoId": "0932aeb9-d6aa-466b-a67b-b8c26a37cbe5",
+      "uploadedAt": "2026-02-18T14:44:48.793Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 242.21,
+      "lessonId": "02_ads_m04_ads_economics_006",
+      "videoId": "28142894-1cc9-458a-b6d7-c76c1c03d3ac",
+      "uploadedAt": "2026-02-18T14:45:23.645Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 248.64,
+      "lessonId": "02_ads_m00_updates_002",
+      "videoId": "0cfea296-13ae-4325-8f0f-dde1396b64ac",
+      "uploadedAt": "2026-02-18T14:46:02.929Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 262.75,
+      "lessonId": "02_ads_m01_prep_001",
+      "videoId": "4cd8a194-82da-4505-a97a-8e7ac4e2b2cc",
+      "uploadedAt": "2026-02-18T14:47:12.522Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 282.14,
+      "lessonId": "02_ads_m03_visual_ctr_001",
+      "videoId": "92aef1c7-b77e-4f33-8520-84b0db357b2a",
+      "uploadedAt": "2026-02-18T14:47:56.936Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 288.82,
+      "lessonId": "02_ads_m03_visual_ctr_002",
+      "videoId": "7303a2e9-2135-4338-a3dc-aedd65b78160",
+      "uploadedAt": "2026-02-18T14:48:40.051Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 289.45,
+      "lessonId": "02_ads_m07_optimization_005",
+      "videoId": "20b39c77-ecb1-4c9b-a5e2-d2191c7379cb",
+      "uploadedAt": "2026-02-18T14:49:33.002Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 294.72,
+      "lessonId": "02_ads_m06_strategies_003",
+      "videoId": "4c9ee2ee-2df8-4383-8e3a-e41be0c8de58",
+      "uploadedAt": "2026-02-18T14:50:23.038Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 299.56,
+      "lessonId": "02_ads_m06_strategies_010",
+      "videoId": "08348c54-db91-49b3-bd64-7ce9713597eb",
+      "uploadedAt": "2026-02-18T14:51:18.055Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 315.71,
+      "lessonId": "02_ads_m04_ads_economics_003",
+      "videoId": "6f06de8e-818d-4db2-a924-c809bf16879c",
+      "uploadedAt": "2026-02-18T14:52:08.787Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 331.75,
+      "lessonId": "02_ads_m04_ads_economics_001",
+      "videoId": "a15b0f6a-400c-4107-b9fa-e1b882f1b5e2",
+      "uploadedAt": "2026-02-18T14:52:59.005Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 381.34,
+      "lessonId": "02_ads_m04_ads_economics_010",
+      "videoId": "b625a4dd-bb50-4bfd-b7ff-10ed2353c4f8",
+      "uploadedAt": "2026-02-18T14:53:56.098Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 383.99,
+      "lessonId": "02_ads_m03_visual_ctr_005",
+      "videoId": "430d5a96-afd3-4209-9903-f25f372eacaa",
+      "uploadedAt": "2026-02-18T14:55:02.700Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 386.8,
+      "lessonId": "02_ads_m04_ads_economics_005",
+      "videoId": "1a16843a-073a-4877-8521-4a338cbe0c24",
+      "uploadedAt": "2026-02-18T14:56:11.809Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 393.05,
+      "lessonId": "02_ads_m05_tools_006",
+      "videoId": "e6321a2b-7889-4014-82ac-52a6701c86ad",
+      "uploadedAt": "2026-02-18T14:57:43.784Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 393.51,
+      "lessonId": "02_ads_m01_prep_003",
+      "videoId": "be173762-6998-46f5-bd3f-012ffc8674a0",
+      "uploadedAt": "2026-02-18T14:58:58.813Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 406.08,
+      "lessonId": "02_ads_m03_visual_ctr_004",
+      "videoId": "b3456eba-0d74-4909-92fb-b11128da0d6c",
+      "uploadedAt": "2026-02-18T15:00:09.826Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 418.37,
+      "lessonId": "02_ads_m01_prep_004",
+      "videoId": "db53058f-b507-4a9c-a6cf-5e542ae75e3c",
+      "uploadedAt": "2026-02-18T15:01:32.548Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 418.55,
+      "lessonId": "02_ads_m05_tools_002",
+      "videoId": "73f7ad86-fb65-43ac-9c85-4fd0e51fcb6d",
+      "uploadedAt": "2026-02-18T15:02:44.926Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 468.22,
+      "lessonId": "02_ads_m04_ads_economics_007",
+      "videoId": "54f43f8d-e502-4b7b-a5c9-7795188daa01",
+      "uploadedAt": "2026-02-18T15:04:32.701Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 508.7,
+      "lessonId": "02_ads_m06_strategies_002",
+      "videoId": "e7264a55-53a3-438f-b8e7-19670e602fef",
+      "uploadedAt": "2026-02-18T15:07:10.276Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 526.58,
+      "lessonId": "02_ads_m05_tools_007",
+      "videoId": "897ab3b4-3ac9-427b-90df-f432245e023f",
+      "uploadedAt": "2026-02-18T15:09:37.559Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 582.02,
+      "lessonId": "02_ads_m04_ads_economics_002",
+      "videoId": "8f13ea97-a180-45b7-9a6b-47cd7e91bffa",
+      "uploadedAt": "2026-02-18T15:12:19.348Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 590.9,
+      "lessonId": "02_ads_m02_top_005",
+      "videoId": "c4ce8362-dd8c-4f16-8e3d-94ab64e7e322",
+      "uploadedAt": "2026-02-18T15:15:45.295Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 595.51,
+      "lessonId": "02_ads_m02_top_001",
+      "videoId": "34521e3c-b10e-4d47-be13-a12d3de14b8c",
+      "uploadedAt": "2026-02-18T15:18:08.436Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 606.16,
+      "lessonId": "02_ads_m04_ads_economics_008",
+      "videoId": "868b86b6-fbf1-4601-a44b-2c437a6380f6",
+      "uploadedAt": "2026-02-18T15:20:17.936Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 609.35,
+      "lessonId": "02_ads_m05_tools_001",
+      "videoId": "98bea302-21b6-4859-802e-fb13b522a42b",
+      "uploadedAt": "2026-02-18T15:22:31.096Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 709.1,
+      "lessonId": "02_ads_m02_top_006",
+      "videoId": "5e45ba5f-b6f0-451f-b98b-ebf5bfc8ac89",
+      "uploadedAt": "2026-02-18T15:25:19.392Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 723.79,
+      "lessonId": "02_ads_m01_prep_002",
+      "videoId": "42cdcc42-edf8-4cfc-8085-31c885430459",
+      "uploadedAt": "2026-02-18T15:28:00.922Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 775.11,
+      "lessonId": "02_ads_m03_visual_ctr_003",
+      "videoId": "9a8905b2-3d10-43da-a4b1-84a47ef2733c",
+      "uploadedAt": "2026-02-18T15:32:44.954Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 824.74,
+      "lessonId": "02_ads_m02_top_002",
+      "videoId": "a824334c-4017-4180-8aac-6af682c9fdfb",
+      "uploadedAt": "2026-02-18T15:36:26.141Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 857.29,
+      "lessonId": "02_ads_m02_top_003",
+      "videoId": "172dd0b6-a2b8-458f-a3d8-5609e1a3efa2",
+      "uploadedAt": "2026-02-18T15:39:49.406Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 1495.93,
+      "lessonId": "02_ads_m00_updates_001",
+      "videoId": "4508a521-dd94-4558-9db9-771e58446e0c",
+      "uploadedAt": "2026-02-18T16:20:18.198Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 1940.88,
+      "lessonId": "02_ads_m00_bonus_ai_external_002",
+      "videoId": "1319c447-407e-418b-8b66-8caeb3a4baf2",
+      "uploadedAt": "2026-02-18T16:25:43.833Z"
+    },
+    {
+      "courseId": "02_ads",
+      "folderId": "97d2cadb-4e63-4eb5-9d50-195d71436f20",
+      "sizeMB": 2266.98,
+      "lessonId": "02_ads_m00_bonus_ai_external_001",
+      "videoId": "f6e68524-31d4-4bd0-bb14-7570f38dd504",
+      "uploadedAt": "2026-02-18T16:32:33.887Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 12.5,
+      "lessonId": "03_ai_m01_intro_005",
+      "videoId": "9d4d17a9-4c68-4c0a-b8ea-893d06807da9",
+      "uploadedAt": "2026-02-19T08:00:26.716Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 15.9,
+      "lessonId": "03_ai_m08_neurointegrator_005",
+      "videoId": "e6119495-84e0-4220-b6c8-34b17b5575ac",
+      "uploadedAt": "2026-02-19T08:00:34.778Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 27.5,
+      "lessonId": "03_ai_m01_intro_004",
+      "videoId": "bb75f394-9fd2-40ce-945b-fc1c23d2c0d4",
+      "uploadedAt": "2026-02-19T08:01:16.250Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 29.02,
+      "lessonId": "03_ai_m04_neurovideo_010",
+      "videoId": "bf94c613-02be-4a59-a361-e107d3ef737f",
+      "uploadedAt": "2026-02-19T08:01:36.065Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 31.75,
+      "lessonId": "03_ai_m04_neurovideo_008",
+      "videoId": "e1c1b682-4813-421d-b93b-3a022de2b674",
+      "uploadedAt": "2026-02-19T08:01:52.362Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 35.73,
+      "lessonId": "03_ai_m06_neuro_ads_006",
+      "videoId": "9e7dd878-0705-4229-9e14-7458f8bc04c1",
+      "uploadedAt": "2026-02-19T08:02:07.756Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 36.13,
+      "lessonId": "03_ai_m01_intro_006",
+      "videoId": "3b0b1c51-115a-46cd-ba75-3440a0df08f0",
+      "uploadedAt": "2026-02-19T08:02:28.835Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 44.88,
+      "lessonId": "03_ai_m04_neurovideo_007",
+      "videoId": "8bdb2887-7ea7-4db6-820a-fd498470bc1e",
+      "uploadedAt": "2026-02-19T08:03:03.670Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 48.3,
+      "lessonId": "03_ai_m01_intro_007",
+      "videoId": "bef14bfc-b299-4807-9369-e333a7906df6",
+      "uploadedAt": "2026-02-19T08:03:23.974Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 65.73,
+      "lessonId": "03_ai_m01_intro_009",
+      "videoId": "83981f9c-439e-496a-9c2a-102d98ab422f",
+      "uploadedAt": "2026-02-19T08:04:00.686Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 70.07,
+      "lessonId": "03_ai_m04_neurovideo_003",
+      "videoId": "c2b92f6c-50f1-45f6-95b6-479377b10b51",
+      "uploadedAt": "2026-02-19T08:04:28.121Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 73.3,
+      "lessonId": "03_ai_m05_neurotexts_006",
+      "videoId": "fb97dbd2-e7f3-46e8-8b27-0303a1cb2d17",
+      "uploadedAt": "2026-02-19T08:05:04.696Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 79.52,
+      "lessonId": "03_ai_m03_visual_005",
+      "videoId": "9314fd13-3acc-439c-ab98-bac14ac572de",
+      "uploadedAt": "2026-02-19T08:05:49.185Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 83.46,
+      "lessonId": "03_ai_m09_neuroassistant_001",
+      "videoId": "30f58a0d-569c-406f-9faf-7f874e2c2659",
+      "uploadedAt": "2026-02-19T08:07:05.308Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 86.08,
+      "lessonId": "03_ai_m02_neuroanalytics_004",
+      "videoId": "4ccccce6-7f7c-4299-8a15-dae88a0035fb",
+      "uploadedAt": "2026-02-19T08:07:56.908Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 93.45,
+      "lessonId": "03_ai_m07_neuroscout_006",
+      "videoId": "e300e1e4-da95-4eb3-851a-071bd7cf46dd",
+      "uploadedAt": "2026-02-19T08:09:02.858Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 96.03,
+      "lessonId": "03_ai_m08_neurointegrator_003",
+      "videoId": "13729b53-2ece-4739-a54a-b31c2653fb9c",
+      "uploadedAt": "2026-02-19T08:09:49.627Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 100.24,
+      "lessonId": "03_ai_m01_intro_012",
+      "videoId": "35738c7b-6682-4b15-b3ab-54e1355771e3",
+      "uploadedAt": "2026-02-19T08:10:42.546Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 103.59,
+      "lessonId": "03_ai_m08_neurointegrator_002",
+      "videoId": "b59c6bb0-8531-40f3-bef4-38e446aa8d87",
+      "uploadedAt": "2026-02-19T08:11:41.424Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 105.52,
+      "lessonId": "03_ai_m03_visual_012",
+      "videoId": "b8fa6306-778a-4f38-b4e3-d47bb2468fee",
+      "uploadedAt": "2026-02-19T08:12:41.606Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 111.37,
+      "lessonId": "03_ai_m07_neuroscout_001",
+      "videoId": "51aa3f1b-c0c0-4520-a07f-36be1687cf51",
+      "uploadedAt": "2026-02-19T08:13:57.420Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 117.12,
+      "lessonId": "03_ai_m04_neurovideo_001",
+      "videoId": "ae967d18-263d-49b1-959f-2cd6bda321bd",
+      "uploadedAt": "2026-02-19T08:15:05.071Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 121.51,
+      "lessonId": "03_ai_m01_intro_014",
+      "videoId": "09743122-85a1-4c11-9974-3c168cab91a4",
+      "uploadedAt": "2026-02-19T08:15:59.237Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 123.19,
+      "lessonId": "03_ai_m07_neuroscout_009",
+      "videoId": "7ca2b018-883f-440c-b991-1bff73470e12",
+      "uploadedAt": "2026-02-19T08:16:51.205Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 126.14,
+      "lessonId": "03_ai_m01_intro_015",
+      "videoId": "927e104f-1c3d-4f89-b580-59cc5a14e447",
+      "uploadedAt": "2026-02-19T08:17:46.672Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 127.09,
+      "lessonId": "03_ai_m07_neuroscout_012",
+      "videoId": "2fe63168-385f-4b24-90e4-200b7d926109",
+      "uploadedAt": "2026-02-19T08:19:01.210Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 127.63,
+      "lessonId": "03_ai_m04_neurovideo_002",
+      "videoId": "f22392ea-4844-4c14-a7b7-8993a3a4e7b1",
+      "uploadedAt": "2026-02-19T08:20:49.245Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 129.7,
+      "lessonId": "03_ai_m02_neuroanalytics_001",
+      "videoId": "59c72b9e-8414-4703-9d98-442dc33b9b11",
+      "uploadedAt": "2026-02-19T08:22:11.608Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 134,
+      "lessonId": "03_ai_m05_neurotexts_009",
+      "videoId": "816a7417-7cfe-4c3f-82be-52a2c1369079",
+      "uploadedAt": "2026-02-19T08:23:46.370Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 137.91,
+      "lessonId": "03_ai_m03_visual_013",
+      "videoId": "7a4af522-1b09-4678-a85c-72d8cf9aa0e7",
+      "uploadedAt": "2026-02-19T08:25:15.351Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 139.1,
+      "lessonId": "03_ai_m01_intro_010",
+      "videoId": "1eff6a66-588f-4a93-a8e4-5cb93e96dfc7",
+      "uploadedAt": "2026-02-19T08:26:42.539Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 140.96,
+      "lessonId": "03_ai_m03_visual_015",
+      "videoId": "ca65c97a-2154-44f3-b9b9-2d5539a66416",
+      "uploadedAt": "2026-02-19T08:28:15.387Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 143.22,
+      "lessonId": "03_ai_m03_visual_006",
+      "videoId": "7f3fe6c7-14f2-4c60-abc9-6f64d3e0cc17",
+      "uploadedAt": "2026-02-19T08:29:55.512Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 148.02,
+      "lessonId": "03_ai_m08_neurointegrator_004",
+      "videoId": "5ce5c712-ec59-428d-8c0d-464e61255932",
+      "uploadedAt": "2026-02-19T08:32:32.113Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 155.2,
+      "lessonId": "03_ai_m03_visual_007",
+      "videoId": "062f307b-0981-4137-9a7f-f231671b0d79",
+      "uploadedAt": "2026-02-19T08:34:31.754Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 157.03,
+      "lessonId": "03_ai_m04_neurovideo_011",
+      "videoId": "d080d57c-5d71-4777-b1e9-0aa7b11369dc",
+      "uploadedAt": "2026-02-19T08:36:16.835Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 162.5,
+      "lessonId": "03_ai_m04_neurovideo_006",
+      "videoId": "f494facf-5d5d-42c0-b343-317fa22f5b2e",
+      "uploadedAt": "2026-02-19T08:37:39.799Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 163.5,
+      "lessonId": "03_ai_m04_neurovideo_005",
+      "videoId": "81a1c645-d4df-400f-90a6-2c01957104f2",
+      "uploadedAt": "2026-02-19T08:38:55.508Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 165.02,
+      "lessonId": "03_ai_m01_intro_013",
+      "videoId": "21bc5518-77cd-4769-95fc-28f13b4f1e03",
+      "uploadedAt": "2026-02-19T08:41:52.943Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 167.55,
+      "lessonId": "03_ai_m01_intro_002",
+      "videoId": "2eb18770-8f0b-457f-a409-43da0e7fbc19",
+      "uploadedAt": "2026-02-19T08:44:00.285Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 178.57,
+      "lessonId": "03_ai_m06_neuro_ads_001",
+      "videoId": "5eea6b9b-14a8-45db-bcb4-09d59bc1633b",
+      "uploadedAt": "2026-02-19T08:45:22.202Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 195.41,
+      "lessonId": "03_ai_m03_visual_001",
+      "videoId": "bb173a77-4d65-4f06-9aee-1b06af9cb740",
+      "uploadedAt": "2026-02-19T08:47:08.063Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 203.61,
+      "lessonId": "03_ai_m08_neurointegrator_001",
+      "videoId": "273af370-1ae2-45be-bec1-bfc3215309fe",
+      "uploadedAt": "2026-02-19T08:49:40.009Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 208.51,
+      "lessonId": "03_ai_m06_neuro_ads_008",
+      "videoId": "18cc370a-0145-4f0d-bb43-95dc9981c623",
+      "uploadedAt": "2026-02-19T08:54:07.041Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 209.52,
+      "lessonId": "03_ai_m07_neuroscout_005",
+      "videoId": "879b4f34-7c19-4027-be3e-524564977931",
+      "uploadedAt": "2026-02-19T08:59:04.396Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 210.74,
+      "lessonId": "03_ai_m05_neurotexts_001",
+      "videoId": "08b5a812-cea1-4279-bcd1-ec01f615d345",
+      "uploadedAt": "2026-02-19T09:01:21.222Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 216.09,
+      "lessonId": "03_ai_m03_visual_009",
+      "videoId": "b8dd5835-67b7-438d-a127-37c54c77e373",
+      "uploadedAt": "2026-02-19T09:02:38.413Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 221.45,
+      "lessonId": "03_ai_m06_neuro_ads_007",
+      "videoId": "14178f56-4f35-43cb-ae64-2faf5075a3ba",
+      "uploadedAt": "2026-02-19T09:06:44.721Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 225.01,
+      "lessonId": "03_ai_m06_neuro_ads_004",
+      "videoId": "1fd8ed7a-13f8-4d49-b913-16faad3adfcc",
+      "uploadedAt": "2026-02-19T09:08:51.018Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 225.2,
+      "lessonId": "03_ai_m06_neuro_ads_002",
+      "videoId": "ab04c1fe-1d86-45ea-bf6c-822351fb9dfe",
+      "uploadedAt": "2026-02-19T09:11:43.144Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 225.53,
+      "lessonId": "03_ai_m07_neuroscout_014",
+      "videoId": "fdb858fa-0297-4aa5-88fc-ae0b90dd214f",
+      "uploadedAt": "2026-02-19T09:14:13.642Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 235.7,
+      "lessonId": "03_ai_m03_visual_002",
+      "videoId": "461cf1c4-0c3c-4c84-abaa-aee963027db4",
+      "uploadedAt": "2026-02-19T09:17:33.784Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 244.64,
+      "lessonId": "03_ai_m02_neuroanalytics_008",
+      "videoId": "c1d25d36-d30d-4c8a-a259-7e5b47ecf0da",
+      "uploadedAt": "2026-02-19T09:19:19.046Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 249.97,
+      "lessonId": "03_ai_m05_neurotexts_007",
+      "videoId": "bac754d6-6a99-4d71-a83a-bbfed9d1414b",
+      "uploadedAt": "2026-02-19T09:21:55.452Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 250.06,
+      "lessonId": "03_ai_m06_neuro_ads_003",
+      "videoId": "f1237941-ecfb-4ccf-8cc3-82b8787b743d",
+      "uploadedAt": "2026-02-19T09:24:06.377Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 256.41,
+      "lessonId": "03_ai_m07_neuroscout_002",
+      "videoId": "04634ce6-7e96-43b6-89b1-ffdb482d8930",
+      "uploadedAt": "2026-02-19T09:27:06.899Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 264.06,
+      "lessonId": "03_ai_m01_intro_008",
+      "videoId": "790296d0-0aef-4db0-a48b-9933a1d5d640",
+      "uploadedAt": "2026-02-19T09:29:35.662Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 266.81,
+      "lessonId": "03_ai_m03_visual_004",
+      "videoId": "f07341cc-f8e4-4976-b758-417da9742c4a",
+      "uploadedAt": "2026-02-19T09:34:42.675Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 266.85,
+      "lessonId": "03_ai_m07_neuroscout_011",
+      "videoId": "1839f27f-d2b9-4862-aea8-bf6fcfac8e85",
+      "uploadedAt": "2026-02-19T09:37:20.708Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 273.92,
+      "lessonId": "03_ai_m05_neurotexts_004",
+      "videoId": "314de781-08a5-4369-98ad-c8051f4da28d",
+      "uploadedAt": "2026-02-19T09:40:26.473Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 279.84,
+      "lessonId": "03_ai_m04_neurovideo_012",
+      "videoId": "c6e4c4a8-aeb0-49bf-8d73-e6d9efd72c91",
+      "uploadedAt": "2026-02-19T09:43:13.982Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 281.34,
+      "lessonId": "03_ai_m06_neuro_ads_005",
+      "videoId": "9f1d569b-feb5-450b-9057-09dd1e358475",
+      "uploadedAt": "2026-02-19T09:46:03.920Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 285.51,
+      "lessonId": "03_ai_m07_neuroscout_013",
+      "videoId": "0777ac25-80e2-48ca-9740-6400ec7f9552",
+      "uploadedAt": "2026-02-19T09:48:27.742Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 299.68,
+      "lessonId": "03_ai_m02_neuroanalytics_003",
+      "videoId": "6bc348a7-5865-4f49-b9d9-2d6f1c79b72a",
+      "uploadedAt": "2026-02-19T09:50:34.772Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 314.85,
+      "lessonId": "03_ai_m09_neuroassistant_004",
+      "videoId": "2766323b-d015-4067-844f-8a93416236f2",
+      "uploadedAt": "2026-02-19T09:53:45.060Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 316.28,
+      "lessonId": "03_ai_m05_neurotexts_005",
+      "videoId": "d233ce7e-59a2-41f1-a293-7e098793609a",
+      "uploadedAt": "2026-02-19T09:57:22.518Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 326.76,
+      "lessonId": "03_ai_m02_neuroanalytics_009",
+      "videoId": "8c4fde91-3fca-41c8-8d0a-f0b0f8854b50",
+      "uploadedAt": "2026-02-19T10:02:15.749Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 344.56,
+      "lessonId": "03_ai_m07_neuroscout_010",
+      "videoId": "76dff914-4da9-49ef-838a-be0a85e98de5",
+      "uploadedAt": "2026-02-19T10:08:21.643Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 346.74,
+      "lessonId": "03_ai_m07_neuroscout_007",
+      "videoId": "e576d417-90bb-4d2f-bde4-5fce4347d3df",
+      "uploadedAt": "2026-02-19T10:14:00.188Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 369.07,
+      "lessonId": "03_ai_m07_neuroscout_003",
+      "videoId": "772353d6-84b4-484b-84aa-25d624e118c4",
+      "uploadedAt": "2026-02-19T10:17:35.021Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 369.96,
+      "lessonId": "03_ai_m02_neuroanalytics_006",
+      "videoId": "841c8677-6505-4fe6-b214-40e781504989",
+      "uploadedAt": "2026-02-19T10:22:25.961Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 375.32,
+      "lessonId": "03_ai_m05_neurotexts_003",
+      "videoId": "6fe5a25b-a7f4-4536-95a7-107edd7e91cc",
+      "uploadedAt": "2026-02-19T10:27:53.371Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 379.45,
+      "lessonId": "03_ai_m01_intro_003",
+      "videoId": "204d9c30-1fbd-4a37-af8e-2fc2598b90ab",
+      "uploadedAt": "2026-02-19T10:31:40.068Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 390.47,
+      "lessonId": "03_ai_m07_neuroscout_004",
+      "videoId": "ec4545a7-31e6-4b05-811c-68bf6061d98b",
+      "uploadedAt": "2026-02-19T10:38:12.071Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 407.95,
+      "lessonId": "03_ai_m08_neurointegrator_006",
+      "videoId": "d632b793-d64b-48dd-a33f-203e50935502",
+      "uploadedAt": "2026-02-19T10:44:28.157Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 413.46,
+      "lessonId": "03_ai_m09_neuroassistant_002",
+      "videoId": "48ce598e-f490-489b-8127-c61045c7d568",
+      "uploadedAt": "2026-02-19T10:52:20.927Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 423.6,
+      "lessonId": "03_ai_m04_neurovideo_009",
+      "videoId": "c9fca5ee-4e81-49f9-aee9-d5162f6f494f",
+      "uploadedAt": "2026-02-19T10:58:52.108Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 450.04,
+      "lessonId": "03_ai_m02_neuroanalytics_007",
+      "videoId": "1885482d-99b9-41b3-8d9d-7670882f84b5",
+      "uploadedAt": "2026-02-19T11:07:55.352Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 455.7,
+      "lessonId": "03_ai_m02_neuroanalytics_005",
+      "videoId": "1bcad9ea-d76f-4f2b-a9d8-b4fff0cc8d45",
+      "uploadedAt": "2026-02-19T11:13:40.087Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 476.72,
+      "lessonId": "03_ai_m03_visual_014",
+      "videoId": "034bae9b-0a8a-4db9-9fb5-3a63303aa1b6",
+      "uploadedAt": "2026-02-19T11:21:20.180Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 488.92,
+      "lessonId": "03_ai_m01_intro_001",
+      "videoId": "f0cd1738-0781-431d-a351-767f7e1dd5dd",
+      "uploadedAt": "2026-02-19T11:27:21.970Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 506.1,
+      "lessonId": "03_ai_m07_neuroscout_008",
+      "videoId": "29ade24d-3b0e-43f9-bad0-f3347e857358",
+      "uploadedAt": "2026-02-19T11:32:01.609Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 506.74,
+      "lessonId": "03_ai_m03_visual_003",
+      "videoId": "28af24f1-f1fb-4403-9fad-5a958819a733",
+      "uploadedAt": "2026-02-19T11:36:24.882Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 507.55,
+      "lessonId": "03_ai_m02_neuroanalytics_002",
+      "videoId": "bb064adf-44f0-4f77-b09f-f73a28d58015",
+      "uploadedAt": "2026-02-19T11:42:52.821Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 571.75,
+      "lessonId": "03_ai_m01_intro_011",
+      "videoId": "2ff58f27-75bf-487c-b63d-e8640ac4e6cd",
+      "uploadedAt": "2026-02-19T11:51:43.916Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 604.67,
+      "lessonId": "03_ai_m03_visual_011",
+      "videoId": "949e145a-cda6-4c24-85ce-c8df3ab62740",
+      "uploadedAt": "2026-02-19T11:57:49.658Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 661.33,
+      "lessonId": "03_ai_m03_visual_010",
+      "videoId": "e01aeec2-8cff-4bf3-aa93-7e6c09690faa",
+      "uploadedAt": "2026-02-19T12:05:19.693Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 692.67,
+      "lessonId": "03_ai_m09_neuroassistant_003",
+      "videoId": "b4fbeb9d-6046-48fb-8125-ccc1d25461d8",
+      "uploadedAt": "2026-02-19T12:14:48.415Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 725.63,
+      "lessonId": "03_ai_m05_neurotexts_002",
+      "videoId": "87499057-737e-4313-bc33-8e3f58c98009",
+      "uploadedAt": "2026-02-19T12:22:38.300Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 760.71,
+      "lessonId": "03_ai_m05_neurotexts_008",
+      "videoId": "957c0678-30ed-4021-b0d4-f329c5efc914",
+      "uploadedAt": "2026-02-19T12:30:30.801Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 871.59,
+      "lessonId": "03_ai_m03_visual_008",
+      "videoId": "27a802e3-6b32-4e71-bc9b-74c29111cbd0",
+      "uploadedAt": "2026-02-19T12:45:10.056Z"
+    },
+    {
+      "courseId": "03_ai",
+      "folderId": "639d0266-4fa8-4e0f-93e1-4128d1ba6283",
+      "sizeMB": 82.26,
+      "lessonId": "03_ai_m04_neurovideo_004",
+      "videoId": "ab1ef54d-8af6-43c3-9ea5-20fa5a95f2ac",
+      "uploadedAt": "2026-02-20T10:00:00.000Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 0,
+      "lessonId": "04_workshops_w01_feb_ads_001",
+      "videoId": "manual-upload-by-user",
+      "uploadedAt": "2026-02-20T10:00:00.000Z"
+    },
+    {
+      "courseId": "01_analytics",
+      "folderId": "71777756-e93a-4484-87eb-570c7588640f",
+      "sizeMB": 522.12,
+      "lessonId": "01_analytics_m00_bonus_autobidder_001",
+      "videoId": "ad02002a-cf7f-4837-bd58-29a165205ecf",
+      "uploadedAt": "2026-02-20T08:50:13.739Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 686.37,
+      "lessonId": "04_workshops_w04_may_navigator_002",
+      "videoId": "f50f35a0-c634-4183-bea4-a750b2b243c3",
+      "uploadedAt": "2026-02-20T08:58:37.473Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 820.69,
+      "lessonId": "04_workshops_w04_may_navigator_001",
+      "videoId": "244a57c2-c4bd-4d97-ac31-00c686b415af",
+      "uploadedAt": "2026-02-20T09:13:57.521Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 1250.42,
+      "lessonId": "04_workshops_w04_may_navigator_003",
+      "videoId": "a40027ef-c2c9-4761-8175-9f6434d5e4f0",
+      "uploadedAt": "2026-02-20T09:23:28.828Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 1581.83,
+      "lessonId": "04_workshops_w11_dec_fails_002",
+      "videoId": "54990b17-777a-4fcf-b1a7-41a1d5be1cec",
+      "uploadedAt": "2026-02-20T09:32:26.414Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2026.31,
+      "lessonId": "04_workshops_w06_jul_q4_001",
+      "videoId": "22f3a842-d729-4ba2-a421-863152e9f528",
+      "uploadedAt": "2026-02-20T09:41:31.733Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2032.25,
+      "lessonId": "04_workshops_w09_oct_ai2_001",
+      "videoId": "52a3d3ed-4a19-4834-b710-a9521ed54fd1",
+      "uploadedAt": "2026-02-20T09:56:18.338Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2042.21,
+      "lessonId": "04_workshops_w02_mar_detox_002",
+      "videoId": "a09b4e6d-d55b-409a-8a6f-34426f232498",
+      "uploadedAt": "2026-02-20T10:07:08.387Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2082.44,
+      "lessonId": "04_workshops_w11_dec_fails_001",
+      "videoId": "56e4a52a-ed25-4d78-8b21-2e927169e5de",
+      "uploadedAt": "2026-02-20T10:15:02.098Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2349.82,
+      "lessonId": "04_workshops_w09_oct_ai2_002",
+      "videoId": "727e49e3-1a1b-4762-9751-b5e5a49b606d",
+      "uploadedAt": "2026-02-20T10:27:16.131Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2411.27,
+      "lessonId": "04_workshops_w07_aug_ai_002",
+      "videoId": "f15a188c-2595-433b-bd47-e7655fdb72dd",
+      "uploadedAt": "2026-02-20T10:39:50.080Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2492.88,
+      "lessonId": "04_workshops_w10_nov_crisis_002",
+      "videoId": "62f07626-4ddf-4f10-809f-a998eaa81c76",
+      "uploadedAt": "2026-02-20T10:55:46.935Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2530.19,
+      "lessonId": "04_workshops_w07_aug_ai_001",
+      "videoId": "2805e12a-7e40-4b3a-979e-c1198d80921b",
+      "uploadedAt": "2026-02-20T11:05:39.517Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2579.89,
+      "lessonId": "04_workshops_w08_sep_100days_002",
+      "videoId": "9a0cd929-125b-4fde-87ad-49ab2966a734",
+      "uploadedAt": "2026-02-20T11:26:19.362Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2599.43,
+      "lessonId": "04_workshops_w10_nov_crisis_001",
+      "videoId": "b418c866-3b89-4cdb-91b6-e1961f3957e9",
+      "uploadedAt": "2026-02-20T11:53:40.636Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2628.15,
+      "lessonId": "04_workshops_w08_sep_100days_001",
+      "videoId": "dbec96ac-79ad-4ec3-9f86-289680268755",
+      "uploadedAt": "2026-02-20T12:07:53.687Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 2899.45,
+      "lessonId": "04_workshops_w02_mar_detox_003",
+      "videoId": "6ceb7d96-5d8f-4397-8936-cba1f7489f2a",
+      "uploadedAt": "2026-02-20T12:30:36.573Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 3755.63,
+      "lessonId": "04_workshops_w06_jul_q4_002",
+      "videoId": "eea865b5-f60c-4470-8225-27023c0396b0",
+      "uploadedAt": "2026-02-20T13:07:29.970Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 4574.34,
+      "lessonId": "04_workshops_w01_feb_ads_002",
+      "videoId": "cc14a78f-897c-432e-896b-5328b1527196",
+      "uploadedAt": "2026-02-20T13:33:37.994Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 4725.9,
+      "lessonId": "04_workshops_w05_jun_seo_001",
+      "videoId": "7588ffda-cf52-4f0c-9b42-08475353da04",
+      "uploadedAt": "2026-02-20T14:21:47.479Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 5022.22,
+      "lessonId": "04_workshops_w01_feb_ads_003",
+      "videoId": "128c2759-6188-41c7-b6c4-4aa1863133dc",
+      "uploadedAt": "2026-02-20T14:58:19.736Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 5237.44,
+      "lessonId": "04_workshops_w05_jun_seo_002",
+      "videoId": "c36713cc-568c-440d-98b8-87da89355a44",
+      "uploadedAt": "2026-02-20T15:40:10.784Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 4354.62,
+      "lessonId": "04_workshops_w02_mar_detox_001",
+      "videoId": "f2271592-e83e-4149-bbda-6cb8739d02fe",
+      "uploadedAt": "2026-02-20T20:22:09.647Z"
+    },
+    {
+      "courseId": "04_workshops",
+      "folderId": "97b9a298-2fd9-4730-b63a-57991dbd2d0d",
+      "sizeMB": 6317.8,
+      "lessonId": "04_workshops_w03_apr_growth_001",
+      "videoId": "16c1e7a8-b268-4446-9b1b-3309e5f4c5af",
+      "uploadedAt": "2026-02-20T20:26:30.950Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 50.53,
+      "lessonId": "05_ozon_m01_economics_003",
+      "videoId": "313b8c8d-3d4f-444e-8bdf-e7282f11d0da",
+      "uploadedAt": "2026-02-20T20:35:18.115Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 75.89,
+      "lessonId": "05_ozon_m01_economics_004",
+      "videoId": "ae81e2a2-8549-41e3-a418-7b0b2ea0280e",
+      "uploadedAt": "2026-02-20T20:35:27.288Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 90.81,
+      "lessonId": "05_ozon_m02_product_card_007",
+      "videoId": "3e063ee3-f156-406f-85e4-3ec3d144705b",
+      "uploadedAt": "2026-02-20T20:35:36.750Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 107.6,
+      "lessonId": "05_ozon_m04_analytics_005",
+      "videoId": "a7b759e7-f71c-4b5b-8527-0edf068cf85a",
+      "uploadedAt": "2026-02-20T20:35:46.584Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 114.15,
+      "lessonId": "05_ozon_m04_analytics_011",
+      "videoId": "0999615e-dd9d-4489-86f7-6e792515abcd",
+      "uploadedAt": "2026-02-20T20:35:56.382Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 118.16,
+      "lessonId": "05_ozon_m00_knowledge_base_007",
+      "videoId": "37949792-06e9-4a19-9c95-36037a46e8a5",
+      "uploadedAt": "2026-02-20T20:36:06.334Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 120.64,
+      "lessonId": "05_ozon_m04_analytics_009",
+      "videoId": "ab1b41d4-f9f7-4c51-991c-358b3878c526",
+      "uploadedAt": "2026-02-20T20:36:16.383Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 121.41,
+      "lessonId": "05_ozon_m00_knowledge_base_001",
+      "videoId": "24caabf8-83f1-4b03-beaf-86e6fd99774b",
+      "uploadedAt": "2026-02-20T20:36:26.524Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 136.71,
+      "lessonId": "05_ozon_m01_economics_001",
+      "videoId": "974b5057-4e12-4cc4-96dd-cd7586f0a791",
+      "uploadedAt": "2026-02-20T20:36:36.264Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 139.65,
+      "lessonId": "05_ozon_m03_promotion_003",
+      "videoId": "bea789d8-251d-4c34-b7eb-10f7914f4bc0",
+      "uploadedAt": "2026-02-20T20:36:46.160Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 154.59,
+      "lessonId": "05_ozon_m05_ads_002",
+      "videoId": "a5cece60-4395-42db-85ca-7393b31dff15",
+      "uploadedAt": "2026-02-20T20:36:57.051Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 164.34,
+      "lessonId": "05_ozon_m06_finance_003",
+      "videoId": "c5876d03-bd38-4a6c-892a-086ab86acf0d",
+      "uploadedAt": "2026-02-20T20:37:08.517Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 173.97,
+      "lessonId": "05_ozon_m04_analytics_008",
+      "videoId": "c8b9245a-180b-41ad-a49e-7e4fa61cf023",
+      "uploadedAt": "2026-02-20T20:37:19.305Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 183.21,
+      "lessonId": "05_ozon_m04_analytics_004",
+      "videoId": "5d5d27ff-a526-42a5-8ddf-e5901e757895",
+      "uploadedAt": "2026-02-20T20:37:29.904Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 202.18,
+      "lessonId": "05_ozon_m03_promotion_005",
+      "videoId": "a254b5a0-51be-4e7f-bb48-68cb0fc9c1f2",
+      "uploadedAt": "2026-02-20T20:37:42.378Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 205.11,
+      "lessonId": "05_ozon_m03_promotion_009",
+      "videoId": "fa86e548-3b07-47aa-b753-10a0f790d45d",
+      "uploadedAt": "2026-02-20T20:37:54.305Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 208.86,
+      "lessonId": "05_ozon_m04_analytics_012",
+      "videoId": "97e10d49-8686-460c-a78a-506eac4377e9",
+      "uploadedAt": "2026-02-20T20:38:07.496Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 222.3,
+      "lessonId": "05_ozon_m01_economics_007",
+      "videoId": "def46141-4e58-4551-94e9-72019bf4ed40",
+      "uploadedAt": "2026-02-20T20:38:20.889Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 226.41,
+      "lessonId": "05_ozon_m00_knowledge_base_013",
+      "videoId": "2a908f55-7719-449b-902a-a132acef044e",
+      "uploadedAt": "2026-02-20T20:38:33.715Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 227.53,
+      "lessonId": "05_ozon_m00_knowledge_base_014",
+      "videoId": "b39c665a-677d-4c87-a699-679a17cce78a",
+      "uploadedAt": "2026-02-20T20:38:47.805Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 229.25,
+      "lessonId": "05_ozon_m06_finance_001",
+      "videoId": "4587044c-cc26-4a7d-83a3-7436fc651b89",
+      "uploadedAt": "2026-02-20T20:39:01.844Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 244.13,
+      "lessonId": "05_ozon_m00_knowledge_base_011",
+      "videoId": "09cea3bc-0cee-414f-8b5a-8c9f2dceacdb",
+      "uploadedAt": "2026-02-20T20:39:17.852Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 250.86,
+      "lessonId": "05_ozon_m06_finance_002",
+      "videoId": "8300e68d-06c7-407b-9f8a-4393ea75350c",
+      "uploadedAt": "2026-02-20T20:39:33.744Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 251.06,
+      "lessonId": "05_ozon_m02_product_card_001",
+      "videoId": "90feee96-18a1-4f33-ba91-8a308e4a4dc6",
+      "uploadedAt": "2026-02-20T20:39:49.266Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 256.56,
+      "lessonId": "05_ozon_m01_economics_006",
+      "videoId": "c03d5b89-577c-4344-8b70-67677a6c4c9e",
+      "uploadedAt": "2026-02-20T20:40:05.350Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 261.21,
+      "lessonId": "05_ozon_m01_economics_005",
+      "videoId": "f5a59b37-d434-4090-8b77-4ddec542269b",
+      "uploadedAt": "2026-02-20T20:40:22.621Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 269.64,
+      "lessonId": "05_ozon_m05_ads_006",
+      "videoId": "74fb1584-3b92-41c2-8961-9c8804493dde",
+      "uploadedAt": "2026-02-20T20:40:39.371Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 286.8,
+      "lessonId": "05_ozon_m05_ads_007",
+      "videoId": "183704f5-74dd-4817-8de0-1a6d7885521d",
+      "uploadedAt": "2026-02-20T20:40:55.023Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 293.82,
+      "lessonId": "05_ozon_m03_promotion_007",
+      "videoId": "27e90c52-d136-475c-87c5-588c8b43f7bb",
+      "uploadedAt": "2026-02-20T20:41:10.757Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 297.73,
+      "lessonId": "05_ozon_m03_promotion_008",
+      "videoId": "75e8c4c9-3c34-4f0a-97c8-ee9e57e141a9",
+      "uploadedAt": "2026-02-20T20:41:28.580Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 312.17,
+      "lessonId": "05_ozon_m02_product_card_005",
+      "videoId": "06fa5131-f84d-41ec-a4e0-f697c990da79",
+      "uploadedAt": "2026-02-20T20:41:44.784Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 312.57,
+      "lessonId": "05_ozon_m04_analytics_003",
+      "videoId": "1c9118b5-3e76-4da0-b45a-f7bef69910a3",
+      "uploadedAt": "2026-02-20T20:42:01.956Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 312.63,
+      "lessonId": "05_ozon_m03_promotion_010",
+      "videoId": "84498424-7568-43c6-8094-c05652e06e23",
+      "uploadedAt": "2026-02-20T20:42:18.485Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 313.87,
+      "lessonId": "05_ozon_m05_ads_004",
+      "videoId": "11840652-1ee6-4f84-95cb-dc1860740888",
+      "uploadedAt": "2026-02-20T20:42:34.086Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 325.75,
+      "lessonId": "05_ozon_m00_knowledge_base_012",
+      "videoId": "3741f834-ff64-476b-ac3d-ea1328bb1e09",
+      "uploadedAt": "2026-02-20T20:42:53.254Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 335.19,
+      "lessonId": "05_ozon_m04_analytics_006",
+      "videoId": "f48eff3b-b0f1-4475-9012-dc839d0c5722",
+      "uploadedAt": "2026-02-20T20:43:11.146Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 335.99,
+      "lessonId": "05_ozon_m03_promotion_006",
+      "videoId": "51de3ba7-29c3-4fa2-befe-b703e309a667",
+      "uploadedAt": "2026-02-20T20:43:29.224Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 337.52,
+      "lessonId": "05_ozon_m03_promotion_011",
+      "videoId": "325e8c56-a745-4cc4-a18f-ff70757ffbd9",
+      "uploadedAt": "2026-02-20T20:43:48.612Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 349.86,
+      "lessonId": "05_ozon_m01_economics_008",
+      "videoId": "040b6989-4694-48eb-bb84-d72ed9e6dc6c",
+      "uploadedAt": "2026-02-20T20:44:06.411Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 356.68,
+      "lessonId": "05_ozon_m00_knowledge_base_017",
+      "videoId": "e27daf7d-ad11-4fe0-9bd2-1d35f553ece1",
+      "uploadedAt": "2026-02-20T20:44:25.129Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 362.16,
+      "lessonId": "05_ozon_m02_product_card_008",
+      "videoId": "910257a2-41f8-4a43-b2d6-7163baedfe1b",
+      "uploadedAt": "2026-02-20T20:44:42.554Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 367.83,
+      "lessonId": "05_ozon_m03_promotion_012",
+      "videoId": "34604e0c-2ace-4e9e-8c8b-d896feaed408",
+      "uploadedAt": "2026-02-20T20:45:03.127Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 373.93,
+      "lessonId": "05_ozon_m03_promotion_015",
+      "videoId": "dd10003e-f6d6-4240-8294-12a16f02017c",
+      "uploadedAt": "2026-02-20T20:45:22.581Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 388.56,
+      "lessonId": "05_ozon_m00_knowledge_base_008",
+      "videoId": "ffbfd367-0733-448c-96f8-ac071adb18b3",
+      "uploadedAt": "2026-02-20T20:45:43.161Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 402.59,
+      "lessonId": "05_ozon_m00_knowledge_base_016",
+      "videoId": "66e5933c-285c-4f28-b0be-0594d70299d2",
+      "uploadedAt": "2026-02-20T20:46:06.430Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 406.91,
+      "lessonId": "05_ozon_m04_analytics_002",
+      "videoId": "47ec1dc4-054b-41b5-90bd-dcfdfa7b3b72",
+      "uploadedAt": "2026-02-20T20:46:28.724Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 409.35,
+      "lessonId": "05_ozon_m02_product_card_006",
+      "videoId": "18f4651e-af41-4eea-adb8-8c347cc36984",
+      "uploadedAt": "2026-02-20T20:46:49.193Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 416.01,
+      "lessonId": "05_ozon_m00_knowledge_base_006",
+      "videoId": "4c358f5f-d754-4085-9c13-0b5b2fe62b8b",
+      "uploadedAt": "2026-02-20T20:47:08.868Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 416.22,
+      "lessonId": "05_ozon_m00_knowledge_base_010",
+      "videoId": "2586bd82-a402-4aba-b97f-d175278064a5",
+      "uploadedAt": "2026-02-20T20:47:27.567Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 418.57,
+      "lessonId": "05_ozon_m02_product_card_003",
+      "videoId": "aa5b5ddc-1cbc-4350-91ec-15f4488bb67f",
+      "uploadedAt": "2026-02-20T20:47:48.965Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 423.89,
+      "lessonId": "05_ozon_m07_external_ads_001",
+      "videoId": "116a31dc-6859-4209-ab0e-2c5620dd888d",
+      "uploadedAt": "2026-02-20T20:48:10.136Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 428.62,
+      "lessonId": "05_ozon_m03_promotion_014",
+      "videoId": "c711fd7c-776d-4a4d-9cb7-9eb1b6138c65",
+      "uploadedAt": "2026-02-20T20:48:31.097Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 463.14,
+      "lessonId": "05_ozon_m00_knowledge_base_003",
+      "videoId": "695e9d40-8b44-4041-b17f-21354d726475",
+      "uploadedAt": "2026-02-20T20:48:53.451Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 469.25,
+      "lessonId": "05_ozon_m02_product_card_009",
+      "videoId": "db40e156-dfce-4ee5-8115-dc0e8b2089e0",
+      "uploadedAt": "2026-02-20T20:49:19.590Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 494.03,
+      "lessonId": "05_ozon_m02_product_card_002",
+      "videoId": "84e5d770-97f3-459c-949d-d934198365ec",
+      "uploadedAt": "2026-02-20T20:49:47.017Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 510.62,
+      "lessonId": "05_ozon_m00_knowledge_base_015",
+      "videoId": "1d0491be-55ea-4d61-a17c-a6d52c4c310e",
+      "uploadedAt": "2026-02-20T20:50:13.460Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 523.34,
+      "lessonId": "05_ozon_m00_knowledge_base_018",
+      "videoId": "26d4b937-e80e-4081-b1be-0a51621640bb",
+      "uploadedAt": "2026-02-20T20:50:40.228Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 552.05,
+      "lessonId": "05_ozon_m03_promotion_013",
+      "videoId": "c5c8bc25-1793-4194-b2b9-a4a7746af94a",
+      "uploadedAt": "2026-02-20T20:51:08.222Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 613.95,
+      "lessonId": "05_ozon_m00_knowledge_base_009",
+      "videoId": "f94f50ad-2573-4870-ade4-d4ca0b0d0581",
+      "uploadedAt": "2026-02-20T20:51:41.974Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 613.98,
+      "lessonId": "05_ozon_m05_ads_001",
+      "videoId": "8ee023b8-282b-467c-853f-2f0f58957527",
+      "uploadedAt": "2026-02-20T20:52:12.582Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 628.16,
+      "lessonId": "05_ozon_m03_promotion_004",
+      "videoId": "e9e7ee6e-a838-4804-83f6-f7b3995db4f1",
+      "uploadedAt": "2026-02-20T20:52:45.121Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 687.97,
+      "lessonId": "05_ozon_m04_analytics_001",
+      "videoId": "37876d9a-bf27-42c7-9892-87f511b2c139",
+      "uploadedAt": "2026-02-20T20:53:19.621Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 713.44,
+      "lessonId": "05_ozon_m03_promotion_002",
+      "videoId": "6d5cf30c-c115-407a-b377-78eba524664e",
+      "uploadedAt": "2026-02-20T20:53:54.904Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 713.96,
+      "lessonId": "05_ozon_m05_ads_003",
+      "videoId": "13ee4163-80da-4cdb-8e0f-4e8cdbf91b94",
+      "uploadedAt": "2026-02-20T20:54:34.566Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 734.54,
+      "lessonId": "05_ozon_m00_knowledge_base_002",
+      "videoId": "60b7d39d-bdb4-4152-828a-6308b68a4f2e",
+      "uploadedAt": "2026-02-20T20:55:14.271Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 753.79,
+      "lessonId": "05_ozon_m04_analytics_007",
+      "videoId": "620ddde4-81f4-439b-8ae5-2150b2d6250d",
+      "uploadedAt": "2026-02-20T20:55:53.896Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 795.82,
+      "lessonId": "05_ozon_m00_knowledge_base_005",
+      "videoId": "6155d0e0-1cff-492f-b698-430255ef8983",
+      "uploadedAt": "2026-02-20T20:56:37.385Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 822.13,
+      "lessonId": "05_ozon_m05_ads_005",
+      "videoId": "44269896-2be5-4d61-9f60-d78c7c196875",
+      "uploadedAt": "2026-02-20T20:57:17.954Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 865.14,
+      "lessonId": "05_ozon_m04_analytics_010",
+      "videoId": "972bf94e-ec0b-48ea-a549-3fc3516082ba",
+      "uploadedAt": "2026-02-20T20:58:01.370Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 898.93,
+      "lessonId": "05_ozon_m00_knowledge_base_004",
+      "videoId": "5610db3c-c031-4609-a3c2-c125b260de22",
+      "uploadedAt": "2026-02-20T20:58:43.206Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 962.08,
+      "lessonId": "05_ozon_m03_promotion_001",
+      "videoId": "f37ea68d-7c6d-41cc-bb2f-c39cdd958a01",
+      "uploadedAt": "2026-02-20T20:59:25.030Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 990.73,
+      "lessonId": "05_ozon_m04_analytics_013",
+      "videoId": "e7e7dfea-0362-4cdb-b6aa-c58fc18b2de8",
+      "uploadedAt": "2026-02-20T21:00:09.473Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 1073.77,
+      "lessonId": "05_ozon_m01_economics_009",
+      "videoId": "b7b8defc-162f-4950-a515-1fb3c6dba37c",
+      "uploadedAt": "2026-02-20T21:00:58.732Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 1207.77,
+      "lessonId": "05_ozon_m02_product_card_004",
+      "videoId": "3043bf07-7fe4-46f5-b206-59358fcadc2b",
+      "uploadedAt": "2026-02-20T21:01:55.086Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 1290,
+      "lessonId": "05_ozon_m04_analytics_014",
+      "videoId": "5c6d4e16-53c0-4188-98a2-bcb8d92ee937",
+      "uploadedAt": "2026-02-20T21:02:52.562Z"
+    },
+    {
+      "courseId": "05_ozon",
+      "folderId": "6d3dbe29-028c-4d13-8554-8367a91c5992",
+      "sizeMB": 1461.02,
+      "lessonId": "05_ozon_m01_economics_002",
+      "videoId": "bd8897d6-7421-42b9-a99e-c8cdc48b130f",
+      "uploadedAt": "2026-02-20T21:03:54.108Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m02_keywords_010",
+      "videoId": "8edaa647-1d53-4d93-9155-64a61a51352f",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 9.43,
+      "uploadedAt": "2026-02-20T21:14:41.965Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_004",
+      "videoId": "f63b788f-c7da-44cf-a3e9-96dee98c1927",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 10.14,
+      "uploadedAt": "2026-02-20T21:14:50.019Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_002",
+      "videoId": "4961bc65-3ab6-406a-bbc2-38a02d561a09",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 14.07,
+      "uploadedAt": "2026-02-20T21:14:57.926Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_003",
+      "videoId": "f10bb99b-2262-472d-a33d-fa9690ee5af9",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 15.95,
+      "uploadedAt": "2026-02-20T21:15:06.207Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_023",
+      "videoId": "a11c01ed-00fb-455c-adbc-f846205118d1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 19.37,
+      "uploadedAt": "2026-02-20T21:15:14.161Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_002",
+      "videoId": "24eae697-6253-4efe-a05e-8fd997bcaddd",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 20.8,
+      "uploadedAt": "2026-02-20T21:15:22.529Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_003",
+      "videoId": "ee5e7c20-fb59-4cf9-adc9-a43a5c82ba6c",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 28.65,
+      "uploadedAt": "2026-02-20T21:15:30.373Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m03_launch_015",
+      "videoId": "6ff82362-7f53-4dd9-9638-2af560fcd3ee",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 34.45,
+      "uploadedAt": "2026-02-20T21:15:38.253Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_008",
+      "videoId": "16c17971-fbab-4efe-a537-15c400ac1710",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 37.67,
+      "uploadedAt": "2026-02-20T21:15:46.857Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m03_launch_014",
+      "videoId": "c24e1180-1f8d-4053-97ca-3a0b34ae57c9",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 41.23,
+      "uploadedAt": "2026-02-20T21:15:55.156Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_007",
+      "videoId": "5f7fb013-6163-47b7-b64a-ee687d61296e",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 68.52,
+      "uploadedAt": "2026-02-20T21:16:04.188Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_001",
+      "videoId": "f60a3540-dd00-4c1f-86eb-44f4a92da4bc",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 69.31,
+      "uploadedAt": "2026-02-20T21:16:12.559Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_004",
+      "videoId": "18cfc291-900b-4561-aaba-e50611ffe45b",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 72.58,
+      "uploadedAt": "2026-02-20T21:16:20.820Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_008",
+      "videoId": "63f7c3dc-aad7-4d2e-8290-823424f174d1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 90.94,
+      "uploadedAt": "2026-02-20T21:16:29.966Z"
+    },
+    {
+      "lessonId": "06_express_c01_ai_content_m03_prompts_003",
+      "videoId": "5bd91dd8-ad1f-4486-90ff-95717afd5aa1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 100.24,
+      "uploadedAt": "2026-02-20T21:16:39.003Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_005",
+      "videoId": "1a882071-7cca-4fa1-a306-752ada01d6e1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 105.06,
+      "uploadedAt": "2026-02-20T21:16:48.496Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_009",
+      "videoId": "f3288e8f-5911-4869-8b84-c85c7ac3ce16",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 109.57,
+      "uploadedAt": "2026-02-20T21:16:58.245Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m03_profit_012",
+      "videoId": "70dd3f76-6f4f-423f-a181-ef2cfcf97fb2",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 112.16,
+      "uploadedAt": "2026-02-20T21:17:07.643Z"
+    },
+    {
+      "lessonId": "06_express_c01_ai_content_m03_prompts_004",
+      "videoId": "aeb0cd55-d8af-40b1-8ea7-d2307fa1f5b9",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 126.14,
+      "uploadedAt": "2026-02-20T21:17:18.013Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m02_categories_009",
+      "videoId": "e6786c1e-d738-42c0-9fe3-803c574c9c89",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 146.48,
+      "uploadedAt": "2026-02-20T21:17:28.300Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_010",
+      "videoId": "20c0c7e9-277e-496c-bd1e-1269806f80b6",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 162.37,
+      "uploadedAt": "2026-02-20T21:17:42.743Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m02_keywords_011",
+      "videoId": "b3f8b450-5845-4b96-9c3e-51c9f3591bb6",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 163.94,
+      "uploadedAt": "2026-02-20T21:17:56.290Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m01_types_002",
+      "videoId": "f0a102df-37e6-4606-81e9-c6a423c1898c",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 164.33,
+      "uploadedAt": "2026-02-20T21:18:09.111Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m02_categories_011",
+      "videoId": "abd92a23-a846-4df6-a547-9a1990c27db5",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 164.33,
+      "uploadedAt": "2026-02-20T21:18:19.958Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_004",
+      "videoId": "345e86ff-d16c-4de9-bba2-50b8718962d6",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 177.45,
+      "uploadedAt": "2026-02-20T21:18:31.540Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m03_launch_013",
+      "videoId": "a0959a50-d7fb-4c67-aae0-295c6eacc9d1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 177.66,
+      "uploadedAt": "2026-02-20T21:18:43.597Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m04_strategies_018",
+      "videoId": "d41f5e1e-6644-43b0-a7a1-a6e0a98810ad",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 187.87,
+      "uploadedAt": "2026-02-20T21:18:54.889Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_026",
+      "videoId": "1c1ce665-7767-4a90-bb32-51b0755c819c",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 190.22,
+      "uploadedAt": "2026-02-20T21:19:06.947Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_024",
+      "videoId": "d338fc76-b205-4f3d-8b58-f80433240405",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 233.02,
+      "uploadedAt": "2026-02-20T21:19:28.752Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_005",
+      "videoId": "20615e4b-fc54-44fd-ac36-ce0443477f8a",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 257.01,
+      "uploadedAt": "2026-02-20T21:19:44.057Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_025",
+      "videoId": "579d8183-59ca-4d1b-be89-69f0c4dce04e",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 287.18,
+      "uploadedAt": "2026-02-20T21:20:00.204Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_005",
+      "videoId": "0c886858-0024-4ef9-b788-2c567c23a41a",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 287.19,
+      "uploadedAt": "2026-02-20T21:20:16.274Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m04_attract_015",
+      "videoId": "19657a9b-2bbc-401d-aa4f-dd09080bdab4",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 296.22,
+      "uploadedAt": "2026-02-20T21:20:33.417Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_006",
+      "videoId": "920f9aa0-9771-4a36-b410-d316bc277930",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 304.15,
+      "uploadedAt": "2026-02-20T21:20:49.241Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m03_profit_011",
+      "videoId": "f81948a2-ebab-4412-8673-e72caab733c6",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 409.35,
+      "uploadedAt": "2026-02-20T21:21:09.000Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m02_categories_013",
+      "videoId": "047e3dad-8d92-49a8-b560-b92c007a5b53",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 409.35,
+      "uploadedAt": "2026-02-20T21:21:29.480Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_007",
+      "videoId": "09a0b7f8-9324-4f25-8e79-4e624bf01e33",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 446.21,
+      "uploadedAt": "2026-02-20T21:21:53.038Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m02_keywords_009",
+      "videoId": "0a00092d-3855-4452-845d-b81f65d5b599",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 486.82,
+      "uploadedAt": "2026-02-20T21:22:22.118Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_021",
+      "videoId": "7d0a5a7a-2f14-43bf-b7a7-b9f7c8388cdf",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 508.86,
+      "uploadedAt": "2026-02-20T21:22:47.593Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m04_strategies_016",
+      "videoId": "d41b6099-c07b-4bd4-a2d6-d4f5150d0e18",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 590.9,
+      "uploadedAt": "2026-02-20T21:23:18.256Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_001",
+      "videoId": "d0a83941-6f48-4a34-8a28-6c7ad04d619e",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 595.51,
+      "uploadedAt": "2026-02-20T21:23:48.444Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m04_attract_013",
+      "videoId": "6916c733-cdb9-4a8c-88d7-8a9c4d2d6659",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 599.75,
+      "uploadedAt": "2026-02-20T21:24:17.035Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_016",
+      "videoId": "1d63f0eb-ca25-411d-9713-9364ee0c1dc2",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 621.81,
+      "uploadedAt": "2026-02-20T21:24:49.905Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m02_why_choose_006",
+      "videoId": "907573d8-2afb-49c8-93f2-32c1cc4029a7",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 695.96,
+      "uploadedAt": "2026-02-20T21:25:23.598Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m01_start_007",
+      "videoId": "b98de3c1-29f8-4522-ae4f-edf36d8cf042",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 718.96,
+      "uploadedAt": "2026-02-20T21:26:05.252Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m01_types_001",
+      "videoId": "9aa7563f-ab56-4ac6-b3ca-e50850a8cd8c",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 739.03,
+      "uploadedAt": "2026-02-20T21:26:44.431Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m02_categories_010",
+      "videoId": "ad9cb0e5-4cc6-4125-9a2c-76aa439a71af",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 739.03,
+      "uploadedAt": "2026-02-20T21:27:27.980Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m04_strategies_017",
+      "videoId": "5b8e57b8-e8e9-4945-adf0-345b8fe99f98",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 759.82,
+      "uploadedAt": "2026-02-20T21:28:07.713Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_017",
+      "videoId": "bb106021-d9ec-40c2-8c56-9fa1c687b4cb",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 774.73,
+      "uploadedAt": "2026-02-20T21:28:46.727Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m01_types_003",
+      "videoId": "1b8871f6-8a52-4f69-9582-e0a91e12bb65",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 790.88,
+      "uploadedAt": "2026-02-20T21:29:25.191Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m02_categories_012",
+      "videoId": "93398b25-bda3-4851-8475-8c5cc468ea2d",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 790.88,
+      "uploadedAt": "2026-02-20T21:30:06.415Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_020",
+      "videoId": "1b4b2036-bbae-4047-bca5-65feb8fe1281",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 795.76,
+      "uploadedAt": "2026-02-20T21:30:48.486Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_014",
+      "videoId": "f433211a-a38f-43cb-8b99-381408c02365",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 841.33,
+      "uploadedAt": "2026-02-20T21:31:29.317Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m01_search_006",
+      "videoId": "c0230104-b828-49db-977b-ae8c7e78156a",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 892.75,
+      "uploadedAt": "2026-02-20T21:32:13.788Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m04_attract_014",
+      "videoId": "66b63338-dd49-4788-97c5-956e64e852c1",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 916.01,
+      "uploadedAt": "2026-02-20T21:32:58.119Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m03_launch_012",
+      "videoId": "d7b53ff2-cf0d-41e3-8f89-b71ac1448c79",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 922.54,
+      "uploadedAt": "2026-02-20T21:33:41.434Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m04_launch_plan_022",
+      "videoId": "65b4b826-1819-4493-8de6-49831c07a01f",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 946.25,
+      "uploadedAt": "2026-02-20T21:34:27.523Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_015",
+      "videoId": "a6edc9f8-3d12-4fcb-9120-32578677de24",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 1082.88,
+      "uploadedAt": "2026-02-20T21:35:17.070Z"
+    },
+    {
+      "lessonId": "06_express_c02_seo_m02_keywords_008",
+      "videoId": "a7f43daf-729c-4d66-a2f2-724c644f7c60",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 1348.15,
+      "uploadedAt": "2026-02-20T21:36:18.296Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_019",
+      "videoId": "007f6295-9ea7-4e43-b025-eb606f547399",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 1662.34,
+      "uploadedAt": "2026-02-20T21:37:29.393Z"
+    },
+    {
+      "lessonId": "06_express_c01_ai_content_m02_video_002",
+      "videoId": "2999a095-3cd3-4979-bf11-1be98eb56985",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 1785.27,
+      "uploadedAt": "2026-02-20T21:38:42.119Z"
+    },
+    {
+      "lessonId": "06_express_c01_ai_content_m01_content_001",
+      "videoId": "ab7a3b1f-7f8c-4c4d-af21-0b30a5bb8a0b",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 1903.66,
+      "uploadedAt": "2026-02-20T21:40:09.969Z"
+    },
+    {
+      "lessonId": "06_express_c03_competitors_m05_analytics_strategy_016",
+      "videoId": "34c808ff-5988-494a-95a2-00de20a5f07f",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 2352.95,
+      "uploadedAt": "2026-02-20T21:41:50.868Z"
+    },
+    {
+      "lessonId": "06_express_c04_product_choice_m03_validation_018",
+      "videoId": "0a272224-5c55-4564-ad9a-0490ae38f027",
+      "courseId": "06_express",
+      "folderId": "865be5b0-c6f7-4a44-a4da-6684dd78e695",
+      "sizeMB": 2550.9,
+      "uploadedAt": "2026-02-20T21:43:40.288Z"
+    }
+  ],
+  "failed": [
+    {
+      "lessonId": "04_workshops_w02_mar_detox_001",
+      "filePath": "E:\\Academy Courses\\04_workshops\\w02_mar_detox\\den_1._filtr_oshibok_kak_konversii_pokazhut_pochem.mp4",
+      "error": "Init failed HTTP 400: {\n\t\"error\": {\n\t\t\"code\": 400419,\n\t\t\"message\": \"already exists\"\n\t}\n}\n",
+      "failedAt": "2026-02-20T13:11:04.281Z"
+    },
+    {
+      "lessonId": "04_workshops_w03_apr_growth_001",
+      "filePath": "E:\\Academy Courses\\04_workshops\\w03_apr_growth\\den_2._reklama_na_ozon_5_tochek_rosta.mp4",
+      "error": "fetch failed",
+      "failedAt": "2026-02-20T18:15:48.753Z"
+    }
+  ]
+}

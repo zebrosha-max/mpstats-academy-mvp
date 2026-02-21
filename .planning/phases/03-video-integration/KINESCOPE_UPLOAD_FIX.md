@@ -1,112 +1,95 @@
-# Kinescope Upload Script Fix Plan
+# Kinescope Upload — Batch Upload Plan
 
-## Status
-Upload script `scripts/kinescope-upload.ts` was partially rewritten but NOT tested yet.
-The old version used wrong endpoint/format. New version uses correct TUS protocol discovered via browser network interception.
+## Status: ✅ COMPLETE (405/405 videos, 100%)
+**Last updated:** 2026-02-21
+**Completed:** 2026-02-20
 
-## Critical Discovery: Correct Kinescope Upload API Format
+## Verification (2026-02-21)
 
-### What was WRONG (old script):
-- Endpoint: `https://upload.new.video` (doesn't exist)
-- Method: Single multipart POST
-- No workspace ID header
+- Kinescope API: 405 videos, all status `done`
+- Progress JSON: 405 uploaded entries
+- DB dry-run: 405 lessons skipped (all have videoId)
 
-### What is CORRECT (discovered via browser DevTools interception):
+## Resolved Issues
 
-**Two-step TUS protocol:**
+- `01_analytics_m00_bonus_autobidder_001` — stale videoId cleared, re-uploaded successfully
+- `03_ai_m04_neurovideo_004` — video uploaded but DB connection dropped; videoId found via API and set manually
+- `04_workshops_w01_feb_ads_001` (den_1.mp4) — uploaded manually, renamed from "den_1" to "День 1" via API
 
-#### Step 1: Init (POST, no body)
+## TUS Protocol (proven working)
+
+Two-step: POST /v2/init → get Location → PATCH with streaming body.
+- `parent_id` in metadata = folder ID (video goes into that folder on Kinescope)
+- `init_id` = random UUID that becomes the Kinescope video ID
+- Upload uses `ReadableStream` (streaming) — не загружает файл целиком в RAM
+- При ошибке `already exists` — скрипт удаляет orphan и генерирует новый initId
+
+## Kinescope Project Structure
+
 ```
-POST https://eu-ams-uploader.kinescope.io/v2/init
-Headers:
-  Authorization: Bearer {KINESCOPE_API_KEY}
-  Tus-Resumable: 1.0.0
-  X-Workspace-ID: fe0bcafb-8b2f-4e7d-b043-ca5afc445504
-  Upload-Length: {file_size_bytes}
-  Upload-Metadata: parent_id {base64(project_id)},init_id {base64(uuid)},type {base64("video")},title {base64(title)},filename {base64(filename)},filesize {base64(file_size_string)}
-
-Response: 201 with Location header → upload URL
-```
-
-#### Step 2: Upload (PATCH, binary body)
-```
-PATCH {location_url_from_step1}
-Headers:
-  Authorization: Bearer {KINESCOPE_API_KEY}
-  Tus-Resumable: 1.0.0
-  X-Workspace-ID: fe0bcafb-8b2f-4e7d-b043-ca5afc445504
-  Upload-Offset: 0
-  Content-Type: application/offset+octet-stream
-Body: raw file bytes
+MPSTATS ACADEMY (project: ad127c11-6187-4fe2-bbfa-16f0d708a41c)
+├── 01_analytics/  (folder: 71777756-e93a-4484-87eb-570c7588640f)
+├── 02_ads/        (folder: 97d2cadb-4e63-4eb5-9d50-195d71436f20)
+├── 03_ai/         (folder: 639d0266-4fa8-4e0f-93e1-4128d1ba6283)
+├── 04_workshops/  (folder: 97b9a298-2fd9-4730-b63a-57991dbd2d0d)
+├── 05_ozon/       (folder: 6d3dbe29-028c-4d13-8554-8367a91c5992)
+└── 06_express/    (folder: 865be5b0-c6f7-4a44-a4da-6684dd78e695)
 ```
 
-### Upload-Metadata format (TUS spec):
-Each field: `key base64value` separated by commas (no spaces after comma).
-Required fields:
-- `parent_id` — base64 of KINESCOPE_PROJECT_ID (= project UUID)
-- `init_id` — base64 of a random UUID (becomes the video ID!)
-- `type` — base64 of "video"
-- `title` — base64 of video title
-- `filename` — base64 of filename with extension
-- `filesize` — base64 of file size as string
+Folder IDs hardcoded in `scripts/kinescope-upload.ts` → `COURSE_FOLDER_IDS`.
 
-### Video ID:
-The `init_id` you generate becomes the Kinescope video ID.
-Confirmed: uploaded video via browser had id = `7bac744d-c5be-4721-b787-34b9b6c3120e` which matched the init_id in metadata.
+## Batch Upload Plan
 
-## Environment Variables (already in apps/web/.env)
-```
-KINESCOPE_API_KEY=6756bfa2-08cc-4340-a72a-ddbcc7741655
-KINESCOPE_PROJECT_ID=ad127c11-6187-4fe2-bbfa-16f0d708a41c
-KINESCOPE_WORKSPACE_ID=fe0bcafb-8b2f-4e7d-b043-ca5afc445504
-```
+### Batch Summary
 
-## Current State of Upload Script
+| # | Course | Videos | Size | Command | Status |
+|---|--------|--------|------|---------|--------|
+| 1 | 01_analytics | 82 | 33.4 GB | `--course 01_analytics` | ✅ 82/82 complete |
+| 2 | 02_ads | 67 | 24.1 GB | `--course 02_ads` | ✅ 67/67 complete |
+| 3 | 03_ai | 92 | 22.4 GB | `--course 03_ai` | ✅ 92/92 complete |
+| 4 | 04_workshops | 24 | 68.2 GB | `--course 04_workshops` | ✅ 24/24 complete |
+| 5 | 05_ozon | 76 | 31.9 GB | `--course 05_ozon` | ✅ 76/76 complete |
+| 6 | 06_express | 64 | 32.2 GB | `--course 06_express` | ✅ 64/64 complete |
+| | **TOTAL** | **405** | **212.2 GB** | | **405/405 (100%)** |
 
-File: `scripts/kinescope-upload.ts`
-- Already rewritten with correct TUS two-step protocol
-- Added `dotenv` loading from `apps/web/.env`
-- Added `randomUUID()` for init_id generation
-- NOT YET TESTED — need to run `npx tsx scripts/kinescope-upload.ts --limit 1`
+### Useful Flags
 
-## Tasks Remaining
+| Flag | Description |
+|------|-------------|
+| `--status` | Show batch progress without uploading |
+| `--course X` | Upload only one course batch |
+| `--limit N` | Upload first N videos (for testing) |
+| `--dry-run` | Show what would be uploaded |
 
-### 1. Test upload script (--limit 1)
-```bash
-cd MAAL && npx tsx scripts/kinescope-upload.ts --limit 1
-```
-Expected: uploads smallest video (9.4 MB), prints videoId, updates Lesson.videoId in DB.
+## Script Features
 
-### 2. If test passes — bulk upload all 405 videos
-```bash
-npx tsx scripts/kinescope-upload.ts
-```
-This will take a long time (~212 GB). Consider running in background.
-Progress saves to `scripts/kinescope-upload-progress.json` for resume.
+- **Auto-resume:** Reads `kinescope-upload-progress.json`, skips already-uploaded
+- **DB check:** Also checks `Lesson.videoId` in Supabase — skips if already set
+- **Folder organization:** Videos go into course folders on Kinescope via `parent_id`
+- **Streaming upload:** Uses `ReadableStream` instead of loading file into memory (fixes >1.5 GB files)
+- **Dynamic timeout:** 3min base + 1.5min per 100MB
+- **Retry:** 3 attempts with exponential backoff (3s, 6s, 12s)
+- **Orphan cleanup:** On `already exists` error, deletes orphan + waits 5s + new initId
+- **Sort:** Small files first within each batch (faster initial feedback)
+- **Atomic progress:** Saves after each upload (safe to Ctrl+C)
 
-### 3. Clean up test files
-- Delete `scripts/test-tus-upload.ts` (test file, no longer needed)
-- Remove `tus-js-client` from root devDeps (was added for testing)
+## Bugs Fixed During This Session (2026-02-18)
 
-### 4. Commit changes
-Files changed:
-- `scripts/kinescope-upload.ts` — rewritten with correct TUS protocol
-- `apps/web/.env` — added KINESCOPE_WORKSPACE_ID
+1. **dotenv override** — корневой `.env` имел пустые KINESCOPE_* → добавлен `override: true`
+2. **Duplicate videos** — retry генерировал новый `initId` каждый раз → исправлено: один `initId` на файл
+3. **API key permissions** — старый ключ не имел прав на удаление → обновлён на full-access
+4. **Large file uploads** — `fs.readFileSync` для >1.5 GB падал → заменён на `ReadableStream` streaming
+5. **`already exists` race condition** — cleanup + 5s wait перед новым init
 
-## Test Video Already in Kinescope
-One video was manually uploaded via Dashboard during debugging:
-- File: `06_express/c02_seo/m02_keywords/003_generator_opisaniya_ai.mp4`
-- Kinescope ID: `7bac744d-c5be-4721-b787-34b9b6c3120e`
-- Status: done (transcoded)
-- This video should be SKIPPED by upload script (already has videoId if DB was updated)
-- NOTE: DB was NOT updated for this manual upload — may need manual fix:
-  ```sql
-  UPDATE "Lesson" SET "videoId" = '7bac744d-c5be-4721-b787-34b9b6c3120e'
-  WHERE id = '06_express_c02_seo_m02_keywords_003';
-  ```
-  (verify exact lesson_id first)
+## Kinescope Storage Note
 
-## Smallest Files for Testing (from E:\Academy Courses)
-1. `06_express/c02_seo/m02_keywords/003_generator_opisaniya_ai.mp4` — 9.4 MB (already uploaded manually)
-2. `06_express/c04_product_choice/m01_start/002_3_materialy_i_vneshnie_ssylki.mp4` — 10.1 MB
-3. `03_ai/m01_intro/002_2_besplatnyy_vpn_ustanovka_rasshireniya.mp4` — 12.5 MB
+Kinescope хранит original + транскодированные версии (1080p, 480p).
+Реальное потребление диска ≈ 1.8-2x от размера оригиналов.
+33 GB originals → ~63 GB on Kinescope (normal behavior).
+
+## Upload Timeline
+
+- **2026-02-18:** Sessions 1-2 — 01_analytics (81/82), 02_ads (67/67) — 148 videos
+- **2026-02-19:** Session 3 — 03_ai (92/92) — 240 videos
+- **2026-02-20:** Session 4 — fixes + 04_workshops (24/24), 05_ozon (76/76), 06_express (64/64) — 405 videos
+- **2026-02-21:** Final verification — all 405 confirmed on Kinescope and in DB

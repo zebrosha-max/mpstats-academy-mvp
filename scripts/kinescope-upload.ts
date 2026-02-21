@@ -2,18 +2,23 @@
  * Kinescope Bulk Upload Script
  *
  * Reads kinescope-video-map.json (from mapping script),
- * uploads videos to Kinescope API, and updates Lesson.videoId in Supabase.
+ * uploads videos to Kinescope API (into course folders), and updates Lesson.videoId in Supabase.
  *
  * Usage:
- *   npx tsx scripts/kinescope-upload.ts              # Upload all
- *   npx tsx scripts/kinescope-upload.ts --dry-run     # Show what would be uploaded
- *   npx tsx scripts/kinescope-upload.ts --limit 5     # Upload only first 5
- *   npx tsx scripts/kinescope-upload.ts --resume      # Resume from progress file (default behavior)
+ *   npx tsx scripts/kinescope-upload.ts                        # Upload all
+ *   npx tsx scripts/kinescope-upload.ts --course 01_analytics  # Upload one course batch
+ *   npx tsx scripts/kinescope-upload.ts --dry-run              # Show what would be uploaded
+ *   npx tsx scripts/kinescope-upload.ts --limit 5              # Upload only first 5
+ *   npx tsx scripts/kinescope-upload.ts --status               # Show batch progress summary
  *
  * Required env vars:
- *   KINESCOPE_API_KEY     - Bearer token from Kinescope dashboard
- *   KINESCOPE_PROJECT_ID  - Project ID from Kinescope dashboard
- *   DATABASE_URL          - Prisma connection string (already in .env)
+ *   KINESCOPE_API_KEY       - Bearer token from Kinescope dashboard
+ *   KINESCOPE_PROJECT_ID    - Project ID from Kinescope dashboard
+ *   KINESCOPE_WORKSPACE_ID  - Workspace ID
+ *   DATABASE_URL            - Prisma connection string (already in .env)
+ *
+ * Resume: Progress auto-saves to scripts/kinescope-upload-progress.json.
+ *         Re-running the script automatically skips already-uploaded videos.
  */
 
 import { config } from 'dotenv';
@@ -23,7 +28,7 @@ import * as path from 'path';
 import { randomUUID } from 'crypto';
 
 // Load env from apps/web/.env (scripts run from monorepo root)
-config({ path: path.resolve(__dirname, '../apps/web/.env') });
+config({ path: path.resolve(__dirname, '../apps/web/.env'), override: true });
 
 // ============== CONFIG ==============
 
@@ -34,12 +39,24 @@ const KINESCOPE_WORKSPACE_ID = process.env.KINESCOPE_WORKSPACE_ID || 'fe0bcafb-8
 // Kinescope TUS upload endpoint (two-step: init → upload)
 const INIT_URL = 'https://eu-ams-uploader.kinescope.io/v2/init';
 
+// Kinescope folder IDs inside "MPSTATS ACADEMY" project
+// Created via API: POST /v1/projects/{project_id}/folders
+const COURSE_FOLDER_IDS: Record<string, string> = {
+  '01_analytics': '71777756-e93a-4484-87eb-570c7588640f',
+  '02_ads':       '97d2cadb-4e63-4eb5-9d50-195d71436f20',
+  '03_ai':        '639d0266-4fa8-4e0f-93e1-4128d1ba6283',
+  '04_workshops': '97b9a298-2fd9-4730-b63a-57991dbd2d0d',
+  '05_ozon':      '6d3dbe29-028c-4d13-8554-8367a91c5992',
+  '06_express':   '865be5b0-c6f7-4a44-a4da-6684dd78e695',
+};
+
 // Retry config
 const MAX_RETRIES = 3;
-const RETRY_DELAYS_MS = [2000, 4000, 8000]; // Exponential backoff
+const RETRY_DELAYS_MS = [3000, 6000, 12000]; // Exponential backoff
 
-// Upload timeout: 5 minutes per file
-const UPLOAD_TIMEOUT_MS = 5 * 60 * 1000;
+// Upload timeout scales with file size: base 3min + 1.5min per 100MB
+const UPLOAD_TIMEOUT_BASE_MS = 3 * 60 * 1000;
+const UPLOAD_TIMEOUT_PER_100MB_MS = 90 * 1000;
 
 // File paths
 const MAP_PATH = path.resolve(__dirname, 'kinescope-video-map.json');
@@ -47,8 +64,11 @@ const PROGRESS_PATH = path.resolve(__dirname, 'kinescope-upload-progress.json');
 
 // CLI flags
 const DRY_RUN = process.argv.includes('--dry-run');
+const STATUS_ONLY = process.argv.includes('--status');
 const LIMIT_INDEX = process.argv.indexOf('--limit');
 const LIMIT = LIMIT_INDEX !== -1 ? parseInt(process.argv[LIMIT_INDEX + 1], 10) : Infinity;
+const COURSE_INDEX = process.argv.indexOf('--course');
+const COURSE_FILTER = COURSE_INDEX !== -1 ? process.argv[COURSE_INDEX + 1] : null;
 
 // ============== TYPES ==============
 
@@ -74,6 +94,9 @@ interface UploadProgress {
   uploaded: Array<{
     lessonId: string;
     videoId: string;
+    courseId: string;
+    folderId: string;
+    sizeMB: number;
     uploadedAt: string;
   }>;
   failed: Array<{
@@ -92,7 +115,17 @@ function sleep(ms: number): Promise<void> {
 
 function loadProgress(): UploadProgress {
   if (fs.existsSync(PROGRESS_PATH)) {
-    return JSON.parse(fs.readFileSync(PROGRESS_PATH, 'utf-8'));
+    const raw = JSON.parse(fs.readFileSync(PROGRESS_PATH, 'utf-8'));
+    // Migrate old format entries that lack courseId/folderId/sizeMB
+    if (raw.uploaded) {
+      raw.uploaded = raw.uploaded.map((u: any) => ({
+        courseId: u.courseId || 'unknown',
+        folderId: u.folderId || '',
+        sizeMB: u.sizeMB || 0,
+        ...u,
+      }));
+    }
+    return raw;
   }
   return {
     startedAt: new Date().toISOString(),
@@ -107,40 +140,102 @@ function saveProgress(progress: UploadProgress): void {
   fs.writeFileSync(PROGRESS_PATH, JSON.stringify(progress, null, 2), 'utf-8');
 }
 
-/**
- * Encode a string to base64 (for TUS Upload-Metadata header)
- */
 function toBase64(str: string): string {
   return Buffer.from(str).toString('base64');
 }
 
-/**
- * Upload a single video to Kinescope via TUS protocol (two-step)
- *
- * Step 1: POST to /v2/init with TUS headers + Upload-Metadata → get upload URL
- * Step 2: PATCH to /v2/upload/{id} with file body → upload complete
- *
- * Returns the Kinescope video ID (init_id from metadata).
- */
+function getUploadTimeout(fileSizeBytes: number): number {
+  const sizeMB = fileSizeBytes / (1024 * 1024);
+  return UPLOAD_TIMEOUT_BASE_MS + Math.ceil(sizeMB / 100) * UPLOAD_TIMEOUT_PER_100MB_MS;
+}
+
+// ============== STATUS COMMAND ==============
+
+function showStatus(mapping: MappingFile, progress: UploadProgress): void {
+  console.log('=== Kinescope Upload Status ===\n');
+
+  // Group by course
+  const courses = new Map<string, { total: number; totalMB: number; uploaded: number; uploadedMB: number; failed: number }>();
+  for (const entry of mapping.matched) {
+    if (!entry.fileExists) continue;
+    const c = courses.get(entry.courseId) || { total: 0, totalMB: 0, uploaded: 0, uploadedMB: 0, failed: 0 };
+    c.total++;
+    c.totalMB += entry.fileSizeMB || 0;
+    courses.set(entry.courseId, c);
+  }
+
+  const uploadedByCourse = new Map<string, number>();
+  const uploadedMBByCourse = new Map<string, number>();
+  for (const u of progress.uploaded) {
+    const cid = u.courseId || 'unknown';
+    uploadedByCourse.set(cid, (uploadedByCourse.get(cid) || 0) + 1);
+    uploadedMBByCourse.set(cid, (uploadedMBByCourse.get(cid) || 0) + (u.sizeMB || 0));
+  }
+
+  const failedSet = new Set(progress.failed.map(f => f.lessonId));
+
+  for (const [courseId, c] of [...courses.entries()].sort()) {
+    c.uploaded = uploadedByCourse.get(courseId) || 0;
+    c.uploadedMB = uploadedMBByCourse.get(courseId) || 0;
+    // Count failed for this course
+    for (const entry of mapping.matched) {
+      if (entry.courseId === courseId && failedSet.has(entry.lessonId)) c.failed++;
+    }
+
+    const remaining = c.total - c.uploaded;
+    const remainingMB = c.totalMB - c.uploadedMB;
+    const pct = c.total > 0 ? Math.round((c.uploaded / c.total) * 100) : 0;
+    const bar = '█'.repeat(Math.round(pct / 5)) + '░'.repeat(20 - Math.round(pct / 5));
+    const status = remaining === 0 ? '✅' : c.failed > 0 ? '⚠️' : '⏳';
+
+    console.log(`${status} ${courseId}: [${bar}] ${pct}% (${c.uploaded}/${c.total} videos, ${(c.uploadedMB / 1024).toFixed(1)}/${(c.totalMB / 1024).toFixed(1)} GB)`);
+    if (c.failed > 0) console.log(`   ↳ ${c.failed} failed (will retry on next run)`);
+  }
+
+  const totalUploaded = progress.uploaded.length;
+  const totalFiles = [...courses.values()].reduce((a, c) => a + c.total, 0);
+  const totalUploadedMB = progress.uploaded.reduce((a, u) => a + (u.sizeMB || 0), 0);
+  const totalMB = [...courses.values()].reduce((a, c) => a + c.totalMB, 0);
+
+  console.log(`\n--- Overall ---`);
+  console.log(`Videos:  ${totalUploaded}/${totalFiles} (${Math.round((totalUploaded / totalFiles) * 100)}%)`);
+  console.log(`Size:    ${(totalUploadedMB / 1024).toFixed(1)}/${(totalMB / 1024).toFixed(1)} GB`);
+  console.log(`Failed:  ${progress.failed.length}`);
+  console.log(`Updated: ${progress.lastUpdated}`);
+  console.log(`\nProgress file: ${PROGRESS_PATH}`);
+
+  if (totalUploaded < totalFiles) {
+    const nextCourse = [...courses.entries()].sort().find(([, c]) => c.uploaded < c.total);
+    if (nextCourse) {
+      console.log(`\nNext batch command:`);
+      console.log(`  npx tsx scripts/kinescope-upload.ts --course ${nextCourse[0]}`);
+    }
+  }
+}
+
+// ============== UPLOAD ==============
+
 async function uploadToKinescope(
   filePath: string,
   title: string,
-  _isFirstUpload: boolean,
+  folderId: string,
+  initId: string,
 ): Promise<string> {
   if (!KINESCOPE_API_KEY || !KINESCOPE_PROJECT_ID) {
-    throw new Error(
-      'KINESCOPE_API_KEY and KINESCOPE_PROJECT_ID must be set in .env',
-    );
+    throw new Error('KINESCOPE_API_KEY and KINESCOPE_PROJECT_ID must be set in .env');
   }
 
   const fileSize = fs.statSync(filePath).size;
   const fileName = path.basename(filePath);
   const titleWithoutExt = path.basename(filePath, path.extname(filePath));
-  const initId = randomUUID();
+
+  // parent_id = folder ID (to place video inside the course folder)
+  // Falls back to project ID if no folder mapping found
+  const parentId = folderId || KINESCOPE_PROJECT_ID;
 
   // Build Upload-Metadata header (TUS spec: key base64value,key base64value)
   const metadata = [
-    `parent_id ${toBase64(KINESCOPE_PROJECT_ID)}`,
+    `parent_id ${toBase64(parentId)}`,
     `init_id ${toBase64(initId)}`,
     `type ${toBase64('video')}`,
     `title ${toBase64(title || titleWithoutExt)}`,
@@ -169,29 +264,36 @@ async function uploadToKinescope(
     throw new Error(`Init failed HTTP ${initResponse.status}: ${errorText}`);
   }
 
-  // Get upload URL from Location header
   const uploadUrl = initResponse.headers.get('Location');
   if (!uploadUrl) {
     throw new Error('No Location header in init response');
   }
 
-  console.log(`  Init OK → upload URL received`);
+  console.log(`  Init OK → folder: ${parentId.substring(0, 8)}...`);
 
   // Step 2: Upload file (PATCH with binary body)
-  const fileBuffer = fs.readFileSync(filePath);
-
+  // Use ReadStream for large files to avoid loading entire file into memory
+  const timeoutMs = getUploadTimeout(fileSize);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
+    // Node.js fetch supports ReadableStream from web streams
+    const { Readable } = await import('stream');
+    const fileStream = fs.createReadStream(filePath);
+    const webStream = Readable.toWeb(fileStream) as ReadableStream;
+
     const uploadResponse = await fetch(uploadUrl, {
       method: 'PATCH',
       headers: {
         ...commonHeaders,
         'Upload-Offset': '0',
         'Content-Type': 'application/offset+octet-stream',
+        'Content-Length': String(fileSize),
       },
-      body: fileBuffer,
+      body: webStream,
+      // @ts-ignore — duplex required for streaming body in Node.js fetch
+      duplex: 'half',
       signal: controller.signal,
     });
 
@@ -202,39 +304,57 @@ async function uploadToKinescope(
       throw new Error(`Upload failed HTTP ${uploadResponse.status}: ${errorText}`);
     }
 
-    console.log(`  Upload complete (${(fileSize / 1024 / 1024).toFixed(1)} MB)`);
+    console.log(`  Upload complete (${(fileSize / 1024 / 1024).toFixed(1)} MB, timeout was ${Math.round(timeoutMs / 1000)}s)`);
 
-    // The video ID is the init_id we generated
     return initId;
   } catch (error: any) {
     clearTimeout(timeout);
     if (error.name === 'AbortError') {
-      throw new Error(`Upload timed out after ${UPLOAD_TIMEOUT_MS / 1000}s`);
+      throw new Error(`Upload timed out after ${Math.round(timeoutMs / 1000)}s for ${(fileSize / 1024 / 1024).toFixed(0)} MB file`);
     }
     throw error;
   }
 }
 
-/**
- * Upload with retry logic (exponential backoff)
- */
+async function deleteVideo(videoId: string): Promise<void> {
+  try {
+    await fetch(`https://api.kinescope.io/v1/videos/${videoId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${KINESCOPE_API_KEY}` },
+    });
+  } catch {
+    // Ignore delete errors — video may not exist
+  }
+}
+
 async function uploadWithRetry(
   filePath: string,
   title: string,
-  isFirstUpload: boolean,
+  folderId: string,
 ): Promise<string> {
   let lastError: Error | null = null;
+  // Generate initId ONCE — reuse across retries to avoid creating duplicate videos
+  let initId = randomUUID();
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
-      return await uploadToKinescope(filePath, title, isFirstUpload && attempt === 0);
+      return await uploadToKinescope(filePath, title, folderId, initId);
     } catch (error: any) {
       lastError = error;
 
+      // "already exists" = init succeeded before but upload failed.
+      // Delete the orphaned video, wait for Kinescope to process, then use a fresh initId.
+      if (error.message?.includes('already exists')) {
+        console.log(`  [CLEANUP] Deleting orphaned video ${initId}, waiting 5s for Kinescope to sync...`);
+        await deleteVideo(initId);
+        await sleep(5000);
+        initId = randomUUID();
+      }
+
       if (attempt < MAX_RETRIES) {
-        const delay = RETRY_DELAYS_MS[attempt] || 8000;
+        const delay = RETRY_DELAYS_MS[attempt] || 12000;
         console.log(
-          `  [RETRY] Attempt ${attempt + 1}/${MAX_RETRIES} failed: ${error.message}. Retrying in ${delay / 1000}s...`,
+          `  [RETRY] Attempt ${attempt + 1}/${MAX_RETRIES}. Retrying in ${delay / 1000}s...`,
         );
         await sleep(delay);
       }
@@ -249,21 +369,7 @@ async function uploadWithRetry(
 async function main() {
   console.log('=== Kinescope Bulk Upload ===\n');
 
-  // 1. Validate environment
-  if (!DRY_RUN) {
-    if (!KINESCOPE_API_KEY) {
-      console.error('ERROR: KINESCOPE_API_KEY not set in .env');
-      console.error('See docs/KINESCOPE_SETUP.md for setup instructions.');
-      process.exit(1);
-    }
-    if (!KINESCOPE_PROJECT_ID) {
-      console.error('ERROR: KINESCOPE_PROJECT_ID not set in .env');
-      console.error('See docs/KINESCOPE_SETUP.md for setup instructions.');
-      process.exit(1);
-    }
-  }
-
-  // 2. Load mapping file
+  // 1. Load mapping file
   if (!fs.existsSync(MAP_PATH)) {
     console.error('Mapping file not found:', MAP_PATH);
     console.error('Run mapping script first: npx tsx scripts/kinescope-mapping.ts');
@@ -271,10 +377,31 @@ async function main() {
   }
 
   const mapping: MappingFile = JSON.parse(fs.readFileSync(MAP_PATH, 'utf-8'));
-  console.log(`Mapping loaded: ${mapping.matched.length} entries (generated ${mapping.generated})\n`);
+  const progress = loadProgress();
+
+  // Status-only mode
+  if (STATUS_ONLY) {
+    showStatus(mapping, progress);
+    return;
+  }
+
+  // 2. Validate environment
+  if (!DRY_RUN) {
+    if (!KINESCOPE_API_KEY) {
+      console.error('ERROR: KINESCOPE_API_KEY not set in .env');
+      process.exit(1);
+    }
+    if (!KINESCOPE_PROJECT_ID) {
+      console.error('ERROR: KINESCOPE_PROJECT_ID not set in .env');
+      process.exit(1);
+    }
+  }
+
+  console.log(`Mapping loaded: ${mapping.matched.length} entries (generated ${mapping.generated})`);
+  if (COURSE_FILTER) console.log(`Course filter: ${COURSE_FILTER}`);
+  console.log();
 
   // 3. Load progress (for resume)
-  const progress = loadProgress();
   const uploadedSet = new Set(progress.uploaded.map((u) => u.lessonId));
   console.log(`Previous progress: ${progress.uploaded.length} uploaded, ${progress.failed.length} failed`);
 
@@ -295,8 +422,10 @@ async function main() {
   const queue: MatchedEntry[] = [];
 
   for (const entry of mapping.matched) {
-    // Skip if file doesn't exist
     if (!entry.fileExists) continue;
+
+    // Filter by course if specified
+    if (COURSE_FILTER && entry.courseId !== COURSE_FILTER) continue;
 
     // Skip if already uploaded in previous run
     if (uploadedSet.has(entry.lessonId)) {
@@ -313,10 +442,14 @@ async function main() {
     queue.push(entry);
   }
 
+  // Sort by file size ascending (upload small files first for faster feedback)
+  queue.sort((a, b) => (a.fileSizeMB || 0) - (b.fileSizeMB || 0));
+
   // Apply limit
   const toUpload = queue.slice(0, LIMIT);
 
-  console.log(`\nUpload queue: ${toUpload.length} videos`);
+  const totalSizeMB = toUpload.reduce((sum, e) => sum + (e.fileSizeMB || 0), 0);
+  console.log(`\nUpload queue: ${toUpload.length} videos (${(totalSizeMB / 1024).toFixed(1)} GB)`);
   console.log(`Skipped: ${dbSkipped} (already have videoId or previously uploaded)`);
   if (LIMIT < Infinity) console.log(`Limit: ${LIMIT}`);
   if (DRY_RUN) console.log('[DRY RUN] No uploads will be performed.\n');
@@ -324,18 +457,17 @@ async function main() {
   // 6. Process uploads
   let uploaded = 0;
   let failed = 0;
-  let skipped = dbSkipped;
-  let isFirstUpload = true;
 
   for (let i = 0; i < toUpload.length; i++) {
     const entry = toUpload[i];
     const num = i + 1;
     const total = toUpload.length;
     const sizeMB = entry.fileSizeMB ? `${entry.fileSizeMB} MB` : 'unknown size';
+    const folderId = COURSE_FOLDER_IDS[entry.courseId] || '';
 
-    console.log(`[${num}/${total}] Uploading: ${entry.lessonId} (${sizeMB})`);
+    console.log(`[${num}/${total}] ${entry.lessonId} (${sizeMB})`);
     console.log(`  File: ${path.basename(entry.filePath)}`);
-    console.log(`  Title: ${entry.title}`);
+    console.log(`  Course: ${entry.courseId} → folder ${folderId ? folderId.substring(0, 8) + '...' : 'PROJECT ROOT'}`);
 
     if (DRY_RUN) {
       console.log('  [DRY RUN] Would upload to Kinescope and update DB\n');
@@ -344,10 +476,7 @@ async function main() {
     }
 
     try {
-      // Upload to Kinescope
-      const videoId = await uploadWithRetry(entry.filePath, entry.title, isFirstUpload);
-      isFirstUpload = false;
-
+      const videoId = await uploadWithRetry(entry.filePath, entry.title, folderId);
       console.log(`  Kinescope videoId: ${videoId}`);
 
       // Update Lesson in DB
@@ -359,12 +488,15 @@ async function main() {
         },
       });
 
-      console.log(`  DB updated: Lesson.videoId = ${videoId}\n`);
+      console.log(`  DB updated ✓\n`);
 
       // Track progress
       progress.uploaded.push({
         lessonId: entry.lessonId,
         videoId,
+        courseId: entry.courseId,
+        folderId,
+        sizeMB: entry.fileSizeMB || 0,
         uploadedAt: new Date().toISOString(),
       });
       saveProgress(progress);
@@ -372,7 +504,6 @@ async function main() {
     } catch (error: any) {
       console.error(`  [FAILED] ${error.message}\n`);
 
-      // Track failure
       progress.failed.push({
         lessonId: entry.lessonId,
         filePath: entry.filePath,
@@ -386,11 +517,10 @@ async function main() {
 
   // 7. Summary
   console.log('\n=== UPLOAD SUMMARY ===');
-  console.log(`Mode:     ${DRY_RUN ? 'DRY RUN' : 'LIVE'}`);
+  console.log(`Mode:     ${DRY_RUN ? 'DRY RUN' : 'LIVE'}${COURSE_FILTER ? ` (course: ${COURSE_FILTER})` : ''}`);
   console.log(`Uploaded: ${uploaded}`);
-  console.log(`Skipped:  ${skipped} (already had videoId)`);
+  console.log(`Skipped:  ${dbSkipped} (already had videoId)`);
   console.log(`Failed:   ${failed}`);
-  console.log(`Total:    ${mapping.matched.length} in mapping`);
 
   if (failed > 0) {
     console.log(`\nFailed uploads saved to: ${PROGRESS_PATH}`);
@@ -398,11 +528,18 @@ async function main() {
   }
 
   if (!DRY_RUN) {
-    console.log(`\nProgress saved to: ${PROGRESS_PATH}`);
+    console.log(`\nProgress file: ${PROGRESS_PATH}`);
+  }
+
+  // Show next batch suggestion
+  if (!COURSE_FILTER && uploaded > 0) {
+    console.log('\nTo upload by batch (recommended):');
+    for (const courseId of Object.keys(COURSE_FOLDER_IDS).sort()) {
+      console.log(`  npx tsx scripts/kinescope-upload.ts --course ${courseId}`);
+    }
   }
 
   console.log('\nDone.');
-
   await prisma.$disconnect();
 }
 

@@ -1,6 +1,21 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-01-08
+**Last updated:** 2026-02-21
+
+## Last Session (2026-02-21)
+
+**Kinescope Upload — COMPLETE:**
+- ✅ Все 405 видео загружены на Kinescope (209.4 GB, 6 курсов)
+- ✅ Все Lesson.videoId записаны в Supabase DB
+- ✅ Проверено: Kinescope API (405, all `done`), DB dry-run (405 skipped), progress.json (405 uploaded)
+- Исправлены: autobidder stale videoId, neurovideo_004 DB connection drop, den_1.mp4 rename
+- Timeline: 2026-02-18..20 (4 сессии)
+
+**Dev Bypass (для отладки без auth):**
+Если Supabase снова недоступна, можно временно добавить bypass в 3 файла:
+1. `apps/web/src/middleware.ts` — добавить `DEV_BYPASS_AUTH = true` в начало middleware
+2. `apps/web/src/app/api/trpc/[trpc]/route.ts` — mock user для tRPC context
+3. `apps/web/src/app/(main)/layout.tsx` — mock user для layout
 
 ## Development Workflow
 
@@ -211,6 +226,13 @@ MAAL/
 - [x] AI-3.4.4: Loading states — spinner, "AI думает..."
 - [x] AI-3.4.5: Error handling — error states для summary и chat
 
+#### Фаза 5: Testing ✅ COMPLETE (2026-01-08)
+- [x] AI-3.5.1: Summary endpoint — verified working, returns structured markdown with 7 sources
+- [x] AI-3.5.2: Chat endpoint — verified working, returns answers with citations and 5 sources
+- [x] AI-3.5.3: Vector search — threshold 0.3 for better recall
+- [x] AI-3.5.4: Timecodes — formatted as "MM:SS - MM:SS"
+- [x] AI-3.5.5: Model — google/gemini-2.5-flash via OpenRouter
+
 #### Ключевые файлы Sprint 3:
 ```
 packages/ai/
@@ -227,12 +249,42 @@ packages/api/src/routers/ai.ts    # tRPC router
 scripts/sql/match_chunks.sql      # Supabase RPC function
 ```
 
-### Sprint 4: Integration (pending)
-Final integration and deploy to VPS.
+### Sprint 4: Integration (partial)
+- [x] Kinescope видео интеграция — 405 видео загружены (209.4 GB), все videoId в DB
 - [ ] Обновить DATABASE_URL credentials
-- [ ] Запустить db:push + seed (Course/Lesson таблицы)
-- [ ] Kinescope видео интеграция
 - [ ] Deploy на VPS
+
+### Sprint 5: RAG + Diagnostic Integration 📋 PLANNED (2026-01-14)
+**Цель:** Синхронизировать UI с реальными данными RAG, добавить мягкое ограничение доступа, генерировать вопросы диагностики из контента уроков.
+
+#### Фаза A: Синхронизация курсов с RAG
+- [ ] RA-5.1: Endpoint `getCourseStructure()` — динамическая загрузка курсов из Supabase `content_chunk`
+- [ ] RA-5.2: Маппинг lesson_id → категории навыков (01_analytics→ANALYTICS, 02_ads→MARKETING, etc.)
+- [ ] RA-5.3: Обновить UI /learn для отображения реальных 6 курсов и 80+ уроков
+- [ ] RA-5.4: Убрать hardcoded данные из `packages/api/src/mocks/courses.ts`
+
+#### Фаза B: Мягкое ограничение доступа
+- [ ] RA-5.5: Компонент `LessonLocked.tsx` — баннер "Пройди диагностику чтобы открыть видео"
+- [ ] RA-5.6: Проверка `hasCompletedDiagnostic()` в lesson page
+- [ ] RA-5.7: Фильтр "Мой трек" в /learn — показывает только recommendedPath уроки
+- [ ] RA-5.8: Сохранение recommendedPath в профиль пользователя
+
+#### Фаза C: AI генерация вопросов
+- [ ] RA-5.9: Сервис `question-generator.ts` — генерация вопросов из RAG chunks
+- [ ] RA-5.10: Интеграция с `diagnostic.startSession()` — вызов AI вместо mock
+- [ ] RA-5.11: Fallback на mock вопросы если LLM недоступен
+- [ ] RA-5.12: Rate limiting для генерации
+
+#### Фаза D: Полировка
+- [ ] RA-5.13: Badge "Рекомендовано для вас" на уроках из recommendedPath
+- [ ] RA-5.14: UI animations для LessonLocked
+- [ ] RA-5.15: E2E тестирование полного flow
+
+**Детальный план:** `C:\Users\Zebrosha\.claude\plans\flickering-knitting-tarjan.md`
+
+**RAG данные (готовы):**
+- 6 курсов: 01_analytics, 02_ads, 03_ai, 04_workshops, 05_ozon, 06_express
+- 80+ уроков, 5,291 chunks с embeddings в Supabase
 
 ## Current Status Summary
 
@@ -242,15 +294,17 @@ Final integration and deploy to VPS.
 | Sprint 1 | ✅ Complete | 95% (QA pending) |
 | Sprint 2 | ✅ Complete | 95% (QA pending) |
 | Sprint 2.5 | ✅ Complete | 100% (Все фазы) |
-| Sprint 3 | ✅ Complete | 95% (db:push pending) |
-| Sprint 4 | 🚀 Ready | Waiting for credentials |
+| Sprint 3 | ✅ Complete | 100% (RAG tested & working) |
+| Sprint 4 | 🔄 Partial | Kinescope done, deploy pending |
+| Sprint 5 | 📋 Planned | RAG + Diagnostic Integration |
 
 **Next Steps:**
-1. Обновить DATABASE_URL credentials в Supabase Dashboard
-2. Запустить `pnpm db:push` для синхронизации схемы
-3. Kinescope: получить videoId для видеоплеера
-4. Deploy на VPS (Sprint 4)
-5. E2E тестирование RAG с реальными lessonId
+1. ✅ ~~Google OAuth callback error~~ — ИСПРАВЛЕНО (2026-01-14)
+2. ✅ ~~Kinescope: загрузить все видео~~ — 405/405 COMPLETE (2026-02-20)
+3. Sprint 5: Фаза A — синхронизация курсов с RAG
+4. Sprint 5: Фаза B — мягкое ограничение доступа
+5. Sprint 5: Фаза C — AI генерация вопросов
+6. Deploy на VPS (Sprint 4)
 
 ## Key Decisions
 
@@ -286,6 +340,37 @@ Final integration and deploy to VPS.
 | Database | PostgreSQL with pgvector |
 | Auth Providers | Email/Password, Google OAuth |
 | Status | ✅ Configured & Working |
+
+### Test User (для локального тестирования)
+| Field | Value |
+|-------|-------|
+| Email | `test@mpstats.academy` |
+| Password | `TestUser2024` |
+| User ID | `62b06f05-1d65-47b6-8f7c-9f535449a9d9` |
+| Created | 2026-01-08 |
+
+### Free Tier Keep-Alive
+⚠️ **Supabase Free Tier паузит проект после 7 дней неактивности!**
+
+**Автоматическая защита:**
+- GitHub Action `.github/workflows/supabase-keepalive.yml`
+- Ping каждые 3 дня (8:00 и 20:00 UTC)
+- Retry logic: 3 попытки с паузой 10 сек
+
+**Если база заснула (Error 521):**
+1. Зайти на https://supabase.com/dashboard
+2. Открыть проект `saecuecevicwjkpmaoot`
+3. Нажать "Restore project"
+4. Подождать 1-2 минуты
+
+**Ручной запуск keep-alive:**
+```bash
+gh workflow run supabase-keepalive.yml
+```
+
+### Known Issues
+- ✅ ~~Google OAuth callback error~~ — ИСПРАВЛЕНО (2026-01-14). Причина: повреждённый SUPABASE_ANON_KEY в `apps/web/.env`
+- ✅ ~~Supabase paused (Error 521)~~ — ИСПРАВЛЕНО (2026-01-27). Keep-alive workflow улучшен.
 
 ## Design Backups
 
