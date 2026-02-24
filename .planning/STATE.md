@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 06: Production Deploy
+**Current focus:** Phase 06: Production Deploy (COMPLETE)
 
 ## Current Position
 
 Phase: 06 of 6 (Production Deploy)
-Plan: 1 of 2 in current phase
-Status: Plan 06-01 Complete
-Last activity: 2026-02-24 — Plan 06-01 complete (Docker fix + health check + CI)
+Plan: 2 of 2 in current phase (COMPLETE)
+Status: Phase 06 Complete - Production deployed and verified
+Last activity: 2026-02-24 — Plan 06-02 complete (CD pipeline + E2E verification)
 
-Progress: [████████░░] 55%
+Progress: [██████████] 100% (Phase 06 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 5.0 min
-- Total execution time: 0.7 hours
+- Total plans completed: 9
+- Average duration: 7.8 min
+- Total execution time: ~1.2 hours
 
 **By Phase:**
 
@@ -39,6 +39,7 @@ Progress: [████████░░] 55%
 | Phase 05.1-vps-infrastructure-setup P01 | 12 | 2 tasks | 4 files |
 | Phase 05.1-vps-infrastructure-setup P02 | 15 | 2 tasks | VPS only |
 | Phase 06-production-deploy P01 | 1 | 2 tasks | 4 files |
+| Phase 06-production-deploy P02 | 45 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [06-01]: openssl in Alpine runner (not binaryTargets) — Prisma auto-detects linux-musl-openssl-3.0.x
 - [06-01]: Health endpoint uses singleton prisma from @mpstats/db, no $disconnect
 - [06-01]: CI includes master, main, develop for backward compatibility
+- [06-02]: appleboy/ssh-action@v1 for CD — simple SSH-based deploy, no Docker registry needed
+- [06-02]: Prisma binaryTargets added linux-musl-openssl-3.0.x alongside openssl package for reliability
+- [06-02]: Prisma engine binaries explicitly copied to standalone output in Dockerfile
 
 ### Roadmap Evolution
 
@@ -101,5 +105,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 06-01-PLAN.md — Docker fix, health check, CI branch targeting
-Resume file: .planning/phases/06-production-deploy/06-01-SUMMARY.md
+Stopped at: Completed 06-02-PLAN.md — CD pipeline + full E2E production verification
+Resume file: .planning/phases/06-production-deploy/06-02-SUMMARY.md

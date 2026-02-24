@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
-- [ ] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация
+- [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
 
 ## Phase Details
 
@@ -128,8 +128,8 @@ Plans:
 **Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 06-01-PLAN.md — Prisma OpenSSL fix, health check endpoint, CI branch fix
-- [ ] 06-02-PLAN.md — CD pipeline, production deploy, E2E verification
+- [x] 06-01-PLAN.md — Prisma OpenSSL fix, health check endpoint, CI branch fix
+- [x] 06-02-PLAN.md — CD pipeline, production deploy, E2E verification
 
 ## Progress
 
@@ -146,4 +146,4 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
-| 6. Production Deploy | 0/2 | Not started | - |
+| 6. Production Deploy | 2/2 | Complete | 2026-02-24 |

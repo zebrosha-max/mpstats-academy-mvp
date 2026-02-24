@@ -54,7 +54,7 @@
 - [x] **DEPLOY-04**: Environment variables настроены на VPS
 - [x] **DEPLOY-05**: Prisma binary targets для Linux (Ubuntu 24.04)
 - [x] **DEPLOY-06**: Health check endpoint для мониторинга
-- [ ] **DEPLOY-07**: Критичные E2E тесты: auth flow, diagnostic flow, learning flow
+- [x] **DEPLOY-07**: Критичные E2E тесты: auth flow, diagnostic flow, learning flow
 
 ## v2 Requirements
 
@@ -125,7 +125,7 @@
 | DEPLOY-04 | Phase 6: Production Deploy | Complete |
 | DEPLOY-05 | Phase 6: Production Deploy | Complete |
 | DEPLOY-06 | Phase 6: Production Deploy | Complete |
-| DEPLOY-07 | Phase 6: Production Deploy | Pending |
+| DEPLOY-07 | Phase 6: Production Deploy | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total
