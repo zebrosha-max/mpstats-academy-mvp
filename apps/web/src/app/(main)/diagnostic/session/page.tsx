@@ -70,10 +70,6 @@ export default function DiagnosticSessionPage() {
     }
   }, [sessionState?.isComplete, sessionId, router]);
 
-  if (!sessionId) {
-    return null;
-  }
-
   // Show slow hint after 3 seconds of loading
   useEffect(() => {
     if (!isLoading) {
@@ -83,6 +79,10 @@ export default function DiagnosticSessionPage() {
     const timer = setTimeout(() => setShowSlowHint(true), 3000);
     return () => clearTimeout(timer);
   }, [isLoading]);
+
+  if (!sessionId) {
+    return null;
+  }
 
   if (isLoading) {
     return (

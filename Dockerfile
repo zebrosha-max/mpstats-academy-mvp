@@ -1,6 +1,8 @@
 # Stage 1: Base image with pnpm
 FROM node:20-alpine AS base
 RUN apk update && apk add --no-cache libc6-compat
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /app
 
@@ -28,6 +30,19 @@ ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
+# Server-side env vars needed at build time for Next.js page data collection
+# (tRPC route handler initializes Supabase/OpenRouter clients during build)
+ARG SUPABASE_SERVICE_ROLE_KEY
+ARG OPENROUTER_API_KEY
+ARG DATABASE_URL
+ARG DIRECT_URL
+
+ENV SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+ENV OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+ENV DATABASE_URL=$DATABASE_URL
+ENV DIRECT_URL=$DIRECT_URL
+
+RUN mkdir -p /app/apps/web/public
 RUN pnpm turbo build --filter=@mpstats/web
 
 # Stage 5: Production runner (minimal image)
