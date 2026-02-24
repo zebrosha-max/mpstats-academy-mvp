@@ -1,14 +1,48 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-02-21
+**Last updated:** 2026-02-24
 
-## Last Session (2026-02-21)
+## Last Session (2026-02-24)
 
+**Production Deploy — COMPLETE (Phase 05.1 + partial Phase 6):**
+
+**VPS Infrastructure (Phase 05.1):**
+- ✅ VPS 89.208.106.208 проверен: Docker 28.2.2, Nginx 1.24.0, UFW (22/80/443), fail2ban
+- ✅ SSH password auth отключён, fail2ban whitelist настроен
+- ✅ DuckDNS + Let's Encrypt SSL: `https://academyal.duckdns.org` (cert expires 2026-05-25)
+- ✅ Nginx reverse proxy с увеличенными буферами для Supabase auth cookies
+
+**Docker Deploy (Phase 6 partial):**
+- ✅ Dockerfile: 5-stage multi-stage build с turbo prune для Turborepo monorepo
+- ✅ docker-compose.yml: production config, порт 127.0.0.1:3000:3000
+- ✅ Контейнер собран и работает (healthy) на VPS
+- ✅ Landing page доступна по HTTPS
+
+**Исправления во время деплоя:**
+
+| Проблема | Файл | Фикс |
+|----------|------|------|
+| `ERR_PNPM_NO_GLOBAL_BIN_DIR` | `Dockerfile` | `ENV PNPM_HOME="/pnpm"` + PATH |
+| React Hook called conditionally | `diagnostic/session/page.tsx` | useEffect перенесён выше return |
+| OpenRouter/Supabase crash при build | `openrouter.ts`, `retrieval.ts` | Lazy-init через Proxy |
+| `/app/apps/web/public` not found | `Dockerfile` | `mkdir -p` перед build |
+| Nginx "too big header" (502) | Nginx `maal.conf` | `proxy_buffer_size 128k` |
+| Alpine localhost → IPv6 | `docker-compose.yml` | healthcheck: `127.0.0.1` вместо `localhost` |
+| OAuth redirect на 0.0.0.0:3000 | `auth/callback/route.ts` | Используем `NEXT_PUBLIC_SITE_URL` вместо `requestUrl.origin` |
+| Docker Compose не читал build args | VPS `.env` | Симлинк `.env` → `.env.production` |
+
+**Supabase URL Configuration обновлена:**
+- Site URL: `https://academyal.duckdns.org`
+- Redirect URLs: `https://academyal.duckdns.org/**`, `http://localhost:3000/**`
+
+**Production URL:** https://academyal.duckdns.org
+
+**Prisma warning:** `libssl.so.1.1` — может потребоваться `openssl` в runner stage или обновление Prisma для OpenSSL 3.x совместимости.
+
+### Previous Session (2026-02-21)
 **Kinescope Upload — COMPLETE:**
 - ✅ Все 405 видео загружены на Kinescope (209.4 GB, 6 курсов)
 - ✅ Все Lesson.videoId записаны в Supabase DB
-- ✅ Проверено: Kinescope API (405, all `done`), DB dry-run (405 skipped), progress.json (405 uploaded)
-- Исправлены: autobidder stale videoId, neurovideo_004 DB connection drop, den_1.mp4 rename
 - Timeline: 2026-02-18..20 (4 сессии)
 
 **Dev Bypass (для отладки без auth):**
@@ -21,7 +55,7 @@
 
 ### Environment Strategy
 - **Development:** Локально (Windows PC)
-- **Production:** VPS 79.137.197.90 (Ubuntu 24.04, Docker, PM2)
+- **Production:** VPS 89.208.106.208 (Ubuntu 24.04, Docker, Nginx + Let's Encrypt)
 - **Database:** Supabase (cloud) — доступна из любого окружения
 
 ### Progress Tracking Rules
@@ -249,10 +283,13 @@ packages/api/src/routers/ai.ts    # tRPC router
 scripts/sql/match_chunks.sql      # Supabase RPC function
 ```
 
-### Sprint 4: Integration (partial)
+### Sprint 4: Integration ✅ COMPLETE (2026-02-24)
 - [x] Kinescope видео интеграция — 405 видео загружены (209.4 GB), все videoId в DB
-- [ ] Обновить DATABASE_URL credentials
-- [ ] Deploy на VPS
+- [x] VPS Infrastructure — Docker, Nginx, UFW, fail2ban, SSL (Phase 05.1)
+- [x] Docker Deploy — multi-stage build, контейнер healthy на VPS
+- [x] HTTPS — academyal.duckdns.org с Let's Encrypt
+- [x] OAuth fix — Supabase URL Config + auth callback redirect
+- [x] Nginx proxy buffer fix — для Supabase auth cookies
 
 ### Sprint 5: RAG + Diagnostic Integration 📋 PLANNED (2026-01-14)
 **Цель:** Синхронизировать UI с реальными данными RAG, добавить мягкое ограничение доступа, генерировать вопросы диагностики из контента уроков.
@@ -295,16 +332,17 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | Sprint 2 | ✅ Complete | 95% (QA pending) |
 | Sprint 2.5 | ✅ Complete | 100% (Все фазы) |
 | Sprint 3 | ✅ Complete | 100% (RAG tested & working) |
-| Sprint 4 | 🔄 Partial | Kinescope done, deploy pending |
+| Sprint 4 | ✅ Complete | 100% (Deploy + SSL + OAuth) |
 | Sprint 5 | 📋 Planned | RAG + Diagnostic Integration |
 
 **Next Steps:**
 1. ✅ ~~Google OAuth callback error~~ — ИСПРАВЛЕНО (2026-01-14)
 2. ✅ ~~Kinescope: загрузить все видео~~ — 405/405 COMPLETE (2026-02-20)
-3. Sprint 5: Фаза A — синхронизация курсов с RAG
-4. Sprint 5: Фаза B — мягкое ограничение доступа
-5. Sprint 5: Фаза C — AI генерация вопросов
-6. Deploy на VPS (Sprint 4)
+3. ✅ ~~Deploy на VPS~~ — COMPLETE (2026-02-24), https://academyal.duckdns.org
+4. Проверить Prisma libssl warning (DB-роуты в production)
+5. Sprint 5: Фаза A — синхронизация курсов с RAG
+6. Sprint 5: Фаза B — мягкое ограничение доступа
+7. Sprint 5: Фаза C — AI генерация вопросов
 
 ## Key Decisions
 
@@ -405,10 +443,35 @@ _backup_design_v1/
 cp -r _backup_design_v1/apps/web/* apps/web/
 ```
 
-## VPS Deploy (Sprint 4)
+## VPS Deploy (Sprint 4) ✅ COMPLETE
 
-Target: `79.137.197.90`
-- Node.js 20 + PM2
-- Nginx reverse proxy
-- Let's Encrypt SSL
-- Docker optional (can run Next.js directly)
+| Параметр | Значение |
+|----------|----------|
+| VPS IP | 89.208.106.208 |
+| User | deploy (SSH key auth only) |
+| URL | https://academyal.duckdns.org |
+| SSL | Let's Encrypt (expires 2026-05-25, auto-renewal) |
+| Reverse Proxy | Nginx 1.24.0 (proxy_buffer_size 128k для Supabase auth) |
+| Container | Docker Compose, image `maal-web`, port 127.0.0.1:3000 |
+| Repo на VPS | `/home/deploy/maal/` (git clone from GitHub) |
+| Env | `/home/deploy/maal/.env.production` + `.env` symlink |
+
+**Редеплой:**
+```bash
+ssh deploy@89.208.106.208
+cd /home/deploy/maal
+git pull origin master
+docker compose down && docker compose build --no-cache && docker compose up -d
+```
+
+**Логи:**
+```bash
+docker compose logs --tail=50 -f
+```
+
+**Gotchas:**
+- `.env` должен быть симлинком на `.env.production` (Docker Compose читает build args из `.env`)
+- `NEXT_PUBLIC_*` переменные вшиваются в бандл при build time, не runtime
+- Nginx `proxy_buffer_size 128k` обязателен для Supabase auth cookies
+- Alpine `localhost` резолвит в IPv6 — использовать `127.0.0.1` в healthcheck
+- Auth callback redirect использует `NEXT_PUBLIC_SITE_URL`, не `request.url`
