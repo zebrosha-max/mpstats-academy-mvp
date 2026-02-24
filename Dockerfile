@@ -49,6 +49,9 @@ RUN pnpm turbo build --filter=@mpstats/web
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Fix Prisma: Alpine needs openssl for libssl (Prisma auto-detects linux-musl-openssl-3.0.x)
+RUN apk add --no-cache openssl
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
