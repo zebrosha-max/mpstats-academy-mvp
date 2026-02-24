@@ -48,12 +48,12 @@
 
 ### Production Deploy
 
-- [ ] **DEPLOY-01**: Next.js standalone build (`output: 'standalone'` в next.config.js)
-- [ ] **DEPLOY-02**: PM2 ecosystem config для production
-- [ ] **DEPLOY-03**: Nginx reverse proxy с SSL (Let's Encrypt)
-- [ ] **DEPLOY-04**: Environment variables настроены на VPS
-- [ ] **DEPLOY-05**: Prisma binary targets для Linux (Ubuntu 24.04)
-- [ ] **DEPLOY-06**: Health check endpoint для мониторинга
+- [x] **DEPLOY-01**: Next.js standalone build (`output: 'standalone'` в next.config.js)
+- [x] **DEPLOY-02**: PM2 ecosystem config для production
+- [x] **DEPLOY-03**: Nginx reverse proxy с SSL (Let's Encrypt)
+- [x] **DEPLOY-04**: Environment variables настроены на VPS
+- [x] **DEPLOY-05**: Prisma binary targets для Linux (Ubuntu 24.04)
+- [x] **DEPLOY-06**: Health check endpoint для мониторинга
 - [ ] **DEPLOY-07**: Критичные E2E тесты: auth flow, diagnostic flow, learning flow
 
 ## v2 Requirements
@@ -119,12 +119,12 @@
 | SEC-03 | Phase 5: Security Hardening | Pending |
 | SEC-04 | Phase 5: Security Hardening | Pending |
 | SEC-05 | Phase 5: Security Hardening | Pending |
-| DEPLOY-01 | Phase 6: Production Deploy | Pending |
-| DEPLOY-02 | Phase 6: Production Deploy | Pending |
-| DEPLOY-03 | Phase 6: Production Deploy | Pending |
-| DEPLOY-04 | Phase 6: Production Deploy | Pending |
-| DEPLOY-05 | Phase 6: Production Deploy | Pending |
-| DEPLOY-06 | Phase 6: Production Deploy | Pending |
+| DEPLOY-01 | Phase 6: Production Deploy | Complete |
+| DEPLOY-02 | Phase 6: Production Deploy | Complete |
+| DEPLOY-03 | Phase 6: Production Deploy | Complete |
+| DEPLOY-04 | Phase 6: Production Deploy | Complete |
+| DEPLOY-05 | Phase 6: Production Deploy | Complete |
+| DEPLOY-06 | Phase 6: Production Deploy | Complete |
 | DEPLOY-07 | Phase 6: Production Deploy | Pending |
 
 **Coverage:**

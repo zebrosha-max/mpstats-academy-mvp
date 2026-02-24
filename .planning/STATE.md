@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 05.1: VPS Infrastructure Setup -- COMPLETE
+**Current focus:** Phase 06: Production Deploy
 
 ## Current Position
 
-Phase: 05.1 of 6 (VPS Infrastructure Setup) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-02-24 — Plan 05.1-02 complete (DuckDNS + Let's Encrypt SSL)
+Phase: 06 of 6 (Production Deploy)
+Plan: 1 of 2 in current phase
+Status: Plan 06-01 Complete
+Last activity: 2026-02-24 — Plan 06-01 complete (Docker fix + health check + CI)
 
-Progress: [███████░░░] 50%
+Progress: [████████░░] 55%
 
 ## Performance Metrics
 
@@ -38,6 +38,7 @@ Progress: [███████░░░] 50%
 *Updated after each plan completion*
 | Phase 05.1-vps-infrastructure-setup P01 | 12 | 2 tasks | 4 files |
 | Phase 05.1-vps-infrastructure-setup P02 | 15 | 2 tasks | VPS only |
+| Phase 06-production-deploy P01 | 1 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 05.1-01]: turbo prune @mpstats/web --docker + outputFileTracingRoot for monorepo standalone Next.js build
 - [Phase 05.1-02]: DuckDNS + Let's Encrypt instead of Cloudflare Tunnel (user has no CF domain)
 - [Phase 05.1-02]: Production URL: https://academyal.duckdns.org (cert expires 2026-05-25)
+- [06-01]: openssl in Alpine runner (not binaryTargets) — Prisma auto-detects linux-musl-openssl-3.0.x
+- [06-01]: Health endpoint uses singleton prisma from @mpstats/db, no $disconnect
+- [06-01]: CI includes master, main, develop for backward compatibility
 
 ### Roadmap Evolution
 
@@ -97,5 +101,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Phase 05.1 COMPLETE — ready for Phase 6 (Production Deploy)
-Resume file: .planning/phases/05.1-vps-infrastructure-setup/05.1-02-SUMMARY.md
+Stopped at: Completed 06-01-PLAN.md — Docker fix, health check, CI branch targeting
+Resume file: .planning/phases/06-production-deploy/06-01-SUMMARY.md
