@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
-- [ ] **Phase 6: Production Deploy** - Standalone build, PM2, ngrok на VPS 89.208.106.208
+- [ ] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация
 
 ## Phase Details
 
@@ -116,21 +116,20 @@ Plans:
 - [x] 05.1-02-PLAN.md — DuckDNS + Let's Encrypt SSL (adapted from Cloudflare Tunnel)
 
 ### Phase 6: Production Deploy
-**Goal**: Приложение задеплоено на VPS 89.208.106.208, доступно через ngrok (временно), работает стабильно под PM2
+**Goal**: Приложение задеплоено на VPS 89.208.106.208, доступно через HTTPS (academyal.duckdns.org), работает стабильно в Docker с полным E2E flow
 **Depends on**: Phase 1, Phase 5, Phase 5.1 (данные + безопасность + инфраструктура)
 **Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, DEPLOY-05, DEPLOY-06, DEPLOY-07
 **Success Criteria** (what must be TRUE):
   1. Пользователь открывает production URL по HTTPS и видит landing page
   2. Google OAuth работает в production (redirect URI обновлён)
   3. Полный flow работает: регистрация -> диагностика -> результаты -> обучение -> RAG chat
-  4. PM2 автоматически перезапускает приложение при crash
+  4. Docker restart policy автоматически перезапускает контейнер при crash
   5. Health check endpoint возвращает статус приложения и БД
-**Plans**: TBD
+**Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 06-01: Standalone build и PM2 config
-- [ ] 06-02: Nginx, SSL, environment setup
-- [ ] 06-03: E2E smoke tests и health check
+- [ ] 06-01-PLAN.md — Prisma OpenSSL fix, health check endpoint, CI branch fix
+- [ ] 06-02-PLAN.md — CD pipeline, production deploy, E2E verification
 
 ## Progress
 
@@ -147,4 +146,4 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
-| 6. Production Deploy | 0/3 | Not started | - |
+| 6. Production Deploy | 0/2 | Not started | - |
