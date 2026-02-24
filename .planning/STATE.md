@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 3: Video Integration -- COMPLETE
+**Current focus:** Phase 05.1: VPS Infrastructure Setup -- COMPLETE
 
 ## Current Position
 
-Phase: 3 of 6 (Video Integration) -- COMPLETE
+Phase: 05.1 of 6 (VPS Infrastructure Setup) -- COMPLETE
 Plan: 2 of 2 in current phase
 Status: Phase Complete
-Last activity: 2026-02-18 — Plan 03-02 complete (Kinescope upload infrastructure)
+Last activity: 2026-02-24 — Plan 05.1-02 complete (DuckDNS + Let's Encrypt SSL)
 
-Progress: [██████░░░░] 43%
+Progress: [███████░░░] 50%
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ Progress: [██████░░░░] 43%
 
 *Updated after each plan completion*
 | Phase 05.1-vps-infrastructure-setup P01 | 12 | 2 tasks | 4 files |
+| Phase 05.1-vps-infrastructure-setup P02 | 15 | 2 tasks | VPS only |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 05.1-01]: VPS already pre-configured: Docker/Nginx/UFW/fail2ban verified rather than installed
 - [Phase 05.1-01]: Docker port binding 127.0.0.1:3000:3000 — port 3000 not exposed externally, Nginx+Cloudflare handle ingress
 - [Phase 05.1-01]: turbo prune @mpstats/web --docker + outputFileTracingRoot for monorepo standalone Next.js build
+- [Phase 05.1-02]: DuckDNS + Let's Encrypt instead of Cloudflare Tunnel (user has no CF domain)
+- [Phase 05.1-02]: Production URL: https://academyal.duckdns.org (cert expires 2026-05-25)
 
 ### Roadmap Evolution
 
@@ -87,12 +90,12 @@ None yet.
 ### Blockers/Concerns
 
 - Kinescope videoId data needed from content team — RESOLVED: upload scripts ready, user setting up Kinescope account
-- Domain name for production SSL not confirmed (blocks Phase 6 DEPLOY-03)
+- Domain name for production SSL — RESOLVED: academyal.duckdns.org with Let's Encrypt
 - SkillCategory enum has 5 values but 6 courses exist — RESOLVED in 01-01 (COURSE_SKILL_MAP)
 - DATABASE_URL credentials RESOLVED — host changed from aws-0-eu-central-1 to aws-1-eu-west-1, DIRECT_URL switched to session pooler
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Phase 05.1 context gathered
-Resume file: .planning/phases/05.1-vps-infrastructure-setup/05.1-CONTEXT.md
+Last session: 2026-02-24
+Stopped at: Phase 05.1 COMPLETE — ready for Phase 6 (Production Deploy)
+Resume file: .planning/phases/05.1-vps-infrastructure-setup/05.1-02-SUMMARY.md

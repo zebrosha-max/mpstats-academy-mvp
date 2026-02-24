@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам (completed 2026-02-18)
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
-- [ ] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED)
+- [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
 - [ ] **Phase 6: Production Deploy** - Standalone build, PM2, ngrok на VPS 89.208.106.208
 
 ## Phase Details
@@ -101,19 +101,19 @@ Plans:
 
 ### Phase 05.1: VPS Infrastructure Setup (INSERTED)
 
-**Goal:** VPS 89.208.106.208 подготовлен для деплоя MAAL: Docker + Nginx + UFW/fail2ban установлены, Cloudflare Tunnel для временного домена с HTTPS
+**Goal:** VPS 89.208.106.208 подготовлен для деплоя MAAL: Docker + Nginx + UFW/fail2ban установлены, HTTPS через DuckDNS + Let's Encrypt
 **Depends on:** Phase 5 (безопасность перед деплоем)
 **Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
 **Success Criteria** (what must be TRUE):
-  1. SSH подключение к 89.208.106.208 работает через deploy пользователя
-  2. Docker Engine + Compose, Nginx установлены и работают на VPS
-  3. Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH
-  4. Cloudflare Tunnel работает и проксирует HTTPS трафик через Nginx на localhost:3000
-**Plans:** 1/2 plans executed
+  1. SSH подключение к 89.208.106.208 работает через deploy пользователя ✅
+  2. Docker Engine + Compose, Nginx установлены и работают на VPS ✅
+  3. Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH ✅
+  4. HTTPS работает на academyal.duckdns.org через Nginx + Let's Encrypt (adapted from Cloudflare Tunnel) ✅
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 05.1-01-PLAN.md — VPS audit + Docker/Nginx/UFW/fail2ban setup + Dockerfile/docker-compose.yml
-- [ ] 05.1-02-PLAN.md — Cloudflare Named Tunnel setup + HTTPS verification
+- [x] 05.1-01-PLAN.md — VPS audit + Docker/Nginx/UFW/fail2ban setup + Dockerfile/docker-compose.yml
+- [x] 05.1-02-PLAN.md — DuckDNS + Let's Encrypt SSL (adapted from Cloudflare Tunnel)
 
 ### Phase 6: Production Deploy
 **Goal**: Приложение задеплоено на VPS 89.208.106.208, доступно через ngrok (временно), работает стабильно под PM2
@@ -146,5 +146,5 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 3. Video Integration | 0/2 | Complete    | 2026-02-18 |
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
-| 5.1 VPS Infrastructure | 0/2 | Not started | - |
+| 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 0/3 | Not started | - |
