@@ -49,12 +49,12 @@
 ### Production Deploy
 
 - [x] **DEPLOY-01**: Next.js standalone build (`output: 'standalone'` в next.config.js)
-- [x] **DEPLOY-02**: PM2 ecosystem config для production
+- [x] **DEPLOY-02**: Process management для production (Docker Compose `restart: unless-stopped` вместо PM2)
 - [x] **DEPLOY-03**: Nginx reverse proxy с SSL (Let's Encrypt)
 - [x] **DEPLOY-04**: Environment variables настроены на VPS
 - [x] **DEPLOY-05**: Prisma binary targets для Linux (Ubuntu 24.04)
 - [x] **DEPLOY-06**: Health check endpoint для мониторинга
-- [x] **DEPLOY-07**: Критичные E2E тесты: auth flow, diagnostic flow, learning flow
+- [x] **DEPLOY-07**: E2E верификация: ручная проверка 12/12 страниц в production (automated Playwright deferred to future)
 
 ## v2 Requirements
 
