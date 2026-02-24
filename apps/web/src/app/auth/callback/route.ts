@@ -6,26 +6,19 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code');
   const next = requestUrl.searchParams.get('next') ?? '/dashboard';
 
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-  console.log('[Auth Callback] ANON_KEY last 10 chars:', anonKey.slice(-10));
-  console.log('[Auth Callback] ANON_KEY length:', anonKey.length);
-  console.log('[Auth Callback] code:', code ? 'present' : 'missing');
+  // Use SITE_URL for redirects — requestUrl.origin returns internal Docker address (0.0.0.0:3000)
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
 
   if (code) {
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-    console.log('[Auth Callback] exchangeCodeForSession result:');
-    console.log('[Auth Callback] - data:', data?.user?.email ?? 'no user');
-    console.log('[Auth Callback] - error:', error?.message ?? 'no error');
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      return NextResponse.redirect(new URL(next, origin));
     }
   }
 
-  // Auth error - redirect to login with error
   return NextResponse.redirect(
-    new URL('/login?error=auth_callback_error', requestUrl.origin)
+    new URL('/login?error=auth_callback_error', origin)
   );
 }
