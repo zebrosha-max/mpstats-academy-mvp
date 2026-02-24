@@ -130,14 +130,12 @@ export async function generateChatResponse(
   history: ChatMessage[] = []
 ): Promise<GenerationResult> {
   // 1. Search for relevant chunks (threshold lowered to 0.3 for better recall)
-  console.log('[Chat] Searching chunks for:', { lessonId, message: message.substring(0, 50) });
   const relevantChunks = await searchChunks({
     query: message,
     lessonId,
     limit: 5,
     threshold: 0.3,
   });
-  console.log('[Chat] Found chunks:', relevantChunks.length);
 
   // 2. Build context with citations
   let context = '';

@@ -9,6 +9,7 @@
     "./client": "./src/client.ts"
   },
   "scripts": {
+    "build": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
