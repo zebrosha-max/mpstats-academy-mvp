@@ -61,7 +61,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
     }
 
     return (
-      <div className={className}>
+      <div className={`aspect-video ${className ?? ''}`}>
         <KinescopePlayerRaw
           ref={playerRef}
           videoId={videoId}
