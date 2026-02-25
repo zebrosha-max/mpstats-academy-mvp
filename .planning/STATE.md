@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 06: Production Deploy (COMPLETE)
+**Current focus:** Phase 04: Access Control & Personalization
 
 ## Current Position
 
-Phase: 06 of 6 (Production Deploy)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 06 Complete - Production deployed and verified
-Last activity: 2026-02-24 — Plan 06-02 complete (CD pipeline + E2E verification)
+Phase: 04 of 7 (Access Control & Personalization)
+Plan: 1 of 2 in current phase
+Status: Plan 04-01 Complete - Soft content gating + path persistence
+Last activity: 2026-02-25 — Plan 04-01 complete (diagnostic gate banner + recommended path)
 
-Progress: [██████████] 100% (Phase 06 complete)
+Progress: [█████████░] 90% (Plan 04-01 of 04 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 7.8 min
 - Total execution time: ~1.2 hours
 
@@ -86,6 +86,9 @@ Recent decisions affecting current work:
 - [06-02]: appleboy/ssh-action@v1 for CD — simple SSH-based deploy, no Docker registry needed
 - [06-02]: Prisma binaryTargets added linux-musl-openssl-3.0.x alongside openssl package for reliability
 - [06-02]: Prisma engine binaries explicitly copied to standalone output in Dockerfile
+- [04-01]: Gate defaults to showing content while loading (hasDiagnostic === false, not !hasDiagnostic)
+- [04-01]: Weak categories threshold score < 50 for recommended path generation
+- [04-01]: Path regenerated on every diagnostic completion via upsert (supports re-takes)
 
 ### Roadmap Evolution
 
@@ -105,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-24
-Stopped at: Completed 06-02-PLAN.md — CD pipeline + full E2E production verification
-Resume file: .planning/phases/06-production-deploy/06-02-SUMMARY.md
+Last session: 2026-02-25
+Stopped at: Completed 04-01-PLAN.md — Soft content gating + recommended path persistence
+Resume file: .planning/phases/04-access-control-personalization/04-01-SUMMARY.md

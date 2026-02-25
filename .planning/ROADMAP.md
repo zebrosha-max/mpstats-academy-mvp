@@ -82,7 +82,7 @@ Plans:
 **Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 04-01-PLAN.md — Backend endpoints (hasCompletedDiagnostic, getRecommendedPath), path persistence on completion, DiagnosticGateBanner, lesson page gating
+- [x] 04-01-PLAN.md — Backend endpoints (hasCompletedDiagnostic, getRecommendedPath), path persistence on completion, DiagnosticGateBanner, lesson page gating
 - [ ] 04-02-PLAN.md — "Мой трек" tab on /learn with smart defaults, progress bar, LessonCard recommendation badge
 
 ### Phase 5: Security Hardening
@@ -145,7 +145,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
 | 2. AI Question Generation | 0/2 | Complete    | 2026-02-25 |
 | 3. Video Integration | 0/2 | Complete    | 2026-02-25 |
-| 4. Access Control | 0/1 | Not started | - |
+| 4. Access Control | 1/2 | In progress | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
