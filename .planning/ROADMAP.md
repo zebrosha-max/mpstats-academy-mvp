@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
 - [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
+- [ ] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители)
 
 ## Phase Details
 
@@ -78,10 +79,11 @@ Plans:
   2. Фильтр "Мой трек" на /learn показывает только уроки, рекомендованные на основе SkillProfile
   3. Рекомендованные уроки помечены бейджем "Рекомендовано для вас"
   4. recommendedPath сохраняется в профиль и доступен между сессиями
-**Plans**: TBD
+**Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 04-01: Soft gating и personalized path
+- [ ] 04-01-PLAN.md — Backend endpoints (hasCompletedDiagnostic, getRecommendedPath), path persistence on completion, DiagnosticGateBanner, lesson page gating
+- [ ] 04-02-PLAN.md — "Мой трек" tab on /learn with smart defaults, progress bar, LessonCard recommendation badge
 
 ### Phase 5: Security Hardening
 **Goal**: Все endpoints защищены, AI output безопасен, приложение готово к production трафику
@@ -134,7 +136,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
 Note: Phases 2 and 3 can execute in parallel after Phase 1.
 Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 
@@ -147,3 +149,20 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
+| 7. Lesson Name Cleanup | 0/? | Not started | - |
+
+### Phase 7: Lesson & Course Name Cleanup
+
+**Goal:** Все 405 уроков, модули и 6 курсов отображаются с чистыми, human-readable названиями — без расширений файлов, технической нумерации и разделителей. Пользователь видит понятную структуру обучения.
+**Depends on:** Phase 1 (данные в Supabase), Phase 6 (production deploy для проверки)
+**Requirements**: NAMING-01, NAMING-02, NAMING-03, NAMING-04, NAMING-05
+**Success Criteria** (what must be TRUE):
+  1. Ни одно название урока не содержит `.mp4`, `.mov` или других расширений файлов
+  2. Названия модулей не содержат технических разделителей `_` и нумерации вида "Модуль N_"
+  3. Названия курсов не начинаются с технической нумерации ("1.", "2." и т.д.)
+  4. Уроки внутри каждого модуля пронумерованы последовательно и логично
+  5. Изменения применены в production (academyal.duckdns.org) и проверены визуально
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 7 to break down)
