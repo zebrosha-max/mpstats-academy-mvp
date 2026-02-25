@@ -5,18 +5,9 @@ import {
   useImperativeHandle,
   useRef,
   useCallback,
-  useState,
-  type ComponentRef,
+  useEffect,
 } from 'react';
-import dynamic from 'next/dynamic';
-import type KinescopePlayerType from '@kinescope/react-kinescope-player';
 import { VideoPlaceholder } from './VideoPlaceholder';
-
-// Dynamic import to avoid SSR crash (Kinescope player accesses window on import)
-const KinescopePlayerRaw = dynamic(
-  () => import('@kinescope/react-kinescope-player'),
-  { ssr: false }
-) as unknown as typeof KinescopePlayerType;
 
 export interface PlayerHandle {
   seekTo: (seconds: number) => void;
@@ -29,32 +20,50 @@ interface KinescopePlayerProps {
 
 export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
   function VideoPlayer({ videoId, className }, ref) {
-    const playerRef = useRef<ComponentRef<typeof KinescopePlayerType>>(null);
-    const [isReady, setIsReady] = useState(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
     const pendingSeekRef = useRef<number | null>(null);
+    const isReadyRef = useRef(false);
 
-    const handleReady = useCallback(() => {
-      setIsReady(true);
-      // Execute queued seek if any
-      if (pendingSeekRef.current !== null) {
-        const seconds = pendingSeekRef.current;
-        pendingSeekRef.current = null;
-        playerRef.current?.seekTo(seconds);
-        playerRef.current?.play();
-      }
+    const postMessage = useCallback((method: string, data?: unknown) => {
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ method, params: data !== undefined ? [data] : [] }),
+        'https://kinescope.io'
+      );
     }, []);
+
+    useEffect(() => {
+      const handleMessage = (event: MessageEvent) => {
+        if (!event.origin.includes('kinescope.io')) return;
+        try {
+          const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          if (data?.type === 'ready' || data?.event === 'ready') {
+            isReadyRef.current = true;
+            if (pendingSeekRef.current !== null) {
+              const seconds = pendingSeekRef.current;
+              pendingSeekRef.current = null;
+              postMessage('seekTo', seconds);
+              postMessage('play');
+            }
+          }
+        } catch {
+          // ignore non-JSON messages
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, [postMessage]);
 
     useImperativeHandle(ref, () => ({
       seekTo: (seconds: number) => {
-        if (isReady && playerRef.current) {
-          playerRef.current.seekTo(seconds);
-          playerRef.current.play();
+        if (isReadyRef.current && iframeRef.current) {
+          postMessage('seekTo', seconds);
+          postMessage('play');
         } else {
-          // Queue seek for when player is ready
           pendingSeekRef.current = seconds;
         }
       },
-    }), [isReady]);
+    }), [postMessage]);
 
     if (!videoId) {
       return <VideoPlaceholder />;
@@ -62,13 +71,15 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
 
     return (
       <div className={`aspect-video ${className ?? ''}`}>
-        <KinescopePlayerRaw
-          ref={playerRef}
-          videoId={videoId}
-          autoPlay={false}
+        <iframe
+          ref={iframeRef}
+          src={`https://kinescope.io/embed/${videoId}`}
           width="100%"
           height="100%"
-          onReady={handleReady}
+          allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; web-share"
+          frameBorder="0"
+          allowFullScreen
+          style={{ border: 0 }}
         />
       </div>
     );
