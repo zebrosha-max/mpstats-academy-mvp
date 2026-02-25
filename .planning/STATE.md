@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 04 of 7 (Access Control & Personalization)
-Plan: 1 of 2 in current phase
-Status: Plan 04-01 Complete - Soft content gating + path persistence
-Last activity: 2026-02-25 — Plan 04-01 complete (diagnostic gate banner + recommended path)
+Phase: 04 of 7 (Access Control & Personalization) -- COMPLETE
+Plan: 2 of 2 in current phase (ALL COMPLETE)
+Status: Phase 04 Complete - Soft gating + personalized track
+Last activity: 2026-02-25 — Plan 04-02 complete (My Track tab + recommended badges)
 
-Progress: [█████████░] 90% (Plan 04-01 of 04 complete)
+Progress: [██████████] 100% (Phase 04 complete, all plans done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 7.8 min
-- Total execution time: ~1.2 hours
+- Total plans completed: 12
+- Average duration: 7.0 min
+- Total execution time: ~1.4 hours
 
 **By Phase:**
 
@@ -30,6 +30,7 @@ Progress: [█████████░] 90% (Plan 04-01 of 04 complete)
 | 01-data-foundation | 4 | 17 min | 4.3 min |
 | 02-ai-question-generation | 2 | 12 min | 6 min |
 | 03-video-integration | 2 | 38 min | 19 min |
+| 04-access-control | 2 | 4 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-04 (4 min), 02-01 (10 min), 02-02 (2 min), 03-01 (3 min), 03-02 (35 min)
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - [04-01]: Gate defaults to showing content while loading (hasDiagnostic === false, not !hasDiagnostic)
 - [04-01]: Weak categories threshold score < 50 for recommended path generation
 - [04-01]: Path regenerated on every diagnostic completion via upsert (supports re-takes)
+- [04-02]: View mode skeleton shown until diagnostic status resolves to prevent flicker
+- [04-02]: Recommended lessons cast as LessonWithProgress (compatible shape, courseName passed separately)
+- [04-02]: Button text changed from "Мой план" to "Мой трек" per CONTEXT.md naming decision
 
 ### Roadmap Evolution
 
@@ -109,5 +113,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 04-01-PLAN.md — Soft content gating + recommended path persistence
-Resume file: .planning/phases/04-access-control-personalization/04-01-SUMMARY.md
+Stopped at: Completed 04-02-PLAN.md — My Track tab + recommended badges (Phase 04 COMPLETE)
+Resume file: .planning/phases/04-access-control-personalization/04-02-SUMMARY.md

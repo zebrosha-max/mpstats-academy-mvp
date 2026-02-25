@@ -27,9 +27,9 @@
 ### Access Control
 
 - [x] **ACCESS-01**: Пользователь без диагностики видит баннер "Пройди диагностику чтобы открыть видео"
-- [ ] **ACCESS-02**: Фильтр "Мой трек" показывает только рекомендованные уроки на основе SkillProfile
+- [x] **ACCESS-02**: Фильтр "Мой трек" показывает только рекомендованные уроки на основе SkillProfile
 - [x] **ACCESS-03**: recommendedPath сохраняется в профиль пользователя (Supabase)
-- [ ] **ACCESS-04**: Badge "Рекомендовано для вас" на уроках из recommendedPath
+- [x] **ACCESS-04**: Badge "Рекомендовано для вас" на уроках из recommendedPath
 
 ### Video Integration
 
@@ -111,9 +111,9 @@
 | VIDEO-03 | Phase 3: Video Integration | Pending |
 | VIDEO-04 | Phase 3: Video Integration | Pending |
 | ACCESS-01 | Phase 4: Access Control | Complete |
-| ACCESS-02 | Phase 4: Access Control | Pending |
+| ACCESS-02 | Phase 4: Access Control | Complete |
 | ACCESS-03 | Phase 4: Access Control | Complete |
-| ACCESS-04 | Phase 4: Access Control | Pending |
+| ACCESS-04 | Phase 4: Access Control | Complete |
 | SEC-01 | Phase 5: Security Hardening | Pending |
 | SEC-02 | Phase 5: Security Hardening | Pending |
 | SEC-03 | Phase 5: Security Hardening | Pending |
