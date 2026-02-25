@@ -90,3 +90,10 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Check for service_role key leak
+        run: |
+          if grep -r "SUPABASE_SERVICE_ROLE" apps/web/.next/static/ 2>/dev/null; then
+            echo "::error::service_role key found in client bundle!"
+            exit 1
+          fi
+          echo "No service_role key in client bundle"
