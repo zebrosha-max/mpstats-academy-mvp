@@ -253,7 +253,7 @@ export default function LearnPage() {
               {recommendedPath.lessons.map((lesson) => (
                 <LessonCard
                   key={lesson.id}
-                  lesson={lesson as LessonWithProgress}
+                  lesson={{ ...lesson, title: `${lesson.order}. ${lesson.title}` } as LessonWithProgress}
                   showCourse
                   courseName={lesson.courseName}
                   isRecommended
@@ -319,7 +319,7 @@ export default function LearnPage() {
                     {visibleLessons.map((lesson) => (
                       <LessonCard
                         key={lesson.id}
-                        lesson={lesson}
+                        lesson={{ ...lesson, title: `${lesson.order}. ${lesson.title}` }}
                         showCourse={false}
                         isRecommended={recommendedLessonIds.has(lesson.id)}
                       />
