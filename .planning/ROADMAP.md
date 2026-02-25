@@ -13,7 +13,7 @@
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Foundation** - Seed реальных курсов/уроков и миграция трёх роутеров с mock на Prisma (completed 2026-02-17)
-- [ ] **Phase 2: AI Question Generation** - Генерация диагностических вопросов из RAG chunks вместо mock
+- [x] **Phase 2: AI Question Generation** - Генерация диагностических вопросов из RAG chunks вместо mock (completed 2026-02-25)
 - [x] **Phase 3: Video Integration** - Kinescope плеер с реальными видео и перемоткой по таймкодам (completed 2026-02-18)
 - [ ] **Phase 4: Access Control & Personalization** - Мягкое ограничение доступа и персонализированный трек
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
@@ -49,7 +49,7 @@ Plans:
   2. Каждый вопрос имеет 4 варианта ответа, 1 правильный, и привязан к SkillCategory
   3. Если LLM недоступен или timeout 10s, диагностика работает с fallback mock вопросами
   4. Генерация вопросов ограничена 50 req/hour
-**Plans:** 2 plans in 2 waves
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 02-01-PLAN.md — Question generator service, Zod/JSON schema validation, 100-question mock bank
@@ -141,7 +141,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
-| 2. AI Question Generation | 0/2 | Not started | - |
+| 2. AI Question Generation | 0/2 | Complete    | 2026-02-25 |
 | 3. Video Integration | 0/2 | Complete    | 2026-02-18 |
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
