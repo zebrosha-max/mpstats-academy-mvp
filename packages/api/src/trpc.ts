@@ -2,6 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import type { User } from '@supabase/supabase-js';
 import { prisma, type PrismaClient } from '@mpstats/db';
+import { createRateLimitMiddleware } from './middleware/rate-limit';
 
 export interface Context {
   prisma: PrismaClient;
@@ -36,3 +37,12 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+// AI procedures with rate limiting (built on top of protectedProcedure)
+export const aiProcedure = protectedProcedure.use(
+  createRateLimitMiddleware(50, 3600000, 'ai') // 50 req/hour
+);
+
+export const chatProcedure = protectedProcedure.use(
+  createRateLimitMiddleware(20, 3600000, 'chat') // 20 req/hour
+);

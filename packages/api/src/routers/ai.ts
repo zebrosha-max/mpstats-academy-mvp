@@ -7,7 +7,7 @@
  * - searchChunks: Debug endpoint for vector search
  */
 
-import { router, protectedProcedure, publicProcedure } from '../trpc';
+import { router, protectedProcedure, aiProcedure, chatProcedure } from '../trpc';
 import { z } from 'zod';
 import {
   generateLessonSummary,
@@ -41,8 +41,7 @@ export const aiRouter = router({
    * 2. If miss: generate via RAG
    * 3. Cache and return
    */
-  // TODO: Switch back to protectedProcedure after fixing Supabase SSR cookies
-  getLessonSummary: publicProcedure
+  getLessonSummary: aiProcedure
     .input(z.object({
       lessonId: z.string().min(1),
       forceRefresh: z.boolean().optional().default(false),
@@ -89,8 +88,7 @@ export const aiRouter = router({
    * 3. Generate response
    * 4. Return with sources
    */
-  // TODO: Switch back to protectedProcedure after fixing Supabase SSR cookies
-  chat: publicProcedure
+  chat: chatProcedure
     .input(z.object({
       lessonId: z.string().min(1),
       message: z.string().min(1).max(2000),
@@ -120,8 +118,7 @@ export const aiRouter = router({
    *
    * Direct access to vector search for debugging
    */
-  // TODO: Switch back to protectedProcedure after fixing Supabase SSR cookies
-  searchChunks: publicProcedure
+  searchChunks: protectedProcedure
     .input(z.object({
       query: z.string().min(1),
       lessonId: z.string().optional(),
