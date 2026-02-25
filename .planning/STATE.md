@@ -90,6 +90,7 @@ Recent decisions affecting current work:
 ### Roadmap Evolution
 
 - Phase 5.1 inserted after Phase 5: VPS Infrastructure Setup (INSERTED) — deploy target changed from 79.137.197.90 to 89.208.106.208
+- Phase 7 added: Lesson & Course Name Cleanup — очистка 405 названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители _)
 
 ### Pending Todos
 
