@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 05 of 7 (Security Hardening)
-Plan: 1 of 2 in current phase
-Status: Plan 05-01 complete — Rate limiting + server-only guards
-Last activity: 2026-02-25 — Plan 05-01 complete (AI endpoint auth + rate limiting + server-only)
+Phase: 05 of 7 (Security Hardening) — COMPLETE
+Plan: 2 of 2 in current phase (ALL COMPLETE)
+Status: Phase 05 complete — All security hardening plans executed
+Last activity: 2026-02-25 — Plan 05-02 complete (output sanitization + error boundaries)
 
-Progress: [█████████░] 90% (Phase 05 plan 1/2 complete)
+Progress: [██████████] 100% (Phase 05 complete, 2/2 plans)
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Progress: [█████████░] 90% (Phase 05 plan 1/2 complete)
 | Phase 06-production-deploy P01 | 1 | 2 tasks | 4 files |
 | Phase 06-production-deploy P02 | 45 | 2 tasks | 3 files |
 | Phase 05-security-hardening P01 | 2 | 2 tasks | 6 files |
+| Phase 05-security-hardening P02 | 3 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,9 @@ Recent decisions affecting current work:
 - [05-01]: Rate limiter uses globalThis Map for HMR persistence (same pattern as diagnostic.ts)
 - [05-01]: server-only added to @mpstats/ai package — Next.js traces imports through monorepo
 - [05-01]: searchChunks uses protectedProcedure without rate limit (debug endpoint)
+- [05-02]: SafeMarkdown blocks all links, images, scripts via allowlist (not blocklist)
+- [05-02]: not-found.tsx uses inline text logo instead of Logo component (server component compatibility)
+- [05-02]: global-error.tsx uses inline styles (no Tailwind — catches root layout failures)
 
 ### Roadmap Evolution
 
@@ -117,5 +121,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 05-01-PLAN.md — AI endpoint auth + rate limiting + server-only guards
-Resume file: .planning/phases/05-security-hardening/05-01-SUMMARY.md
+Stopped at: Completed 05-02-PLAN.md — Output sanitization + error boundaries (Phase 05 COMPLETE)
+Resume file: .planning/phases/05-security-hardening/05-02-SUMMARY.md

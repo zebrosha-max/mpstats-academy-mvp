@@ -111,7 +111,7 @@ Plans:
   2. Docker Engine + Compose, Nginx установлены и работают на VPS ✅
   3. Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH ✅
   4. HTTPS работает на academyal.duckdns.org через Nginx + Let's Encrypt (adapted from Cloudflare Tunnel) ✅
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 05.1-01-PLAN.md — VPS audit + Docker/Nginx/UFW/fail2ban setup + Dockerfile/docker-compose.yml

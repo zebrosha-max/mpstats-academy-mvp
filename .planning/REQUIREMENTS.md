@@ -42,9 +42,9 @@
 
 - [x] **SEC-01**: AI router endpoints используют protectedProcedure (не publicProcedure)
 - [x] **SEC-02**: Rate limiting на LLM endpoints (50 req/hour per user)
-- [ ] **SEC-03**: Санитизация AI output — замена dangerouslySetInnerHTML на безопасный рендеринг
+- [x] **SEC-03**: Санитизация AI output — замена dangerouslySetInnerHTML на безопасный рендеринг
 - [x] **SEC-04**: Supabase service_role key доступен только server-side (не утекает в клиент)
-- [ ] **SEC-05**: Error boundaries в React компонентах (diagnostic, learning, chat)
+- [x] **SEC-05**: Error boundaries в React компонентах (diagnostic, learning, chat)
 
 ### Production Deploy
 
@@ -116,9 +116,9 @@
 | ACCESS-04 | Phase 4: Access Control | Complete |
 | SEC-01 | Phase 5: Security Hardening | Complete |
 | SEC-02 | Phase 5: Security Hardening | Complete |
-| SEC-03 | Phase 5: Security Hardening | Pending |
+| SEC-03 | Phase 5: Security Hardening | Complete |
 | SEC-04 | Phase 5: Security Hardening | Complete |
-| SEC-05 | Phase 5: Security Hardening | Pending |
+| SEC-05 | Phase 5: Security Hardening | Complete |
 | DEPLOY-01 | Phase 6: Production Deploy | Complete |
 | DEPLOY-02 | Phase 6: Production Deploy | Complete |
 | DEPLOY-03 | Phase 6: Production Deploy | Complete |
