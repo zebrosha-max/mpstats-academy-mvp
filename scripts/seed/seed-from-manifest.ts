@@ -11,6 +11,7 @@
 
 import { PrismaClient, SkillCategory } from '@prisma/client';
 import * as fs from 'fs';
+import { cleanLessonTitle, cleanModuleDescription, COURSE_NAMES } from '../utils/clean-titles';
 
 const prisma = new PrismaClient();
 
@@ -153,17 +154,20 @@ async function seedFromManifest() {
     console.log(`Course: ${course.title_original} [${course.id}] -> ${skillCategory}`);
 
     if (!DRY_RUN) {
+      const courseTitle = COURSE_NAMES[course.id]?.title ?? course.title_original;
+      const courseDesc = COURSE_NAMES[course.id]?.description ?? course.title_en;
+
       await prisma.course.upsert({
         where: { id: course.id },
         update: {
-          title: course.title_original,
-          description: course.title_en,
+          title: courseTitle,
+          description: courseDesc,
           order: course.order,
         },
         create: {
           id: course.id,
-          title: course.title_original,
-          description: course.title_en,
+          title: courseTitle,
+          description: courseDesc,
           slug: course.id,
           duration: 0,
           order: course.order,
@@ -185,10 +189,14 @@ async function seedFromManifest() {
         }
 
         if (!DRY_RUN) {
+          const lessonTitle = cleanLessonTitle(lesson.title_original);
+          const lessonDesc = cleanModuleDescription(`Модуль: ${module.title_original}`);
+
           await prisma.lesson.upsert({
             where: { id: lesson.id },
             update: {
-              title: lesson.title_original,
+              title: lessonTitle,
+              description: lessonDesc,
               order: lesson.order,
               duration: durationMinutes,
               skillCategory: skillCategory,
@@ -196,8 +204,8 @@ async function seedFromManifest() {
             create: {
               id: lesson.id,
               courseId: course.id,
-              title: lesson.title_original,
-              description: `Модуль: ${module.title_original}`,
+              title: lessonTitle,
+              description: lessonDesc,
               order: lesson.order,
               duration: durationMinutes,
               skillCategory: skillCategory,
