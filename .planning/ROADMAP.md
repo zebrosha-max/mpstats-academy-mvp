@@ -149,7 +149,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
-| 7. Lesson Name Cleanup | 0/2 | Not started | - |
+| 7. Lesson Name Cleanup | 1/2 | In progress | - |
 
 ### Phase 7: Lesson & Course Name Cleanup
 
@@ -165,5 +165,5 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 **Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 07-01-PLAN.md — Cleanup script (dry-run + apply), seed script update, UI visual numbering
+- [x] 07-01-PLAN.md — Cleanup script (dry-run + apply), seed script update, UI visual numbering
 - [ ] 07-02-PLAN.md — Production redeploy and visual verification checkpoint

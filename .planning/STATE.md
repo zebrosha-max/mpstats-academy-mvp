@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 05: Security Hardening
+**Current focus:** Phase 07: Lesson & Course Name Cleanup
 
 ## Current Position
 
-Phase: 05 of 7 (Security Hardening) — COMPLETE
-Plan: 2 of 2 in current phase (ALL COMPLETE)
-Status: Phase 05 complete — All security hardening plans executed
-Last activity: 2026-02-25 — Plan 05-02 complete (output sanitization + error boundaries)
+Phase: 07 of 7 (Lesson & Course Name Cleanup)
+Plan: 1 of 2 in current phase
+Status: Plan 07-01 complete — Cleanup script, seed update, UI numbering
+Last activity: 2026-02-25 — Plan 07-01 complete (lesson/course name cleanup + visual numbering)
 
-Progress: [██████████] 100% (Phase 05 complete, 2/2 plans)
+Progress: [█████████░] 90% (Phase 07, 1/2 plans)
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Progress: [██████████] 100% (Phase 05 complete, 2/2 plans)
 | Phase 06-production-deploy P02 | 45 | 2 tasks | 3 files |
 | Phase 05-security-hardening P01 | 2 | 2 tasks | 6 files |
 | Phase 05-security-hardening P02 | 3 | 2 tasks | 6 files |
+| Phase 07-lesson-course-name-cleanup P01 | 9 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,12 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Phase 07 Decisions
+- [07-01]: Shared scripts/utils/clean-titles.ts module for DRY between cleanup and seed scripts
+- [07-01]: Bare "N word" prefix preserved when no file extension -- idempotent cleanup
+- [07-01]: First underscore-space in module description becomes colon separator
+- [07-01]: Visual numbering uses lesson.order field, not array index
+
 ### Blockers/Concerns
 
 - Kinescope videoId data needed from content team — RESOLVED: upload scripts ready, user setting up Kinescope account
@@ -121,5 +128,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 05-02-PLAN.md — Output sanitization + error boundaries (Phase 05 COMPLETE)
-Resume file: .planning/phases/05-security-hardening/05-02-SUMMARY.md
+Stopped at: Completed 07-01-PLAN.md — Lesson/course name cleanup, seed update, visual numbering
+Resume file: .planning/phases/07-lesson-course-name-cleanup/07-01-SUMMARY.md
