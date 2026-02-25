@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { VideoPlayer, type PlayerHandle } from '@/components/video/KinescopePlayer';
 import { TimecodeLink } from '@/components/video/TimecodeLink';
+import { DiagnosticGateBanner } from '@/components/learning/DiagnosticGateBanner';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 
@@ -57,6 +58,7 @@ export default function LessonPage() {
   };
 
   const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
+  const { data: hasDiagnostic } = trpc.diagnostic.hasCompletedDiagnostic.useQuery();
 
   // Use AI router for summary
   const { data: summaryData, isLoading: summaryLoading, error: summaryError } = trpc.ai.getLessonSummary.useQuery(
@@ -223,6 +225,9 @@ export default function LessonPage() {
         )}
       </div>
 
+      {hasDiagnostic === false ? (
+        <DiagnosticGateBanner />
+      ) : (
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Video section */}
         <div className="lg:col-span-2 space-y-4">
@@ -529,6 +534,7 @@ export default function LessonPage() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
