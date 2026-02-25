@@ -187,6 +187,43 @@ export async function getCompletedSessions(prisma: PrismaClient, userId: string)
   });
 }
 
+// ============== PATH GENERATION ==============
+
+/**
+ * Generate full recommended learning path from weak categories (score < 50).
+ * Returns lesson IDs ordered by weakness priority (lowest score first).
+ */
+async function generateFullRecommendedPath(
+  prisma: PrismaClient,
+  skillProfile: SkillProfile,
+): Promise<string[]> {
+  const categories: Array<{ key: keyof SkillProfile; category: SkillCategory }> = [
+    { key: 'analytics', category: 'ANALYTICS' },
+    { key: 'marketing', category: 'MARKETING' },
+    { key: 'content', category: 'CONTENT' },
+    { key: 'operations', category: 'OPERATIONS' },
+    { key: 'finance', category: 'FINANCE' },
+  ];
+
+  // Sort by weakness (lowest score first)
+  const weakCategories = categories
+    .map((c) => ({ ...c, score: skillProfile[c.key] }))
+    .filter((c) => c.score < 50)
+    .sort((a, b) => a.score - b.score);
+
+  const lessonIds: string[] = [];
+  for (const cat of weakCategories) {
+    const lessons = await prisma.lesson.findMany({
+      where: { skillCategory: cat.category },
+      orderBy: { order: 'asc' },
+      select: { id: true },
+    });
+    lessonIds.push(...lessons.map((l) => l.id));
+  }
+
+  return lessonIds;
+}
+
 // ============== ROUTER ==============
 
 export const diagnosticRouter = router({
@@ -216,6 +253,18 @@ export const diagnosticRouter = router({
         currentQuestion: session.currentQuestion,
         startedAt: session.startedAt,
       };
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
+
+  // Check if user has completed at least one diagnostic
+  hasCompletedDiagnostic: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const count = await ctx.prisma.diagnosticSession.count({
+        where: { userId: ctx.user.id, status: 'COMPLETED' },
+      });
+      return count > 0;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -461,6 +510,14 @@ export const diagnosticRouter = router({
           await ctx.prisma.diagnosticSession.update({
             where: { id: input.sessionId },
             data: { status: 'COMPLETED', completedAt: new Date() },
+          });
+
+          // Generate and persist recommended learning path
+          const fullPath = await generateFullRecommendedPath(ctx.prisma, skillProfile);
+          await ctx.prisma.learningPath.upsert({
+            where: { userId: ctx.user.id },
+            update: { lessons: fullPath, generatedAt: new Date() },
+            create: { userId: ctx.user.id, lessons: fullPath },
           });
 
           // Clean up in-memory question data

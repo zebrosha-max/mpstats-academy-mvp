@@ -213,6 +213,65 @@ export const learningRouter = router({
     }
   }),
 
+  // Get recommended learning path (generated on diagnostic completion)
+  getRecommendedPath: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const path = await ctx.prisma.learningPath.findUnique({
+        where: { userId: ctx.user.id },
+        select: { lessons: true, generatedAt: true },
+      });
+
+      if (!path || !Array.isArray(path.lessons) || path.lessons.length === 0) {
+        return null;
+      }
+
+      // Fetch full lesson data for recommended IDs with progress
+      const recommendedIds = path.lessons as string[];
+      const lessons = await ctx.prisma.lesson.findMany({
+        where: { id: { in: recommendedIds } },
+        include: {
+          progress: {
+            where: { path: { userId: ctx.user.id } },
+          },
+          course: { select: { title: true } },
+        },
+        orderBy: { order: 'asc' },
+      });
+
+      // Preserve the recommended order (by weakness priority)
+      const lessonMap = new Map(lessons.map((l) => [l.id, l]));
+      const orderedLessons = recommendedIds
+        .map((id) => lessonMap.get(id))
+        .filter(Boolean)
+        .map((l) => ({
+          id: l!.id,
+          courseId: l!.courseId,
+          courseName: l!.course.title,
+          title: l!.title,
+          description: l!.description,
+          videoUrl: l!.videoUrl || '',
+          videoId: l!.videoId,
+          duration: l!.duration || 0,
+          order: l!.order,
+          skillCategory: l!.skillCategory,
+          skillLevel: l!.skillLevel,
+          status: (l!.progress[0]?.status || 'NOT_STARTED') as string,
+          watchedPercent: l!.progress[0]?.watchedPercent || 0,
+        }));
+
+      const completedCount = orderedLessons.filter((l) => l.status === 'COMPLETED').length;
+
+      return {
+        generatedAt: path.generatedAt,
+        lessons: orderedLessons,
+        totalLessons: orderedLessons.length,
+        completedLessons: completedCount,
+      };
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
+
   // Get lesson details with progress
   getLesson: protectedProcedure
     .input(z.object({ lessonId: z.string() }))
