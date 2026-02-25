@@ -142,7 +142,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 |-------|----------------|--------|-----------|
 | 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
 | 2. AI Question Generation | 0/2 | Complete    | 2026-02-25 |
-| 3. Video Integration | 0/2 | Complete    | 2026-02-18 |
+| 3. Video Integration | 0/2 | Complete    | 2026-02-25 |
 | 4. Access Control | 0/1 | Not started | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
