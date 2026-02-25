@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
-import type { SkillCategory } from '@mpstats/shared';
+import type { SkillCategory, LessonWithProgress } from '@mpstats/shared';
 
 const CATEGORY_FILTERS: { value: SkillCategory | 'ALL'; label: string; color: string }[] = [
   { value: 'ALL', label: 'Все', color: 'bg-mp-gray-100 text-mp-gray-700' },
@@ -35,12 +36,31 @@ export default function LearnPage() {
   const [categoryFilter, setCategoryFilter] = useState<SkillCategory | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [viewMode, setViewMode] = useState<'path' | 'courses'>('courses');
+  const [viewModeInitialized, setViewModeInitialized] = useState(false);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
 
   const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
   const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
+  const { data: hasDiagnostic, isLoading: diagLoading } = trpc.diagnostic.hasCompletedDiagnostic.useQuery();
+  const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery(
+    undefined,
+    { enabled: hasDiagnostic === true }
+  );
 
-  const isLoading = coursesLoading || pathLoading;
+  // Smart default: show "Мой трек" if user has completed diagnostic
+  useEffect(() => {
+    if (!diagLoading && !viewModeInitialized) {
+      setViewMode(hasDiagnostic ? 'path' : 'courses');
+      setViewModeInitialized(true);
+    }
+  }, [hasDiagnostic, diagLoading, viewModeInitialized]);
+
+  // O(1) lookup for recommended lesson IDs
+  const recommendedLessonIds = new Set(
+    recommendedPath?.lessons.map((l) => l.id) ?? []
+  );
+
+  const isLoading = coursesLoading || pathLoading || (diagLoading && !viewModeInitialized);
   const error = coursesError || pathError;
 
   const toggleCourseExpanded = (courseId: string) => {
@@ -110,6 +130,11 @@ export default function LearnPage() {
     );
   }
 
+  // Track completion state
+  const isTrackComplete = recommendedPath &&
+    recommendedPath.completedLessons === recommendedPath.totalLessons &&
+    recommendedPath.totalLessons > 0;
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -120,23 +145,43 @@ export default function LearnPage() {
             Персональный план на основе диагностики
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === 'path' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('path')}
-          >
-            Мой план
-          </Button>
-          <Button
-            variant={viewMode === 'courses' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('courses')}
-          >
-            Все курсы
-          </Button>
-        </div>
+        {!viewModeInitialized ? (
+          <div className="h-10 bg-mp-gray-200 rounded-lg w-48 animate-pulse" />
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === 'path' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('path')}
+            >
+              Мой трек
+            </Button>
+            <Button
+              variant={viewMode === 'courses' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('courses')}
+            >
+              Все курсы
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Track progress bar (only in "Мой трек" view with data) */}
+      {viewMode === 'path' && recommendedPath && recommendedPath.totalLessons > 0 && (
+        <div className="animate-slide-up" style={{ animationDelay: '25ms' }}>
+          <div className="flex justify-between text-body-sm text-mp-gray-600 mb-2">
+            <span>Прогресс трека</span>
+            <span className="font-medium">{recommendedPath.completedLessons}/{recommendedPath.totalLessons} уроков завершено</span>
+          </div>
+          <div className="h-2 bg-mp-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-mp-green-500 rounded-full transition-all duration-500"
+              style={{ width: `${Math.round((recommendedPath.completedLessons / recommendedPath.totalLessons) * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 animate-slide-up" style={{ animationDelay: '50ms' }}>
@@ -162,48 +207,63 @@ export default function LearnPage() {
 
       {viewMode === 'path' ? (
         <>
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4">
-            {/* Category filter */}
-            <div className="flex flex-wrap gap-2">
-              {CATEGORY_FILTERS.map((filter) => (
-                <button
-                  key={filter.value}
-                  onClick={() => setCategoryFilter(filter.value)}
-                  className={cn(
-                    'px-3 py-1.5 rounded-full text-body-sm font-medium transition-all duration-200',
-                    categoryFilter === filter.value
-                      ? 'bg-mp-blue-600 text-white shadow-mp-sm'
-                      : 'bg-mp-gray-100 text-mp-gray-600 hover:bg-mp-gray-200'
-                  )}
-                >
-                  {filter.label}
-                </button>
+          {/* Case A: No diagnostic completed — show CTA banner */}
+          {hasDiagnostic === false && (
+            <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
+              <CardContent className="py-12 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-mp-blue-100 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-mp-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h2 className="text-heading text-mp-gray-900 mb-2">Персональный трек обучения</h2>
+                <p className="text-body text-mp-gray-500 mb-6 max-w-md mx-auto">
+                  Пройди диагностику, чтобы получить персональный трек обучения на основе твоих навыков
+                </p>
+                <Link href="/diagnostic">
+                  <Button size="lg">Начать диагностику</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Case B: Track complete — congratulatory message */}
+          {hasDiagnostic && isTrackComplete && (
+            <Card className="shadow-mp-card border-mp-green-200 bg-gradient-to-br from-mp-green-50 to-white">
+              <CardContent className="py-12 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-mp-green-100 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-mp-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-heading text-mp-gray-900 mb-2">Отличная работа!</h2>
+                <p className="text-body text-mp-gray-500 mb-6 max-w-md mx-auto">
+                  Ты завершил все рекомендованные уроки. Пройди диагностику снова, чтобы проверить прогресс!
+                </p>
+                <Link href="/diagnostic">
+                  <Button size="lg">Проверь свой прогресс</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Case C: Normal track with lessons */}
+          {hasDiagnostic && recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
+            <div className="space-y-3">
+              {recommendedPath.lessons.map((lesson) => (
+                <LessonCard
+                  key={lesson.id}
+                  lesson={lesson as LessonWithProgress}
+                  showCourse
+                  courseName={lesson.courseName}
+                  isRecommended
+                />
               ))}
             </div>
+          )}
 
-            {/* Status filter */}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-mp-gray-300 text-body-sm bg-white focus:ring-2 focus:ring-mp-blue-500 focus:border-mp-blue-500"
-            >
-              {STATUS_FILTERS.map((filter) => (
-                <option key={filter.value} value={filter.value}>
-                  {filter.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Lessons list */}
-          {filteredLessons.length > 0 ? (
-            <div className="grid gap-4">
-              {filteredLessons.map((lesson) => (
-                <LessonCard key={lesson.id} lesson={lesson} />
-              ))}
-            </div>
-          ) : (
+          {/* Case D: Diagnostic done but no recommended path (edge case) */}
+          {hasDiagnostic && !recommendedPath && (
             <Card className="shadow-mp-card">
               <CardContent className="py-12 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-mp-gray-100 flex items-center justify-center mx-auto mb-4">
@@ -211,7 +271,10 @@ export default function LearnPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-body text-mp-gray-500">Нет уроков по выбранным фильтрам</p>
+                <p className="text-body text-mp-gray-500">Персональный трек пока не сформирован. Попробуйте пройти диагностику заново.</p>
+                <Link href="/diagnostic" className="mt-4 inline-block">
+                  <Button>Пройти диагностику</Button>
+                </Link>
               </CardContent>
             </Card>
           )}
@@ -258,6 +321,7 @@ export default function LearnPage() {
                         key={lesson.id}
                         lesson={lesson}
                         showCourse={false}
+                        isRecommended={recommendedLessonIds.has(lesson.id)}
                       />
                     ))}
                   </div>
