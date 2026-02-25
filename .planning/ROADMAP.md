@@ -95,11 +95,11 @@ Plans:
   3. AI-генерированный markdown рендерится безопасно (нет XSS через dangerouslySetInnerHTML)
   4. service_role key не присутствует в client-side bundle после build
   5. Ошибка в diagnostic/learning/chat компоненте показывает Error Boundary, а не белый экран
-**Plans**: TBD
+**Plans:** 2 plans in 2 waves
 
 Plans:
-- [ ] 05-01: Protected procedures и rate limiting
-- [ ] 05-02: Sanitization, error boundaries, server-only enforcement
+- [ ] 05-01-PLAN.md — Rate limit middleware, protectedProcedure on AI endpoints, server-only guards, CI leak detection
+- [ ] 05-02-PLAN.md — SafeMarkdown (react-markdown + rehype-sanitize), error boundaries, not-found page
 
 ### Phase 05.1: VPS Infrastructure Setup (INSERTED)
 
