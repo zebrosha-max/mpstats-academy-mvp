@@ -10,6 +10,7 @@ import { VideoPlayer, type PlayerHandle } from '@/components/video/KinescopePlay
 import { TimecodeLink } from '@/components/video/TimecodeLink';
 import { DiagnosticGateBanner } from '@/components/learning/DiagnosticGateBanner';
 import { trpc } from '@/lib/trpc/client';
+import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
 import { cn } from '@/lib/utils';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -116,19 +117,6 @@ export default function LessonPage() {
       e.preventDefault();
       handleSendMessage();
     }
-  };
-
-  // Format markdown-like content to simple HTML
-  const formatContent = (content: string): string => {
-    return content
-      .replace(/## (.*?)(?:\n|$)/g, '<h4 class="font-semibold text-mp-gray-900 mt-3 mb-1">$1</h4>')
-      .replace(/### (.*?)(?:\n|$)/g, '<h5 class="font-medium text-mp-gray-800 mt-2 mb-1">$1</h5>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\[([\d]+)\]/g, '<sup class="text-mp-blue-600 cursor-pointer">[$1]</sup>')
-      .replace(/^- (.*?)$/gm, '<li class="ml-4">$1</li>')
-      .replace(/^(\d+)\. (.*?)$/gm, '<li class="ml-4">$1. $2</li>')
-      .replace(/\n\n/g, '</p><p class="mt-2">')
-      .replace(/\n/g, '<br/>');
   };
 
   if (isLoading) {
@@ -384,9 +372,9 @@ export default function LessonPage() {
                   </div>
                 ) : summaryData?.content ? (
                   <div className="space-y-4">
-                    <div
+                    <SafeMarkdown
+                      content={summaryData.content}
                       className="prose prose-sm max-w-none text-body-sm text-mp-gray-700"
-                      dangerouslySetInnerHTML={{ __html: formatContent(summaryData.content) }}
                     />
 
                     {/* Sources */}
@@ -459,9 +447,9 @@ export default function LessonPage() {
                           ? 'bg-mp-blue-50 text-mp-blue-900 ml-4'
                           : 'bg-mp-gray-100 text-mp-gray-800 mr-4'
                       )}>
-                        <div
+                        <SafeMarkdown
+                          content={msg.content}
                           className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: formatContent(msg.content) }}
                         />
                         {msg.sources && msg.sources.length > 0 && (
                           <div className="border-t border-mp-gray-200 mt-2 pt-2">
