@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 04: Access Control & Personalization
+**Current focus:** Phase 05: Security Hardening
 
 ## Current Position
 
-Phase: 04 of 7 (Access Control & Personalization) -- COMPLETE
-Plan: 2 of 2 in current phase (ALL COMPLETE)
-Status: Phase 04 Complete - Soft gating + personalized track
-Last activity: 2026-02-25 — Plan 04-02 complete (My Track tab + recommended badges)
+Phase: 05 of 7 (Security Hardening)
+Plan: 1 of 2 in current phase
+Status: Plan 05-01 complete — Rate limiting + server-only guards
+Last activity: 2026-02-25 — Plan 05-01 complete (AI endpoint auth + rate limiting + server-only)
 
-Progress: [██████████] 100% (Phase 04 complete, all plans done)
+Progress: [█████████░] 90% (Phase 05 plan 1/2 complete)
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Progress: [██████████] 100% (Phase 04 complete, all plans do
 | Phase 05.1-vps-infrastructure-setup P02 | 15 | 2 tasks | VPS only |
 | Phase 06-production-deploy P01 | 1 | 2 tasks | 4 files |
 | Phase 06-production-deploy P02 | 45 | 2 tasks | 3 files |
+| Phase 05-security-hardening P01 | 2 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [04-02]: View mode skeleton shown until diagnostic status resolves to prevent flicker
 - [04-02]: Recommended lessons cast as LessonWithProgress (compatible shape, courseName passed separately)
 - [04-02]: Button text changed from "Мой план" to "Мой трек" per CONTEXT.md naming decision
+- [05-01]: Rate limiter uses globalThis Map for HMR persistence (same pattern as diagnostic.ts)
+- [05-01]: server-only added to @mpstats/ai package — Next.js traces imports through monorepo
+- [05-01]: searchChunks uses protectedProcedure without rate limit (debug endpoint)
 
 ### Roadmap Evolution
 
@@ -113,5 +117,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 04-02-PLAN.md — My Track tab + recommended badges (Phase 04 COMPLETE)
-Resume file: .planning/phases/04-access-control-personalization/04-02-SUMMARY.md
+Stopped at: Completed 05-01-PLAN.md — AI endpoint auth + rate limiting + server-only guards
+Resume file: .planning/phases/05-security-hardening/05-01-SUMMARY.md
