@@ -20,6 +20,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
 - [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
 - [x] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители) (completed 2026-02-26)
+- [ ] **Phase 8: Documentation & Traceability Sync** - Обновление чекбоксов, traceability table, plan checkboxes и недостающих VERIFICATION.md
+- [ ] **Phase 9: Integration Wire-Up** - Подключение getCompletedSessions в profile, recommended track в dashboard, верификация seekTo
 
 ## Phase Details
 
@@ -53,8 +55,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 02-01-PLAN.md — Question generator service, Zod/JSON schema validation, 100-question mock bank
-- [ ] 02-02-PLAN.md — Integration with diagnostic router, rate limiting, fallback logic, loading UI
+- [x] 02-01-PLAN.md — Question generator service, Zod/JSON schema validation, 100-question mock bank
+- [x] 02-02-PLAN.md — Integration with diagnostic router, rate limiting, fallback logic, loading UI
 
 ### Phase 3: Video Integration
 **Goal**: Пользователь смотрит реальные видеоуроки через Kinescope и может переходить к конкретным моментам по таймкодам из RAG
@@ -67,8 +69,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 03-01-PLAN.md — Kinescope React player, TimecodeLink component, lesson page integration
-- [ ] 03-02-PLAN.md — Bulk upload scripts (mapping + upload) and Kinescope setup guide
+- [x] 03-01-PLAN.md — Kinescope React player, TimecodeLink component, lesson page integration
+- [x] 03-02-PLAN.md — Bulk upload scripts (mapping + upload) and Kinescope setup guide
 
 ### Phase 4: Access Control & Personalization
 **Goal**: Пользователь проходит диагностику прежде чем получить доступ к видео, и видит персонализированный трек обучения
@@ -136,20 +138,23 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 5.1 -> 6 -> 7 -> 8 -> 9
 Note: Phases 2 and 3 can execute in parallel after Phase 1.
 Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
+Note: Phases 8 and 9 are gap closure phases from v1.0 milestone audit.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Foundation | 4/4 | Complete | 2026-02-17 |
-| 2. AI Question Generation | 0/2 | Complete    | 2026-02-25 |
-| 3. Video Integration | 0/2 | Complete    | 2026-02-25 |
+| 2. AI Question Generation | 2/2 | Complete | 2026-02-25 |
+| 3. Video Integration | 2/2 | Complete | 2026-02-25 |
 | 4. Access Control | 1/2 | In progress | - |
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
-| 7. Lesson Name Cleanup | 2/2 | Complete    | 2026-02-26 |
+| 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
+| 8. Documentation Sync | 0/0 | Not started | - |
+| 9. Integration Wire-Up | 0/0 | Not started | - |
 
 ### Phase 7: Lesson & Course Name Cleanup
 
@@ -167,3 +172,28 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 Plans:
 - [x] 07-01-PLAN.md — Cleanup script (dry-run + apply), seed script update, UI visual numbering
 - [x] 07-02-PLAN.md — Production redeploy and visual verification checkpoint
+
+### Phase 8: Documentation & Traceability Sync
+**Goal:** Вся документация milestone v1.0 синхронизирована: чекбоксы актуальны, traceability table полная, plan checkboxes отражают реальный статус, все фазы имеют VERIFICATION.md
+**Depends on:** Phase 7 (все фазы завершены)
+**Requirements:** Gap Closure (audit documentation gaps)
+**Gap Closure:** Closes documentation gaps from v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. Все 17 requirement checkboxes (DATA-01..08, AIGEN-01..05, VIDEO-01..04) обновлены до `[x]` в REQUIREMENTS.md
+  2. INFRA-01..04 и NAMING-01..05 добавлены в traceability table с статусом Complete
+  3. Coverage count обновлён (33 → 42 total requirements)
+  4. Phase 5.1 имеет VERIFICATION.md
+
+Plans:
+
+### Phase 9: Integration Wire-Up
+**Goal:** Integration gaps из milestone audit закрыты: profile router использует getCompletedSessions, dashboard показывает прогресс recommended track, seekTo через postMessage верифицирован
+**Depends on:** Phase 8 (документация синхронизирована)
+**Requirements:** DATA-05, DATA-06, DATA-07, VIDEO-03 (integration wiring)
+**Gap Closure:** Closes integration gaps from v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. Profile router вызывает getCompletedSessions для отображения истории диагностик
+  2. Dashboard показывает прогресс по рекомендованному треку (recommended path progress widget)
+  3. Timecode seekTo через postMessage API верифицирован (клик по таймкоду перематывает видео)
+
+Plans:

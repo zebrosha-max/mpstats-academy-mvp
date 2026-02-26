@@ -7,22 +7,22 @@
 
 ### Data Migration
 
-- [ ] **DATA-01**: Курсы и уроки загружаются из Supabase (таблицы Course/Lesson), а не из hardcoded mock
-- [ ] **DATA-02**: Seed script заполняет Course/Lesson таблицы из существующих content_chunk данных (6 курсов, 80+ уроков)
-- [ ] **DATA-03**: Маппинг lesson_id prefix → SkillCategory (01_analytics→ANALYTICS, 02_ads→MARKETING, etc.)
-- [ ] **DATA-04**: Learning router (`packages/api/src/routers/learning.ts`) использует Prisma вместо mock arrays
-- [ ] **DATA-05**: Diagnostic router (`packages/api/src/routers/diagnostic.ts`) сохраняет сессии в Supabase вместо globalThis Map
-- [ ] **DATA-06**: Profile router (`packages/api/src/routers/profile.ts`) читает реальные данные из DiagnosticSession/SkillProfile
-- [ ] **DATA-07**: Dashboard отображает реальную статистику (из migrated routers)
-- [ ] **DATA-08**: Mock fallback — если Supabase недоступна, приложение не крашится
+- [x] **DATA-01**: Курсы и уроки загружаются из Supabase (таблицы Course/Lesson), а не из hardcoded mock
+- [x] **DATA-02**: Seed script заполняет Course/Lesson таблицы из существующих content_chunk данных (6 курсов, 80+ уроков)
+- [x] **DATA-03**: Маппинг lesson_id prefix → SkillCategory (01_analytics→ANALYTICS, 02_ads→MARKETING, etc.)
+- [x] **DATA-04**: Learning router (`packages/api/src/routers/learning.ts`) использует Prisma вместо mock arrays
+- [x] **DATA-05**: Diagnostic router (`packages/api/src/routers/diagnostic.ts`) сохраняет сессии в Supabase вместо globalThis Map
+- [x] **DATA-06**: Profile router (`packages/api/src/routers/profile.ts`) читает реальные данные из DiagnosticSession/SkillProfile
+- [x] **DATA-07**: Dashboard отображает реальную статистику (из migrated routers)
+- [x] **DATA-08**: Mock fallback — если Supabase недоступна, приложение не крашится
 
 ### AI Question Generation
 
-- [ ] **AIGEN-01**: Сервис генерирует diagnostic вопросы из RAG chunks через LLM (4 варианта, 1 правильный)
-- [ ] **AIGEN-02**: Валидация структуры сгенерированных вопросов (Zod schema)
-- [ ] **AIGEN-03**: Fallback на mock вопросы если LLM недоступен или timeout (10s)
-- [ ] **AIGEN-04**: Вопросы привязаны к SkillCategory через lesson_id маппинг
-- [ ] **AIGEN-05**: Rate limiting для генерации вопросов (50 req/hour)
+- [x] **AIGEN-01**: Сервис генерирует diagnostic вопросы из RAG chunks через LLM (4 варианта, 1 правильный)
+- [x] **AIGEN-02**: Валидация структуры сгенерированных вопросов (Zod schema)
+- [x] **AIGEN-03**: Fallback на mock вопросы если LLM недоступен или timeout (10s)
+- [x] **AIGEN-04**: Вопросы привязаны к SkillCategory через lesson_id маппинг
+- [x] **AIGEN-05**: Rate limiting для генерации вопросов (50 req/hour)
 
 ### Access Control
 
@@ -33,10 +33,10 @@
 
 ### Video Integration
 
-- [ ] **VIDEO-01**: Kinescope API loader (`@kinescope/player-iframe-api-loader`) интегрирован
-- [ ] **VIDEO-02**: videoId маппинг — каждый урок имеет videoId из Kinescope
-- [ ] **VIDEO-03**: Timecode seek — клик по таймкоду в RAG chat перематывает видео
-- [ ] **VIDEO-04**: Fallback UI если videoId отсутствует (placeholder с сообщением)
+- [x] **VIDEO-01**: Kinescope API loader (`@kinescope/player-iframe-api-loader`) интегрирован
+- [x] **VIDEO-02**: videoId маппинг — каждый урок имеет videoId из Kinescope
+- [x] **VIDEO-03**: Timecode seek — клик по таймкоду в RAG chat перематывает видео
+- [x] **VIDEO-04**: Fallback UI если videoId отсутствует (placeholder с сообщением)
 
 ### Security Hardening
 
@@ -45,6 +45,13 @@
 - [x] **SEC-03**: Санитизация AI output — замена dangerouslySetInnerHTML на безопасный рендеринг
 - [x] **SEC-04**: Supabase service_role key доступен только server-side (не утекает в клиент)
 - [x] **SEC-05**: Error boundaries в React компонентах (diagnostic, learning, chat)
+
+### VPS Infrastructure
+
+- [x] **INFRA-01**: SSH подключение к VPS работает через deploy пользователя
+- [x] **INFRA-02**: Docker Engine + Compose, Nginx установлены и работают на VPS
+- [x] **INFRA-03**: Firewall (UFW) настроен: порты 22, 80, 443 открыты; fail2ban защищает SSH
+- [x] **INFRA-04**: HTTPS работает на academyal.duckdns.org через Nginx + Let's Encrypt
 
 ### Production Deploy
 
@@ -55,6 +62,14 @@
 - [x] **DEPLOY-05**: Prisma binary targets для Linux (Ubuntu 24.04)
 - [x] **DEPLOY-06**: Health check endpoint для мониторинга
 - [x] **DEPLOY-07**: E2E верификация: ручная проверка 12/12 страниц в production (automated Playwright deferred to future)
+
+### Lesson & Course Name Cleanup
+
+- [x] **NAMING-01**: Ни одно название урока не содержит .mp4, .mov или других расширений файлов
+- [x] **NAMING-02**: Названия модулей не содержат технических разделителей _ и нумерации вида "Модуль N_"
+- [x] **NAMING-03**: Названия курсов не начинаются с технической нумерации ("1.", "2." и т.д.)
+- [x] **NAMING-04**: Уроки внутри каждого модуля пронумерованы последовательно и логично
+- [x] **NAMING-05**: Изменения применены в production и проверены визуально
 
 ## v2 Requirements
 
@@ -93,23 +108,23 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1: Data Foundation | Pending |
-| DATA-02 | Phase 1: Data Foundation | Pending |
-| DATA-03 | Phase 1: Data Foundation | Pending |
-| DATA-04 | Phase 1: Data Foundation | Pending |
-| DATA-05 | Phase 1: Data Foundation | Pending |
-| DATA-06 | Phase 1: Data Foundation | Pending |
-| DATA-07 | Phase 1: Data Foundation | Pending |
-| DATA-08 | Phase 1: Data Foundation | Pending |
-| AIGEN-01 | Phase 2: AI Question Generation | Pending |
-| AIGEN-02 | Phase 2: AI Question Generation | Pending |
-| AIGEN-03 | Phase 2: AI Question Generation | Pending |
-| AIGEN-04 | Phase 2: AI Question Generation | Pending |
-| AIGEN-05 | Phase 2: AI Question Generation | Pending |
-| VIDEO-01 | Phase 3: Video Integration | Pending |
-| VIDEO-02 | Phase 3: Video Integration | Pending |
-| VIDEO-03 | Phase 3: Video Integration | Pending |
-| VIDEO-04 | Phase 3: Video Integration | Pending |
+| DATA-01 | Phase 1: Data Foundation | Complete |
+| DATA-02 | Phase 1: Data Foundation | Complete |
+| DATA-03 | Phase 1: Data Foundation | Complete |
+| DATA-04 | Phase 1: Data Foundation | Complete |
+| DATA-05 | Phase 1: Data Foundation | Complete |
+| DATA-06 | Phase 1: Data Foundation | Complete |
+| DATA-07 | Phase 1: Data Foundation | Complete |
+| DATA-08 | Phase 1: Data Foundation | Complete |
+| AIGEN-01 | Phase 2: AI Question Generation | Complete |
+| AIGEN-02 | Phase 2: AI Question Generation | Complete |
+| AIGEN-03 | Phase 2: AI Question Generation | Complete |
+| AIGEN-04 | Phase 2: AI Question Generation | Complete |
+| AIGEN-05 | Phase 2: AI Question Generation | Complete |
+| VIDEO-01 | Phase 3: Video Integration | Complete |
+| VIDEO-02 | Phase 3: Video Integration | Complete |
+| VIDEO-03 | Phase 3: Video Integration | Complete |
+| VIDEO-04 | Phase 3: Video Integration | Complete |
 | ACCESS-01 | Phase 4: Access Control | Complete |
 | ACCESS-02 | Phase 4: Access Control | Complete |
 | ACCESS-03 | Phase 4: Access Control | Complete |
@@ -119,6 +134,10 @@
 | SEC-03 | Phase 5: Security Hardening | Complete |
 | SEC-04 | Phase 5: Security Hardening | Complete |
 | SEC-05 | Phase 5: Security Hardening | Complete |
+| INFRA-01 | Phase 5.1: VPS Infrastructure | Complete |
+| INFRA-02 | Phase 5.1: VPS Infrastructure | Complete |
+| INFRA-03 | Phase 5.1: VPS Infrastructure | Complete |
+| INFRA-04 | Phase 5.1: VPS Infrastructure | Complete |
 | DEPLOY-01 | Phase 6: Production Deploy | Complete |
 | DEPLOY-02 | Phase 6: Production Deploy | Complete |
 | DEPLOY-03 | Phase 6: Production Deploy | Complete |
@@ -126,10 +145,16 @@
 | DEPLOY-05 | Phase 6: Production Deploy | Complete |
 | DEPLOY-06 | Phase 6: Production Deploy | Complete |
 | DEPLOY-07 | Phase 6: Production Deploy | Complete |
+| NAMING-01 | Phase 7: Name Cleanup | Complete |
+| NAMING-02 | Phase 7: Name Cleanup | Complete |
+| NAMING-03 | Phase 7: Name Cleanup | Complete |
+| NAMING-04 | Phase 7: Name Cleanup | Complete |
+| NAMING-05 | Phase 7: Name Cleanup | Complete |
 
 **Coverage:**
-- v1 requirements: 33 total
-- Mapped to phases: 33
+- v1 requirements: 42 total
+- Mapped to phases: 42
+- Complete: 42
 - Unmapped: 0
 
 ---
