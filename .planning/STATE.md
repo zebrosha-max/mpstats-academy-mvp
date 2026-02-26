@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 ## Current Position
 
 Phase: 10 of 14 (Superuser & Admin Panel) -- COMPLETE
-Plan: 2 of 2 complete
-Status: Phase complete, ready for next phase
-Last activity: 2026-02-26 — Completed 10-02 Admin Pages
+Plan: 3 of 3 complete
+Status: Phase 10 complete, ready for next phase
+Last activity: 2026-02-26 — Completed 10-03 (content editing features)
 
-Progress: [======..............] 33% (2/6 plans)
+Progress: [======..............] 43% (3/7 plans)
 
 ## Performance Metrics
 
@@ -23,7 +23,7 @@ Progress: [======..............] 33% (2/6 plans)
 - Total phases: 10
 - Timeline: 49 days (2026-01-08 -> 2026-02-26)
 
-**v1.1 Plans:** 6 total (2+1+1+1+1)
+**v1.1 Plans:** 7 total (3+1+1+1+1)
 
 *Updated after each plan completion*
 
@@ -39,6 +39,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - v1.1: Phases 10, 11, 12, 14 are independent — can execute in any order
 - 10-01: AdminSidebar uses lucide-react icons; email search via Supabase Admin API; added isActive field alongside isAdmin
 - 10-02: Custom Toggle button instead of shadcn Switch; getCourseLessons for lazy accordion; analytics groups dates in app code
+- 10-03: Course mutations lifted to parent CourseManager, lesson mutations stay in CourseAccordion; consistent click-to-edit UX pattern
 
 ### Blockers/Concerns
 
@@ -51,5 +52,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 10-02-PLAN.md (Admin Pages)
-Resume file: None
+Stopped at: Completed 10-03-PLAN.md (Content editing features) — Phase 10 complete
+Resume file: Next phase (11, 12, or 14)
