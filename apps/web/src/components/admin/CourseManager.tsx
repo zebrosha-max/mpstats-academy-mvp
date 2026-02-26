@@ -3,8 +3,7 @@
 import { useState, useCallback } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, ArrowUp, ArrowDown, Video, VideoOff, Database } from 'lucide-react';
+import { ChevronDown, ChevronUp, Video, VideoOff, Database } from 'lucide-react';
 
 interface Lesson {
   id: string;
@@ -67,28 +66,30 @@ function CourseAccordion({
     { courseId: course.id },
     { enabled: isExpanded },
   );
-  const updateOrder = trpc.admin.updateLessonOrder.useMutation({
+  const moveLesson = trpc.admin.moveLessonToPosition.useMutation({
     onSuccess: () => {
       utils.admin.getCourseLessons.invalidate({ courseId: course.id });
     },
   });
 
-  const handleReorder = useCallback(
-    (lessonId: string, currentOrder: number, direction: 'up' | 'down') => {
-      const lessons = courseLessons.data;
-      if (!lessons) return;
+  // Track which lesson is being edited
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
 
-      const currentIndex = lessons.findIndex((l) => l.id === lessonId);
-      const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-      if (targetIndex < 0 || targetIndex >= lessons.length) return;
+  const handlePositionClick = useCallback((lessonId: string, currentOrder: number) => {
+    setEditingId(lessonId);
+    setEditValue(String(currentOrder));
+  }, []);
 
-      const targetLesson = lessons[targetIndex];
-
-      // Swap orders
-      updateOrder.mutate({ lessonId, newOrder: targetLesson.order });
-      updateOrder.mutate({ lessonId: targetLesson.id, newOrder: currentOrder });
+  const handlePositionSubmit = useCallback(
+    (lessonId: string) => {
+      const target = parseInt(editValue, 10);
+      if (!isNaN(target) && target >= 1) {
+        moveLesson.mutate({ lessonId, targetPosition: target });
+      }
+      setEditingId(null);
     },
-    [courseLessons.data, updateOrder],
+    [editValue, moveLesson],
   );
 
   return (
@@ -131,15 +132,36 @@ function CourseAccordion({
             </div>
           ) : courseLessons.data && courseLessons.data.length > 0 ? (
             <div className="divide-y divide-mp-gray-100">
-              {courseLessons.data.map((lesson, index) => (
+              {courseLessons.data.map((lesson) => (
                 <div
                   key={lesson.id}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-mp-gray-50 transition-colors"
                 >
-                  {/* Order number */}
-                  <span className="text-xs font-mono text-mp-gray-400 w-6 text-right">
-                    {lesson.order}
-                  </span>
+                  {/* Order number — click to edit */}
+                  {editingId === lesson.id ? (
+                    <input
+                      type="number"
+                      min={1}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handlePositionSubmit(lesson.id);
+                        if (e.key === 'Escape') setEditingId(null);
+                      }}
+                      onBlur={() => handlePositionSubmit(lesson.id)}
+                      autoFocus
+                      className="w-10 h-6 text-xs font-mono text-center border border-mp-blue-400 rounded bg-white focus:outline-none focus:ring-1 focus:ring-mp-blue-500"
+                    />
+                  ) : (
+                    <button
+                      onClick={() => handlePositionClick(lesson.id, lesson.order)}
+                      disabled={moveLesson.isPending}
+                      className="w-8 text-xs font-mono text-mp-gray-400 text-right hover:text-mp-blue-600 hover:bg-mp-blue-50 rounded px-1 py-0.5 transition-colors cursor-pointer"
+                      title="Click to change position"
+                    >
+                      {lesson.order}
+                    </button>
+                  )}
 
                   {/* Title */}
                   <div className="flex-1 min-w-0">
@@ -160,34 +182,6 @@ function CourseAccordion({
                   ) : (
                     <VideoOff className="w-4 h-4 text-mp-gray-300 shrink-0" />
                   )}
-
-                  {/* Reorder buttons */}
-                  <div className="flex items-center gap-0.5 shrink-0">
-                    <button
-                      onClick={() => handleReorder(lesson.id, lesson.order, 'up')}
-                      disabled={index === 0 || updateOrder.isPending}
-                      className={cn(
-                        'p-1 rounded hover:bg-mp-gray-200 transition-colors',
-                        'disabled:opacity-30 disabled:cursor-not-allowed',
-                      )}
-                      title="Move up"
-                    >
-                      <ArrowUp className="w-3.5 h-3.5 text-mp-gray-500" />
-                    </button>
-                    <button
-                      onClick={() => handleReorder(lesson.id, lesson.order, 'down')}
-                      disabled={
-                        index === (courseLessons.data?.length ?? 0) - 1 || updateOrder.isPending
-                      }
-                      className={cn(
-                        'p-1 rounded hover:bg-mp-gray-200 transition-colors',
-                        'disabled:opacity-30 disabled:cursor-not-allowed',
-                      )}
-                      title="Move down"
-                    >
-                      <ArrowDown className="w-3.5 h-3.5 text-mp-gray-500" />
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>

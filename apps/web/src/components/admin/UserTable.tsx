@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 interface UserRow {
   id: string;
   name: string | null;
+  email: string | null;
   isAdmin: boolean;
   isActive: boolean;
   createdAt: Date;
@@ -155,8 +156,8 @@ export function UserTable({ users, totalCount, page, totalPages, onPageChange }:
                       <p className="text-body-sm font-medium text-mp-gray-900">
                         {user.name || 'Unnamed'}
                       </p>
-                      <p className="text-xs text-mp-gray-400 truncate max-w-[200px]">
-                        {user.id.slice(0, 8)}...
+                      <p className="text-xs text-mp-gray-400 truncate max-w-[250px]">
+                        {user.email || `${user.id.slice(0, 8)}...`}
                       </p>
                     </div>
                   </div>

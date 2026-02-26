@@ -228,8 +228,27 @@ export const adminRouter = router({
           ctx.prisma.userProfile.count({ where }),
         ]);
 
+        // Fetch emails from Supabase auth.users for display
+        let emailMap = new Map<string, string>();
+        try {
+          const admin = getSupabaseAdmin();
+          const { data } = await admin.auth.admin.listUsers({ perPage: 1000 });
+          if (data?.users) {
+            data.users.forEach((u) => {
+              if (u.email) emailMap.set(u.id, u.email);
+            });
+          }
+        } catch {
+          // Service role key missing — emails won't be shown
+        }
+
+        const usersWithEmail = users.map((u) => ({
+          ...u,
+          email: emailMap.get(u.id) || null,
+        }));
+
         return {
-          users,
+          users: usersWithEmail,
           totalCount,
           page,
           limit,
@@ -329,6 +348,73 @@ export const adminRouter = router({
           },
         });
         return lessons;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Move a lesson to a specific position within its course.
+   * Shifts all lessons between old and new positions accordingly.
+   */
+  moveLessonToPosition: adminProcedure
+    .input(
+      z.object({
+        lessonId: z.string(),
+        targetPosition: z.number().int().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const lesson = await ctx.prisma.lesson.findUnique({
+          where: { id: input.lessonId },
+          select: { id: true, courseId: true, order: true },
+        });
+        if (!lesson) throw new Error('Lesson not found');
+
+        const oldPos = lesson.order;
+        const newPos = input.targetPosition;
+        if (oldPos === newPos) return lesson;
+
+        // Get all lessons in the course sorted by order
+        const allLessons = await ctx.prisma.lesson.findMany({
+          where: { courseId: lesson.courseId },
+          orderBy: { order: 'asc' },
+          select: { id: true, order: true },
+        });
+
+        // Clamp target to valid range
+        const maxPos = allLessons.length;
+        const clampedNew = Math.min(Math.max(newPos, 1), maxPos);
+
+        // Shift lessons between old and new positions
+        if (oldPos < clampedNew) {
+          // Moving down: shift lessons in (oldPos, clampedNew] up by 1
+          await ctx.prisma.lesson.updateMany({
+            where: {
+              courseId: lesson.courseId,
+              order: { gt: oldPos, lte: clampedNew },
+            },
+            data: { order: { decrement: 1 } },
+          });
+        } else {
+          // Moving up: shift lessons in [clampedNew, oldPos) down by 1
+          await ctx.prisma.lesson.updateMany({
+            where: {
+              courseId: lesson.courseId,
+              order: { gte: clampedNew, lt: oldPos },
+            },
+            data: { order: { increment: 1 } },
+          });
+        }
+
+        // Place the lesson at target position
+        const updated = await ctx.prisma.lesson.update({
+          where: { id: input.lessonId },
+          data: { order: clampedNew },
+        });
+
+        return updated;
       } catch (error) {
         handleDatabaseError(error);
       }
