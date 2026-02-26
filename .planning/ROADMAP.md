@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
 - [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
 - [x] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители) (completed 2026-02-26)
-- [ ] **Phase 8: Documentation & Traceability Sync** - Обновление чекбоксов, traceability table, plan checkboxes и недостающих VERIFICATION.md
+- [x] **Phase 8: Documentation & Traceability Sync** - Обновление чекбоксов, traceability table, plan checkboxes и недостающих VERIFICATION.md (completed 2026-02-26)
 - [ ] **Phase 9: Integration Wire-Up** - Подключение getCompletedSessions в profile, recommended track в dashboard, верификация seekTo
 
 ## Phase Details
@@ -153,7 +153,7 @@ Note: Phases 8 and 9 are gap closure phases from v1.0 milestone audit.
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
 | 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
-| 8. Documentation Sync | 0/1 | In progress | - |
+| 8. Documentation Sync | 1/1 | Complete | 2026-02-26 |
 | 9. Integration Wire-Up | 0/0 | Not started | - |
 
 ### Phase 7: Lesson & Course Name Cleanup
@@ -185,7 +185,7 @@ Plans:
   4. Phase 5.1 имеет VERIFICATION.md
 
 Plans:
-- [ ] 08-01-PLAN.md — Create Phase 5.1 VERIFICATION.md (retroactive infrastructure verification)
+- [x] 08-01-PLAN.md — Create Phase 5.1 VERIFICATION.md (retroactive infrastructure verification)
 
 ### Phase 9: Integration Wire-Up
 **Goal:** Integration gaps из milestone audit закрыты: profile router использует getCompletedSessions, dashboard показывает прогресс recommended track, seekTo через postMessage верифицирован

@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 07: Lesson & Course Name Cleanup
+**Current focus:** Phase 08: Documentation & Traceability Sync
 
 ## Current Position
 
-Phase: 07 of 7 (Lesson & Course Name Cleanup)
-Plan: 2 of 2 in current phase
-Status: Phase 07 COMPLETE — All naming cleanup verified in production
-Last activity: 2026-02-26 — Plan 07-02 complete (production redeploy + visual verification)
+Phase: 08 of 9 (Documentation & Traceability Sync)
+Plan: 1 of 1 in current phase
+Status: Phase 08 COMPLETE — Phase 5.1 VERIFICATION.md created, last doc gap closed
+Last activity: 2026-02-26 — Plan 08-01 complete (retroactive Phase 5.1 verification)
 
-Progress: [██████████] 100% (Phase 07, 2/2 plans)
+Progress: [██████████] 100% (Phase 08, 1/1 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 7.0 min
 - Total execution time: ~1.4 hours
 
@@ -45,6 +45,7 @@ Progress: [██████████] 100% (Phase 07, 2/2 plans)
 | Phase 05-security-hardening P02 | 3 | 2 tasks | 6 files |
 | Phase 07-lesson-course-name-cleanup P01 | 9 | 3 tasks | 4 files |
 | Phase 07-lesson-course-name-cleanup P02 | 5 | 2 tasks | 1 files |
+| Phase 08-documentation-traceability-sync P01 | 3 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,9 @@ None yet.
 - [07-01]: Visual numbering uses lesson.order field, not array index
 - [07-02]: Visual numbering switched to array index (idx+1) — order field was per-module, not sequential
 
+### Phase 08 Decisions
+- [08-01]: Retroactive verification from SUMMARY evidence + production confirmation (no VPS re-audit needed)
+
 ### Blockers/Concerns
 
 - Kinescope videoId data needed from content team — RESOLVED: upload scripts ready, user setting up Kinescope account
@@ -130,5 +134,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 07-02-PLAN.md — Production redeploy + visual verification (Phase 07 COMPLETE)
-Resume file: .planning/phases/07-lesson-course-name-cleanup/07-02-SUMMARY.md
+Stopped at: Completed 08-01-PLAN.md — Phase 5.1 VERIFICATION.md (Phase 08 COMPLETE)
+Resume file: .planning/phases/08-documentation-traceability-sync/08-01-SUMMARY.md
