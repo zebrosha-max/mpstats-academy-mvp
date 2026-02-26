@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Security Hardening** - Защита endpoints, rate limiting, санитизация AI output
 - [x] **Phase 5.1: VPS Infrastructure Setup** - Подготовка VPS 89.208.106.208 для деплоя MAAL (INSERTED) (completed 2026-02-24)
 - [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
-- [ ] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители)
+- [x] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители) (completed 2026-02-26)
 
 ## Phase Details
 
@@ -149,7 +149,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
-| 7. Lesson Name Cleanup | 1/2 | In progress | - |
+| 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
 
 ### Phase 7: Lesson & Course Name Cleanup
 
@@ -166,4 +166,4 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 
 Plans:
 - [x] 07-01-PLAN.md — Cleanup script (dry-run + apply), seed script update, UI visual numbering
-- [ ] 07-02-PLAN.md — Production redeploy and visual verification checkpoint
+- [x] 07-02-PLAN.md — Production redeploy and visual verification checkpoint
