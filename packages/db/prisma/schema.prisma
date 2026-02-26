@@ -21,6 +21,8 @@ model UserProfile {
   id        String   @id // Matches Supabase auth.users.id
   name      String?
   avatarUrl String?
+  isAdmin   Boolean  @default(false)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

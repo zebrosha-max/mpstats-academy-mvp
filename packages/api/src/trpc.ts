@@ -38,6 +38,20 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
+// Admin procedure — requires isAdmin=true in UserProfile
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const profile = await ctx.prisma.userProfile.findUnique({
+    where: { id: ctx.user.id },
+    select: { isAdmin: true },
+  });
+
+  if (!profile || profile.isAdmin !== true) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+  }
+
+  return next({ ctx });
+});
+
 // AI procedures with rate limiting (built on top of protectedProcedure)
 export const aiProcedure = protectedProcedure.use(
   createRateLimitMiddleware(50, 3600000, 'ai') // 50 req/hour
