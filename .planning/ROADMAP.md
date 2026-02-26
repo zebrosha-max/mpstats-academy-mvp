@@ -47,11 +47,11 @@ Full details: `milestones/v1.0-ROADMAP.md`
   3. Админ может найти пользователя по email и переключить его is_active/is_admin через inline toggle
   4. Админ видит графики роста пользователей и активности по времени
   5. Админ может просматривать курсы и менять порядок уроков
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: Prisma migration + adminProcedure + route group guard
-- [ ] 10-02: Admin dashboard + users management + analytics + content management
+- [ ] 10-01-PLAN.md — Infrastructure: Prisma isAdmin/isActive fields, adminProcedure, admin tRPC router, (admin) route group with layout guard and sidebar
+- [ ] 10-02-PLAN.md — Admin pages: Dashboard with KPIs, Users management with toggles, Analytics charts, Content management with lesson reordering
 
 ### Phase 11: Summary & Sources UX
 **Goal**: Пользователь взаимодействует с источниками в summary урока — кликает, видит превью, перематывает видео
