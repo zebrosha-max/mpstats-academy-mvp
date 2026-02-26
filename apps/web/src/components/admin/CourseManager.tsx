@@ -37,6 +37,34 @@ const skillCategoryVariant: Record<string, 'analytics' | 'marketing' | 'content'
 
 export function CourseManager({ courses }: CourseManagerProps) {
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
+  const utils = trpc.useUtils();
+
+  // Course-level mutations (invalidate getCourses)
+  const moveCourse = trpc.admin.moveCourseToPosition.useMutation({
+    onSuccess: () => {
+      utils.admin.getCourses.invalidate();
+    },
+  });
+
+  const updateCourseTitle = trpc.admin.updateCourseTitle.useMutation({
+    onSuccess: () => {
+      utils.admin.getCourses.invalidate();
+    },
+  });
+
+  const handleMoveCourse = useCallback(
+    (courseId: string, targetPosition: number) => {
+      moveCourse.mutate({ courseId, targetPosition });
+    },
+    [moveCourse],
+  );
+
+  const handleUpdateCourseTitle = useCallback(
+    (courseId: string, title: string) => {
+      updateCourseTitle.mutate({ courseId, title });
+    },
+    [updateCourseTitle],
+  );
 
   return (
     <div className="space-y-3">
@@ -46,6 +74,8 @@ export function CourseManager({ courses }: CourseManagerProps) {
           course={course}
           isExpanded={expandedCourse === course.id}
           onToggle={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
+          onMoveCourse={handleMoveCourse}
+          onUpdateCourseTitle={handleUpdateCourseTitle}
         />
       ))}
     </div>
@@ -56,10 +86,14 @@ function CourseAccordion({
   course,
   isExpanded,
   onToggle,
+  onMoveCourse,
+  onUpdateCourseTitle,
 }: {
   course: CourseWithDetails;
   isExpanded: boolean;
   onToggle: () => void;
+  onMoveCourse: (courseId: string, targetPosition: number) => void;
+  onUpdateCourseTitle: (courseId: string, title: string) => void;
 }) {
   const utils = trpc.useUtils();
   const courseLessons = trpc.admin.getCourseLessons.useQuery(
@@ -71,26 +105,103 @@ function CourseAccordion({
       utils.admin.getCourseLessons.invalidate({ courseId: course.id });
     },
   });
+  const updateLessonTitle = trpc.admin.updateLessonTitle.useMutation({
+    onSuccess: () => {
+      utils.admin.getCourseLessons.invalidate({ courseId: course.id });
+    },
+  });
 
-  // Track which lesson is being edited
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
+  // Lesson order editing state
+  const [editingLessonOrderId, setEditingLessonOrderId] = useState<string | null>(null);
+  const [lessonOrderValue, setLessonOrderValue] = useState('');
 
-  const handlePositionClick = useCallback((lessonId: string, currentOrder: number) => {
-    setEditingId(lessonId);
-    setEditValue(String(currentOrder));
+  // Course order editing state
+  const [editingCourseOrder, setEditingCourseOrder] = useState(false);
+  const [courseOrderValue, setCourseOrderValue] = useState('');
+
+  // Course title editing state
+  const [editingCourseTitle, setEditingCourseTitle] = useState(false);
+  const [courseTitleValue, setCourseTitleValue] = useState('');
+
+  // Lesson title editing state
+  const [editingLessonTitleId, setEditingLessonTitleId] = useState<string | null>(null);
+  const [lessonTitleValue, setLessonTitleValue] = useState('');
+
+  // --- Lesson order handlers ---
+  const handleLessonOrderClick = useCallback((lessonId: string, currentOrder: number) => {
+    setEditingLessonOrderId(lessonId);
+    setLessonOrderValue(String(currentOrder));
   }, []);
 
-  const handlePositionSubmit = useCallback(
+  const handleLessonOrderSubmit = useCallback(
     (lessonId: string) => {
-      const target = parseInt(editValue, 10);
+      const target = parseInt(lessonOrderValue, 10);
       if (!isNaN(target) && target >= 1) {
         moveLesson.mutate({ lessonId, targetPosition: target });
       }
-      setEditingId(null);
+      setEditingLessonOrderId(null);
     },
-    [editValue, moveLesson],
+    [lessonOrderValue, moveLesson],
   );
+
+  // --- Course order handlers ---
+  const handleCourseOrderClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingCourseOrder(true);
+    setCourseOrderValue(String(course.order));
+  }, [course.order]);
+
+  const handleCourseOrderSubmit = useCallback(() => {
+    const target = parseInt(courseOrderValue, 10);
+    if (!isNaN(target) && target >= 1) {
+      onMoveCourse(course.id, target);
+    }
+    setEditingCourseOrder(false);
+  }, [courseOrderValue, course.id, onMoveCourse]);
+
+  const handleCourseOrderCancel = useCallback(() => {
+    setEditingCourseOrder(false);
+  }, []);
+
+  // --- Course title handlers ---
+  const handleCourseTitleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingCourseTitle(true);
+    setCourseTitleValue(course.title);
+  }, [course.title]);
+
+  const handleCourseTitleSubmit = useCallback(() => {
+    const trimmed = courseTitleValue.trim();
+    if (trimmed.length > 0 && trimmed !== course.title) {
+      onUpdateCourseTitle(course.id, trimmed);
+    }
+    setEditingCourseTitle(false);
+  }, [courseTitleValue, course.id, course.title, onUpdateCourseTitle]);
+
+  const handleCourseTitleCancel = useCallback(() => {
+    setEditingCourseTitle(false);
+  }, []);
+
+  // --- Lesson title handlers ---
+  const handleLessonTitleClick = useCallback((lessonId: string, currentTitle: string) => {
+    setEditingLessonTitleId(lessonId);
+    setLessonTitleValue(currentTitle);
+  }, []);
+
+  const handleLessonTitleSubmit = useCallback(
+    (lessonId: string, originalTitle: string) => {
+      const trimmed = lessonTitleValue.trim();
+      if (trimmed.length > 0 && trimmed !== originalTitle) {
+        updateLessonTitle.mutate({ lessonId, title: trimmed });
+      }
+      setEditingLessonTitleId(null);
+    },
+    [lessonTitleValue, updateLessonTitle],
+  );
+
+  const handleLessonTitleCancel = useCallback(() => {
+    setEditingLessonTitleId(null);
+  }, []);
 
   return (
     <div className="border border-mp-gray-200 rounded-lg bg-white overflow-hidden">
@@ -100,12 +211,58 @@ function CourseAccordion({
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-mp-gray-50 transition-colors text-left"
       >
         <div className="flex items-center gap-3">
-          <span className="text-body-sm font-medium text-mp-gray-400 w-6">
-            #{course.order}
-          </span>
-          <span className="text-body-md font-semibold text-mp-gray-900">
-            {course.title}
-          </span>
+          {/* Course order — click to edit */}
+          {editingCourseOrder ? (
+            <input
+              type="number"
+              min={1}
+              value={courseOrderValue}
+              onChange={(e) => setCourseOrderValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCourseOrderSubmit();
+                if (e.key === 'Escape') handleCourseOrderCancel();
+              }}
+              onBlur={handleCourseOrderSubmit}
+              onClick={(e) => e.stopPropagation()}
+              autoFocus
+              onFocus={(e) => e.target.select()}
+              className="w-10 h-6 text-xs font-mono text-center border border-mp-blue-400 rounded bg-white focus:outline-none focus:ring-1 focus:ring-mp-blue-500"
+            />
+          ) : (
+            <span
+              onClick={handleCourseOrderClick}
+              className="text-body-sm font-medium text-mp-gray-400 w-6 hover:text-mp-blue-600 hover:bg-mp-blue-50 rounded px-1 py-0.5 transition-colors cursor-pointer text-center"
+              title="Click to change position"
+            >
+              #{course.order}
+            </span>
+          )}
+
+          {/* Course title — click to edit */}
+          {editingCourseTitle ? (
+            <input
+              type="text"
+              value={courseTitleValue}
+              onChange={(e) => setCourseTitleValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCourseTitleSubmit();
+                if (e.key === 'Escape') handleCourseTitleCancel();
+              }}
+              onBlur={handleCourseTitleSubmit}
+              onClick={(e) => e.stopPropagation()}
+              autoFocus
+              onFocus={(e) => e.target.select()}
+              className="text-body-md font-semibold text-mp-gray-900 border-b-2 border-mp-blue-400 bg-transparent focus:outline-none focus:border-mp-blue-500 min-w-[200px]"
+            />
+          ) : (
+            <span
+              onClick={handleCourseTitleClick}
+              className="text-body-md font-semibold text-mp-gray-900 hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors"
+              title="Click to edit title"
+            >
+              {course.title}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="primary" size="sm">
@@ -138,23 +295,24 @@ function CourseAccordion({
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-mp-gray-50 transition-colors"
                 >
                   {/* Order number — click to edit */}
-                  {editingId === lesson.id ? (
+                  {editingLessonOrderId === lesson.id ? (
                     <input
                       type="number"
                       min={1}
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
+                      value={lessonOrderValue}
+                      onChange={(e) => setLessonOrderValue(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') handlePositionSubmit(lesson.id);
-                        if (e.key === 'Escape') setEditingId(null);
+                        if (e.key === 'Enter') handleLessonOrderSubmit(lesson.id);
+                        if (e.key === 'Escape') setEditingLessonOrderId(null);
                       }}
-                      onBlur={() => handlePositionSubmit(lesson.id)}
+                      onBlur={() => handleLessonOrderSubmit(lesson.id)}
                       autoFocus
+                      onFocus={(e) => e.target.select()}
                       className="w-10 h-6 text-xs font-mono text-center border border-mp-blue-400 rounded bg-white focus:outline-none focus:ring-1 focus:ring-mp-blue-500"
                     />
                   ) : (
                     <button
-                      onClick={() => handlePositionClick(lesson.id, lesson.order)}
+                      onClick={() => handleLessonOrderClick(lesson.id, lesson.order)}
                       disabled={moveLesson.isPending}
                       className="w-8 text-xs font-mono text-mp-gray-400 text-right hover:text-mp-blue-600 hover:bg-mp-blue-50 rounded px-1 py-0.5 transition-colors cursor-pointer"
                       title="Click to change position"
@@ -163,9 +321,31 @@ function CourseAccordion({
                     </button>
                   )}
 
-                  {/* Title */}
+                  {/* Lesson title — click to edit */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-body-sm text-mp-gray-900 truncate">{lesson.title}</p>
+                    {editingLessonTitleId === lesson.id ? (
+                      <input
+                        type="text"
+                        value={lessonTitleValue}
+                        onChange={(e) => setLessonTitleValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleLessonTitleSubmit(lesson.id, lesson.title);
+                          if (e.key === 'Escape') handleLessonTitleCancel();
+                        }}
+                        onBlur={() => handleLessonTitleSubmit(lesson.id, lesson.title)}
+                        autoFocus
+                        onFocus={(e) => e.target.select()}
+                        className="w-full text-body-sm text-mp-gray-900 border-b-2 border-mp-blue-400 bg-transparent focus:outline-none focus:border-mp-blue-500"
+                      />
+                    ) : (
+                      <p
+                        onClick={() => handleLessonTitleClick(lesson.id, lesson.title)}
+                        className="text-body-sm text-mp-gray-900 truncate hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors"
+                        title="Click to edit title"
+                      >
+                        {lesson.title}
+                      </p>
+                    )}
                   </div>
 
                   {/* Skill category badge */}
