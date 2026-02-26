@@ -2,7 +2,8 @@
  * Admin Router — Superuser-only procedures for MPSTATS Academy admin panel.
  *
  * All procedures use adminProcedure (requires isAdmin=true).
- * Endpoints: getDashboardStats, getUsers, toggleUserField, getCourses, updateLessonOrder
+ * Endpoints: getDashboardStats, getUsers, toggleUserField, getCourses, updateLessonOrder,
+ *   moveCourseToPosition, updateCourseTitle, updateLessonTitle
  */
 
 import { z } from 'zod';
@@ -414,6 +415,114 @@ export const adminRouter = router({
           data: { order: clampedNew },
         });
 
+        return updated;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Move a course to a specific position among all courses.
+   * Shifts all courses between old and new positions accordingly.
+   */
+  moveCourseToPosition: adminProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        targetPosition: z.number().int().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const course = await ctx.prisma.course.findUnique({
+          where: { id: input.courseId },
+          select: { id: true, order: true },
+        });
+        if (!course) throw new Error('Course not found');
+
+        const oldPos = course.order;
+        const newPos = input.targetPosition;
+        if (oldPos === newPos) return course;
+
+        // Get all courses sorted by order
+        const allCourses = await ctx.prisma.course.findMany({
+          orderBy: { order: 'asc' },
+          select: { id: true, order: true },
+        });
+
+        // Clamp target to valid range
+        const maxPos = allCourses.length;
+        const clampedNew = Math.min(Math.max(newPos, 1), maxPos);
+
+        // Shift courses between old and new positions
+        if (oldPos < clampedNew) {
+          // Moving down: shift courses in (oldPos, clampedNew] up by 1
+          await ctx.prisma.course.updateMany({
+            where: {
+              order: { gt: oldPos, lte: clampedNew },
+            },
+            data: { order: { decrement: 1 } },
+          });
+        } else {
+          // Moving up: shift courses in [clampedNew, oldPos) down by 1
+          await ctx.prisma.course.updateMany({
+            where: {
+              order: { gte: clampedNew, lt: oldPos },
+            },
+            data: { order: { increment: 1 } },
+          });
+        }
+
+        // Place the course at target position
+        const updated = await ctx.prisma.course.update({
+          where: { id: input.courseId },
+          data: { order: clampedNew },
+        });
+
+        return updated;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Update a course title.
+   */
+  updateCourseTitle: adminProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        title: z.string().min(1).max(200),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const updated = await ctx.prisma.course.update({
+          where: { id: input.courseId },
+          data: { title: input.title },
+        });
+        return updated;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Update a lesson title.
+   */
+  updateLessonTitle: adminProcedure
+    .input(
+      z.object({
+        lessonId: z.string(),
+        title: z.string().min(1).max(300),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const updated = await ctx.prisma.lesson.update({
+          where: { id: input.lessonId },
+          data: { title: input.title },
+        });
         return updated;
       } catch (error) {
         handleDatabaseError(error);
