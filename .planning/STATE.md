@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.0 shipped. Planning next milestone.
+**Current focus:** Milestone v1.1 — Admin & Polish
 
 ## Current Position
 
-Phase: N/A — between milestones
-Plan: N/A
-Status: v1.0 MVP SHIPPED
-Last activity: 2026-02-26 — Milestone v1.0 archived
-
-Progress: [██████████] 100% (v1.0 complete)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-26 — Milestone v1.1 started
 
 ## Accumulated Context
 
@@ -31,7 +29,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 
 ### Blockers/Concerns
 
-None — milestone shipped.
+None.
 
 ### Pending Todos
 
@@ -40,5 +38,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: v1.0 milestone archived
-Resume file: N/A — use /gsd:new-milestone for next milestone
+Stopped at: Defining v1.1 requirements
+Resume file: N/A

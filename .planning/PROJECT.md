@@ -36,12 +36,22 @@
 
 ### Active
 
+## Current Milestone: v1.1 Admin & Polish
+
+**Goal:** Добавить админ-панель с управлением пользователями/контентом/аналитикой, улучшить UX источников в уроках, оптимизировать производительность, добавить трекинг просмотра видео и закрыть tech debt.
+
+**Target features:**
+- Суперюзер + Админ-панель (по паттерну MPSTATS Connect)
+- Summary & Sources UX (collapsible, тултипы, seekTo по клику)
+- Производительность загрузки уроков
+- Watch Progress Tracking (% просмотра видео)
+- Tech Debt Cleanup (in-memory → DB, кеширование, spinner timing)
+
+**Deferred to future milestones:**
 - [ ] Адаптивная сложность вопросов (IRT-lite) на основе предыдущих ответов
-- [ ] Кеширование сгенерированных вопросов для повторного использования
 - [ ] Визуализация прогресса навыков между диагностиками
 - [ ] Dark mode toggle
 - [ ] Полное accessibility audit (WCAG 2.1 AA)
-- [ ] Watch progress tracking (процент просмотра видео)
 - [ ] Полное QA покрытие (unit tests, component tests, E2E)
 
 ### Out of Scope
@@ -49,7 +59,6 @@
 - Mobile app — web-first, PWA достаточен
 - Платёжная система — MVP бесплатный
 - Real-time уведомления — не нужны для образовательного контента
-- Административная панель — управление через Supabase Dashboard
 - SCORM/xAPI — over-engineering для MVP
 - Gamification (бейджи, очки) — усложняет без доказанной ценности
 - Multi-language — только русский
@@ -91,4 +100,7 @@ Embeddings: OpenAI text-embedding-3-small (1536 dims).
 | QA минимально в v1.0 | Фокус на функциональность | ⚠️ Revisit — нужны тесты |
 
 ---
-*Last updated: 2026-02-26 after v1.0 milestone*
+| Admin panel по паттерну MPSTATS Connect | Двойной guard + adminProcedure в tRPC | — Pending |
+
+---
+*Last updated: 2026-02-26 after v1.1 milestone start*
