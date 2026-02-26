@@ -155,10 +155,12 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
     }
 
     return (
-      <div
-        id={stableId.current}
-        className={`aspect-video ${className ?? ''}`}
-      />
+      <div className={`aspect-video ${className ?? ''}`}>
+        <div
+          id={stableId.current}
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
     );
   }
 );
