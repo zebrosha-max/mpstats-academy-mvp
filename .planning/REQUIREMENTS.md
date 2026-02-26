@@ -12,8 +12,8 @@
 - [ ] **ADMIN-03**: Admin может переключать is_active и is_admin у пользователей inline
 - [ ] **ADMIN-04**: Admin может видеть аналитику платформы (графики по времени: рост юзеров, активность)
 - [ ] **ADMIN-05**: Admin может управлять курсами и уроками (просмотр, редактирование порядка)
-- [ ] **ADMIN-06**: Поле isAdmin в UserProfile с Prisma миграцией, adminProcedure в tRPC
-- [ ] **ADMIN-07**: Route group (admin) с layout guard + защита API через adminProcedure
+- [x] **ADMIN-06**: Поле isAdmin в UserProfile с Prisma миграцией, adminProcedure в tRPC
+- [x] **ADMIN-07**: Route group (admin) с layout guard + защита API через adminProcedure
 
 ### Lesson UX
 
@@ -73,8 +73,8 @@
 | ADMIN-03 | Phase 10 | Pending |
 | ADMIN-04 | Phase 10 | Pending |
 | ADMIN-05 | Phase 10 | Pending |
-| ADMIN-06 | Phase 10 | Pending |
-| ADMIN-07 | Phase 10 | Pending |
+| ADMIN-06 | Phase 10 | Complete |
+| ADMIN-07 | Phase 10 | Complete |
 | UX-01 | Phase 11 | Pending |
 | UX-02 | Phase 11 | Pending |
 | UX-03 | Phase 11 | Pending |
