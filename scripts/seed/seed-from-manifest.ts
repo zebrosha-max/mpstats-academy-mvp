@@ -177,9 +177,23 @@ async function seedFromManifest() {
     coursesProcessed++;
 
     // Обрабатываем модули и уроки (flatten submodules)
-    for (const module of course.modules) {
-      const lessons = flattenLessons(module.lessons);
+    // Global order: sequential numbering across all modules in the course
+    const sortedModules = [...course.modules].sort((a, b) => a.order - b.order);
+    let globalOrder = 0;
+
+    for (const module of sortedModules) {
+      const lessons = flattenLessons(module.lessons).sort((a, b) => {
+        // Normal orders first, order=999 at end (sorted by title for determinism)
+        const aDefault = a.order >= 999;
+        const bDefault = b.order >= 999;
+        if (aDefault !== bDefault) return aDefault ? 1 : -1;
+        if (!aDefault) return a.order - b.order;
+        return a.title_original.localeCompare(b.title_original, 'ru');
+      });
+
       for (const lesson of lessons) {
+        globalOrder++;
+
         const durationMinutes = lesson.duration_seconds
           ? Math.ceil(lesson.duration_seconds / 60)
           : null;
@@ -197,7 +211,7 @@ async function seedFromManifest() {
             update: {
               title: lessonTitle,
               description: lessonDesc,
-              order: lesson.order,
+              order: globalOrder,
               duration: durationMinutes,
               skillCategory: skillCategory,
             },
@@ -206,7 +220,7 @@ async function seedFromManifest() {
               courseId: course.id,
               title: lessonTitle,
               description: lessonDesc,
-              order: lesson.order,
+              order: globalOrder,
               duration: durationMinutes,
               skillCategory: skillCategory,
               skillLevel: 'MEDIUM',
