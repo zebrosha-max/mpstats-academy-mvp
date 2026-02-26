@@ -153,7 +153,7 @@ Note: Phases 8 and 9 are gap closure phases from v1.0 milestone audit.
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
 | 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
-| 8. Documentation Sync | 0/0 | Not started | - |
+| 8. Documentation Sync | 0/1 | In progress | - |
 | 9. Integration Wire-Up | 0/0 | Not started | - |
 
 ### Phase 7: Lesson & Course Name Cleanup
@@ -185,6 +185,7 @@ Plans:
   4. Phase 5.1 имеет VERIFICATION.md
 
 Plans:
+- [ ] 08-01-PLAN.md — Create Phase 5.1 VERIFICATION.md (retroactive infrastructure verification)
 
 ### Phase 9: Integration Wire-Up
 **Goal:** Integration gaps из milestone audit закрыты: profile router использует getCompletedSessions, dashboard показывает прогресс recommended track, seekTo через postMessage верифицирован
