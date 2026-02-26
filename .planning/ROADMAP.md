@@ -149,7 +149,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
 | 5. Security Hardening | 0/2 | Not started | - |
 | 5.1 VPS Infrastructure | 2/2 | Complete | 2026-02-24 |
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
-| 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
+| 7. Lesson Name Cleanup | 2/2 | Complete    | 2026-02-26 |
 
 ### Phase 7: Lesson & Course Name Cleanup
 
@@ -162,7 +162,7 @@ Note: Phase 5.1 (INSERTED) prepares VPS infrastructure before Phase 6 deploy.
   3. Названия курсов не начинаются с технической нумерации ("1.", "2." и т.д.)
   4. Уроки внутри каждого модуля пронумерованы последовательно и логично
   5. Изменения применены в production (academyal.duckdns.org) и проверены визуально
-**Plans:** 2 plans in 2 waves
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 07-01-PLAN.md — Cleanup script (dry-run + apply), seed script update, UI visual numbering
