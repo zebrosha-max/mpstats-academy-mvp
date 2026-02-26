@@ -7,11 +7,11 @@
 
 ### Admin
 
-- [ ] **ADMIN-01**: Admin может видеть dashboard со статистикой платформы (юзеры, диагностики, активность)
-- [ ] **ADMIN-02**: Admin может просматривать список всех пользователей с поиском и фильтрами
-- [ ] **ADMIN-03**: Admin может переключать is_active и is_admin у пользователей inline
-- [ ] **ADMIN-04**: Admin может видеть аналитику платформы (графики по времени: рост юзеров, активность)
-- [ ] **ADMIN-05**: Admin может управлять курсами и уроками (просмотр, редактирование порядка)
+- [x] **ADMIN-01**: Admin может видеть dashboard со статистикой платформы (юзеры, диагностики, активность)
+- [x] **ADMIN-02**: Admin может просматривать список всех пользователей с поиском и фильтрами
+- [x] **ADMIN-03**: Admin может переключать is_active и is_admin у пользователей inline
+- [x] **ADMIN-04**: Admin может видеть аналитику платформы (графики по времени: рост юзеров, активность)
+- [x] **ADMIN-05**: Admin может управлять курсами и уроками (просмотр, редактирование порядка)
 - [x] **ADMIN-06**: Поле isAdmin в UserProfile с Prisma миграцией, adminProcedure в tRPC
 - [x] **ADMIN-07**: Route group (admin) с layout guard + защита API через adminProcedure
 
@@ -68,11 +68,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ADMIN-01 | Phase 10 | Pending |
-| ADMIN-02 | Phase 10 | Pending |
-| ADMIN-03 | Phase 10 | Pending |
-| ADMIN-04 | Phase 10 | Pending |
-| ADMIN-05 | Phase 10 | Pending |
+| ADMIN-01 | Phase 10 | Complete |
+| ADMIN-02 | Phase 10 | Complete |
+| ADMIN-03 | Phase 10 | Complete |
+| ADMIN-04 | Phase 10 | Complete |
+| ADMIN-05 | Phase 10 | Complete |
 | ADMIN-06 | Phase 10 | Complete |
 | ADMIN-07 | Phase 10 | Complete |
 | UX-01 | Phase 11 | Pending |
