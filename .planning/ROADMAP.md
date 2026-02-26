@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Production Deploy** - Docker deploy с Prisma fix, health check, CD pipeline, E2E верификация (completed 2026-02-24)
 - [x] **Phase 7: Lesson & Course Name Cleanup** - Очистка названий уроков, модулей и курсов от технических артефактов (.mp4, нумерация, разделители) (completed 2026-02-26)
 - [x] **Phase 8: Documentation & Traceability Sync** - Обновление чекбоксов, traceability table, plan checkboxes и недостающих VERIFICATION.md (completed 2026-02-26)
-- [ ] **Phase 9: Integration Wire-Up** - Подключение getCompletedSessions в profile, recommended track в dashboard, верификация seekTo
+- [ ] **Phase 9: Integration Wire-Up** - Подключение getCompletedSessions в profile, верификация seekTo (dashboard widget отложен)
 
 ## Phase Details
 
@@ -154,7 +154,7 @@ Note: Phases 8 and 9 are gap closure phases from v1.0 milestone audit.
 | 6. Production Deploy | 2/2 | Complete | 2026-02-24 |
 | 7. Lesson Name Cleanup | 2/2 | Complete | 2026-02-26 |
 | 8. Documentation Sync | 1/1 | Complete | 2026-02-26 |
-| 9. Integration Wire-Up | 0/0 | Not started | - |
+| 9. Integration Wire-Up | 0/1 | Not started | - |
 
 ### Phase 7: Lesson & Course Name Cleanup
 
@@ -188,13 +188,15 @@ Plans:
 - [x] 08-01-PLAN.md — Create Phase 5.1 VERIFICATION.md (retroactive infrastructure verification)
 
 ### Phase 9: Integration Wire-Up
-**Goal:** Integration gaps из milestone audit закрыты: profile router использует getCompletedSessions, dashboard показывает прогресс recommended track, seekTo через postMessage верифицирован
+**Goal:** Integration gaps из milestone audit закрыты: profile router использует getCompletedSessions, seekTo через postMessage верифицирован (dashboard widget отложен до video tracking)
 **Depends on:** Phase 8 (документация синхронизирована)
 **Requirements:** DATA-05, DATA-06, DATA-07, VIDEO-03 (integration wiring)
 **Gap Closure:** Closes integration gaps from v1.0 audit
 **Success Criteria** (what must be TRUE):
   1. Profile router вызывает getCompletedSessions для отображения истории диагностик
-  2. Dashboard показывает прогресс по рекомендованному треку (recommended path progress widget)
-  3. Timecode seekTo через postMessage API верифицирован (клик по таймкоду перематывает видео)
+  2. Timecode seekTo через postMessage API верифицирован (клик по таймкоду перематывает видео)
+  3. Dashboard recommended track progress widget DEFERRED (требует video watch tracking)
+**Plans:** 1 plan
 
 Plans:
+- [ ] 09-01-PLAN.md — Profile router wire-up (getCompletedSessions) + seekTo production verification
