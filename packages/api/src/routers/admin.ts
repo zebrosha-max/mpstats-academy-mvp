@@ -310,6 +310,31 @@ export const adminRouter = router({
   }),
 
   /**
+   * Get lessons for a specific course (used by CourseManager accordion).
+   */
+  getCourseLessons: adminProcedure
+    .input(z.object({ courseId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const lessons = await ctx.prisma.lesson.findMany({
+          where: { courseId: input.courseId },
+          orderBy: { order: 'asc' },
+          select: {
+            id: true,
+            title: true,
+            order: true,
+            skillCategory: true,
+            videoId: true,
+            duration: true,
+          },
+        });
+        return lessons;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
    * Update lesson display order.
    */
   updateLessonOrder: adminProcedure
