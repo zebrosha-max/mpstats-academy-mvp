@@ -29,7 +29,7 @@ Full details: `milestones/v1.0-ROADMAP.md`
 
 **Milestone Goal:** Добавить админ-панель с управлением платформой, улучшить UX источников в уроках, оптимизировать производительность, добавить трекинг просмотра видео и закрыть tech debt.
 
-- [x] **Phase 10: Superuser & Admin Panel** — Полноценная админ-панель с управлением пользователями, аналитикой и контентом (completed 2026-02-26)
+- [ ] **Phase 10: Superuser & Admin Panel** — Полноценная админ-панель с управлением пользователями, аналитикой и контентом
 - [ ] **Phase 11: Summary & Sources UX** — Интерактивные источники в summary урока с тултипами и seekTo
 - [ ] **Phase 12: Lesson Page Performance** — Быстрая загрузка страницы урока с lazy video и кешированием
 - [ ] **Phase 13: Watch Progress Tracking** — Сохранение и отображение прогресса просмотра видео
@@ -47,11 +47,12 @@ Full details: `milestones/v1.0-ROADMAP.md`
   3. Админ может найти пользователя по email и переключить его is_active/is_admin через inline toggle
   4. Админ видит графики роста пользователей и активности по времени
   5. Админ может просматривать курсы и менять порядок уроков
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — Infrastructure: Prisma isAdmin/isActive fields, adminProcedure, admin tRPC router, (admin) route group with layout guard and sidebar
-- [ ] 10-02-PLAN.md — Admin pages: Dashboard with KPIs, Users management with toggles, Analytics charts, Content management with lesson reordering
+- [x] 10-01-PLAN.md — Infrastructure: Prisma isAdmin/isActive fields, adminProcedure, admin tRPC router, (admin) route group with layout guard and sidebar
+- [x] 10-02-PLAN.md — Admin pages: Dashboard with KPIs, Users management with toggles, Analytics charts, Content management with lesson reordering
+- [ ] 10-03-PLAN.md — Content editing: Course reorder, inline course title editing, inline lesson title editing
 
 ### Phase 11: Summary & Sources UX
 **Goal**: Пользователь взаимодействует с источниками в summary урока — кликает, видит превью, перематывает видео
@@ -125,7 +126,7 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 7. Lesson Name Cleanup | v1.0 | 2/2 | Complete | 2026-02-26 |
 | 8. Documentation Sync | v1.0 | 1/1 | Complete | 2026-02-26 |
 | 9. Integration Wire-Up | v1.0 | 1/1 | Complete | 2026-02-26 |
-| 10. Superuser & Admin Panel | 2/2 | Complete    | 2026-02-26 | - |
+| 10. Superuser & Admin Panel | v1.1 | 2/3 | In progress | - |
 | 11. Summary & Sources UX | v1.1 | 0/1 | Not started | - |
 | 12. Lesson Page Performance | v1.1 | 0/1 | Not started | - |
 | 13. Watch Progress Tracking | v1.1 | 0/1 | Not started | - |
