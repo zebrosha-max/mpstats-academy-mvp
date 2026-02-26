@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
-import { getLatestSkillProfile } from './diagnostic';
+import { getLatestSkillProfile, getCompletedSessions } from './diagnostic';
 import type { PrismaClient } from '@mpstats/db';
 import type {
   DashboardData,
@@ -168,11 +168,7 @@ export const profileRouter = router({
               },
             },
           }),
-          ctx.prisma.diagnosticSession.findMany({
-            where: { userId: ctx.user.id, status: 'COMPLETED' },
-            orderBy: { completedAt: 'desc' },
-            take: 10,
-          }),
+          getCompletedSessions(ctx.prisma, ctx.user.id),
           ctx.prisma.lessonProgress.findMany({
             where: { path: { userId: ctx.user.id } },
             include: { lesson: true },
