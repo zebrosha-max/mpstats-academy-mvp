@@ -68,34 +68,34 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ADMIN-01 | TBD | Pending |
-| ADMIN-02 | TBD | Pending |
-| ADMIN-03 | TBD | Pending |
-| ADMIN-04 | TBD | Pending |
-| ADMIN-05 | TBD | Pending |
-| ADMIN-06 | TBD | Pending |
-| ADMIN-07 | TBD | Pending |
-| UX-01 | TBD | Pending |
-| UX-02 | TBD | Pending |
-| UX-03 | TBD | Pending |
-| UX-04 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| PERF-03 | TBD | Pending |
-| WATCH-01 | TBD | Pending |
-| WATCH-02 | TBD | Pending |
-| WATCH-03 | TBD | Pending |
-| WATCH-04 | TBD | Pending |
-| DEBT-01 | TBD | Pending |
-| DEBT-02 | TBD | Pending |
-| DEBT-03 | TBD | Pending |
-| DEBT-04 | TBD | Pending |
+| ADMIN-01 | Phase 10 | Pending |
+| ADMIN-02 | Phase 10 | Pending |
+| ADMIN-03 | Phase 10 | Pending |
+| ADMIN-04 | Phase 10 | Pending |
+| ADMIN-05 | Phase 10 | Pending |
+| ADMIN-06 | Phase 10 | Pending |
+| ADMIN-07 | Phase 10 | Pending |
+| UX-01 | Phase 11 | Pending |
+| UX-02 | Phase 11 | Pending |
+| UX-03 | Phase 11 | Pending |
+| UX-04 | Phase 11 | Pending |
+| PERF-01 | Phase 12 | Pending |
+| PERF-02 | Phase 12 | Pending |
+| PERF-03 | Phase 12 | Pending |
+| WATCH-01 | Phase 13 | Pending |
+| WATCH-02 | Phase 13 | Pending |
+| WATCH-03 | Phase 13 | Pending |
+| WATCH-04 | Phase 13 | Pending |
+| DEBT-01 | Phase 14 | Pending |
+| DEBT-02 | Phase 14 | Pending |
+| DEBT-03 | Phase 14 | Pending |
+| DEBT-04 | Phase 14 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22
+- Mapped to phases: 22
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-26 after initial definition*
+*Last updated: 2026-02-26 after roadmap creation*

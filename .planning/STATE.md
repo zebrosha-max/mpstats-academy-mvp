@@ -5,27 +5,38 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Admin & Polish
+**Current focus:** Milestone v1.1 — Phase 10: Superuser & Admin Panel
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 10 of 14 (Superuser & Admin Panel)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-02-26 — Milestone v1.1 started
+Status: Ready to plan
+Last activity: 2026-02-26 — Roadmap created for v1.1
+
+Progress: [░░░░░░░░░░] 0% (0/6 plans)
+
+## Performance Metrics
+
+**Velocity (v1.0):**
+- Total plans completed: 20
+- Total phases: 10
+- Timeline: 49 days (2026-01-08 -> 2026-02-26)
+
+**v1.1 Plans:** 6 total (2+1+1+1+1)
+
+*Updated after each plan completion*
 
 ## Accumulated Context
 
 ### Decisions
 
-Full decision history archived in `milestones/v1.0-ROADMAP.md`.
+Full v1.0 decision history archived in `milestones/v1.0-ROADMAP.md`.
 Key decisions summary in PROJECT.md Key Decisions table.
 
-### Roadmap Evolution
-
-- v1.0: 10 phases (1-9 + 5.1), 20 plans, 42 requirements — all complete and shipped
-- Phase 5.1 was INSERTED for VPS infrastructure
-- Phases 8-9 were gap closure from milestone audit
+- v1.1: Admin panel по паттерну MPSTATS Connect — (admin) route group, layout guard, adminProcedure
+- v1.1: Phase 13 depends on Phase 12 (lazy video needed before progress tracking)
+- v1.1: Phases 10, 11, 12, 14 are independent — can execute in any order
 
 ### Blockers/Concerns
 
@@ -38,5 +49,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Defining v1.1 requirements
-Resume file: N/A
+Stopped at: Roadmap created for v1.1, ready to plan Phase 10
+Resume file: None
