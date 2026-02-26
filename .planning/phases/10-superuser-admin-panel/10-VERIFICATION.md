@@ -1,8 +1,18 @@
 ---
 phase: 10-superuser-admin-panel
-verified: 2026-02-26T14:00:00Z
+verified: 2026-02-26T16:00:00Z
 status: human_needed
-score: 5/5 must-haves verified
+score: 7/7 must-haves verified
+re_verification:
+  previous_status: human_needed
+  previous_score: 5/5
+  gaps_closed:
+    - "Email not displayed in UserTable (commit 9b98633 — email fetched from Supabase auth.admin.listUsers and passed to UserRow)"
+    - "Course reorder by position missing (commit 9b98633 — moveCourseToPosition mutation added)"
+    - "Course title inline editing missing (commits 04e4a2b + 95d049f — updateCourseTitle mutation + UI)"
+    - "Lesson title inline editing missing (commits 04e4a2b + 95d049f — updateLessonTitle mutation + UI)"
+  gaps_remaining: []
+  regressions: []
 human_verification:
   - test: "Войти как isAdmin=true пользователь и открыть /admin"
     expected: "Видно dashboard с 4 KPI карточками (Total Users, Completed Diagnostics, Total Lessons, New Users 7d), mini area chart регистраций, лента Recent Activity"
@@ -14,7 +24,7 @@ human_verification:
     expected: "Редирект на /dashboard"
     why_human: "Server component layout guard — requires live Supabase auth"
   - test: "На странице /admin/users ввести email в поиск"
-    expected: "Таблица фильтруется по email (через Supabase Admin API), результаты появляются через ~300ms debounce"
+    expected: "Таблица фильтруется по email (через Supabase Admin API), результаты появляются через ~300ms debounce; email пользователя отображается в столбце Email"
     why_human: "Требует SUPABASE_SERVICE_ROLE_KEY в env и живого auth.admin.listUsers вызова"
   - test: "На странице /admin/users переключить isAdmin toggle для пользователя"
     expected: "Toggle переключается мгновенно (optimistic), изменение сохраняется в DB"
@@ -22,56 +32,80 @@ human_verification:
   - test: "На странице /admin/analytics нажать 30d"
     expected: "Оба графика перерисовываются с данными за 30 дней"
     why_human: "Chart re-render behaviour — визуальное и state-зависимое"
-  - test: "На странице /admin/content раскрыть курс, нажать стрелку вверх/вниз для урока"
-    expected: "Порядок уроков меняется, мутация вызывает invalidate и список обновляется"
-    why_human: "Accordion lazy-load + mutation flow требует live DB"
+  - test: "На странице /admin/content кликнуть по номеру порядка курса, ввести новое значение, нажать Enter"
+    expected: "Курс перемещается на новую позицию, список обновляется"
+    why_human: "moveCourseToPosition mutation + query invalidation требует live DB"
+  - test: "На странице /admin/content кликнуть по названию курса, ввести новое, нажать Enter"
+    expected: "Название курса обновляется inline, сохраняется в DB"
+    why_human: "updateCourseTitle mutation требует live Prisma + DB"
+  - test: "На странице /admin/content раскрыть курс, кликнуть по названию урока, ввести новое, нажать Enter"
+    expected: "Название урока обновляется inline, сохраняется в DB"
+    why_human: "updateLessonTitle mutation требует live DB с уроками"
+  - test: "Нажать Escape при любом inline-редактировании (порядок/название курса, название урока)"
+    expected: "Редактирование отменяется без API вызова, исходное значение восстанавливается"
+    why_human: "State reset logic требует взаимодействия в браузере"
 ---
 
 # Phase 10: Superuser & Admin Panel — Verification Report
 
 **Phase Goal:** Администратор может управлять платформой через защищённую админ-панель — видеть статистику, управлять пользователями и контентом
-**Verified:** 2026-02-26T14:00:00Z
+**Verified:** 2026-02-26T16:00:00Z
 **Status:** human_needed
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — after Plan 10-03 execution (commits 9b98633, 04e4a2b, 95d049f)
+
+## Re-Verification Summary
+
+Previous verification (2026-02-26T14:00:00Z) had status `human_needed` with one informational note about email not being displayed in UserTable. Since then, 3 commits added:
+- Email display in UserTable (fetched from Supabase auth API)
+- Course jump-to-position reorder via position number
+- Inline editing for course titles (click-to-edit, Enter/Escape)
+- Inline editing for lesson titles (click-to-edit, Enter/Escape)
+- 3 new tRPC mutations: `moveCourseToPosition`, `updateCourseTitle`, `updateLessonTitle`
+
+All previously noted informational gaps are now resolved. No regressions detected.
 
 ## Goal Achievement
 
-### Observable Truths (from ROADMAP.md Success Criteria)
+### Observable Truths
 
-| #  | Truth                                                                                          | Status     | Evidence                                                                                          |
-|----|-----------------------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------------------------|
-| 1  | Пользователь с isAdmin=true попадает на /admin dashboard со статистикой платформы              | VERIFIED  | `(admin)/layout.tsx` queries UserProfile.isAdmin, redirects non-admins; dashboard calls `trpc.admin.getDashboardStats.useQuery()` with real Prisma counts |
-| 2  | Пользователь без isAdmin при попытке открыть /admin получает редирект на главную              | VERIFIED  | Layout guard: `if (!profile \|\| !profile.isAdmin) redirect('/dashboard')`. Middleware adds `/admin` to protectedRoutes for unauthenticated redirect to `/login` |
-| 3  | Админ может найти пользователя по email и переключить его is_active/is_admin через inline toggle | VERIFIED  | `getUsers` queries Supabase Admin API (`auth.admin.listUsers`) for email match + Prisma name search OR-combined; `UserTable` calls `trpc.admin.toggleUserField.useMutation` for both `isAdmin` and `isActive` with optimistic state |
-| 4  | Админ видит графики роста пользователей и активности по времени                               | VERIFIED  | `analytics/page.tsx` calls `trpc.admin.getAnalytics.useQuery({ days })`, renders two `ActivityChart` (Recharts AreaChart) components; period selector 7d/14d/30d/90d changes `days` state |
-| 5  | Админ может просматривать курсы и менять порядок уроков                                        | VERIFIED  | `CourseManager` accordion lazy-loads lessons via `trpc.admin.getCourseLessons` (enabled only when expanded); up/down arrows call `trpc.admin.updateLessonOrder.useMutation` swapping adjacent lesson orders |
+| #  | Truth | Status | Evidence |
+|----|-------|--------|----------|
+| 1  | Пользователь с isAdmin=true попадает на /admin dashboard со статистикой платформы | VERIFIED | `(admin)/layout.tsx` queries `UserProfile.isAdmin`, redirects non-admins; dashboard calls `trpc.admin.getDashboardStats.useQuery()` with real Prisma counts |
+| 2  | Пользователь без isAdmin при попытке открыть /admin получает редирект | VERIFIED | Layout guard: `if (!profile || !profile.isAdmin) redirect('/dashboard')`. Middleware adds `/admin` to protectedRoutes for unauthenticated redirect to `/login` |
+| 3  | Админ может найти пользователя по email и видеть его адрес в таблице | VERIFIED | `getUsers` queries Supabase `auth.admin.listUsers` for email match; `emailMap` built from listUsers and mapped to each `UserRow.email`; UserTable renders `{user.email || user.id.slice(0,8)+'...'}` |
+| 4  | Админ может переключить is_active/is_admin через inline toggle | VERIFIED | `toggleUserField` mutation supports both enum values; `UserTable` renders two Toggle per row with optimistic state |
+| 5  | Админ видит графики роста пользователей и активности по времени | VERIFIED | `getAnalytics` returns userGrowth+activity arrays; analytics/page.tsx renders two `ActivityChart` (Recharts AreaChart) with period selector 7d/14d/30d/90d |
+| 6  | Админ может менять порядок курсов и уроков через click-to-edit по номеру позиции | VERIFIED | `moveCourseToPosition` mutation (shift algorithm, 428-486 admin.ts) called from CourseAccordion `handleCourseOrderSubmit`; `moveLessonToPosition` mutation for lessons |
+| 7  | Админ может inline-редактировать названия курсов и уроков (Enter saves, Escape cancels) | VERIFIED | `updateCourseTitle` (491-508 admin.ts) + `updateLessonTitle` (513-530 admin.ts); CourseManager has `editingCourseTitle`, `editingLessonTitleId` state with Enter/Escape/onBlur handlers, `stopPropagation` prevents accordion toggle |
 
-**Score:** 5/5 truths verified
+**Score:** 7/7 truths verified
 
 ### Required Artifacts
 
-#### Plan 10-01 Artifacts
+#### Plans 10-01 and 10-02 (unchanged from previous verification — all VERIFIED)
+
+| Artifact | Expected | Status | Lines |
+|----------|----------|--------|-------|
+| `packages/db/prisma/schema.prisma` | isAdmin, isActive on UserProfile | VERIFIED | `isAdmin Boolean @default(false)`, `isActive Boolean @default(true)` |
+| `packages/api/src/trpc.ts` | adminProcedure with isAdmin check | VERIFIED | Lines 42-53: throws FORBIDDEN for non-admins |
+| `packages/api/src/routers/admin.ts` | Admin tRPC router | VERIFIED | 553 lines, 10 procedures |
+| `apps/web/src/app/(admin)/layout.tsx` | Admin layout with isAdmin guard | VERIFIED | 61 lines, server-side redirect |
+| `apps/web/src/components/admin/AdminSidebar.tsx` | Admin nav sidebar | VERIFIED | 94 lines, 4 nav items |
+| `apps/web/src/app/(admin)/admin/page.tsx` | Dashboard with KPIs, chart, activity | VERIFIED | 225 lines |
+| `apps/web/src/app/(admin)/admin/users/page.tsx` | Users page with search/table | VERIFIED | 93 lines |
+| `apps/web/src/app/(admin)/admin/analytics/page.tsx` | Analytics with period selector | VERIFIED | 123 lines |
+| `apps/web/src/app/(admin)/admin/content/page.tsx` | Content with course/lesson management | VERIFIED | 68 lines |
+| `apps/web/src/components/admin/UserTable.tsx` | Table with email, pagination, toggles | VERIFIED | 227 lines; email field added |
+| `apps/web/src/components/admin/StatCard.tsx` | KPI card | VERIFIED | 57 lines |
+| `apps/web/src/components/admin/ActivityChart.tsx` | Recharts AreaChart wrapper | VERIFIED | 72 lines |
+| `apps/web/src/components/admin/CourseManager.tsx` | Accordion with reorder + inline editing | VERIFIED | 377 lines |
+
+#### Plan 10-03 Artifacts (new)
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `packages/db/prisma/schema.prisma` | isAdmin field on UserProfile | VERIFIED | Lines 24-25: `isAdmin Boolean @default(false)` and `isActive Boolean @default(true)` present |
-| `packages/api/src/trpc.ts` | adminProcedure with isAdmin check | VERIFIED | Lines 42-53: `adminProcedure = protectedProcedure.use(...)` queries `UserProfile.isAdmin`, throws `FORBIDDEN` if not true |
-| `packages/api/src/routers/admin.ts` | Admin tRPC router, exports adminRouter | VERIFIED | 358 lines, 7 procedures: getDashboardStats, getRecentActivity, getAnalytics, getUsers, toggleUserField, getCourses, getCourseLessons, updateLessonOrder. Exports `adminRouter` |
-| `apps/web/src/app/(admin)/layout.tsx` | Admin layout with isAdmin guard | VERIFIED | 61 lines, checks `profile.isAdmin`, redirects to `/dashboard` if false. Renders AdminSidebar + content area |
-| `apps/web/src/components/admin/AdminSidebar.tsx` | Admin sidebar navigation component | VERIFIED | 94 lines, exports `AdminSidebar`, 4 nav items (Dashboard/Users/Content/Analytics), active state via `usePathname()`, "Back to app" link |
-
-#### Plan 10-02 Artifacts
-
-| Artifact | Expected | Min Lines | Actual | Status | Details |
-|----------|----------|-----------|--------|--------|---------|
-| `apps/web/src/app/(admin)/admin/page.tsx` | Dashboard with KPIs, chart, activity feed | 50 | 225 | VERIFIED | 4 StatCards, AreaChart (Recharts), recent activity feed — all wired to live tRPC queries |
-| `apps/web/src/app/(admin)/admin/users/page.tsx` | Users page with table, search, pagination, toggles | 80 | 93 | VERIFIED | Debounced search, `getUsers.useQuery`, renders `UserTable` |
-| `apps/web/src/app/(admin)/admin/analytics/page.tsx` | Analytics page with charts and period selector | 50 | 123 | VERIFIED | Period selector (7d/14d/30d/90d), 2 `ActivityChart` components, 6 summary stat cards |
-| `apps/web/src/app/(admin)/admin/content/page.tsx` | Content page with courses and lesson ordering | 50 | 68 | VERIFIED | Calls `getCourses.useQuery`, renders `CourseManager`, shows badges for counts |
-| `apps/web/src/components/admin/UserTable.tsx` | Table with search, pagination, inline toggles | 60 | 227 | VERIFIED | Custom Toggle component, optimistic updates with revert-on-error, pagination controls |
-| `apps/web/src/components/admin/StatCard.tsx` | Reusable KPI card | — | 57 | VERIFIED | 4 color variants, icon + value + optional trend |
-| `apps/web/src/components/admin/ActivityChart.tsx` | Recharts AreaChart wrapper | — | 72 | VERIFIED | Gradient fill, responsive container, configurable color |
-| `apps/web/src/components/admin/CourseManager.tsx` | Accordion with lazy lesson load and reorder | — | 203 | VERIFIED | Accordion with `enabled: isExpanded` query flag, swap-order mutation via ArrowUp/ArrowDown buttons |
+| `packages/api/src/routers/admin.ts` | `moveCourseToPosition`, `updateCourseTitle`, `updateLessonTitle` mutations | VERIFIED | Lines 428-530; all use `adminProcedure`, Zod validation, `ctx.prisma`, error handling |
+| `apps/web/src/components/admin/CourseManager.tsx` | Inline editing for course order, course title, lesson title | VERIFIED | `editingCourseOrder`, `editingCourseTitle`, `editingLessonTitleId` states; all handlers with Enter/Escape/onBlur; `stopPropagation` on header clicks |
 
 ### Key Link Verification
 
@@ -85,27 +119,29 @@ human_verification:
 | `components/admin/UserTable.tsx` | `routers/admin.ts` | `trpc.admin.toggleUserField.useMutation(...)` | WIRED | Line 66 of UserTable.tsx |
 | `(admin)/admin/analytics/page.tsx` | `routers/admin.ts` | `trpc.admin.getAnalytics.useQuery({ days })` | WIRED | Line 28 of analytics/page.tsx |
 | `(admin)/admin/content/page.tsx` | `routers/admin.ts` | `trpc.admin.getCourses.useQuery()` | WIRED | Line 10 of content/page.tsx |
-| `components/admin/CourseManager.tsx` | `routers/admin.ts` | `trpc.admin.updateLessonOrder.useMutation(...)` | WIRED | Line 70 of CourseManager.tsx |
+| `components/admin/CourseManager.tsx` | `routers/admin.ts` | `trpc.admin.moveCourseToPosition.useMutation(...)` | WIRED | Line 43 of CourseManager.tsx |
+| `components/admin/CourseManager.tsx` | `routers/admin.ts` | `trpc.admin.updateCourseTitle.useMutation(...)` | WIRED | Line 49 of CourseManager.tsx |
+| `components/admin/CourseManager.tsx` | `routers/admin.ts` | `trpc.admin.updateLessonTitle.useMutation(...)` | WIRED | Line 108 of CourseManager.tsx |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| ADMIN-01 | 10-02-PLAN.md | Admin видит dashboard со статистикой (юзеры, диагностики, активность) | SATISFIED | `getDashboardStats` returns totalUsers/totalDiagnostics/totalLessons/recentRegistrations; dashboard page renders 4 KPI cards + activity feed |
-| ADMIN-02 | 10-02-PLAN.md | Admin просматривает список пользователей с поиском | SATISFIED | `getUsers` procedure with search, page, limit; users/page.tsx renders `UserTable` with debounced search |
-| ADMIN-03 | 10-02-PLAN.md | Admin переключает is_active и is_admin inline | SATISFIED | `toggleUserField` mutation supports both `isAdmin` and `isActive` enum values; `UserTable` renders two Toggle per row with optimistic updates |
-| ADMIN-04 | 10-02-PLAN.md | Admin видит аналитику платформы (графики) | SATISFIED | `getAnalytics` returns userGrowth+activity arrays; analytics/page.tsx renders two `ActivityChart` with period selector |
-| ADMIN-05 | 10-02-PLAN.md | Admin управляет курсами и уроками (порядок) | SATISFIED | `getCourses`+`getCourseLessons` procedures; `CourseManager` accordion with reorder arrows calling `updateLessonOrder` |
-| ADMIN-06 | 10-01-PLAN.md | isAdmin в UserProfile + Prisma migration + adminProcedure | SATISFIED | Schema has `isAdmin Boolean @default(false)` and `isActive Boolean @default(true)`; `adminProcedure` in trpc.ts throws FORBIDDEN for non-admins |
-| ADMIN-07 | 10-01-PLAN.md | Route group (admin) с layout guard + защита API через adminProcedure | SATISFIED | `(admin)/layout.tsx` checks isAdmin server-side and redirects; all admin router procedures use `adminProcedure`; middleware adds `/admin` to protectedRoutes |
+| ADMIN-01 | 10-02-PLAN.md | Admin видит dashboard со статистикой (юзеры, диагностики, активность) | SATISFIED | `getDashboardStats` returns totalUsers/totalDiagnostics/totalLessons/recentRegistrations; dashboard renders 4 KPI cards + activity feed |
+| ADMIN-02 | 10-02-PLAN.md | Admin просматривает список пользователей с поиском | SATISFIED | `getUsers` with search, page, limit; email displayed via Supabase auth API lookup; debounced search in users/page.tsx |
+| ADMIN-03 | 10-02-PLAN.md | Admin переключает is_active и is_admin inline | SATISFIED | `toggleUserField` mutation for both fields; UserTable renders two Toggle per row with optimistic updates |
+| ADMIN-04 | 10-02-PLAN.md | Admin видит аналитику платформы (графики) | SATISFIED | `getAnalytics` returns userGrowth+activity arrays; two `ActivityChart` with period selector |
+| ADMIN-05 | 10-02-PLAN.md + 10-03-PLAN.md | Admin управляет курсами и уроками (порядок + редактирование) | SATISFIED | Lesson/course reorder via position numbers; inline title editing for both courses and lessons; all 5 mutations wired |
+| ADMIN-06 | 10-01-PLAN.md | isAdmin в UserProfile + Prisma migration + adminProcedure | SATISFIED | `isAdmin Boolean @default(false)`, `isActive Boolean @default(true)` in schema; `adminProcedure` throws FORBIDDEN for non-admins |
+| ADMIN-07 | 10-01-PLAN.md | Route group (admin) с layout guard + защита API через adminProcedure | SATISFIED | `(admin)/layout.tsx` checks isAdmin server-side; all admin router procedures use `adminProcedure`; middleware adds `/admin` to protectedRoutes |
 
-All 7 requirements for Phase 10 are accounted for and satisfied. No orphaned requirements.
+All 7 requirements accounted for. No orphaned requirements.
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `packages/api/src/routers/admin.ts` | 246 | `TODO: Add isActive support when field is used in access control` | Info | Misleading comment — `isActive` toggle IS fully implemented (line 249 Zod enum includes `'isActive'`, mutation reads and writes it). The TODO refers to using `isActive` in *access control enforcement* (e.g., blocking login), not the toggle itself. No blocker. |
+| `packages/api/src/routers/admin.ts` | 246 | `TODO: Add isActive support when access control is enforced` | Info | `isActive` toggle is fully implemented; TODO refers to blocking `isActive=false` users from logging in (Phase 5 tech debt). No blocker. |
 
 ### Human Verification Required
 
@@ -114,7 +150,7 @@ All automated checks passed. The following require live environment testing:
 #### 1. Admin Dashboard Live Data
 
 **Test:** Set test user as admin via Supabase SQL (`UPDATE "UserProfile" SET "isAdmin" = true WHERE id = '62b06f05-1d65-47b6-8f7c-9f535449a9d9'`), start `pnpm dev`, visit `http://localhost:3000/admin`
-**Expected:** Dashboard shows 4 KPI cards with real numbers from DB, a mini registrations chart, and recent activity feed
+**Expected:** Dashboard shows 4 KPI cards with real numbers from DB, mini registrations chart, and recent activity feed
 **Why human:** Requires live Supabase connection and populated DB data
 
 #### 2. Auth Guard — Unauthenticated
@@ -129,10 +165,10 @@ All automated checks passed. The following require live environment testing:
 **Expected:** Redirect to `/dashboard`
 **Why human:** Server component layout queries live Supabase auth + Prisma
 
-#### 4. Email Search in User Management
+#### 4. Email Display and Search in User Management
 
-**Test:** On `/admin/users`, type a known email address into the search input
-**Expected:** Table filters to show matching user after ~300ms debounce. Requires `SUPABASE_SERVICE_ROLE_KEY` env var.
+**Test:** On `/admin/users`, verify emails are shown in the Email column; type a known email address into the search input
+**Expected:** Email addresses visible in table; table filters matching user after ~300ms debounce. Requires `SUPABASE_SERVICE_ROLE_KEY` env var.
 **Why human:** Depends on `auth.admin.listUsers()` API call to live Supabase service
 
 #### 5. Inline Toggle — isAdmin/isActive
@@ -147,21 +183,40 @@ All automated checks passed. The following require live environment testing:
 **Expected:** Both AreaCharts re-render with data spanning 30 days; summary stats update
 **Why human:** Chart re-render with state change is visual and runtime-dependent
 
-#### 7. Course Lesson Reordering
+#### 7. Course Reorder by Position
 
-**Test:** On `/admin/content`, expand a course (e.g., "Аналитика"), click down arrow on first lesson
-**Expected:** Lesson moves down one position, list re-fetches via query invalidation
-**Why human:** Accordion lazy-load + mutation invalidation flow requires live DB with lessons
+**Test:** On `/admin/content`, click the `#1` order number next to a course, type `3`, press Enter
+**Expected:** Course moves to position 3, other courses shift accordingly, list re-fetches
+**Why human:** `moveCourseToPosition` shift algorithm requires live DB with multiple courses
+
+#### 8. Course Title Inline Editing
+
+**Test:** On `/admin/content`, click a course title, type new name, press Enter; then try Escape on another
+**Expected:** Enter saves new title (DB updated, list refreshes); Escape restores original without API call. Clicking title does NOT toggle accordion.
+**Why human:** `updateCourseTitle` mutation + accordion stopPropagation requires browser interaction
+
+#### 9. Lesson Title Inline Editing
+
+**Test:** On `/admin/content`, expand a course, click a lesson title, type new name, press Enter
+**Expected:** Lesson title updates inline, DB updated via `updateLessonTitle` mutation
+**Why human:** Requires live DB with lesson records
+
+#### 10. Escape Cancels All Edits
+
+**Test:** Start editing any field (course order, course title, lesson title), press Escape
+**Expected:** Input disappears, original value restored, no API call made
+**Why human:** State reset interaction requires browser
 
 ---
 
 ## Verification Notes
 
-**Email field in UserTable:** The `UserRow` interface in `UserTable.tsx` does not include an `email` field — email is stored in Supabase `auth.users`, not `UserProfile`. The table currently shows user ID prefix instead of email. This is by design (no email field in Prisma `UserProfile`), but means the table does not display emails even when found by email search. This is an informational gap, not a blocker for goal achievement.
-
 **isActive enforcement:** The `isActive` field can be toggled in the admin panel, but there is currently no enforcement in middleware or layout guards that blocks `isActive=false` users from accessing the platform. This matches the documented Phase 5 (Security Hardening) technical debt.
+
+**Plan 10-03 scope note:** ADMIN-05 requirement ("управление курсами и уроками") was initially satisfied by basic reorder (plan 10-02). Plan 10-03 extended this with jump-to-position reorder and inline title editing. Both are now covered under ADMIN-05 and fully wired.
 
 ---
 
-_Verified: 2026-02-26T14:00:00Z_
+_Verified: 2026-02-26T16:00:00Z_
 _Verifier: Claude (gsd-verifier)_
+_Re-verification after: Plan 10-03 execution (commits 9b98633, 04e4a2b, 95d049f)_
