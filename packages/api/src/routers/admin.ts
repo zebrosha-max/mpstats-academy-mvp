@@ -53,6 +53,120 @@ export const adminRouter = router({
   }),
 
   /**
+   * Recent activity: last registrations and completed diagnostics (last 7 days).
+   */
+  getRecentActivity: adminProcedure.query(async ({ ctx }) => {
+    try {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const [recentUsers, recentDiagnostics] = await Promise.all([
+        ctx.prisma.userProfile.findMany({
+          where: { createdAt: { gte: sevenDaysAgo } },
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+          select: { id: true, name: true, createdAt: true },
+        }),
+        ctx.prisma.diagnosticSession.findMany({
+          where: {
+            status: 'COMPLETED',
+            completedAt: { gte: sevenDaysAgo },
+          },
+          orderBy: { completedAt: 'desc' },
+          take: 10,
+          include: {
+            user: { select: { name: true } },
+          },
+        }),
+      ]);
+
+      // Merge and sort by date
+      const events = [
+        ...recentUsers.map((u) => ({
+          type: 'registration' as const,
+          userName: u.name || 'Unknown',
+          date: u.createdAt,
+        })),
+        ...recentDiagnostics.map((d) => ({
+          type: 'diagnostic' as const,
+          userName: d.user.name || 'Unknown',
+          date: d.completedAt || d.startedAt,
+        })),
+      ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 10);
+
+      return events;
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
+
+  /**
+   * Analytics: user growth and diagnostic activity grouped by day for a given period.
+   */
+  getAnalytics: adminProcedure
+    .input(z.object({ days: z.number().int().min(1).max(90).default(7) }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - input.days);
+
+        // Generate date range
+        const dates: string[] = [];
+        for (let i = 0; i < input.days; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - input.days + i + 1);
+          dates.push(d.toISOString().split('T')[0]);
+        }
+
+        // Query registrations
+        const users = await ctx.prisma.userProfile.findMany({
+          where: { createdAt: { gte: startDate } },
+          select: { createdAt: true },
+        });
+
+        // Query completed diagnostics
+        const diagnostics = await ctx.prisma.diagnosticSession.findMany({
+          where: {
+            status: 'COMPLETED',
+            completedAt: { gte: startDate },
+          },
+          select: { completedAt: true },
+        });
+
+        // Group by date
+        const userGrowthMap = new Map<string, number>();
+        const activityMap = new Map<string, number>();
+        dates.forEach((d) => {
+          userGrowthMap.set(d, 0);
+          activityMap.set(d, 0);
+        });
+
+        users.forEach((u) => {
+          const key = u.createdAt.toISOString().split('T')[0];
+          if (userGrowthMap.has(key)) {
+            userGrowthMap.set(key, (userGrowthMap.get(key) || 0) + 1);
+          }
+        });
+
+        diagnostics.forEach((d) => {
+          if (d.completedAt) {
+            const key = d.completedAt.toISOString().split('T')[0];
+            if (activityMap.has(key)) {
+              activityMap.set(key, (activityMap.get(key) || 0) + 1);
+            }
+          }
+        });
+
+        const userGrowth = dates.map((date) => ({ date, count: userGrowthMap.get(date) || 0 }));
+        const activity = dates.map((date) => ({ date, count: activityMap.get(date) || 0 }));
+
+        return { userGrowth, activity };
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
    * Paginated user list with search by name AND email.
    * Email search uses Supabase Admin API (auth.admin.listUsers) since emails
    * live in auth.users, not in UserProfile.
