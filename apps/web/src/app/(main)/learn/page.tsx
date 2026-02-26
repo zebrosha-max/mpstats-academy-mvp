@@ -250,10 +250,10 @@ export default function LearnPage() {
           {/* Case C: Normal track with lessons */}
           {hasDiagnostic && recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
             <div className="space-y-3">
-              {recommendedPath.lessons.map((lesson) => (
+              {recommendedPath.lessons.map((lesson, idx) => (
                 <LessonCard
                   key={lesson.id}
-                  lesson={{ ...lesson, title: `${lesson.order}. ${lesson.title}` } as LessonWithProgress}
+                  lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
                   showCourse
                   courseName={lesson.courseName}
                   isRecommended
@@ -316,10 +316,10 @@ export default function LearnPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
-                    {visibleLessons.map((lesson) => (
+                    {visibleLessons.map((lesson, idx) => (
                       <LessonCard
                         key={lesson.id}
-                        lesson={{ ...lesson, title: `${lesson.order}. ${lesson.title}` }}
+                        lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` }}
                         showCourse={false}
                         isRecommended={recommendedLessonIds.has(lesson.id)}
                       />
