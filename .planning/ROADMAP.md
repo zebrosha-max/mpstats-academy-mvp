@@ -134,7 +134,7 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 12. Lesson Page Performance | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
 | 13. Watch Progress Tracking | 2/2 | Complete    | 2026-02-27 | - |
 | 14. Tech Debt Cleanup | 2/2 | Complete    | 2026-02-27 | - |
-| 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
+| 15. Landing Redesign & Theme Toggle | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
 
 ### Phase 15: Landing Redesign & Theme Toggle
 
@@ -147,7 +147,7 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
   3. Тёмная тема (design-v1) визуально идентична по верстке, отличается только цветовым решением
   4. CTA блок внизу страницы тёмный в обеих темах
   5. Старые design-v1/v4/v4a/v4b страницы удалены, остался только основной лендинг
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 15-01-PLAN.md — Theme infrastructure: CSS-переменные, ThemeProvider, ThemeToggle
