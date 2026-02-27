@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,19 +69,37 @@ const SKILL_CATEGORIES = [
 export default function DiagnosticPage() {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
+  const [loadingStage, setLoadingStage] = useState<string | null>(null);
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+  }, []);
 
   const startSession = trpc.diagnostic.startSession.useMutation({
     onSuccess: (data) => {
+      clearTimers();
       router.push(`/diagnostic/session?id=${data.id}`);
     },
     onError: (error) => {
+      clearTimers();
       console.error('Failed to start session:', error);
       setIsStarting(false);
+      setLoadingStage(null);
     },
   });
 
   const handleStart = () => {
     setIsStarting(true);
+    setLoadingStage('Подготовка вопросов...');
+
+    // Progressive hints for slower loads (bank miss = AI generation)
+    const t1 = setTimeout(() => setLoadingStage('Подбираем вопросы по вашему уровню...'), 2000);
+    const t2 = setTimeout(() => setLoadingStage('AI формирует персональный набор...'), 5000);
+    const t3 = setTimeout(() => setLoadingStage('Почти готово, ещё немного...'), 10000);
+    timersRef.current = [t1, t2, t3];
+
     startSession.mutate();
   };
 
@@ -176,17 +194,22 @@ export default function DiagnosticPage() {
             className="px-10 shadow-mp-md"
           >
             {isStarting ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2">
+                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Загрузка...
-              </>
+                <span>{loadingStage || 'Загрузка...'}</span>
+              </div>
             ) : (
               'Начать диагностику'
             )}
           </Button>
+          {isStarting && (
+            <p className="mt-4 text-body-sm text-mp-gray-400 animate-fade-in">
+              {loadingStage}
+            </p>
+          )}
         </CardContent>
       </Card>
 
