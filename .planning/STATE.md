@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 10: Superuser & Admin Panel
+**Current focus:** Milestone v1.1 — Phase 11: Summary & Sources UX
 
 ## Current Position
 
-Phase: 10 of 14 (Superuser & Admin Panel) -- COMPLETE
-Plan: 3 of 3 complete
-Status: Phase 10 complete, ready for next phase
-Last activity: 2026-02-26 — Completed 10-03 (content editing features)
+Phase: 11 of 14 (Summary & Sources UX) -- COMPLETE
+Plan: 1 of 1 complete
+Status: Phase 11 complete, ready for next phase
+Last activity: 2026-02-27 — Completed 11-01 (Summary & Sources UX)
 
-Progress: [======..............] 43% (3/7 plans)
+Progress: [========............] 57% (4/7 plans)
 
 ## Performance Metrics
 
@@ -40,6 +40,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 10-01: AdminSidebar uses lucide-react icons; email search via Supabase Admin API; added isActive field alongside isAdmin
 - 10-02: Custom Toggle button instead of shadcn Switch; getCourseLessons for lazy accordion; analytics groups dates in app code
 - 10-03: Course mutations lifted to parent CourseManager, lesson mutations stay in CourseAccordion; consistent click-to-edit UX pattern
+- 11-01: SourceContext + SourceAwareWrapper pattern for injecting tooltips into markdown tree; summary always loads (removed tab gating)
 
 ### Blockers/Concerns
 
@@ -51,6 +52,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-26
-Stopped at: Completed 10-03-PLAN.md (Content editing features) — Phase 10 complete
-Resume file: Next phase (11, 12, or 14)
+Last session: 2026-02-27
+Stopped at: Completed 11-01-PLAN.md (Summary & Sources UX) — Phase 11 complete
+Resume file: Next phase (12 or 14)

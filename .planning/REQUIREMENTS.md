@@ -17,10 +17,10 @@
 
 ### Lesson UX
 
-- [ ] **UX-01**: Summary урока ограничен по высоте с кнопкой expand/collapse
-- [ ] **UX-02**: Источники в тексте [N] кликабельны как интерактивные ссылки
-- [ ] **UX-03**: Hover на источник [N] показывает тултип с превью (название, таймкод, фрагмент текста)
-- [ ] **UX-04**: Клик на источник [N] перематывает видео на таймкод через seekTo
+- [x] **UX-01**: Summary урока ограничен по высоте с кнопкой expand/collapse
+- [x] **UX-02**: Источники в тексте [N] кликабельны как интерактивные ссылки
+- [x] **UX-03**: Hover на источник [N] показывает тултип с превью (название, таймкод, фрагмент текста)
+- [x] **UX-04**: Клик на источник [N] перематывает видео на таймкод через seekTo
 
 ### Performance
 
@@ -75,10 +75,10 @@
 | ADMIN-05 | Phase 10 | Complete |
 | ADMIN-06 | Phase 10 | Complete |
 | ADMIN-07 | Phase 10 | Complete |
-| UX-01 | Phase 11 | Pending |
-| UX-02 | Phase 11 | Pending |
-| UX-03 | Phase 11 | Pending |
-| UX-04 | Phase 11 | Pending |
+| UX-01 | Phase 11 | Complete |
+| UX-02 | Phase 11 | Complete |
+| UX-03 | Phase 11 | Complete |
+| UX-04 | Phase 11 | Complete |
 | PERF-01 | Phase 12 | Pending |
 | PERF-02 | Phase 12 | Pending |
 | PERF-03 | Phase 12 | Pending |
