@@ -133,7 +133,7 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 11. Summary & Sources UX | 1/1 | Complete    | 2026-02-27 | - |
 | 12. Lesson Page Performance | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
 | 13. Watch Progress Tracking | 2/2 | Complete    | 2026-02-27 | - |
-| 14. Tech Debt Cleanup | 2/2 | Complete   | 2026-02-27 | - |
+| 14. Tech Debt Cleanup | 2/2 | Complete    | 2026-02-27 | - |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 0/0 | Not planned | - |
 
 ### Phase 15: Landing Redesign & Theme Toggle
