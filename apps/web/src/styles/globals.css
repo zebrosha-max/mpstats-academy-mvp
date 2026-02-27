@@ -39,6 +39,14 @@
   --landing-timeline-to: rgba(16, 185, 129, 0.3);
   --landing-gradient-text-via: #6366F1;
   --landing-gradient-text-to: #2C4FF8;
+  --landing-metric-blue: #2C4FF8;
+  --landing-stats-gradient-from: #111827;
+  --landing-stats-gradient-to: #9CA3AF;
+  --landing-quote-text: #374151;
+  --landing-ticker-dot: rgba(44, 79, 248, 0.6);
+  --landing-ghost-hover-bg: #F3F4F6;
+  --landing-ghost-text: #9CA3AF;
+  --landing-ghost-text-hover: #111827;
 }
 
 [data-landing-theme="dark"] {
@@ -77,6 +85,14 @@
   --landing-timeline-to: rgba(135, 245, 15, 0.5);
   --landing-gradient-text-via: #818CF8;
   --landing-gradient-text-to: #87F50F;
+  --landing-metric-blue: #4D6FFF;
+  --landing-stats-gradient-from: #FFFFFF;
+  --landing-stats-gradient-to: rgba(255, 255, 255, 0.6);
+  --landing-quote-text: rgba(255, 255, 255, 0.8);
+  --landing-ticker-dot: #2C4FF8;
+  --landing-ghost-hover-bg: rgba(255, 255, 255, 0.05);
+  --landing-ghost-text: rgba(255, 255, 255, 0.6);
+  --landing-ghost-text-hover: #FFFFFF;
 }
 
 @layer base {
