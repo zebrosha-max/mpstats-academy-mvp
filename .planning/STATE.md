@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 ## Current Position
 
 Phase: 14 of 14 (Tech Debt Cleanup)
-Plan: 1 of 2 complete
-Status: Executing Phase 14
-Last activity: 2026-02-27 — Completed 14-01 (Session Persistence & Dockerfile Fix)
+Plan: 2 of 2 complete
+Status: Phase 14 Complete
+Last activity: 2026-02-27 — Completed 14-02 (Question Bank Caching & Progressive Loading)
 
-Progress: [=================== ] 95% (8/9 plans)
+Progress: [====================] 100% (9/9 plans)
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 13-01: 10s polling interval for Kinescope time; 15s debounced save; ignore < 5s; ref-based pattern to avoid re-renders; sendBeacon on unload
 - 13-02: Progress bar on all lessons with watchedPercent > 0; weighted-average course progressPercent; admin getWatchStats endpoint
 - 14-01: Session questions persisted to DB (Json field), no globalThis Map; Dockerfile dynamic Prisma engine copy
+- 14-02: QuestionBank with 7-day TTL, bank-based instant diagnostic start, admin refresh, progressive loading UX
 
 ### Roadmap Evolution
 
@@ -61,5 +62,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 14-01-PLAN.md (Session Persistence & Dockerfile Fix)
-Resume file: 14-02-PLAN.md
+Stopped at: Completed 14-02-PLAN.md (Question Bank Caching & Progressive Loading) — Phase 14 complete
+Resume file: Phase 15 (Landing Redesign & Theme Toggle)
