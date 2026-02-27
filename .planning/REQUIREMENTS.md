@@ -30,9 +30,9 @@
 
 ### Watch Progress
 
-- [ ] **WATCH-01**: Прогресс просмотра видео сохраняется в БД (позиция + процент)
+- [x] **WATCH-01**: Прогресс просмотра видео сохраняется в БД (позиция + процент)
 - [ ] **WATCH-02**: Прогресс-бар просмотра отображается на карточках уроков
-- [ ] **WATCH-03**: Возобновление просмотра с последней сохранённой позиции
+- [x] **WATCH-03**: Возобновление просмотра с последней сохранённой позиции
 - [ ] **WATCH-04**: Процент завершения курса рассчитывается на основе просмотренных видео
 
 ### Tech Debt
@@ -82,9 +82,9 @@
 | PERF-01 | Phase 12 | Complete |
 | PERF-02 | Phase 12 | Complete |
 | PERF-03 | Phase 12 | Complete |
-| WATCH-01 | Phase 13 | Pending |
+| WATCH-01 | Phase 13 | Complete |
 | WATCH-02 | Phase 13 | Pending |
-| WATCH-03 | Phase 13 | Pending |
+| WATCH-03 | Phase 13 | Complete |
 | WATCH-04 | Phase 13 | Pending |
 | DEBT-01 | Phase 14 | Pending |
 | DEBT-02 | Phase 14 | Pending |

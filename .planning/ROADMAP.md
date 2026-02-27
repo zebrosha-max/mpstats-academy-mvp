@@ -130,5 +130,5 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 10. Superuser & Admin Panel | 3/3 | Complete    | 2026-02-26 | - |
 | 11. Summary & Sources UX | 1/1 | Complete    | 2026-02-27 | - |
 | 12. Lesson Page Performance | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
-| 13. Watch Progress Tracking | v1.1 | 0/1 | Not started | - |
+| 13. Watch Progress Tracking | 1/2 | In Progress|  | - |
 | 14. Tech Debt Cleanup | v1.1 | 0/1 | Not started | - |

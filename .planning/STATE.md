@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 12: Lesson Page Performance
+**Current focus:** Milestone v1.1 — Phase 13: Watch Progress Tracking
 
 ## Current Position
 
-Phase: 12 of 14 (Lesson Page Performance) -- COMPLETE
-Plan: 1 of 1 complete
-Status: Phase 12 complete, ready for next phase
-Last activity: 2026-02-27 — Completed 12-01 (Lesson Page Performance)
+Phase: 13 of 14 (Watch Progress Tracking)
+Plan: 1 of 2 complete
+Status: Phase 13 Plan 01 complete, Plan 02 remaining
+Last activity: 2026-02-27 — Completed 13-01 (Watch Progress Persistence)
 
-Progress: [==========..........] 71% (5/7 plans)
+Progress: [============........] 86% (6/7 plans)
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 10-03: Course mutations lifted to parent CourseManager, lesson mutations stay in CourseAccordion; consistent click-to-edit UX pattern
 - 11-01: SourceContext + SourceAwareWrapper pattern for injecting tooltips into markdown tree; summary always loads (removed tab gating)
 - 12-01: Gradient PlayPlaceholder instead of Kinescope poster; gcTime 30min; single-query getLesson via course relation; prev/next simplified to {id, title}
+- 13-01: 10s polling interval for Kinescope time; 15s debounced save; ignore < 5s; ref-based pattern to avoid re-renders; sendBeacon on unload
 
 ### Blockers/Concerns
 
@@ -54,5 +55,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 12-01-PLAN.md (Lesson Page Performance) — Phase 12 complete
-Resume file: Next phase (13 or 14)
+Stopped at: Completed 13-01-PLAN.md (Watch Progress Persistence)
+Resume file: 13-02-PLAN.md
