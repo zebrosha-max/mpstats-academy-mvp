@@ -37,10 +37,10 @@
 
 ### Tech Debt
 
-- [ ] **DEBT-01**: activeSessionQuestions из globalThis Map → Prisma/Supabase хранилище
+- [x] **DEBT-01**: activeSessionQuestions из globalThis Map → Prisma/Supabase хранилище
 - [ ] **DEBT-02**: Кеширование AI-сгенерированных вопросов в БД для повторного использования
 - [ ] **DEBT-03**: UX spinner timing при генерации AI вопросов (progressive loading)
-- [ ] **DEBT-04**: Hardcoded Prisma version в Dockerfile → динамическое определение
+- [x] **DEBT-04**: Hardcoded Prisma version в Dockerfile → динамическое определение
 
 ## Future Requirements
 
@@ -86,10 +86,10 @@
 | WATCH-02 | Phase 13 | Complete |
 | WATCH-03 | Phase 13 | Complete |
 | WATCH-04 | Phase 13 | Complete |
-| DEBT-01 | Phase 14 | Pending |
+| DEBT-01 | Phase 14 | Complete |
 | DEBT-02 | Phase 14 | Pending |
 | DEBT-03 | Phase 14 | Pending |
-| DEBT-04 | Phase 14 | Pending |
+| DEBT-04 | Phase 14 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 22 total

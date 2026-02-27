@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 13: Watch Progress Tracking
+**Current focus:** Milestone v1.1 — Phase 14: Tech Debt Cleanup
 
 ## Current Position
 
-Phase: 13 of 14 (Watch Progress Tracking) -- COMPLETE
-Plan: 2 of 2 complete
-Status: Phase 13 complete, all plans executed
-Last activity: 2026-02-27 — Completed 13-02 (Progress UI & Admin Watch Stats)
+Phase: 14 of 14 (Tech Debt Cleanup)
+Plan: 1 of 2 complete
+Status: Executing Phase 14
+Last activity: 2026-02-27 — Completed 14-01 (Session Persistence & Dockerfile Fix)
 
-Progress: [====================] 100% (7/7 plans)
+Progress: [=================== ] 95% (8/9 plans)
 
 ## Performance Metrics
 
@@ -44,6 +44,11 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 12-01: Gradient PlayPlaceholder instead of Kinescope poster; gcTime 30min; single-query getLesson via course relation; prev/next simplified to {id, title}
 - 13-01: 10s polling interval for Kinescope time; 15s debounced save; ignore < 5s; ref-based pattern to avoid re-renders; sendBeacon on unload
 - 13-02: Progress bar on all lessons with watchedPercent > 0; weighted-average course progressPercent; admin getWatchStats endpoint
+- 14-01: Session questions persisted to DB (Json field), no globalThis Map; Dockerfile dynamic Prisma engine copy
+
+### Roadmap Evolution
+
+- Phase 15 added: Landing Redesign & Theme Toggle
 
 ### Blockers/Concerns
 
@@ -56,5 +61,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 13-02-PLAN.md (Progress UI & Admin Watch Stats) -- Phase 13 complete
-Resume file: Phase 14 or milestone complete
+Stopped at: Completed 14-01-PLAN.md (Session Persistence & Dockerfile Fix)
+Resume file: 14-02-PLAN.md

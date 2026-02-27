@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-9 (shipped 2026-02-26)
-- 🚧 **v1.1 Admin & Polish** — Phases 10-14 (in progress)
+- 🚧 **v1.1 Admin & Polish** — Phases 10-15 (in progress)
 
 ## Phases
 
@@ -34,6 +34,7 @@ Full details: `milestones/v1.0-ROADMAP.md`
 - [x] **Phase 12: Lesson Page Performance** — Быстрая загрузка страницы урока с lazy video и кешированием (completed 2026-02-27)
 - [x] **Phase 13: Watch Progress Tracking** — Сохранение и отображение прогресса просмотра видео (completed 2026-02-27)
 - [ ] **Phase 14: Tech Debt Cleanup** — Миграция in-memory данных в DB, кеширование AI вопросов, UX polish
+- [ ] **Phase 15: Landing Redesign & Theme Toggle** — Новый лендинг (design-v4a light + design-v1 dark), toggle тем, премиальный вид
 
 ## Phase Details
 
@@ -132,4 +133,21 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 11. Summary & Sources UX | 1/1 | Complete    | 2026-02-27 | - |
 | 12. Lesson Page Performance | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
 | 13. Watch Progress Tracking | 2/2 | Complete    | 2026-02-27 | - |
-| 14. Tech Debt Cleanup | v1.1 | 0/1 | Not started | - |
+| 14. Tech Debt Cleanup | 1/2 | In Progress|  | - |
+| 15. Landing Redesign & Theme Toggle | v1.1 | 0/0 | Not planned | - |
+
+### Phase 15: Landing Redesign & Theme Toggle
+
+**Goal:** Заменить текущий лендинг (app/page.tsx) на новый дизайн design-v4a (light) с возможностью переключения на тёмную тему (design-v1). Премиальный вид, SVG radar chart, dark CTA блок, toggle dark/light.
+**Depends on:** Nothing (independent)
+**Requirements:** LANDING-01, LANDING-02, LANDING-03
+**Success Criteria** (what must be TRUE):
+  1. Лендинг по умолчанию отображается в светлой теме (design-v4a) с премиальным видом
+  2. Пользователь может переключить тему (dark/light) через toggle в навигации, и весь лендинг перерисовывается
+  3. Тёмная тема (design-v1) визуально идентична по верстке, отличается только цветовым решением
+  4. CTA блок внизу страницы тёмный в обеих темах
+  5. Старые design-v1/v4/v4a/v4b страницы удалены, остался только основной лендинг
+**Plans:** 1/2 plans executed
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 15 to break down)
