@@ -105,10 +105,11 @@ Plans:
   2. Повторный запуск диагностики по той же категории использует ранее сгенерированные вопросы из кеша
   3. При генерации AI вопросов пользователь видит progressive loading (этапы генерации, а не просто спиннер)
   4. Prisma version в Dockerfile определяется из package.json, а не захардкожена
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 14-01: activeSessionQuestions migration + AI question caching + spinner UX + Dockerfile fix
+- [ ] 14-01-PLAN.md — Session questions DB persistence + Dockerfile dynamic Prisma version
+- [ ] 14-02-PLAN.md — AI question bank caching + progressive loading UX + admin refresh button
 
 ## Progress
 
