@@ -76,10 +76,10 @@ Plans:
   1. Страница урока рендерится с контентом менее чем за 2 секунды (без учёта видео)
   2. Видеоплеер появляется после загрузки страницы (lazy loading), не блокируя текст и навигацию
   3. Повторное открытие того же урока загружается быстрее благодаря кешированию tRPC ответов
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: Lazy video loading + tRPC query optimization + caching
+- [ ] 12-01-PLAN.md — Lazy video loading with click-to-play placeholder + tRPC cache optimization + getLesson query consolidation
 
 ### Phase 13: Watch Progress Tracking
 **Goal**: Пользователь видит свой прогресс просмотра видео и может продолжить с последней позиции
