@@ -42,6 +42,12 @@
 - [x] **DEBT-03**: UX spinner timing при генерации AI вопросов (progressive loading)
 - [x] **DEBT-04**: Hardcoded Prisma version в Dockerfile → динамическое определение
 
+### Landing Redesign
+
+- [ ] **LANDING-01**: Лендинг по умолчанию отображается в светлой теме (design-v4a) с премиальным видом
+- [ ] **LANDING-02**: Пользователь может переключить тему (dark/light) через toggle в навигации, тема сохраняется в localStorage
+- [ ] **LANDING-03**: CTA блок внизу страницы тёмный в обеих темах
+
 ## Future Requirements
 
 ### Deferred from Active
@@ -91,9 +97,13 @@
 | DEBT-03 | Phase 14 | Complete |
 | DEBT-04 | Phase 14 | Complete |
 
+| LANDING-01 | Phase 15 | Planned |
+| LANDING-02 | Phase 15 | Planned |
+| LANDING-03 | Phase 15 | Planned |
+
 **Coverage:**
-- v1.1 requirements: 22 total
-- Mapped to phases: 22
+- v1.1 requirements: 25 total
+- Mapped to phases: 25
 - Unmapped: 0
 
 ---
