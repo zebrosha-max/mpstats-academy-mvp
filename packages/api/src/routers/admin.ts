@@ -530,6 +530,113 @@ export const adminRouter = router({
     }),
 
   /**
+   * Watch engagement stats: avg watch %, total sessions, completion rate,
+   * per-course breakdown, and top 5 active users.
+   */
+  getWatchStats: adminProcedure.query(async ({ ctx }) => {
+    try {
+      // All lesson progress records with any watch activity
+      const allProgress = await ctx.prisma.lessonProgress.findMany({
+        where: { watchedPercent: { gt: 0 } },
+        include: {
+          lesson: {
+            include: { course: { select: { id: true, title: true } } },
+          },
+          path: { select: { userId: true } },
+        },
+      });
+
+      // KPI: avg watch percent
+      const avgWatchPercent = allProgress.length > 0
+        ? Math.round(allProgress.reduce((sum, p) => sum + p.watchedPercent, 0) / allProgress.length)
+        : 0;
+
+      // KPI: total watch sessions
+      const totalWatchSessions = allProgress.length;
+
+      // KPI: completion rate (started -> completed)
+      const completedCount = allProgress.filter((p) => p.status === 'COMPLETED').length;
+      const completionRate = totalWatchSessions > 0
+        ? Math.round((completedCount / totalWatchSessions) * 100)
+        : 0;
+
+      // Per-course engagement
+      const courseMap = new Map<string, {
+        courseId: string;
+        courseTitle: string;
+        totalPercent: number;
+        startedCount: number;
+        completedCount: number;
+      }>();
+
+      for (const p of allProgress) {
+        const courseId = p.lesson.course.id;
+        const courseTitle = p.lesson.course.title;
+        const existing = courseMap.get(courseId) || {
+          courseId,
+          courseTitle,
+          totalPercent: 0,
+          startedCount: 0,
+          completedCount: 0,
+        };
+        existing.totalPercent += p.watchedPercent;
+        existing.startedCount += 1;
+        if (p.status === 'COMPLETED') existing.completedCount += 1;
+        courseMap.set(courseId, existing);
+      }
+
+      const courseEngagement = Array.from(courseMap.values()).map((c) => ({
+        courseId: c.courseId,
+        courseTitle: c.courseTitle,
+        avgPercent: Math.round(c.totalPercent / c.startedCount),
+        startedCount: c.startedCount,
+        completedCount: c.completedCount,
+      }));
+
+      // Top 5 active users
+      const userMap = new Map<string, { userId: string; lessonsWatched: number; totalPercent: number }>();
+      for (const p of allProgress) {
+        const userId = p.path.userId;
+        const existing = userMap.get(userId) || { userId, lessonsWatched: 0, totalPercent: 0 };
+        existing.lessonsWatched += 1;
+        existing.totalPercent += p.watchedPercent;
+        userMap.set(userId, existing);
+      }
+
+      const topUserIds = Array.from(userMap.values())
+        .sort((a, b) => b.lessonsWatched - a.lessonsWatched)
+        .slice(0, 5);
+
+      // Fetch user names
+      const userProfiles = topUserIds.length > 0
+        ? await ctx.prisma.userProfile.findMany({
+            where: { id: { in: topUserIds.map((u) => u.userId) } },
+            select: { id: true, name: true },
+          })
+        : [];
+
+      const nameMap = new Map(userProfiles.map((u) => [u.id, u.name]));
+
+      const topActiveUsers = topUserIds.map((u) => ({
+        userId: u.userId,
+        name: nameMap.get(u.userId) || 'Unknown',
+        lessonsWatched: u.lessonsWatched,
+        avgPercent: Math.round(u.totalPercent / u.lessonsWatched),
+      }));
+
+      return {
+        avgWatchPercent,
+        totalWatchSessions,
+        completionRate,
+        courseEngagement,
+        topActiveUsers,
+      };
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
+
+  /**
    * Update lesson display order.
    */
   updateLessonOrder: adminProcedure
