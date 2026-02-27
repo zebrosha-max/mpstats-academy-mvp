@@ -136,6 +136,8 @@ model LessonProgress {
   lessonId       String
   status         LessonStatus @default(NOT_STARTED)
   watchedPercent Int          @default(0)
+  lastPosition   Int          @default(0) // seconds into video
+  videoDuration  Int          @default(0) // total video duration in seconds
   completedAt    DateTime?
 
   path   LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)

@@ -420,6 +420,107 @@ export const learningRouter = router({
     }
   }),
 
+  // Get watch progress for a lesson (used to resume video)
+  getWatchProgress: protectedProcedure
+    .input(z.object({ lessonId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const path = await ctx.prisma.learningPath.findUnique({
+          where: { userId: ctx.user.id },
+        });
+
+        if (!path) return null;
+
+        const progress = await ctx.prisma.lessonProgress.findUnique({
+          where: {
+            pathId_lessonId: {
+              pathId: path.id,
+              lessonId: input.lessonId,
+            },
+          },
+          select: {
+            lastPosition: true,
+            watchedPercent: true,
+            status: true,
+          },
+        });
+
+        return progress ?? null;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  // Save watch progress from video playback (auto-fires during watching)
+  saveWatchProgress: protectedProcedure
+    .input(
+      z.object({
+        lessonId: z.string(),
+        position: z.number().min(0),
+        duration: z.number().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Ignore saves where position < 5 seconds (prevents noise from page loads)
+        if (input.position < 5) {
+          return { lessonId: input.lessonId, status: 'NOT_STARTED' as const, watchedPercent: 0, lastPosition: 0 };
+        }
+
+        const watchedPercent = Math.min(100, Math.max(0, Math.round((input.position / input.duration) * 100)));
+
+        // Ensure user profile exists
+        await ensureUserProfile(ctx.prisma, ctx.user);
+
+        // Auto-create LearningPath if not exists
+        const path = await ctx.prisma.learningPath.upsert({
+          where: { userId: ctx.user.id },
+          update: {},
+          create: {
+            userId: ctx.user.id,
+            lessons: [],
+          },
+        });
+
+        const status = watchedPercent >= 90 ? 'COMPLETED' : 'IN_PROGRESS';
+        const completedAt = status === 'COMPLETED' ? new Date() : undefined;
+
+        const progress = await ctx.prisma.lessonProgress.upsert({
+          where: {
+            pathId_lessonId: {
+              pathId: path.id,
+              lessonId: input.lessonId,
+            },
+          },
+          update: {
+            lastPosition: Math.round(input.position),
+            watchedPercent,
+            videoDuration: Math.round(input.duration),
+            status,
+            ...(completedAt ? { completedAt } : {}),
+          },
+          create: {
+            pathId: path.id,
+            lessonId: input.lessonId,
+            lastPosition: Math.round(input.position),
+            watchedPercent,
+            videoDuration: Math.round(input.duration),
+            status,
+            completedAt: completedAt ?? null,
+          },
+        });
+
+        return {
+          lessonId: input.lessonId,
+          status: progress.status,
+          watchedPercent: progress.watchedPercent,
+          lastPosition: progress.lastPosition,
+        };
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
   // Update lesson progress
   updateProgress: protectedProcedure
     .input(
