@@ -2,6 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Landing Theme Variables ===== */
+[data-landing-theme="light"] {
+  --landing-bg: #FAFBFC;
+  --landing-text: #111827;
+  --landing-text-muted: #6B7280;
+  --landing-text-faint: #D1D5DB;
+  --landing-border: rgba(229, 231, 235, 0.6);
+  --landing-card-bg: #FFFFFF;
+  --landing-card-border: rgba(229, 231, 235, 0.8);
+  --landing-card-shadow: rgba(229, 231, 235, 0.5);
+  --landing-green: #10B981;
+  --landing-nav-bg: rgba(255, 255, 255, 0.9);
+  --landing-glow-primary: rgba(44, 79, 248, 0.03);
+  --landing-glow-secondary: rgba(245, 158, 11, 0.02);
+  --landing-radar-fill: rgba(44, 79, 248, 0.1);
+  --landing-radar-stroke: #2C4FF8;
+  --landing-radar-grid: rgba(0, 0, 0, 0.07);
+  --landing-radar-axis: rgba(0, 0, 0, 0.05);
+  --landing-radar-label: rgba(0, 0, 0, 0.4);
+  --landing-radar-dot-stroke: white;
+  --landing-progress-bg: #F3F4F6;
+  --landing-badge-bg: rgba(44, 79, 248, 0.08);
+  --landing-badge-text: #2C4FF8;
+  --landing-badge-border: rgba(44, 79, 248, 0.2);
+  --landing-section-badge-bg: #F3F4F6;
+  --landing-section-badge-text: #6B7280;
+  --landing-section-badge-border: #E5E7EB;
+  --landing-feature-icon-opacity: 0.5;
+  --landing-feature-icon-hover-opacity: 1;
+  --landing-glow-box-shadow: 0 0 20px rgba(44, 79, 248, 0.06);
+  --landing-glow-box-shadow-active: 0 0 40px rgba(44, 79, 248, 0.12);
+  --landing-selection-bg: rgba(44, 79, 248, 0.15);
+  --landing-timeline-from: rgba(44, 79, 248, 0.3);
+  --landing-timeline-via: rgba(99, 102, 241, 0.15);
+  --landing-timeline-to: rgba(16, 185, 129, 0.3);
+  --landing-gradient-text-via: #6366F1;
+  --landing-gradient-text-to: #2C4FF8;
+}
+
+[data-landing-theme="dark"] {
+  --landing-bg: #060B1F;
+  --landing-text: #FFFFFF;
+  --landing-text-muted: rgba(255, 255, 255, 0.5);
+  --landing-text-faint: rgba(255, 255, 255, 0.2);
+  --landing-border: rgba(255, 255, 255, 0.05);
+  --landing-card-bg: rgba(255, 255, 255, 0.03);
+  --landing-card-border: rgba(255, 255, 255, 0.06);
+  --landing-card-shadow: transparent;
+  --landing-green: #87F50F;
+  --landing-nav-bg: rgba(6, 11, 31, 0.8);
+  --landing-glow-primary: rgba(44, 79, 248, 0.08);
+  --landing-glow-secondary: rgba(135, 245, 15, 0.05);
+  --landing-radar-fill: rgba(44, 79, 248, 0.25);
+  --landing-radar-stroke: #4D6FFF;
+  --landing-radar-grid: rgba(255, 255, 255, 0.12);
+  --landing-radar-axis: rgba(255, 255, 255, 0.12);
+  --landing-radar-label: rgba(255, 255, 255, 0.7);
+  --landing-radar-dot-stroke: rgba(255, 255, 255, 0.3);
+  --landing-progress-bg: rgba(255, 255, 255, 0.05);
+  --landing-badge-bg: rgba(44, 79, 248, 0.15);
+  --landing-badge-text: #818CF8;
+  --landing-badge-border: rgba(44, 79, 248, 0.3);
+  --landing-section-badge-bg: rgba(255, 255, 255, 0.05);
+  --landing-section-badge-text: rgba(255, 255, 255, 0.5);
+  --landing-section-badge-border: rgba(255, 255, 255, 0.1);
+  --landing-feature-icon-opacity: 0.4;
+  --landing-feature-icon-hover-opacity: 0.7;
+  --landing-glow-box-shadow: 0 0 20px rgba(44, 79, 248, 0.15);
+  --landing-glow-box-shadow-active: 0 0 40px rgba(44, 79, 248, 0.3);
+  --landing-selection-bg: #2C4FF8;
+  --landing-timeline-from: rgba(44, 79, 248, 0.5);
+  --landing-timeline-via: rgba(129, 140, 248, 0.3);
+  --landing-timeline-to: rgba(135, 245, 15, 0.5);
+  --landing-gradient-text-via: #818CF8;
+  --landing-gradient-text-to: #87F50F;
+}
+
 @layer base {
   :root {
     /* MPSTATS Brand Theme (Light Mode) */
