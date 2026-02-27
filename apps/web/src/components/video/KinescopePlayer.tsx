@@ -30,6 +30,9 @@ interface KinescopePlayerInstance {
   destroy(): Promise<void>;
   getCurrentTime(): Promise<number>;
   getDuration(): Promise<number>;
+  on(event: string, callback: (data: Record<string, unknown>) => void): void;
+  off(event: string, callback: (data: Record<string, unknown>) => void): void;
+  Events: Record<string, string>;
 }
 
 interface KinescopeIframePlayerFactory {
@@ -120,7 +123,6 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
     const playerRef = useRef<KinescopePlayerInstance | null>(null);
     const pendingSeekRef = useRef<number | null>(null);
     const currentTimeRef = useRef<number | null>(null);
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const onTimeUpdateRef = useRef(onTimeUpdate);
     const [activated, setActivated] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -189,23 +191,27 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
             });
           }
 
-          // Set up time tracking interval (every 10 seconds)
-          intervalRef.current = setInterval(() => {
-            if (!playerRef.current) return;
-            Promise.all([
-              playerRef.current.getCurrentTime(),
-              playerRef.current.getDuration(),
-            ])
-              .then(([time, dur]) => {
-                if (typeof time === 'number' && typeof dur === 'number' && dur > 0) {
-                  currentTimeRef.current = time;
-                  onTimeUpdateRef.current?.(time, dur);
-                }
-              })
-              .catch(() => {
-                // Silently ignore — player may be transitioning
-              });
-          }, 10_000);
+          // Event-based time tracking (Kinescope events via player.on)
+          // getCurrentTime()/getDuration() polling returns 0 — use events instead
+          let knownDuration = 0;
+
+          const handleDurationChange = (data: Record<string, unknown>) => {
+            const dur = data.duration as number;
+            if (typeof dur === 'number' && dur > 0) {
+              knownDuration = dur;
+            }
+          };
+
+          const handleTimeUpdate = (data: Record<string, unknown>) => {
+            const time = data.currentTime as number;
+            if (typeof time === 'number' && knownDuration > 0) {
+              currentTimeRef.current = time;
+              onTimeUpdateRef.current?.(time, knownDuration);
+            }
+          };
+
+          pl.on(pl.Events.DurationChange, handleDurationChange);
+          pl.on(pl.Events.TimeUpdate, handleTimeUpdate);
         })
         .catch((err) => {
           if (!destroyed) {
@@ -216,10 +222,6 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
 
       return () => {
         destroyed = true;
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
         if (player) {
           player.destroy().catch(() => {});
           playerRef.current = null;
