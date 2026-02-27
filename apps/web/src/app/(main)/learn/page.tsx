@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
@@ -289,6 +288,13 @@ export default function LearnPage() {
               : course.lessons.slice(0, INITIAL_LESSONS_SHOWN);
             const hiddenCount = course.lessons.length - INITIAL_LESSONS_SHOWN;
 
+            // Find first lesson to continue watching
+            const continueLesson = course.lessons.find(
+              (l) => l.status === 'IN_PROGRESS'
+            ) || (course.progressPercent > 0
+              ? course.lessons.find((l) => l.status === 'NOT_STARTED')
+              : null);
+
             return (
               <Card key={course.id} className="shadow-mp-card">
                 <CardHeader>
@@ -304,15 +310,42 @@ export default function LearnPage() {
                       <div className="text-body-sm text-mp-gray-500">уроков</div>
                     </div>
                   </div>
-                  {/* Course progress */}
-                  <div className="mt-4">
-                    <div className="h-2 bg-mp-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-mp-green-500 rounded-full transition-all duration-500"
-                        style={{ width: `${course.progressPercent}%` }}
-                      />
+                  {/* Course progress bar */}
+                  {course.progressPercent > 0 && (
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-1.5">
+                        {course.progressPercent === 100 ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium border border-mp-green-200 bg-mp-green-50 text-mp-green-700">
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            Курс завершён
+                          </span>
+                        ) : (
+                          <span className="text-caption text-mp-gray-500">{course.progressPercent}% завершено</span>
+                        )}
+                        {continueLesson && course.progressPercent < 100 && (
+                          <Link href={`/learn/${continueLesson.id}`}>
+                            <Button variant="ghost" size="sm" className="text-caption text-mp-blue-600 hover:text-mp-blue-700 h-auto py-0.5 px-2">
+                              Продолжить просмотр
+                              <svg className="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                      <div className="h-1.5 bg-mp-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            'h-full rounded-full transition-all duration-500',
+                            course.progressPercent === 100 ? 'bg-mp-green-500' : 'bg-mp-blue-500'
+                          )}
+                          style={{ width: `${course.progressPercent}%` }}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">

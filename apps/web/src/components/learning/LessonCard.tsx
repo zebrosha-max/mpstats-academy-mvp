@@ -112,16 +112,26 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended }: Le
                 </span>
               </div>
 
-              {/* Progress bar for in-progress */}
-              {lesson.status === 'IN_PROGRESS' && lesson.watchedPercent > 0 && (
+              {/* Progress bar for any lesson with watch progress */}
+              {lesson.watchedPercent > 0 && (
                 <div className="mt-3">
-                  <div className="flex justify-between text-caption text-mp-gray-500 mb-1">
-                    <span>Прогресс</span>
+                  <div className="flex justify-between items-center text-caption text-mp-gray-500 mb-1">
+                    <span className="flex items-center gap-1">
+                      Прогресс
+                      {lesson.status === 'COMPLETED' && (
+                        <svg className="w-3.5 h-3.5 text-mp-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </span>
                     <span>{lesson.watchedPercent}%</span>
                   </div>
                   <div className="h-1.5 bg-mp-gray-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-mp-blue-500 rounded-full transition-all duration-500"
+                      className={cn(
+                        'h-full rounded-full transition-all duration-500',
+                        lesson.status === 'COMPLETED' ? 'bg-mp-green-500' : 'bg-mp-blue-500'
+                      )}
                       style={{ width: `${lesson.watchedPercent}%` }}
                     />
                   </div>

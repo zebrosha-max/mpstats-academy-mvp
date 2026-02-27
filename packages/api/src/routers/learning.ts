@@ -22,7 +22,17 @@ export const learningRouter = router({
         orderBy: { order: 'asc' },
       });
 
-      return courses.map((course) => ({
+      return courses.map((course) => {
+        const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
+        const watchedPercentSum = lessonsWithVideo.reduce((sum, l) => {
+          const percent = l.progress[0]?.watchedPercent || 0;
+          return sum + percent;
+        }, 0);
+        const progressPercent = lessonsWithVideo.length > 0
+          ? Math.round(watchedPercentSum / lessonsWithVideo.length)
+          : 0;
+
+        return {
         id: course.id,
         title: course.title,
         description: course.description,
@@ -34,16 +44,7 @@ export const learningRouter = router({
         completedLessons: course.lessons.filter((l) =>
           l.progress.some((p) => p.status === 'COMPLETED')
         ).length,
-        progressPercent:
-          course.lessons.length > 0
-            ? Math.round(
-                (course.lessons.filter((l) =>
-                  l.progress.some((p) => p.status === 'COMPLETED')
-                ).length /
-                  course.lessons.length) *
-                  100
-              )
-            : 0,
+        progressPercent,
         lessons: course.lessons.map((l) => ({
           id: l.id,
           courseId: l.courseId,
@@ -58,7 +59,8 @@ export const learningRouter = router({
           status: l.progress[0]?.status || 'NOT_STARTED',
           watchedPercent: l.progress[0]?.watchedPercent || 0,
         })),
-      }));
+      };
+      });
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -85,6 +87,15 @@ export const learningRouter = router({
 
         if (!course) return null;
 
+        const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
+        const watchedPercentSum = lessonsWithVideo.reduce((sum, l) => {
+          const percent = l.progress[0]?.watchedPercent || 0;
+          return sum + percent;
+        }, 0);
+        const progressPercent = lessonsWithVideo.length > 0
+          ? Math.round(watchedPercentSum / lessonsWithVideo.length)
+          : 0;
+
         return {
           id: course.id,
           title: course.title,
@@ -97,16 +108,7 @@ export const learningRouter = router({
           completedLessons: course.lessons.filter((l) =>
             l.progress.some((p) => p.status === 'COMPLETED')
           ).length,
-          progressPercent:
-            course.lessons.length > 0
-              ? Math.round(
-                  (course.lessons.filter((l) =>
-                    l.progress.some((p) => p.status === 'COMPLETED')
-                  ).length /
-                    course.lessons.length) *
-                    100
-                )
-              : 0,
+          progressPercent,
           lessons: course.lessons.map((l) => ({
             id: l.id,
             courseId: l.courseId,
