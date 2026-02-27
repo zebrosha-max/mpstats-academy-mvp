@@ -90,10 +90,11 @@ Plans:
   2. На карточках уроков отображается прогресс-бар с процентом просмотра
   3. При повторном открытии урока видео начинает воспроизведение с последней сохранённой позиции
   4. На странице курса отображается общий процент завершения на основе просмотренных видео
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 13-01: Watch progress DB model + save/restore + progress UI on cards and courses
+- [ ] 13-01-PLAN.md — Backend: DB schema (lastPosition), saveWatchProgress/getWatchProgress endpoints, Kinescope time tracking, lesson page save/restore
+- [ ] 13-02-PLAN.md — Frontend: Progress bars on lesson cards, course completion %, admin watch engagement stats
 
 ### Phase 14: Tech Debt Cleanup
 **Goal**: Устранить технический долг — мигрировать in-memory данные в DB, добавить кеширование AI вопросов и улучшить UX загрузки
