@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 15: Landing Redesign & Theme Toggle
+**Current focus:** Milestone v1.1 — COMPLETE
 
 ## Current Position
 
 Phase: 15 of 15 (Landing Redesign & Theme Toggle)
-Plan: 1 of 2 complete
-Status: In Progress
-Last activity: 2026-02-27 — Completed 15-01 (Theme Infrastructure)
+Plan: 2 of 2 complete
+Status: Complete
+Last activity: 2026-02-27 — Completed 15-02 (Unified Landing Page)
 
-Progress: [==========----------] 50% (1/2 plans)
+Progress: [====================] 100% (2/2 plans)
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 14-01: Session questions persisted to DB (Json field), no globalThis Map; Dockerfile dynamic Prisma engine copy
 - 14-02: QuestionBank with 7-day TTL, bank-based instant diagnostic start, admin refresh, progressive loading UX
 - 15-01: CSS variables on [data-landing-theme] attribute for independent landing theme; inline script FOUC prevention; useTheme() hook pattern
+- 15-02: Bento features use conditional accentLight/accentDark via useTheme(); CTA always dark (#0A0F25); hero gradient conditional classes per theme
 
 ### Roadmap Evolution
 
@@ -63,5 +64,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 15-01-PLAN.md (Theme Infrastructure)
-Resume file: 15-02-PLAN.md (Unified Landing Page)
+Stopped at: Completed 15-02-PLAN.md (Unified Landing Page) — Phase 15 complete, v1.1 milestone complete
+Resume file: None — all plans complete
