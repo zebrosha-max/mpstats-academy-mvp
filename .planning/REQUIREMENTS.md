@@ -24,9 +24,9 @@
 
 ### Performance
 
-- [ ] **PERF-01**: Lesson page загружается без длительного скелетона (целевое время < 2s)
-- [ ] **PERF-02**: Видео загружается lazy — не блокирует рендер страницы
-- [ ] **PERF-03**: tRPC запросы оптимизированы (параллельные запросы, кеширование ответов)
+- [x] **PERF-01**: Lesson page загружается без длительного скелетона (целевое время < 2s)
+- [x] **PERF-02**: Видео загружается lazy — не блокирует рендер страницы
+- [x] **PERF-03**: tRPC запросы оптимизированы (параллельные запросы, кеширование ответов)
 
 ### Watch Progress
 
@@ -79,9 +79,9 @@
 | UX-02 | Phase 11 | Complete |
 | UX-03 | Phase 11 | Complete |
 | UX-04 | Phase 11 | Complete |
-| PERF-01 | Phase 12 | Pending |
-| PERF-02 | Phase 12 | Pending |
-| PERF-03 | Phase 12 | Pending |
+| PERF-01 | Phase 12 | Complete |
+| PERF-02 | Phase 12 | Complete |
+| PERF-03 | Phase 12 | Complete |
 | WATCH-01 | Phase 13 | Pending |
 | WATCH-02 | Phase 13 | Pending |
 | WATCH-03 | Phase 13 | Pending |

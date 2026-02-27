@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 11: Summary & Sources UX
+**Current focus:** Milestone v1.1 — Phase 12: Lesson Page Performance
 
 ## Current Position
 
-Phase: 11 of 14 (Summary & Sources UX) -- COMPLETE
+Phase: 12 of 14 (Lesson Page Performance) -- COMPLETE
 Plan: 1 of 1 complete
-Status: Phase 11 complete, ready for next phase
-Last activity: 2026-02-27 — Completed 11-01 (Summary & Sources UX)
+Status: Phase 12 complete, ready for next phase
+Last activity: 2026-02-27 — Completed 12-01 (Lesson Page Performance)
 
-Progress: [========............] 57% (4/7 plans)
+Progress: [==========..........] 71% (5/7 plans)
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 10-02: Custom Toggle button instead of shadcn Switch; getCourseLessons for lazy accordion; analytics groups dates in app code
 - 10-03: Course mutations lifted to parent CourseManager, lesson mutations stay in CourseAccordion; consistent click-to-edit UX pattern
 - 11-01: SourceContext + SourceAwareWrapper pattern for injecting tooltips into markdown tree; summary always loads (removed tab gating)
+- 12-01: Gradient PlayPlaceholder instead of Kinescope poster; gcTime 30min; single-query getLesson via course relation; prev/next simplified to {id, title}
 
 ### Blockers/Concerns
 
@@ -53,5 +54,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 11-01-PLAN.md (Summary & Sources UX) — Phase 11 complete
-Resume file: Next phase (12 or 14)
+Stopped at: Completed 12-01-PLAN.md (Lesson Page Performance) — Phase 12 complete
+Resume file: Next phase (13 or 14)

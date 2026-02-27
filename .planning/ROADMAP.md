@@ -31,7 +31,7 @@ Full details: `milestones/v1.0-ROADMAP.md`
 
 - [x] **Phase 10: Superuser & Admin Panel** — Полноценная админ-панель с управлением пользователями, аналитикой и контентом (completed 2026-02-26)
 - [x] **Phase 11: Summary & Sources UX** — Интерактивные источники в summary урока с тултипами и seekTo (completed 2026-02-27)
-- [ ] **Phase 12: Lesson Page Performance** — Быстрая загрузка страницы урока с lazy video и кешированием
+- [x] **Phase 12: Lesson Page Performance** — Быстрая загрузка страницы урока с lazy video и кешированием (completed 2026-02-27)
 - [ ] **Phase 13: Watch Progress Tracking** — Сохранение и отображение прогресса просмотра видео
 - [ ] **Phase 14: Tech Debt Cleanup** — Миграция in-memory данных в DB, кеширование AI вопросов, UX polish
 
@@ -79,7 +79,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01-PLAN.md — Lazy video loading with click-to-play placeholder + tRPC cache optimization + getLesson query consolidation
+- [x] 12-01-PLAN.md — Lazy video loading with click-to-play placeholder + tRPC cache optimization + getLesson query consolidation
 
 ### Phase 13: Watch Progress Tracking
 **Goal**: Пользователь видит свой прогресс просмотра видео и может продолжить с последней позиции
@@ -128,6 +128,6 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 9. Integration Wire-Up | v1.0 | 1/1 | Complete | 2026-02-26 |
 | 10. Superuser & Admin Panel | 3/3 | Complete    | 2026-02-26 | - |
 | 11. Summary & Sources UX | 1/1 | Complete    | 2026-02-27 | - |
-| 12. Lesson Page Performance | v1.1 | 0/1 | Not started | - |
+| 12. Lesson Page Performance | v1.1 | 1/1 | Complete | 2026-02-27 |
 | 13. Watch Progress Tracking | v1.1 | 0/1 | Not started | - |
 | 14. Tech Debt Cleanup | v1.1 | 0/1 | Not started | - |
