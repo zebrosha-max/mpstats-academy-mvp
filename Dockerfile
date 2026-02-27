@@ -45,6 +45,11 @@ ENV DIRECT_URL=$DIRECT_URL
 RUN mkdir -p /app/apps/web/public
 RUN pnpm turbo build --filter=@mpstats/web
 
+# Collect Prisma engine binaries to a known location (version-independent)
+RUN mkdir -p /app/prisma-collected && \
+    find /app/node_modules/.pnpm -path '*/.prisma/client/*.so.node' -exec cp {} /app/prisma-collected/ \; && \
+    find /app/node_modules/.pnpm -path '*/.prisma/client/schema.prisma' -exec cp {} /app/prisma-collected/ \;
+
 # Stage 5: Production runner (minimal image)
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -60,11 +65,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-# Copy Prisma engine binaries — Next.js standalone doesn't include native .so files
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client/*.so.node ./node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client/
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client/schema.prisma ./node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client/
+# Copy Prisma engine binaries — version-independent (no hardcoded Prisma version)
+COPY --from=builder --chown=nextjs:nodejs /app/prisma-collected/*.so.node ./node_modules/.prisma/client/
+COPY --from=builder --chown=nextjs:nodejs /app/prisma-collected/schema.prisma ./node_modules/.prisma/client/
 
 ENV NODE_ENV=production
+ENV PRISMA_QUERY_ENGINE_LIBRARY=/app/node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
