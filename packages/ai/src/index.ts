@@ -24,6 +24,6 @@ export type { GenerationResult, SourceCitation, ChatMessage } from './generation
 
 // Question generation
 export { generateDiagnosticQuestions, CATEGORY_TO_COURSES } from './question-generator';
-export type { MockQuestionsFn } from './question-generator';
+export type { MockQuestionsFn, GenerateOptions } from './question-generator';
 export { generatedQuestionSchema, generatedQuestionsArraySchema, questionJsonSchema } from './question-schema';
 export type { GeneratedQuestion } from './question-schema';

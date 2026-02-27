@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
-import { getBalancedQuestions, getMockQuestionsForCategory } from '../mocks/questions';
-import { generateDiagnosticQuestions } from '@mpstats/ai';
+import { getBalancedQuestions } from '../mocks/questions';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
+import { getQuestionsFromBank } from '../utils/question-bank';
 import type { PrismaClient } from '@mpstats/db';
 import type {
   DiagnosticResult,
@@ -275,16 +275,13 @@ export const diagnosticRouter = router({
         });
       }
 
-      // Generate questions with AI, fallback to mock
+      // Get questions from cached bank (DB), fallback to mock
       let questions: DiagnosticQuestion[];
       try {
-        questions = await generateDiagnosticQuestions(
-          (category, count) => getMockQuestionsForCategory(category, count)
-        );
+        questions = await getQuestionsFromBank(ctx.prisma, QUESTIONS_PER_SESSION);
       } catch (error) {
-        // Complete fallback: if generateDiagnosticQuestions itself throws,
-        // use fully mock-based questions
-        console.error('AI question generation failed completely, using mock:', error);
+        // Complete fallback: if bank retrieval fails, use fully mock-based questions
+        console.error('Question bank retrieval failed, using mock:', error);
         questions = getBalancedQuestions(QUESTIONS_PER_SESSION);
       }
 

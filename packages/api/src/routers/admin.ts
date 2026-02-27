@@ -9,7 +9,9 @@
 import { z } from 'zod';
 import { router, adminProcedure } from '../trpc';
 import { handleDatabaseError } from '../utils/db-errors';
+import { refreshBankForCategory } from '../utils/question-bank';
 import { createClient } from '@supabase/supabase-js';
+import type { SkillCategory } from '@mpstats/shared';
 
 // Lazy-initialized Supabase admin client (service role) for email lookups
 let supabaseAdmin: ReturnType<typeof createClient> | null = null;
@@ -657,4 +659,35 @@ export const adminRouter = router({
         handleDatabaseError(error);
       }
     }),
+
+  /**
+   * Force-refresh the AI question bank for all categories.
+   * Generates ~30 questions per category via LLM + RAG, stores in DB with 7-day TTL.
+   */
+  refreshQuestionBank: adminProcedure.mutation(async ({ ctx }) => {
+    const categories: SkillCategory[] = [
+      'ANALYTICS',
+      'MARKETING',
+      'CONTENT',
+      'OPERATIONS',
+      'FINANCE',
+    ];
+    const results: Record<string, { success: boolean; count: number }> = {};
+
+    for (const category of categories) {
+      try {
+        await refreshBankForCategory(ctx.prisma, category);
+        const bank = await ctx.prisma.questionBank.findUnique({
+          where: { skillCategory: category },
+        });
+        const count = bank ? (bank.questions as any[]).length : 0;
+        results[category] = { success: true, count };
+      } catch (err) {
+        console.error(`[refreshQuestionBank] Failed for ${category}:`, err);
+        results[category] = { success: false, count: 0 };
+      }
+    }
+
+    return results;
+  }),
 });

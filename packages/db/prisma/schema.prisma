@@ -205,3 +205,13 @@ model SummaryCache {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
+model QuestionBank {
+  id            String        @id @default(cuid())
+  skillCategory SkillCategory
+  questions     Json          // Array of DiagnosticQuestion objects (~30 per category)
+  generatedAt   DateTime      @default(now())
+  expiresAt     DateTime      // TTL: generatedAt + 7 days
+
+  @@unique([skillCategory])
+}

@@ -42,32 +42,43 @@ export type MockQuestionsFn = (
   count: number
 ) => DiagnosticQuestion[];
 
+// ============== TYPES ==============
+
+/** Options for customizing question generation scope and volume */
+export interface GenerateOptions {
+  categories?: SkillCategory[];
+  questionsPerCategory?: number;
+}
+
 // ============== MAIN ENTRY POINT ==============
 
 /**
- * Generate 15 diagnostic questions (3 per category) using LLM + RAG chunks.
+ * Generate diagnostic questions using LLM + RAG chunks.
  *
  * For each category, attempts LLM generation with model fallback chain.
  * If all models fail for a category, uses `fallbackFn` to get mock questions.
  *
  * @param fallbackFn - Provides mock questions for categories where LLM fails
- * @returns 15 shuffled DiagnosticQuestion objects
+ * @param options - Optional: limit to specific categories or change count per category
+ * @returns Shuffled DiagnosticQuestion objects
  */
 export async function generateDiagnosticQuestions(
-  fallbackFn: MockQuestionsFn
+  fallbackFn: MockQuestionsFn,
+  options?: GenerateOptions,
 ): Promise<DiagnosticQuestion[]> {
-  const categories: SkillCategory[] = [
+  const categories: SkillCategory[] = options?.categories ?? [
     'ANALYTICS',
     'MARKETING',
     'CONTENT',
     'OPERATIONS',
     'FINANCE',
   ];
+  const perCategory = options?.questionsPerCategory ?? QUESTIONS_PER_CATEGORY;
 
   // Generate questions per category in parallel
   const results = await Promise.allSettled(
     categories.map((category) =>
-      generateQuestionsForCategory(category, QUESTIONS_PER_CATEGORY)
+      generateQuestionsForCategory(category, perCategory)
     )
   );
 
@@ -77,7 +88,7 @@ export async function generateDiagnosticQuestions(
     const result = results[i];
     const category = categories[i];
 
-    if (result.status === 'fulfilled' && result.value.length === QUESTIONS_PER_CATEGORY) {
+    if (result.status === 'fulfilled' && result.value.length === perCategory) {
       allQuestions.push(...result.value);
     } else {
       // Fallback to mock questions for this category
@@ -85,7 +96,7 @@ export async function generateDiagnosticQuestions(
         `[question-generator] LLM failed for ${category}, using mock fallback.`,
         result.status === 'rejected' ? result.reason : 'Wrong count'
       );
-      allQuestions.push(...fallbackFn(category, QUESTIONS_PER_CATEGORY));
+      allQuestions.push(...fallbackFn(category, perCategory));
     }
   }
 
