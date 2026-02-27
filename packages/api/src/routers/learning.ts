@@ -272,7 +272,7 @@ export const learningRouter = router({
     }
   }),
 
-  // Get lesson details with progress
+  // Get lesson details with progress (single DB query via course relation)
   getLesson: protectedProcedure
     .input(z.object({ lessonId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -280,7 +280,14 @@ export const learningRouter = router({
         const lesson = await ctx.prisma.lesson.findUnique({
           where: { id: input.lessonId },
           include: {
-            course: true,
+            course: {
+              include: {
+                lessons: {
+                  orderBy: { order: 'asc' },
+                  select: { id: true, title: true, order: true },
+                },
+              },
+            },
             progress: {
               where: { path: { userId: ctx.user.id } },
             },
@@ -289,63 +296,37 @@ export const learningRouter = router({
 
         if (!lesson) return null;
 
-        // Get all lessons in this course for next/prev navigation
-        const courseLessons = await ctx.prisma.lesson.findMany({
-          where: { courseId: lesson.courseId },
-          orderBy: { order: 'asc' },
-          include: {
-            progress: {
-              where: { path: { userId: ctx.user.id } },
-            },
-          },
-        });
-
+        const courseLessons = lesson.course.lessons;
         const currentIndex = courseLessons.findIndex((l) => l.id === lesson.id);
 
-        type LessonWithProgressData = {
-          id: string;
-          courseId: string;
-          title: string;
-          description: string | null;
-          videoUrl: string | null;
-          videoId: string | null;
-          duration: number | null;
-          order: number;
-          skillCategory: typeof lesson.skillCategory;
-          skillLevel: typeof lesson.skillLevel;
-          progress: typeof lesson.progress;
-        };
-
-        const mapToLessonWithProgress = (l: LessonWithProgressData): LessonWithProgress => ({
-          id: l.id,
-          courseId: l.courseId,
-          title: l.title,
-          description: l.description,
-          videoUrl: l.videoUrl || '',
-          videoId: l.videoId,
-          duration: l.duration || 0,
-          order: l.order,
-          skillCategory: l.skillCategory,
-          skillLevel: l.skillLevel,
-          status: l.progress[0]?.status || 'NOT_STARTED',
-          watchedPercent: l.progress[0]?.watchedPercent || 0,
-        });
-
-        const nextLessonData =
+        const nextLessonNav =
           currentIndex < courseLessons.length - 1
-            ? mapToLessonWithProgress(courseLessons[currentIndex + 1])
+            ? { id: courseLessons[currentIndex + 1].id, title: courseLessons[currentIndex + 1].title }
             : null;
 
-        const prevLessonData =
+        const prevLessonNav =
           currentIndex > 0
-            ? mapToLessonWithProgress(courseLessons[currentIndex - 1])
+            ? { id: courseLessons[currentIndex - 1].id, title: courseLessons[currentIndex - 1].title }
             : null;
 
         return {
-          lesson: mapToLessonWithProgress(lesson),
-          course: lesson.course,
-          nextLesson: nextLessonData,
-          prevLesson: prevLessonData,
+          lesson: {
+            id: lesson.id,
+            courseId: lesson.courseId,
+            title: lesson.title,
+            description: lesson.description,
+            videoUrl: lesson.videoUrl || '',
+            videoId: lesson.videoId,
+            duration: lesson.duration || 0,
+            order: lesson.order,
+            skillCategory: lesson.skillCategory,
+            skillLevel: lesson.skillLevel,
+            status: lesson.progress[0]?.status || 'NOT_STARTED',
+            watchedPercent: lesson.progress[0]?.watchedPercent || 0,
+          } satisfies LessonWithProgress,
+          course: { id: lesson.course.id, title: lesson.course.title, slug: lesson.course.slug },
+          nextLesson: nextLessonNav,
+          prevLesson: prevLessonNav,
           totalLessonsInCourse: courseLessons.length,
           currentLessonNumber: currentIndex + 1,
         };
