@@ -134,7 +134,7 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 | 12. Lesson Page Performance | v1.1 | Complete    | 2026-02-27 | 2026-02-27 |
 | 13. Watch Progress Tracking | 2/2 | Complete    | 2026-02-27 | - |
 | 14. Tech Debt Cleanup | 2/2 | Complete    | 2026-02-27 | - |
-| 15. Landing Redesign & Theme Toggle | v1.1 | 0/2 | Planned | - |
+| 15. Landing Redesign & Theme Toggle | v1.1 | 1/2 | In Progress | - |
 
 ### Phase 15: Landing Redesign & Theme Toggle
 
@@ -150,5 +150,5 @@ Phases 10, 11, 12 can start independently. Phase 13 depends on Phase 12. Phase 1
 **Plans:** 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md — Theme infrastructure: CSS-переменные, ThemeProvider, ThemeToggle
+- [x] 15-01-PLAN.md — Theme infrastructure: CSS-переменные, ThemeProvider, ThemeToggle
 - [ ] 15-02-PLAN.md — Unified landing page с theme-aware CSS переменными + visual checkpoint

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Milestone v1.1 — Phase 14: Tech Debt Cleanup
+**Current focus:** Milestone v1.1 — Phase 15: Landing Redesign & Theme Toggle
 
 ## Current Position
 
-Phase: 14 of 14 (Tech Debt Cleanup)
-Plan: 2 of 2 complete
-Status: Phase 14 Complete
-Last activity: 2026-02-27 — Completed 14-02 (Question Bank Caching & Progressive Loading)
+Phase: 15 of 15 (Landing Redesign & Theme Toggle)
+Plan: 1 of 2 complete
+Status: In Progress
+Last activity: 2026-02-27 — Completed 15-01 (Theme Infrastructure)
 
-Progress: [====================] 100% (9/9 plans)
+Progress: [==========----------] 50% (1/2 plans)
 
 ## Performance Metrics
 
@@ -46,6 +46,7 @@ Key decisions summary in PROJECT.md Key Decisions table.
 - 13-02: Progress bar on all lessons with watchedPercent > 0; weighted-average course progressPercent; admin getWatchStats endpoint
 - 14-01: Session questions persisted to DB (Json field), no globalThis Map; Dockerfile dynamic Prisma engine copy
 - 14-02: QuestionBank with 7-day TTL, bank-based instant diagnostic start, admin refresh, progressive loading UX
+- 15-01: CSS variables on [data-landing-theme] attribute for independent landing theme; inline script FOUC prevention; useTheme() hook pattern
 
 ### Roadmap Evolution
 
@@ -62,5 +63,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 14-02-PLAN.md (Question Bank Caching & Progressive Loading) — Phase 14 complete
-Resume file: Phase 15 (Landing Redesign & Theme Toggle)
+Stopped at: Completed 15-01-PLAN.md (Theme Infrastructure)
+Resume file: 15-02-PLAN.md (Unified Landing Page)
