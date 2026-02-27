@@ -63,10 +63,10 @@ Plans:
   2. Ссылки [1], [2], [N] в тексте summary кликабельны и визуально выделены
   3. При наведении на ссылку [N] появляется тултип с названием источника, таймкодом и фрагментом текста
   4. Клик на ссылку [N] перематывает Kinescope видео на соответствующий таймкод
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: Collapsible summary + interactive source links with tooltips and seekTo
+- [ ] 11-01-PLAN.md — Collapsible summary under video, interactive [N] source badges with tooltips and seekTo, sidebar chat-only
 
 ### Phase 12: Lesson Page Performance
 **Goal**: Страница урока загружается быстро без длительного скелетона, видео не блокирует рендер
