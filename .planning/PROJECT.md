@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Образовательная платформа для селлеров маркетплейсов с AI-диагностикой навыков и адаптивным обучением. Платформа оценивает уровень знаний пользователя по 5 осям (Аналитика, Маркетинг, Контент, Операции, Финансы), генерирует AI-вопросы из реального контента уроков, строит персонализированный трек обучения и предоставляет RAG-чат с цитированием таймкодов по 405 видеоурокам на Kinescope.
+Образовательная платформа для селлеров маркетплейсов с AI-диагностикой навыков и адаптивным обучением. Платформа оценивает уровень знаний пользователя по 5 осям (Аналитика, Маркетинг, Контент, Операции, Финансы), генерирует AI-вопросы из реального контента уроков, строит персонализированный трек обучения и предоставляет RAG-чат с цитированием таймкодов по 405 видеоурокам на Kinescope. Включает админ-панель с управлением пользователями и контентом, watch progress tracking и dark/light theme toggle.
 
 ## Core Value
 
@@ -33,26 +33,21 @@
 - ✓ VPS Infrastructure: Docker, Nginx, UFW, SSL (INFRA-01..04) — v1.0
 - ✓ Production deploy с CI/CD и E2E верификацией (DEPLOY-01..07) — v1.0
 - ✓ Чистые названия уроков и курсов (NAMING-01..05) — v1.0
+- ✓ Админ-панель: dashboard KPIs, управление пользователями, аналитика, контент-менеджмент (ADMIN-01..07) — v1.1
+- ✓ Summary & Sources UX: collapsible, [N] тултипы, seekTo (UX-01..04) — v1.1
+- ✓ Lesson Page Performance: lazy video, tRPC cache 30min (PERF-01..03) — v1.1
+- ✓ Watch Progress Tracking: сохранение позиции, прогресс-бары, автовозобновление (WATCH-01..04) — v1.1
+- ✓ Tech Debt: in-memory → DB, QuestionBank с TTL, progressive loading, dynamic Prisma (DEBT-01..04) — v1.1
+- ✓ Landing Redesign: dark/light theme toggle, CSS variables, FOUC prevention (LANDING-01..03) — v1.1
 
 ### Active
-
-## Current Milestone: v1.1 Admin & Polish
-
-**Goal:** Добавить админ-панель с управлением пользователями/контентом/аналитикой, улучшить UX источников в уроках, оптимизировать производительность, добавить трекинг просмотра видео и закрыть tech debt.
-
-**Target features:**
-- Суперюзер + Админ-панель (по паттерну MPSTATS Connect)
-- Summary & Sources UX (collapsible, тултипы, seekTo по клику)
-- Производительность загрузки уроков
-- Watch Progress Tracking (% просмотра видео)
-- Tech Debt Cleanup (in-memory → DB, кеширование, spinner timing)
 
 **Deferred to future milestones:**
 - [ ] Адаптивная сложность вопросов (IRT-lite) на основе предыдущих ответов
 - [ ] Визуализация прогресса навыков между диагностиками
-- [ ] Dark mode toggle
 - [ ] Полное accessibility audit (WCAG 2.1 AA)
 - [ ] Полное QA покрытие (unit tests, component tests, E2E)
+- [ ] Full-app dark mode (не только лендинг)
 
 ### Out of Scope
 
@@ -66,14 +61,19 @@
 
 ## Context
 
-Shipped v1.0 MVP с 15,043 LOC TypeScript.
+Shipped v1.1 Admin & Polish с 18,017 LOC TypeScript.
 Tech stack: Next.js 14, tRPC, Prisma, Supabase (pgvector), Turborepo, shadcn/ui.
 Production: https://academyal.duckdns.org (VPS 89.208.106.208, Docker + Nginx + Let's Encrypt).
 RAG данные: 6 курсов, 80+ уроков, 5,291 chunks с embeddings, 405 видео на Kinescope (209 GB).
 Модель генерации: google/gemini-2.5-flash через OpenRouter.
 Embeddings: OpenAI text-embedding-3-small (1536 dims).
+Админ-панель: (admin) route group, adminProcedure, dashboard/users/analytics/content pages.
+Watch progress: Kinescope postMessage time tracking, 15s debounced save, auto-resume.
 
-**Tech debt (9 items):** Kinescope React player broken (iframe workaround), 1 E2E test, UX spinner timing, in-memory activeSessionQuestions, hardcoded Prisma version in Dockerfile.
+**Remaining tech debt (3 items):**
+- Kinescope React player broken — iframe workaround (не критично)
+- Only 1 E2E test (landing) — auth/diagnostic/learning deferred
+- Rate limiter в globalThis Map — нужен Redis для production scale
 
 ## Constraints
 
@@ -99,8 +99,13 @@ Embeddings: OpenAI text-embedding-3-small (1536 dims).
 | Rate limiter в globalThis Map | HMR persistence, простота | ⚠️ Revisit для production scale |
 | QA минимально в v1.0 | Фокус на функциональность | ⚠️ Revisit — нужны тесты |
 
----
-| Admin panel по паттерну MPSTATS Connect | Двойной guard + adminProcedure в tRPC | — Pending |
+| Admin panel по паттерну MPSTATS Connect | Двойной guard + adminProcedure в tRPC | ✓ Good |
+| SourceContext pattern для interactive tooltips | React context injection в markdown tree | ✓ Good |
+| Lazy video loading (click-to-play) | Не блокировать рендер страницы Kinescope JS | ✓ Good |
+| Kinescope postMessage time tracking | Event API broken → fallback timer 10s | ✓ Good (workaround) |
+| QuestionBank с TTL 7 дней | Instant diagnostic start, экономия LLM calls | ✓ Good |
+| CSS variables для landing theme | Независимый theme scope через data-landing-theme | ✓ Good |
+| FOUC prevention inline script | localStorage read before React hydration | ✓ Good |
 
 ---
-*Last updated: 2026-02-26 after v1.1 milestone start*
+*Last updated: 2026-02-28 after v1.1 milestone*

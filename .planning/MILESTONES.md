@@ -28,3 +28,37 @@
 
 ---
 
+
+## v1.1 Admin & Polish (Shipped: 2026-02-28)
+
+**Phases:** 6 (Phase 10-15) | **Plans:** 11 | **Requirements:** 25/25
+**Timeline:** 2 days (2026-02-26 → 2026-02-27)
+**Commits:** 81 | **Files modified:** 92 | **Changes:** +11,366 / -950 lines
+**Lines of code:** 18,017 TypeScript (total codebase)
+**Production:** https://academyal.duckdns.org
+
+**Delivered:** Админ-панель с управлением пользователями и контентом, улучшенный UX источников с seekTo, lazy video loading, watch progress tracking, миграция in-memory данных в DB, landing redesign с dark/light theme toggle.
+
+**Key accomplishments:**
+1. Админ-панель — dashboard KPIs, управление пользователями (is_admin/is_active toggles), аналитика, inline-редактирование курсов/уроков
+2. Summary & Sources UX — интерактивные [N] бейджи с тултипами и seekTo по видео, collapsible summary
+3. Производительность — lazy video loading (click-to-play), tRPC кеширование 30min, consolidated DB queries
+4. Watch Progress Tracking — сохранение позиции видео в БД, прогресс-бары на карточках, автовозобновление
+5. Tech Debt Cleanup — in-memory → Prisma, QuestionBank с TTL 7 дней, progressive loading UX, dynamic Prisma в Dockerfile
+6. Landing Redesign — unified лендинг с dark/light theme toggle, CSS variables, FOUC prevention
+
+**v1.0 tech debt resolved:**
+- ~~UX spinner timing~~ — progressive loading UX (Phase 14)
+- ~~In-memory activeSessionQuestions~~ — Prisma DB persistence (Phase 14)
+- ~~Hardcoded Prisma version in Dockerfile~~ — dynamic engine copy (Phase 14)
+
+**Remaining tech debt:**
+- Kinescope React player broken — iframe workaround (не критично)
+- Only 1 E2E test (landing) — auth/diagnostic/learning deferred
+- Rate limiter в globalThis Map — нужен Redis для production scale
+
+**Archives:** `milestones/v1.1-ROADMAP.md`, `milestones/v1.1-REQUIREMENTS.md`
+**Git range:** feat(10-01)..feat(15-02)
+
+---
+
