@@ -61,6 +61,7 @@ model DiagnosticSession {
   startedAt       DateTime         @default(now())
   completedAt     DateTime?
   currentQuestion Int              @default(0)
+  questions       Json?            // Persisted question set (array of DiagnosticQuestion objects)
 
   user    UserProfile        @relation(fields: [userId], references: [id], onDelete: Cascade)
   answers DiagnosticAnswer[]

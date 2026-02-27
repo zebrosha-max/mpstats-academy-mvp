@@ -20,20 +20,6 @@ import type {
 const TARGET_SCORE = 70;
 const QUESTIONS_PER_SESSION = 15;
 
-// ============== IN-FLIGHT SESSION QUESTIONS ==============
-// Only active (IN_PROGRESS) sessions store their question set in memory.
-// This is acceptable because active sessions are short-lived (minutes).
-// All COMPLETED data is persisted in DB via Prisma.
-
-type ActiveSessionData = {
-  questions: DiagnosticQuestion[];
-};
-
-const activeSessionQuestions =
-  ((globalThis as any).__activeSessionQuestions as Map<string, ActiveSessionData>) ||
-  new Map<string, ActiveSessionData>();
-(globalThis as any).__activeSessionQuestions = activeSessionQuestions;
-
 // ============== RATE LIMITER ==============
 // Simple sliding window rate limiter for question generation (50 req/hour per user)
 
@@ -236,10 +222,9 @@ export const diagnosticRouter = router({
 
       if (!session) return null;
 
-      // Check if we have the questions in memory
-      const sessionData = activeSessionQuestions.get(session.id);
-      if (!sessionData) {
-        // Server restarted during active session — mark as ABANDONED
+      // Check if session has persisted questions
+      if (!session.questions) {
+        // Legacy session without persisted questions — mark as ABANDONED
         await ctx.prisma.diagnosticSession.update({
           where: { id: session.id },
           data: { status: 'ABANDONED' },
@@ -282,9 +267,6 @@ export const diagnosticRouter = router({
         data: { status: 'ABANDONED' },
       });
 
-      // Note: stale entries in activeSessionQuestions are harmless
-      // and will be cleaned up when their sessions are accessed next
-
       // Rate limit check before any LLM call
       if (!checkRateLimit(ctx.user.id)) {
         throw new TRPCError({
@@ -306,17 +288,15 @@ export const diagnosticRouter = router({
         questions = getBalancedQuestions(QUESTIONS_PER_SESSION);
       }
 
-      // Create session in DB
+      // Create session in DB with persisted questions
       const session = await ctx.prisma.diagnosticSession.create({
         data: {
           userId: ctx.user.id,
           status: 'IN_PROGRESS',
           currentQuestion: 0,
+          questions: questions as any, // Prisma Json type
         },
       });
-
-      // Store questions in memory for this active session
-      activeSessionQuestions.set(session.id, { questions });
 
       return {
         id: session.id,
@@ -368,10 +348,10 @@ export const diagnosticRouter = router({
           };
         }
 
-        // In-progress session — need questions from memory
-        const sessionData = activeSessionQuestions.get(input.sessionId);
-        if (!sessionData) {
-          // Server restarted — mark as ABANDONED
+        // In-progress session — read questions from DB
+        const questions = session.questions as unknown as DiagnosticQuestion[] | null;
+        if (!questions) {
+          // Legacy session without persisted questions — mark as ABANDONED
           await ctx.prisma.diagnosticSession.update({
             where: { id: input.sessionId },
             data: { status: 'ABANDONED' },
@@ -386,10 +366,10 @@ export const diagnosticRouter = router({
           };
         }
 
-        const isComplete = session.currentQuestion >= sessionData.questions.length;
+        const isComplete = session.currentQuestion >= questions.length;
         const currentQuestion = isComplete
           ? null
-          : sessionData.questions[session.currentQuestion];
+          : questions[session.currentQuestion];
 
         // Don't expose correctIndex to client
         const safeQuestion = currentQuestion
@@ -403,7 +383,7 @@ export const diagnosticRouter = router({
         return {
           sessionId: input.sessionId,
           currentQuestionIndex: session.currentQuestion,
-          totalQuestions: sessionData.questions.length,
+          totalQuestions: questions.length,
           answeredQuestions: session.answers.map((a) => ({
             questionId: a.questionId,
             answer: a.answer,
@@ -430,17 +410,21 @@ export const diagnosticRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // Get questions from memory
-        const sessionData = activeSessionQuestions.get(input.sessionId);
-        if (!sessionData) {
+        // Get questions from DB
+        const session = await ctx.prisma.diagnosticSession.findUnique({
+          where: { id: input.sessionId },
+          select: { questions: true, currentQuestion: true, userId: true },
+        });
+        if (!session || !session.questions) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Session not found or expired. Please start a new diagnostic.',
           });
         }
+        const questions = session.questions as unknown as DiagnosticQuestion[];
 
         // Find the question
-        const question = sessionData.questions.find((q) => q.id === input.questionId);
+        const question = questions.find((q) => q.id === input.questionId);
         if (!question) {
           throw new TRPCError({
             code: 'NOT_FOUND',
@@ -470,7 +454,7 @@ export const diagnosticRouter = router({
         });
 
         // Check completion
-        const isComplete = updatedSession.currentQuestion >= sessionData.questions.length;
+        const isComplete = updatedSession.currentQuestion >= questions.length;
 
         if (isComplete) {
           // Fetch all answers for this session
@@ -520,8 +504,6 @@ export const diagnosticRouter = router({
             create: { userId: ctx.user.id, lessons: fullPath },
           });
 
-          // Clean up in-memory question data
-          activeSessionQuestions.delete(input.sessionId);
         }
 
         return {
