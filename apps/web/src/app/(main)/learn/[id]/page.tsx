@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,13 +57,93 @@ export default function LessonPage() {
     document.getElementById('video-player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
+  // Watch progress: position tracking refs (no re-renders)
+  const lastPositionRef = useRef<number>(0);
+  const lastDurationRef = useRef<number>(0);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const utils = trpc.useUtils();
+
   const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
   const { data: hasDiagnostic } = trpc.diagnostic.hasCompletedDiagnostic.useQuery();
+  const { data: watchProgress } = trpc.learning.getWatchProgress.useQuery({ lessonId });
 
   // Summary always loads (no longer gated by tab)
   const { data: summaryData, isLoading: summaryLoading, error: summaryError } = trpc.ai.getLessonSummary.useQuery(
     { lessonId },
   );
+
+  // Save watch progress mutation
+  const saveWatchProgress = trpc.learning.saveWatchProgress.useMutation({
+    onSuccess: () => {
+      // Silently invalidate to update the badge
+      utils.learning.getLesson.invalidate({ lessonId });
+    },
+    onError: (err) => {
+      console.warn('Failed to save watch progress:', err.message);
+    },
+  });
+
+  // Debounced save handler (15 seconds) — stores in refs, no re-renders
+  const handleTimeUpdate = useCallback((currentTime: number, duration: number) => {
+    lastPositionRef.current = currentTime;
+    lastDurationRef.current = duration;
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      saveWatchProgress.mutate({
+        lessonId,
+        position: currentTime,
+        duration,
+      });
+    }, 15_000);
+  }, [lessonId, saveWatchProgress]);
+
+  // Save on page unload (final position capture)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (lastPositionRef.current >= 5 && lastDurationRef.current > 0) {
+        // Use sendBeacon for reliable delivery during page unload
+        const payload = JSON.stringify({
+          lessonId,
+          position: lastPositionRef.current,
+          duration: lastDurationRef.current,
+        });
+        // Fall back to sync mutation if beacon not available
+        try {
+          navigator.sendBeacon?.(
+            '/api/trpc/learning.saveWatchProgress',
+            new Blob([JSON.stringify({ json: payload })], { type: 'application/json' })
+          );
+        } catch {
+          // Best effort — mutation might not complete during unload
+          saveWatchProgress.mutate({
+            lessonId,
+            position: lastPositionRef.current,
+            duration: lastDurationRef.current,
+          });
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Clear pending debounce on unmount and fire final save
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      if (lastPositionRef.current >= 5 && lastDurationRef.current > 0) {
+        saveWatchProgress.mutate({
+          lessonId,
+          position: lastPositionRef.current,
+          duration: lastDurationRef.current,
+        });
+      }
+    };
+  }, [lessonId, saveWatchProgress]);
 
   // Chat mutation
   const chatMutation = trpc.ai.chat.useMutation({
@@ -220,6 +300,8 @@ export default function LessonPage() {
             <VideoPlayer
               ref={playerRef}
               videoId={lesson.videoId}
+              onTimeUpdate={handleTimeUpdate}
+              initialTime={watchProgress?.lastPosition}
             />
           </Card>
 

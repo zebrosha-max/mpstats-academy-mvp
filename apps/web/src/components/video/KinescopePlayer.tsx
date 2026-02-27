@@ -12,11 +12,14 @@ import { VideoPlaceholder } from './VideoPlaceholder';
 
 export interface PlayerHandle {
   seekTo: (seconds: number) => void;
+  getCurrentTime: () => number | null;
 }
 
 interface KinescopePlayerProps {
   videoId: string | null;
   className?: string;
+  onTimeUpdate?: (currentTime: number, duration: number) => void;
+  initialTime?: number;
 }
 
 // Kinescope Iframe API types (from official React component source)
@@ -25,6 +28,8 @@ interface KinescopePlayerInstance {
   play(): Promise<void>;
   pause(): Promise<void>;
   destroy(): Promise<void>;
+  getCurrentTime(): Promise<number>;
+  getDuration(): Promise<number>;
 }
 
 interface KinescopeIframePlayerFactory {
@@ -111,12 +116,19 @@ function PlayPlaceholder({ onClick }: { onClick: () => void }) {
 let playerCounter = 0;
 
 export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
-  function VideoPlayer({ videoId, className }, ref) {
+  function VideoPlayer({ videoId, className, onTimeUpdate, initialTime }, ref) {
     const playerRef = useRef<KinescopePlayerInstance | null>(null);
     const pendingSeekRef = useRef<number | null>(null);
+    const currentTimeRef = useRef<number | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const onTimeUpdateRef = useRef(onTimeUpdate);
     const [activated, setActivated] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [resumeNotice, setResumeNotice] = useState<string | null>(null);
     const stableId = useRef(`__kinescope_player_${++playerCounter}`);
+
+    // Keep callback ref up-to-date without causing re-renders
+    onTimeUpdateRef.current = onTimeUpdate;
 
     const activate = useCallback(() => {
       setActivated(true);
@@ -132,6 +144,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           setActivated(true);
         }
       },
+      getCurrentTime: () => currentTimeRef.current,
     }), []);
 
     useEffect(() => {
@@ -159,11 +172,40 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           player = pl;
           playerRef.current = pl;
 
+          // Handle pending seek from imperative handle
           if (pendingSeekRef.current !== null) {
             const seconds = pendingSeekRef.current;
             pendingSeekRef.current = null;
             pl.seekTo(seconds).then(() => pl.play());
           }
+          // Resume from initialTime if provided
+          else if (initialTime && initialTime > 0) {
+            pl.seekTo(initialTime).then(() => {
+              pl.play();
+              const mins = Math.floor(initialTime / 60);
+              const secs = Math.floor(initialTime % 60);
+              setResumeNotice(`Продолжаем с ${mins}:${secs.toString().padStart(2, '0')}`);
+              setTimeout(() => setResumeNotice(null), 3000);
+            });
+          }
+
+          // Set up time tracking interval (every 10 seconds)
+          intervalRef.current = setInterval(() => {
+            if (!playerRef.current) return;
+            Promise.all([
+              playerRef.current.getCurrentTime(),
+              playerRef.current.getDuration(),
+            ])
+              .then(([time, dur]) => {
+                if (typeof time === 'number' && typeof dur === 'number' && dur > 0) {
+                  currentTimeRef.current = time;
+                  onTimeUpdateRef.current?.(time, dur);
+                }
+              })
+              .catch(() => {
+                // Silently ignore — player may be transitioning
+              });
+          }, 10_000);
         })
         .catch((err) => {
           if (!destroyed) {
@@ -174,12 +216,16 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
 
       return () => {
         destroyed = true;
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
         if (player) {
           player.destroy().catch(() => {});
           playerRef.current = null;
         }
       };
-    }, [videoId, activated]);
+    }, [videoId, activated, initialTime]);
 
     if (!videoId) {
       return <VideoPlaceholder />;
@@ -198,11 +244,16 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
     }
 
     return (
-      <div className={`aspect-video ${className ?? ''}`}>
+      <div className={`aspect-video relative ${className ?? ''}`}>
         <div
           id={stableId.current}
           style={{ width: '100%', height: '100%' }}
         />
+        {resumeNotice && (
+          <div className="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg pointer-events-none animate-fade-in z-10">
+            {resumeNotice}
+          </div>
+        )}
       </div>
     );
   }
