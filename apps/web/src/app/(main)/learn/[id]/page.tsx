@@ -83,21 +83,24 @@ export default function LessonPage() {
     },
   });
 
-  // Debounced save handler (15 seconds) — stores in refs, no re-renders
+  // Throttled save handler (every 15 seconds) — stores in refs, no re-renders.
+  // onTimeUpdate fires every ~1s from the timer; we only save periodically.
   const handleTimeUpdate = useCallback((currentTime: number, duration: number) => {
     lastPositionRef.current = currentTime;
     lastDurationRef.current = duration;
 
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    // If a save is already scheduled, just update the refs — don't reset the timer
+    if (saveTimeoutRef.current) return;
 
     saveTimeoutRef.current = setTimeout(() => {
-      saveWatchProgress.mutate({
-        lessonId,
-        position: currentTime,
-        duration,
-      });
+      saveTimeoutRef.current = null;
+      if (lastPositionRef.current >= 5) {
+        saveWatchProgress.mutate({
+          lessonId,
+          position: lastPositionRef.current,
+          duration: lastDurationRef.current,
+        });
+      }
     }, 15_000);
   }, [lessonId, saveWatchProgress]);
 
@@ -302,6 +305,7 @@ export default function LessonPage() {
               videoId={lesson.videoId}
               onTimeUpdate={handleTimeUpdate}
               initialTime={watchProgress?.lastPosition}
+              durationSeconds={lesson.duration ? lesson.duration * 60 : undefined}
             />
           </Card>
 

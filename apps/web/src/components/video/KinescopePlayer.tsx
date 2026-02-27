@@ -20,6 +20,8 @@ interface KinescopePlayerProps {
   className?: string;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
   initialTime?: number;
+  /** Total video duration in seconds — used as fallback when Kinescope events fail */
+  durationSeconds?: number;
 }
 
 // Kinescope Iframe API types (from official React component source)
@@ -32,7 +34,7 @@ interface KinescopePlayerInstance {
   getDuration(): Promise<number>;
   on(event: string, callback: (data: Record<string, unknown>) => void): void;
   off(event: string, callback: (data: Record<string, unknown>) => void): void;
-  Events: Record<string, string>;
+  Events?: Record<string, string>;
 }
 
 interface KinescopeIframePlayerFactory {
@@ -119,7 +121,7 @@ function PlayPlaceholder({ onClick }: { onClick: () => void }) {
 let playerCounter = 0;
 
 export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
-  function VideoPlayer({ videoId, className, onTimeUpdate, initialTime }, ref) {
+  function VideoPlayer({ videoId, className, onTimeUpdate, initialTime, durationSeconds }, ref) {
     const playerRef = useRef<KinescopePlayerInstance | null>(null);
     const pendingSeekRef = useRef<number | null>(null);
     const currentTimeRef = useRef<number | null>(null);
@@ -154,6 +156,45 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
 
       let destroyed = false;
       let player: KinescopePlayerInstance | null = null;
+      let timerCleanup: (() => void) | null = null;
+      let eventsWorking = false;
+
+      // --- Timer-based fallback tracking ---
+      // Kinescope IframePlayer API events are broken (postMessage bridge
+      // from iframe→parent never fires). Timer tracks approximate position.
+      // Works even without known duration — position increments each second
+      // while the tab is visible. Duration is either from DB or estimated
+      // as max(position, knownDuration).
+      const startTimerTracking = (startFrom: number) => {
+        let position = startFrom;
+        let isPageVisible = !document.hidden;
+        const knownDuration = durationSeconds || 0;
+
+        const handleVisibility = () => {
+          isPageVisible = !document.hidden;
+        };
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        const interval = setInterval(() => {
+          if (!isPageVisible || destroyed) return;
+          position += 1;
+          // Cap at known duration if available; otherwise let it grow
+          if (knownDuration > 0) {
+            position = Math.min(position, knownDuration);
+          }
+          currentTimeRef.current = position;
+          // Use known duration, or estimate as position * 1.1 (assume ~90% watched)
+          const effectiveDuration = knownDuration > 0 ? knownDuration : Math.max(position * 1.1, 60);
+          onTimeUpdateRef.current?.(position, effectiveDuration);
+        }, 1000);
+
+        timerCleanup = () => {
+          clearInterval(interval);
+          document.removeEventListener('visibilitychange', handleVisibility);
+        };
+
+        console.log(`[KP] Timer tracking started: position=${startFrom}s, knownDuration=${knownDuration}s`);
+      };
 
       loadKinescopeApi()
         .then((factory) => {
@@ -174,6 +215,8 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           player = pl;
           playerRef.current = pl;
 
+          const startPosition = pendingSeekRef.current ?? (initialTime && initialTime > 0 ? initialTime : 0);
+
           // Handle pending seek from imperative handle
           if (pendingSeekRef.current !== null) {
             const seconds = pendingSeekRef.current;
@@ -191,27 +234,54 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
             });
           }
 
-          // Event-based time tracking (Kinescope events via player.on)
-          // getCurrentTime()/getDuration() polling returns 0 — use events instead
+          // --- Try Kinescope events first ---
           let knownDuration = 0;
 
           const handleDurationChange = (data: Record<string, unknown>) => {
-            const dur = data.duration as number;
+            const dur = data?.duration as number;
             if (typeof dur === 'number' && dur > 0) {
+              eventsWorking = true;
               knownDuration = dur;
+              console.log('[KP] Kinescope event: durationChange', dur);
             }
           };
 
           const handleTimeUpdate = (data: Record<string, unknown>) => {
-            const time = data.currentTime as number;
-            if (typeof time === 'number' && knownDuration > 0) {
-              currentTimeRef.current = time;
-              onTimeUpdateRef.current?.(time, knownDuration);
+            const time = data?.currentTime as number;
+            if (typeof time === 'number') {
+              eventsWorking = true;
+              if (knownDuration > 0) {
+                currentTimeRef.current = time;
+                onTimeUpdateRef.current?.(time, knownDuration);
+              }
             }
           };
 
-          pl.on(pl.Events.DurationChange, handleDurationChange);
-          pl.on(pl.Events.TimeUpdate, handleTimeUpdate);
+          // Try multiple event name formats — Events enum may be undefined in latest version
+          const eventNames = pl.Events
+            ? { timeUpdate: pl.Events.TimeUpdate, durationChange: pl.Events.DurationChange }
+            : null;
+
+          if (eventNames?.durationChange && eventNames?.timeUpdate) {
+            pl.on(eventNames.durationChange, handleDurationChange);
+            pl.on(eventNames.timeUpdate, handleTimeUpdate);
+            console.log('[KP] Subscribed via player.Events:', eventNames);
+          } else {
+            // Fallback: try common string event names
+            console.warn('[KP] player.Events is missing, trying string names');
+            try { pl.on('DurationChange', handleDurationChange); } catch { /* ignore */ }
+            try { pl.on('TimeUpdate', handleTimeUpdate); } catch { /* ignore */ }
+            try { pl.on('durationchange', handleDurationChange); } catch { /* ignore */ }
+            try { pl.on('timeupdate', handleTimeUpdate); } catch { /* ignore */ }
+          }
+
+          // --- Fallback: start timer if events don't fire within 5s ---
+          setTimeout(() => {
+            if (!eventsWorking && !destroyed) {
+              console.warn('[KP] Kinescope events not firing — activating timer fallback');
+              startTimerTracking(startPosition);
+            }
+          }, 5000);
         })
         .catch((err) => {
           if (!destroyed) {
@@ -222,12 +292,13 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
 
       return () => {
         destroyed = true;
+        timerCleanup?.();
         if (player) {
           player.destroy().catch(() => {});
           playerRef.current = null;
         }
       };
-    }, [videoId, activated, initialTime]);
+    }, [videoId, activated, initialTime, durationSeconds]);
 
     if (!videoId) {
       return <VideoPlaceholder />;
