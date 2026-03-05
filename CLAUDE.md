@@ -1,43 +1,80 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-02-24
+**Last updated:** 2026-02-25
 
-## Last Session (2026-02-24)
+## Last Session (2026-03-05)
 
-**Production Deploy — COMPLETE (Phase 05.1 + partial Phase 6):**
+**Kinescope Player UX Fix + Infinite Re-render Bug Fix:**
 
-**VPS Infrastructure (Phase 05.1):**
-- ✅ VPS 89.208.106.208 проверен: Docker 28.2.2, Nginx 1.24.0, UFW (22/80/443), fail2ban
-- ✅ SSH password auth отключён, fail2ban whitelist настроен
-- ✅ DuckDNS + Let's Encrypt SSL: `https://academyal.duckdns.org` (cert expires 2026-05-25)
-- ✅ Nginx reverse proxy с увеличенными буферами для Supabase auth cookies
+1. **Убрана чёрная заглушка PlayPlaceholder** — `KinescopePlayer.tsx`
+   - Компонент `PlayPlaceholder` ("Нажмите для воспроизведения") удалён
+   - Плеер Kinescope загружается сразу при открытии страницы урока (без autoplay)
+   - Пользователь видит превью Kinescope напрямую, без промежуточного шага
 
-**Docker Deploy (Phase 6 partial):**
-- ✅ Dockerfile: 5-stage multi-stage build с turbo prune для Turborepo monorepo
-- ✅ docker-compose.yml: production config, порт 127.0.0.1:3000:3000
-- ✅ Контейнер собран и работает (healthy) на VPS
-- ✅ Landing page доступна по HTTPS
+2. **Исправлен бесконечный цикл ре-рендеров (React error #185)** — `learn/[id]/page.tsx`
+   - **Симптом:** через ~30 сек после открытия урока появлялась ошибка "Ошибка загрузки"
+   - **Причина:** `saveWatchProgress` от `useMutation()` — нестабильная ссылка, пересоздаётся каждый рендер. Была в deps `useEffect` и `useCallback` → cleanup вызывал `mutate()` → `invalidate getLesson` → ре-рендер → cleanup → бесконечный цикл
+   - **Фикс:** `saveWatchProgressRef` (ref-паттерн) вместо прямого использования mutation в deps
 
-**Исправления во время деплоя:**
+**Файлы:**
+- `apps/web/src/components/video/KinescopePlayer.tsx` — удалён PlayPlaceholder, autoPlay=false
+- `apps/web/src/app/(main)/learn/[id]/page.tsx` — saveWatchProgressRef для стабильности
 
-| Проблема | Файл | Фикс |
-|----------|------|------|
-| `ERR_PNPM_NO_GLOBAL_BIN_DIR` | `Dockerfile` | `ENV PNPM_HOME="/pnpm"` + PATH |
-| React Hook called conditionally | `diagnostic/session/page.tsx` | useEffect перенесён выше return |
-| OpenRouter/Supabase crash при build | `openrouter.ts`, `retrieval.ts` | Lazy-init через Proxy |
-| `/app/apps/web/public` not found | `Dockerfile` | `mkdir -p` перед build |
-| Nginx "too big header" (502) | Nginx `maal.conf` | `proxy_buffer_size 128k` |
-| Alpine localhost → IPv6 | `docker-compose.yml` | healthcheck: `127.0.0.1` вместо `localhost` |
-| OAuth redirect на 0.0.0.0:3000 | `auth/callback/route.ts` | Используем `NEXT_PUBLIC_SITE_URL` вместо `requestUrl.origin` |
-| Docker Compose не читал build args | VPS `.env` | Симлинк `.env` → `.env.production` |
+### Previous Session (2026-02-25)
 
-**Supabase URL Configuration обновлена:**
-- Site URL: `https://academyal.duckdns.org`
-- Redirect URLs: `https://academyal.duckdns.org/**`, `http://localhost:3000/**`
+**Phase 2 (AI Question Generation) — формально закрыта:**
+- Была выполнена ранее (2026-02-17), но не отмечена `[x]` в ROADMAP.md
+- Верификация: 4/4 must-haves, AIGEN-01..05 покрыты, human approved
+- Коммит: `e99a41e`
+
+**Phase 3 (Video Integration) — формально закрыта:**
+- Была выполнена ранее (2026-02-18), верификация: 10/10 must-haves, passed
+- Коммит: `4feaa9e`
+
+**Kinescope Player — CRITICAL FIX (2 проблемы):**
+
+1. **Сжатый плеер (aspect ratio):** контейнер `<div>` не имел `aspect-video` → iframe коллапсировал
+   - Фикс: добавлен `aspect-video` на обёртку в `KinescopePlayer.tsx`
+   - Коммит: `92a842f`
+
+2. **Белый экран вместо видео:** `@kinescope/react-kinescope-player` v0.5.4 сломался — Kinescope обновил `iframe.player.js`, метод `IframePlayer.create` больше не существует (есть только `createMutex` и `creatingIds`). React-компонент рендерил пустой `<span>`.
+   - Фикс: полностью заменён на прямой `<iframe src="kinescope.io/embed/{videoId}">` с postMessage API для seekTo/play
+   - Коммит: `ec6d2c2`
+   - **Файл:** `apps/web/src/components/video/KinescopePlayer.tsx`
+
+**CD pipeline удалён:**
+- `.github/workflows/cd.yml` удалён — GitHub secrets не настроены
+- Деплой через vps-ops-manager (ручной SSH + docker compose)
+- Коммит: `c37ccb2`
+
+**Деплой:** Все фиксы задеплоены на прод, плеер проверен — видео отображается корректно
 
 **Production URL:** https://academyal.duckdns.org
 
-**Prisma warning:** `libssl.so.1.1` — может потребоваться `openssl` в runner stage или обновление Prisma для OpenSSL 3.x совместимости.
+### Previous Session (2026-02-24)
+
+**Auth Registration Bug Fix + Phase 6 Complete:**
+
+**Auth bug (critical):**
+- Сотрудник (tokarev.explorer@gmail.com) не мог зарегистрироваться — "Database error saving new user"
+- **Причина:** Trigger-функция `handle_new_user` в Supabase делала INSERT в `UserProfile` без колонок `createdAt` и `updatedAt`. Prisma `@updatedAt` не создаёт DEFAULT в PostgreSQL → NOT NULL violation
+- **Фикс:** `CREATE OR REPLACE FUNCTION public.handle_new_user()` — добавлены `"createdAt"` и `"updatedAt"` с `NOW()` в INSERT
+
+**Phase 6: Production Deploy — COMPLETE (GSD workflow):**
+- ✅ Plan 06-01: Prisma OpenSSL fix, health endpoint `/api/health`, CI master branch
+- ✅ Plan 06-02: CD pipeline, full E2E verification (12/12 pages)
+
+**Пропущенные фазы (не реализованы, проект задеплоен без них):**
+- Phase 4: Access Control & Personalization — нет soft gating и персонализированного трека
+- Phase 5: Security Hardening — endpoints не защищены protectedProcedure, нет rate limiting
+
+### Previous Session (2026-02-24 earlier)
+
+**Production Deploy infrastructure:**
+- VPS 89.208.106.208: Docker 28.2.2, Nginx 1.24.0, UFW, fail2ban, SSL (DuckDNS + Let's Encrypt)
+- Dockerfile: 5-stage multi-stage build с turbo prune
+- 8 deploy-time fixes (Prisma OpenSSL, OAuth redirect, Nginx buffers, etc.)
+- Supabase URL Config: Site URL + Redirect URLs обновлены
 
 ### Previous Session (2026-02-21)
 **Kinescope Upload — COMPLETE:**
@@ -325,24 +362,39 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 
 ## Current Status Summary
 
-| Sprint | Status | Completion |
-|--------|--------|------------|
-| Sprint 0 | ✅ Complete | 100% |
-| Sprint 1 | ✅ Complete | 95% (QA pending) |
-| Sprint 2 | ✅ Complete | 95% (QA pending) |
-| Sprint 2.5 | ✅ Complete | 100% (Все фазы) |
-| Sprint 3 | ✅ Complete | 100% (RAG tested & working) |
-| Sprint 4 | ✅ Complete | 100% (Deploy + SSL + OAuth) |
-| Sprint 5 | 📋 Planned | RAG + Diagnostic Integration |
+**Production deployed:** https://academyal.duckdns.org
+
+| Sprint / Phase | Status | Completion |
+|----------------|--------|------------|
+| Sprint 0: Setup | ✅ Complete | 100% |
+| Sprint 1: Foundation + Auth | ✅ Complete | 95% (QA pending) |
+| Sprint 2: UI Shell | ✅ Complete | 95% (QA pending) |
+| Sprint 2.5: UI Redesign | ✅ Complete | 100% |
+| Sprint 3: RAG Integration | ✅ Complete | 100% |
+| Sprint 4: Deploy + Kinescope | ✅ Complete | 100% |
+| Phase 1: Data Foundation | ✅ Complete | Prisma migration done |
+| Phase 2: AI Question Gen | ✅ Complete | Verified & closed 2026-02-25 |
+| Phase 3: Video Integration | ✅ Complete | 405 videos on Kinescope |
+| Phase 4: Access Control | ⏭️ Skipped | No soft gating |
+| Phase 5: Security Hardening | ⏭️ Skipped | No rate limiting / protectedProcedure |
+| Phase 5.1: VPS Infrastructure | ✅ Complete | Docker + Nginx + SSL |
+| Phase 6: Production Deploy | ✅ Complete | CI/CD + health check + E2E verified |
+
+**Skipped phases (technical debt):**
+- **Phase 4** — нет soft gating (видео доступны без диагностики), нет персонализированного трека
+- **Phase 5** — endpoints не защищены, нет rate limiting, нет sanitization AI output
+
+**Kinescope integration notes:**
+- `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
+- Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
+- seekTo через postMessage API к iframe
 
 **Next Steps:**
-1. ✅ ~~Google OAuth callback error~~ — ИСПРАВЛЕНО (2026-01-14)
-2. ✅ ~~Kinescope: загрузить все видео~~ — 405/405 COMPLETE (2026-02-20)
-3. ✅ ~~Deploy на VPS~~ — COMPLETE (2026-02-24), https://academyal.duckdns.org
-4. Проверить Prisma libssl warning (DB-роуты в production)
-5. Sprint 5: Фаза A — синхронизация курсов с RAG
-6. Sprint 5: Фаза B — мягкое ограничение доступа
-7. Sprint 5: Фаза C — AI генерация вопросов
+1. ✅ ~~Auth registration bug~~ — ИСПРАВЛЕНО (2026-02-24), trigger `handle_new_user` обновлён
+2. Подтвердить что сотрудник смог зарегистрироваться
+3. Phase 2: AI Question Generation (когда понадобится)
+4. Phase 4: Access Control (когда понадобится)
+5. Phase 5: Security Hardening (перед публичным запуском)
 
 ## Key Decisions
 

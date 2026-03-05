@@ -83,6 +83,11 @@ export default function LessonPage() {
     },
   });
 
+  // Stable ref for mutation to avoid re-render loops
+  // (useMutation returns unstable refs — putting them in useEffect/useCallback deps causes infinite loops)
+  const saveWatchProgressRef = useRef(saveWatchProgress);
+  saveWatchProgressRef.current = saveWatchProgress;
+
   // Throttled save handler (every 15 seconds) — stores in refs, no re-renders.
   // onTimeUpdate fires every ~1s from the timer; we only save periodically.
   const handleTimeUpdate = useCallback((currentTime: number, duration: number) => {
@@ -95,14 +100,14 @@ export default function LessonPage() {
     saveTimeoutRef.current = setTimeout(() => {
       saveTimeoutRef.current = null;
       if (lastPositionRef.current >= 5) {
-        saveWatchProgress.mutate({
+        saveWatchProgressRef.current.mutate({
           lessonId,
           position: lastPositionRef.current,
           duration: lastDurationRef.current,
         });
       }
     }, 15_000);
-  }, [lessonId, saveWatchProgress]);
+  }, [lessonId]);
 
   // Save on page unload (final position capture)
   useEffect(() => {
@@ -122,7 +127,7 @@ export default function LessonPage() {
           );
         } catch {
           // Best effort — mutation might not complete during unload
-          saveWatchProgress.mutate({
+          saveWatchProgressRef.current.mutate({
             lessonId,
             position: lastPositionRef.current,
             duration: lastDurationRef.current,
@@ -139,14 +144,14 @@ export default function LessonPage() {
         clearTimeout(saveTimeoutRef.current);
       }
       if (lastPositionRef.current >= 5 && lastDurationRef.current > 0) {
-        saveWatchProgress.mutate({
+        saveWatchProgressRef.current.mutate({
           lessonId,
           position: lastPositionRef.current,
           duration: lastDurationRef.current,
         });
       }
     };
-  }, [lessonId, saveWatchProgress]);
+  }, [lessonId]);
 
   // Chat mutation
   const chatMutation = trpc.ai.chat.useMutation({

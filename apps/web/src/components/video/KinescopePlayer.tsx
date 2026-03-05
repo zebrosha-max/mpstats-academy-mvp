@@ -6,7 +6,6 @@ import {
   useRef,
   useEffect,
   useState,
-  useCallback,
 } from 'react';
 import { VideoPlaceholder } from './VideoPlaceholder';
 
@@ -87,37 +86,6 @@ function loadKinescopeApi(): Promise<KinescopeIframePlayerFactory> {
   return waitForReady();
 }
 
-/** Click-to-play placeholder shown before video activation */
-function PlayPlaceholder({ onClick }: { onClick: () => void }) {
-  return (
-    <div
-      className="aspect-video bg-gradient-to-br from-mp-gray-800 to-mp-gray-900 rounded-xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
-      onClick={onClick}
-      role="button"
-      aria-label="Play video"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-    >
-      {/* Camera icon background */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-10">
-        <svg className="w-32 h-32 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-      </div>
-      {/* Play button */}
-      <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-200 group-hover:scale-110 group-hover:bg-white/30 z-10">
-        <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </div>
-      {/* Label */}
-      <span className="absolute bottom-4 text-sm text-mp-gray-400 z-10">
-        Нажмите для воспроизведения
-      </span>
-    </div>
-  );
-}
-
 let playerCounter = 0;
 
 export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
@@ -126,17 +94,12 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
     const pendingSeekRef = useRef<number | null>(null);
     const currentTimeRef = useRef<number | null>(null);
     const onTimeUpdateRef = useRef(onTimeUpdate);
-    const [activated, setActivated] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [resumeNotice, setResumeNotice] = useState<string | null>(null);
     const stableId = useRef(`__kinescope_player_${++playerCounter}`);
 
     // Keep callback ref up-to-date without causing re-renders
     onTimeUpdateRef.current = onTimeUpdate;
-
-    const activate = useCallback(() => {
-      setActivated(true);
-    }, []);
 
     useImperativeHandle(ref, () => ({
       seekTo: (seconds: number) => {
@@ -145,14 +108,13 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
         } else {
           // Store pending seek and activate the player so iframe loads
           pendingSeekRef.current = seconds;
-          setActivated(true);
         }
       },
       getCurrentTime: () => currentTimeRef.current,
     }), []);
 
     useEffect(() => {
-      if (!videoId || !activated) return;
+      if (!videoId) return;
 
       let destroyed = false;
       let player: KinescopePlayerInstance | null = null;
@@ -204,7 +166,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           return factory.create(stableId.current, {
             url: `https://kinescope.io/embed/${videoId}`,
             size: { width: '100%', height: '100%' },
-            behavior: { autoPlay: true },
+            behavior: { autoPlay: false },
           });
         })
         .then((pl) => {
@@ -298,7 +260,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           playerRef.current = null;
         }
       };
-    }, [videoId, activated, initialTime, durationSeconds]);
+    }, [videoId, initialTime, durationSeconds]);
 
     if (!videoId) {
       return <VideoPlaceholder />;
@@ -310,10 +272,6 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           <p className="text-body-sm text-mp-gray-500">{error}</p>
         </div>
       );
-    }
-
-    if (!activated) {
-      return <PlayPlaceholder onClick={activate} />;
     }
 
     return (
