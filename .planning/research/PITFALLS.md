@@ -1,276 +1,502 @@
-# Pitfalls Research
+# Domain Pitfalls: Auth Rework + Billing (v1.2)
 
-**Domain:** Educational platform MVP — mock-to-real migration, video integration, AI question generation, VPS deployment
-**Researched:** 2026-02-16
-**Confidence:** MEDIUM (based on codebase analysis + training data; WebSearch/Context7 unavailable for verification)
+**Domain:** OAuth provider migration, CloudPayments billing, paywall for educational platform
+**Researched:** 2026-03-06
+**Confidence:** MEDIUM (CloudPayments docs verified via WebSearch; Supabase custom OAuth limitations confirmed via GitHub discussions)
 
 ## Critical Pitfalls
 
-### Pitfall 1: Mock Data Shape Diverges from Prisma Schema
+### Pitfall 1: Supabase Auth Does Not Support Yandex ID as Built-in Provider
 
 **What goes wrong:**
-Mock data types in `packages/api/src/mocks/courses.ts` and `packages/shared/src/index.ts` define shapes (`Course`, `Lesson`, `CourseWithProgress`) that do not match the actual Prisma schema. When switching to `ctx.prisma.lesson.findMany()`, the return types differ: Prisma returns objects with relations defined in `schema.prisma`, while mocks use flat objects with computed fields like `progressPercent`, `completedLessons`, `status`.
+Supabase Auth has a fixed list of OAuth providers (Google, GitHub, Apple, Facebook, etc.). Yandex ID is NOT in that list. Attempting to call `signInWithOAuth({ provider: 'yandex' })` will fail. The `signInWithIdToken()` method also rejects custom OIDC providers with error "Custom OIDC provider not allowed".
 
-Concrete example: `MOCK_COURSES` has 5 courses (01_analytics through 05_finance), but the actual Supabase `content_chunk` table has 6 courses (including 03_ai, 05_ozon, 06_express). The mock `skillCategory` mapping (`02_marketing` -> MARKETING) does not cover the real data (03_ai has no matching SkillCategory enum).
+The current codebase (`apps/web/src/lib/auth/actions.ts`) calls `supabase.auth.signInWithOAuth({ provider: 'google' })` directly. Simply swapping `'google'` to `'yandex'` will not work.
 
 **Why it happens:**
-During UI-first development, mock shapes were designed for frontend convenience, not database fidelity. The Prisma schema was written later and evolved independently.
+Supabase Auth server (GoTrue) has hardcoded provider configurations. Generic OIDC support is "in progress" (auth server work done, dashboard integration pending) but not available on hosted Supabase as of March 2026.
 
-**How to avoid:**
-1. Before touching router code, run `pnpm db:generate` and compare Prisma types against `@mpstats/shared` types
-2. Create a mapping layer (e.g., `toDTO()` functions) that transforms Prisma models into the shape the frontend expects
-3. Add the missing courses (03_ai, 05_ozon, 06_express) to the Course/Lesson seed data, or update SkillCategory enum to include them
-4. Write a single integration test that calls each tRPC endpoint with real Prisma and asserts the response shape matches `@mpstats/shared` types
+**Consequences:**
+- Cannot use Supabase's built-in OAuth flow for Yandex ID
+- Must implement a custom server-side OAuth flow that manually exchanges tokens and creates/links Supabase sessions
+- Or use an intermediary like Keycloak (overkill for this project)
 
-**Warning signs:**
-- TypeScript errors when replacing `MOCK_COURSES` with `prisma.course.findMany()`
-- Frontend crashes on undefined properties (`lesson.status` exists on mock, but is computed from `LessonProgress` in Prisma)
-- `CourseWithProgress` expects `progressPercent` which is not a DB column
+**Prevention:**
+1. Implement Yandex ID OAuth manually on server side:
+   - Create `/api/auth/yandex` route that redirects to `https://oauth.yandex.ru/authorize`
+   - Create `/api/auth/yandex/callback` that exchanges code for Yandex token
+   - Use Yandex token to get user profile from `https://login.yandex.ru/info`
+   - Call `supabase.auth.admin.createUser()` or `supabase.auth.admin.updateUserById()` with Supabase Admin API to create/link the user
+   - Generate Supabase session via `supabase.auth.admin.generateLink()` or set custom claims
+2. Alternative: Auth.js (NextAuth.js) has a built-in Yandex provider. Could use Auth.js for the OAuth flow and Supabase only for database/RLS. But this means rewriting the entire auth layer.
+3. **Recommended approach:** Manual server-side OAuth with Supabase Admin API. Keep email/password auth via Supabase as-is. Add Yandex as a "manual" provider.
+
+**Detection:**
+- `signInWithOAuth({ provider: 'yandex' })` throws immediately
+- Build-time: no TypeScript error because provider is a string union that includes arbitrary strings in some SDK versions
 
 **Phase to address:**
-Phase 1 (Mock-to-DB migration) -- must be the first task before any other real data work.
+Phase 1 (Auth Rework) -- design the auth architecture BEFORE writing code. This is an architectural decision, not a simple provider swap.
+
+**Confidence:** HIGH (verified via Supabase GitHub discussions #417, #6547, and official docs)
 
 ---
 
-### Pitfall 2: In-Memory State Not Migrated Atomically
+### Pitfall 2: Existing Google OAuth Users Lose Access After Provider Swap
 
 **What goes wrong:**
-Three routers maintain separate in-memory state using `globalThis`:
-- `diagnostic.ts`: `mockSessions`, `completedSessions`, `latestSkillProfiles` (Map objects)
-- `learning.ts`: `mockProgress` (Map)
-- `ai.ts`: `summaryCache` (Map, 24h TTL)
-
-Partial migration (e.g., migrating diagnostic to Prisma but leaving learning on mock) creates data integrity issues. The `diagnostic.ts` router calls `getRecommendedLessonsFromGaps()` which references `MOCK_LESSONS` to build recommended lesson IDs. If learning is migrated to real DB but diagnostic still returns mock lesson IDs, the `recommendedPath` will point to non-existent records.
+Current users authenticated via Google OAuth have `auth.users.raw_app_meta_data.provider = 'google'`. Their `UserProfile.id` matches the Supabase `auth.users.id` (UUID). If Google OAuth is disabled and only Yandex ID is enabled:
+- Existing users cannot log in anymore (no Google button, no Yandex account linked)
+- User data (diagnostic sessions, learning progress, watch history) is orphaned
+- The Supabase trigger `handle_new_user` may create duplicate UserProfile rows if the same person registers with Yandex using a different email
 
 **Why it happens:**
-Each router looks independently migratable, but they share data through mock imports (`MOCK_LESSONS`, `MOCK_SKILL_PROFILE`) and through `globalThis` cross-references (`getLatestSkillProfile` is exported from diagnostic and imported by profile router).
+OAuth providers use different user identifiers. Google returns a Google-specific sub claim. Yandex returns a Yandex-specific UID. Even if the email is the same, Supabase treats these as separate identities unless explicitly linked.
 
-**How to avoid:**
-1. Map all cross-router dependencies before starting:
-   - `diagnostic.ts` imports from `mocks/questions.ts`, `mocks/dashboard.ts`, `mocks/courses.ts`
-   - `profile.ts` imports `getLatestSkillProfile` and `getCompletedSessions` from `diagnostic.ts`
-   - `learning.ts` imports from `mocks/courses.ts`
-2. Migrate in dependency order: Courses/Lessons seed first, then Diagnostic, then Learning Progress, then Profile
-3. Keep mock fallback code until all routers are migrated, guarded by a feature flag or env var `USE_REAL_DB=true`
+**Consequences:**
+- Data loss for existing users (progress, diagnostics, skill profiles)
+- Duplicate accounts for the same person
+- Admin panel shows ghost users
 
-**Warning signs:**
-- Profile page shows stale/empty skill profile after diagnostic migration
-- "Recommended path" links go to 404 lessons
-- `getLatestSkillProfile()` returns null for users who completed diagnostics via the new DB flow
+**Prevention:**
+1. **Keep Google OAuth active** during transition period (weeks/months). Add Yandex ID as an additional auth method, don't replace.
+2. **Implement account linking:** When a user logs in with Yandex ID and an account with the same email already exists (from Google), link the identities:
+   - Look up existing user by email in `auth.users`
+   - Use `supabase.auth.admin.updateUserById()` to add Yandex identity to the existing user
+   - Do NOT create a new user
+3. **Email as the canonical identifier:** Match users by verified email, not by provider UID
+4. **Migration script:** For existing Google-only users, send an email asking them to also link their Yandex account (or set a password for email/password fallback)
+5. **Never disable Google OAuth silently.** Show UI prompt: "We're switching to Yandex ID. Please link your account."
+
+**Detection:**
+- `UserProfile` count increases without corresponding new real users
+- Users report "my progress is gone"
+- Admin panel shows users with 0 lessons completed who previously had progress
 
 **Phase to address:**
-Phase 1 (Mock-to-DB migration) -- plan the migration order explicitly, do not parallelize.
+Phase 1 (Auth Rework) -- account linking logic must be designed first. The transition must be gradual, not a hard cutover.
+
+**Confidence:** HIGH (standard OAuth migration pattern, verified against Supabase auth.users schema)
 
 ---
 
-### Pitfall 3: AI Endpoints Left as publicProcedure in Production
+### Pitfall 3: CloudPayments Webhook Without HMAC Verification
 
 **What goes wrong:**
-All three AI router endpoints (`getLessonSummary`, `chat`, `searchChunks`) are currently `publicProcedure` with TODO comments: "Switch back to protectedProcedure after fixing Supabase SSR cookies". This was a dev workaround. If deployed as-is:
-- Any unauthenticated user can call the AI endpoints
-- OpenRouter API costs are unbounded (no user-level rate limiting)
-- `searchChunks` debug endpoint exposes raw vector search to the internet
+CloudPayments sends webhook notifications (Check, Pay, Fail, Recurrent, Cancel, Refund) to your endpoint. Each request includes `X-Content-HMAC` and `Content-HMAC` headers calculated using HMAC-SHA256 with your API secret. If you don't verify these signatures:
+- An attacker can forge webhook calls to your endpoint
+- They can mark any user's subscription as "paid" without actual payment
+- They can trigger fake refund/cancel events to lock users out of content
+
+CloudPayments sends notifications from specific IPs (130.193.70.192, 185.98.85.109, 91.142.84.0/27, 87.251.91.160/27, 185.98.81.0/28), but IP filtering alone is insufficient (can be spoofed from within those ranges or if CloudPayments adds new IPs).
 
 **Why it happens:**
-SSR cookie handling with Supabase Auth in tRPC context is tricky. The workaround was applied during Sprint 3 testing and never reverted.
+Webhook endpoints are public URLs. Developers often skip signature verification during development ("it works, I'll add security later") and forget to add it before production.
 
-**How to avoid:**
-1. Fix Supabase SSR cookie propagation in the tRPC context creation (`packages/api/src/trpc.ts` + `apps/web/src/app/api/trpc/[trpc]/route.ts`)
-2. Switch all AI endpoints back to `protectedProcedure` before deployment
-3. Remove or protect the `searchChunks` endpoint (admin-only or delete it)
-4. Add rate limiting middleware to `protectedProcedure` for AI endpoints (the PRD specifies 20 msg/hour per user, 50 LLM req/hour)
+**Consequences:**
+- Unauthorized access to paid content
+- Revenue loss
+- Subscription state corruption
 
-**Warning signs:**
-- `grep -r "publicProcedure" packages/api/src/routers/ai.ts` returns matches
-- OpenRouter bill spikes without corresponding authenticated user activity
-- Bot traffic hitting `/api/trpc/ai.chat`
+**Prevention:**
+1. **Always verify HMAC signature** on every webhook request:
+   ```typescript
+   import crypto from 'crypto';
+
+   function verifyCloudPaymentsWebhook(body: string, hmacHeader: string, apiSecret: string): boolean {
+     const calculated = crypto.createHmac('sha256', apiSecret).update(body).digest('base64');
+     return crypto.timingSafeEqual(Buffer.from(calculated), Buffer.from(hmacHeader));
+   }
+   ```
+2. Use `crypto.timingSafeEqual` (not `===`) to prevent timing attacks
+3. Return HTTP 200 with `{ "code": 0 }` only after verification passes
+4. Log failed verification attempts for monitoring
+5. **IP allowlist as defense-in-depth** (not sole protection): configure Nginx to restrict webhook endpoint to CloudPayments IPs
+
+**Detection:**
+- Webhook endpoint accessible without any auth headers
+- Subscriptions appearing for users who never paid
+- No failed webhook verification logs
 
 **Phase to address:**
-Phase 3 (Pre-deployment hardening) -- must be resolved before VPS deploy.
+Phase 2 (Billing) -- implement HMAC verification as the FIRST step of webhook handler, before any business logic.
+
+**Confidence:** HIGH (CloudPayments official docs confirm HMAC headers on all notifications)
 
 ---
 
-### Pitfall 4: Next.js Standalone Build Missing for PM2 Deployment
+### Pitfall 4: Non-Idempotent Webhook Handlers Cause Double-Charging or Double-Access
 
 **What goes wrong:**
-The project has no `output: 'standalone'` in `next.config.js`. Without this, `next build` produces a build that requires the full `node_modules` on the server. PM2 then needs to run `next start` which expects the complete monorepo structure. On VPS, this means copying the entire monorepo (including dev dependencies, all packages) rather than a slim deployable bundle.
+CloudPayments retries webhook delivery up to 100 times with increasing intervals if it doesn't receive `{ "code": 0 }` response. Common failures:
+1. Your server returns 500 (temporary error) -- CloudPayments retries, your handler processes the same payment twice, creating duplicate subscription records
+2. Your handler succeeds but returns non-zero code due to a bug in the response format -- CloudPayments retries, user gets charged again on retry
+3. Network timeout -- your handler completed the operation but response didn't reach CloudPayments, so it retries
 
-Additionally, `turbo.json` defines `build` tasks for the monorepo, but there is no explicit build pipeline for production that handles:
-- Environment variable injection at build time vs runtime
-- Prisma client generation on the target architecture (Linux vs Windows)
-- The `packages/ai/` package which directly calls `process.env.OPENROUTER_API_KEY` at import time
+Without idempotency, each retry creates a new subscription record, extends access period, or charges the user again.
 
 **Why it happens:**
-Development happens on Windows, deployment targets Ubuntu Linux. Prisma generates platform-specific binaries. The monorepo structure adds complexity to deployment that does not surface during local development.
+Webhook handlers are often written as "receive event -> do work -> return success" without checking if the event was already processed.
 
-**How to avoid:**
-1. Add `output: 'standalone'` to `next.config.js` -- this bundles the app into a self-contained `.next/standalone/` directory
-2. Configure Prisma `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]` (or the correct Linux target for Ubuntu 24.04)
-3. Create a deployment script that: builds on CI or server, copies `.next/standalone/`, `.next/static/`, and `public/` to the deploy directory
-4. Use PM2 ecosystem file (`ecosystem.config.js`) pointing to `standalone/server.js`, not `next start`
-5. Set all env vars in PM2 ecosystem config or `/etc/environment`, not in `.env` files
+**Consequences:**
+- Duplicate subscription records in database
+- Users charged multiple times for the same period
+- Inconsistent subscription state (two active subscriptions for the same user+course)
 
-**Warning signs:**
-- `next build` succeeds locally but fails on VPS with Prisma binary errors
-- PM2 process crashes with "Cannot find module" errors
-- Server starts but static assets return 404
+**Prevention:**
+1. **Store processed transaction IDs:** Create a `WebhookEvent` table:
+   ```sql
+   CREATE TABLE webhook_event (
+     id TEXT PRIMARY KEY,           -- CloudPayments TransactionId
+     event_type TEXT NOT NULL,      -- 'pay', 'fail', 'recurrent', 'cancel'
+     processed_at TIMESTAMPTZ DEFAULT NOW(),
+     payload JSONB
+   );
+   ```
+2. **Check before processing:** At handler start, `SELECT id FROM webhook_event WHERE id = $transactionId`. If exists, return `{ "code": 0 }` immediately without re-processing.
+3. **Use CloudPayments `X-Request-ID` header** (or `TransactionId` from payload) as the idempotency key
+4. **Wrap handler in a database transaction** with a unique constraint on the event ID -- the DB prevents duplicates even under concurrent retries
+5. **Return `{ "code": 0 }` AFTER committing** to DB, not before
+
+**Detection:**
+- Multiple `Subscription` records for the same user+plan with overlapping dates
+- CloudPayments dashboard shows 100 delivery attempts for a single webhook
+- Users complain about double charges
 
 **Phase to address:**
-Phase 4 (VPS deployment) -- configure before first deploy attempt.
+Phase 2 (Billing) -- idempotency must be built into the webhook handler from day one, not retrofitted.
+
+**Confidence:** HIGH (CloudPayments docs confirm 100 retries; idempotency is standard webhook practice)
 
 ---
 
-### Pitfall 5: AI Question Generation Without Quality Guardrails
+### Pitfall 5: Subscription State Inconsistency (Race Conditions)
 
 **What goes wrong:**
-Sprint 5 Phase C plans to generate diagnostic questions from RAG chunks via LLM. Common failures:
-1. **Hallucinated answer options** -- LLM generates plausible-sounding but incorrect options that are not grounded in the chunk content
-2. **Inconsistent difficulty** -- questions labeled HARD are actually EASY, breaking the IRT-lite adaptive difficulty
-3. **Duplicate or near-duplicate questions** -- same chunk generates semantically identical questions across sessions
-4. **Format violations** -- LLM returns malformed JSON, missing `correctIndex`, or fewer than 4 options
+Multiple events can arrive nearly simultaneously for the same subscription:
+1. User opens lesson page (checks subscription status)
+2. CloudPayments sends `Fail` webhook (payment failed)
+3. CloudPayments retries and sends `Pay` webhook (payment succeeded on retry)
+4. User navigates to another lesson (checks subscription status again)
 
-The current mock system in `mocks/questions.ts` uses hardcoded questions with guaranteed structure. Replacing this with LLM generation introduces non-determinism into a critical user-facing flow (diagnostic results directly determine the learning path).
+If the Fail webhook is processed after the Pay webhook (out of order), the subscription is incorrectly marked as inactive. The user loses access to content they paid for.
+
+Another scenario: User cancels subscription via `my.cloudpayments.ru/unsubscribe`. The Cancel webhook arrives. But a pre-scheduled Recurrent charge was already in flight. The Pay webhook for the last charge arrives after Cancel. User's subscription is reactivated when it should be cancelled.
 
 **Why it happens:**
-LLM outputs are probabilistic. Without structured output enforcement, validation, and caching, every generation call can produce different quality results.
+Webhooks are delivered asynchronously and can arrive out of order. CloudPayments does not guarantee event ordering. HTTP is not a reliable message queue.
 
-**How to avoid:**
-1. Use structured output (JSON mode) with a strict Zod schema for question format validation
-2. Generate a question bank offline (batch process) and cache in DB, not on-the-fly during diagnostic sessions
-3. Implement a validation pipeline: schema check -> answer verification against chunk -> difficulty heuristic -> deduplication
-4. Keep mock questions as fallback (Sprint 5 plan RA-5.11 already specifies this -- actually implement it)
-5. Set temperature to 0.2-0.3 for question generation (lower than chat)
-6. Include the correct answer explicitly in the prompt context and validate that `correctIndex` points to it
+**Consequences:**
+- Users lose access to paid content (false negative)
+- Cancelled users retain access (false positive, revenue leakage)
+- Support tickets about "I paid but can't access"
 
-**Warning signs:**
-- Diagnostic results vary wildly between sessions on the same content
-- Users report "none of these answers are correct"
-- `submitAnswer` returns `isCorrect: false` for questions where the user's answer matches the chunk content
-- Generation latency exceeds 5s (p95 target from PRD), making diagnostic start feel slow
+**Prevention:**
+1. **Use timestamps, not event order:** Each webhook contains a payment date/time. Compare with the last known state timestamp:
+   ```typescript
+   if (event.createdAt <= subscription.lastEventAt) {
+     // This is an older event, ignore it
+     return { code: 0 };
+   }
+   ```
+2. **State machine for subscriptions:** Define valid transitions:
+   - `ACTIVE` -> `PAST_DUE` (fail) -> `ACTIVE` (successful retry) or `CANCELLED` (max retries exceeded)
+   - `ACTIVE` -> `CANCELLED` (user cancel) -- no going back to ACTIVE from CANCELLED without new payment
+   - `PAST_DUE` -> `ACTIVE` (successful retry)
+3. **Pessimistic locking:** When processing a webhook, lock the subscription row with `SELECT ... FOR UPDATE` to prevent concurrent modifications
+4. **Grace period for failed payments:** Don't revoke access immediately on first Fail. CloudPayments retries daily. Give 3-5 days grace period before downgrading.
+
+**Detection:**
+- Subscription status flips between active/inactive rapidly
+- Webhook processing logs show out-of-order events
+- Users report intermittent access loss
 
 **Phase to address:**
-Phase 2 (AI question generation) -- design validation pipeline before writing generation code.
+Phase 2 (Billing) -- design the state machine before implementing webhook handlers.
+
+**Confidence:** MEDIUM (based on general payment system patterns; CloudPayments-specific retry behavior confirmed via docs)
 
 ---
 
-### Pitfall 6: Supabase Service Role Key Exposed in Client Bundle
+### Pitfall 6: Content Access Check Not Separated from Subscription State
 
 **What goes wrong:**
-`packages/ai/src/retrieval.ts` uses `SUPABASE_SERVICE_ROLE_KEY` to initialize a Supabase client that bypasses RLS. This code is imported by `packages/api/src/routers/ai.ts` which runs in the tRPC API handler (server-side). However, if any import path accidentally pulls this into client-side code (e.g., via barrel exports or tree-shaking failure in Turborepo), the service role key leaks to the browser.
+Developers often check subscription status directly in the lesson page component or tRPC router:
+```typescript
+// BAD: Checking subscription inline
+const subscription = await getSubscription(userId);
+if (!subscription || subscription.status !== 'ACTIVE') {
+  throw new TRPCError({ code: 'FORBIDDEN' });
+}
+```
 
-Additionally, the `OPENROUTER_API_KEY` is used directly in `packages/ai/src/openrouter.ts`. If these packages are ever imported from a client component (even transitively), the keys are exposed.
+This creates problems:
+1. **No caching:** Every page load hits the DB to check subscription status
+2. **No grace period logic:** Binary active/inactive, no room for "past due but still has access"
+3. **Scattered access control:** Paywall logic duplicated across lesson page, video endpoint, AI chat, summary endpoint
+4. **Testing nightmare:** Can't test content access without a real subscription
 
 **Why it happens:**
-Turborepo monorepos make it easy to import across package boundaries. Next.js server/client boundary is enforced by convention (the `'use server'` directive), not by the build system. A single missing `'use server'` or a shared barrel export can leak server-only code.
+It's the simplest implementation -- check and block. But access control is a cross-cutting concern that needs centralization.
 
-**How to avoid:**
-1. Add `import 'server-only'` at the top of `packages/ai/src/index.ts` (or each server-only file) -- Next.js will throw a build error if any client component imports it
-2. Verify env vars: `SUPABASE_SERVICE_ROLE_KEY` and `OPENROUTER_API_KEY` must NOT have `NEXT_PUBLIC_` prefix
-3. After building, search the `.next/` output for the key values: `grep -r "SUPABASE_SERVICE_ROLE" .next/static/` should return nothing
-4. Configure `next.config.js` `serverExternalPackages` to include `@mpstats/ai` if needed
+**Consequences:**
+- Inconsistent paywall behavior (some endpoints check, others don't)
+- Performance degradation (N+1 subscription queries)
+- Difficult to change paywall rules (e.g., "first 2 lessons free" requires touching every endpoint)
+- A/B testing billing plans becomes impossible
 
-**Warning signs:**
-- Browser Network tab shows API keys in request headers
-- Build warning about importing server-only module in client component
-- `SUPABASE_SERVICE_ROLE_KEY` appears in `.next/static/chunks/`
+**Prevention:**
+1. **Create a centralized access service:**
+   ```typescript
+   // packages/api/src/services/access.ts
+   export async function canAccessLesson(userId: string, lessonId: string): Promise<{
+     allowed: boolean;
+     reason: 'free_content' | 'active_subscription' | 'grace_period' | 'no_subscription' | 'trial';
+   }> { ... }
+   ```
+2. **Create a tRPC middleware** that injects access level into context:
+   ```typescript
+   export const paidProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+     const access = await checkAccess(ctx.user.id);
+     return next({ ctx: { ...ctx, access } });
+   });
+   ```
+3. **Define free content explicitly:** Diagnostic is free. First 1-2 lessons per course are free. Everything else requires subscription.
+4. **Cache subscription status** in context per-request (not per-endpoint). One DB query per request, not per endpoint call.
+5. **Feature flag for billing toggle:** `BILLING_ENABLED=false` bypasses all access checks (for testing/staging).
+
+**Detection:**
+- Multiple `getSubscription()` calls in a single page load (check tRPC batch queries)
+- Some lessons accessible without subscription while others are blocked (inconsistency)
+- No way to toggle billing off for testing
 
 **Phase to address:**
-Phase 3 (Pre-deployment hardening) -- add `server-only` import before deploying.
+Phase 3 (Paywall) -- design the access service BEFORE implementing paywall UI.
 
-## Technical Debt Patterns
+**Confidence:** HIGH (architectural pattern, confirmed by codebase analysis showing no existing access control layer)
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| `globalThis` mock storage | Fast prototyping, persists across hot reloads | Data loss on restart, no multi-process support, blocks PM2 cluster mode | Sprint 0-2 only; must migrate before production |
-| `publicProcedure` on AI routes | Skip SSR cookie debugging | Unbounded API costs, security hole | Never in production |
-| `dangerouslySetInnerHTML` for markdown | Quick rendering of AI-generated markdown | XSS vulnerability if AI output contains `<script>` tags | Only if sanitized with DOMPurify or similar; current code does NOT sanitize |
-| Hardcoded mock lesson IDs in progress | No DB dependency for progress display | Impossible to show real progress for 80+ lessons | Sprint 0-2 only |
-| In-memory summary cache (ai.ts) | No DB table needed | Lost on restart, no cross-process sharing, no persistence | MVP only; migrate to `SummaryCache` Prisma model before production |
+---
 
-## Integration Gotchas
+## Moderate Pitfalls
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| Kinescope iframe | Using `lesson.videoId = 'demo1'` placeholder IDs that return Kinescope 404 page silently (no error, just blank) | Validate videoIds before deployment; add `onError` handler via Kinescope JS SDK postMessage API; show explicit "video not found" state |
-| Supabase RPC `match_chunks` | Calling with `filter_lesson_prefix = null` returns ALL chunks across ALL lessons, causing slow queries and high token usage | Always pass lesson prefix when in lesson context; add a reasonable `match_count` limit (current default 5 is correct) |
-| OpenRouter API | No retry/fallback logic when primary model (gemini-2.5-flash) is unavailable or rate-limited | Implement fallback chain: primary model -> fallback model -> cached response -> graceful error message. `openrouter.ts` defines `MODELS.fallback` but `generation.ts` never uses it |
-| Prisma + Supabase | Running `db:push` on Supabase with `Unsupported("vector(1536)")` type can fail because Prisma does not natively manage pgvector columns | The `content_chunk` table already exists with data; use `db:push --accept-data-loss` cautiously or manage vector columns via raw SQL migrations only |
-| PM2 + Next.js | Running `pm2 start "next start"` which spawns a shell subprocess that PM2 cannot properly signal | Use `pm2 start .next/standalone/server.js` directly; or use ecosystem config with `interpreter: 'node'` and `script: 'node_modules/.bin/next'` |
+### Pitfall 7: CloudPayments Check Webhook Misunderstood
 
-## Performance Traps
+**What goes wrong:**
+CloudPayments sends a "Check" notification BEFORE processing a payment to verify the order is valid. The expected response is `{ "code": 0 }` to approve or `{ "code": 10-13 }` to reject. Developers often:
+1. Skip implementing the Check handler entirely (CloudPayments still processes payments, but you lose fraud prevention)
+2. Always return `{ "code": 0 }` without validating the user/amount/order
+3. Confuse Check with Pay and start granting access in the Check handler
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Loading all chunks for lesson summary | `generateLessonSummary` calls `getChunksForLesson()` which fetches ALL chunks. Some lessons may have 100+ chunks (a 60-min video = ~60-120 chunks). Sending all to LLM exceeds context window and costs a lot | Limit to first 20-30 chunks for summary, or use summarize-then-combine approach. Check `token_count` column to stay under model context limit | Lessons with >50 chunks (long videos) |
-| No pagination on learning path endpoint | `getPath` returns ALL lessons for ALL courses in one query. With 80+ lessons, this is fine. But adding progress relations makes it N+1 | Add cursor pagination or load by course. For 80 lessons this is acceptable; flag for 500+ | >200 lessons |
-| Chat history grows unbounded | `history.slice(-10)` in generation.ts is good, but the frontend `chatMessages` state accumulates indefinitely within the session | Add max history display limit in frontend; consider persisting to `ChatMessage` Prisma model to enable history recovery | Long chat sessions (>30 messages) |
-| Embedding API called per chat message | Each `chat` call triggers `embedQuery()` which calls OpenAI embeddings API. No client-side debouncing or server-side deduplication | Add input debouncing (300ms) on chat input; consider caching embeddings for repeated/similar queries | High chat volume (>20 msg/hour per user) |
+**Prevention:**
+1. In the Check handler, validate: user exists, amount matches expected price, currency is RUB, subscription plan is valid
+2. Do NOT grant access or create subscription records in Check -- only in Pay
+3. Return error codes for invalid requests:
+   - `{ "code": 10 }` -- declined (invalid data)
+   - `{ "code": 11 }` -- declined (currency mismatch)
+   - `{ "code": 13 }` -- declined (amount mismatch)
 
-## Security Mistakes
+**Phase to address:** Phase 2 (Billing)
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| `dangerouslySetInnerHTML` on AI-generated content without sanitization | XSS: if AI response contains `<img onerror=...>` or `<script>`, it executes in user's browser. Current `formatContent()` in lesson page uses regex-based markdown-to-HTML which does NOT strip malicious tags | Use DOMPurify or `sanitize-html` before rendering. Or use a proper markdown renderer (react-markdown) instead of regex + dangerouslySetInnerHTML |
-| Service Role key in `retrieval.ts` bypasses ALL Supabase RLS | If `retrieval.ts` is ever misused or the service role key leaks, attacker has full DB access (read/write/delete all tables) | Use anon key + RLS policies for read operations where possible. Reserve service role for admin operations only. Consider creating a Supabase database function with SECURITY DEFINER that only exposes `match_chunks` |
-| No rate limiting on tRPC endpoints | DDoS, API cost explosion, Supabase connection pool exhaustion | Implement per-user rate limiting in tRPC middleware. PRD specifies limits (100 req/min general, 50 LLM/hour, 20 chat/hour). Use `@upstash/ratelimit` or in-memory token bucket |
-| `correctIndex` sent to client then hidden with `-1` | Security by obscurity: `correctIndex: -1` in `getSessionState`. The real answers live in server memory, but if someone modifies the mock to leak, all answers are exposed | When migrating to DB, never include `correctIndex` in the select query for session state. Only resolve it server-side in `submitAnswer` |
+---
 
-## UX Pitfalls
+### Pitfall 8: Hardcoded Prices in Frontend Without Server Validation
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Kinescope iframe shows blank box when videoId is invalid | User sees empty black rectangle with no explanation, thinks the page is broken | Check if `lesson.videoId` starts with 'demo' (placeholder). If so, show "Video coming soon" card instead of iframe. Add Kinescope postMessage error listener |
-| AI summary takes 5-15s to generate on first load | User sees spinner for a long time, may navigate away | Pregenerate summaries during content ingestion (batch job). Cache in `SummaryCache` DB table. Show skeleton + "generating first time..." message with estimated time |
-| Diagnostic session has no save/resume | If user closes browser mid-diagnostic (question 8/15), they lose all progress. `mockSessions` Map has no persistence | When migrating to DB, save answers incrementally (each `submitAnswer` persists). Add "Resume session" option on diagnostic intro page |
-| Chat history lost on page navigation | Navigating to another lesson and back clears `chatMessages` state (React state, not persisted) | Persist chat to `ChatMessage` Prisma model. Load history on page mount. This model already exists in schema but is never used |
+**What goes wrong:**
+Prices displayed on the frontend (e.g., "999 RUB/month") are hardcoded in React components. But the actual charge amount comes from CloudPayments API. If these diverge:
+- User sees "999 RUB" but gets charged "1499 RUB" (price changed in CloudPayments but not in frontend)
+- Or worse: attacker modifies the payment widget amount parameter to "1 RUB" and your Check webhook approves it because it doesn't validate amount
 
-## "Looks Done But Isn't" Checklist
+**Prevention:**
+1. **Store prices in DB** (or at minimum in server-side config, not frontend)
+2. **Validate amount in Check webhook** against the expected price for the subscription plan
+3. **Use CloudPayments subscription plans** (not ad-hoc amounts) for recurring payments -- the plan defines the amount, not the frontend
+4. **Display prices from server** via a tRPC endpoint, not hardcoded in components
 
-- [ ] **Course/Lesson DB tables:** Schema exists in Prisma but tables are not synced to Supabase (`db:push` not run for Course/Lesson models). Verify with `prisma db pull` that tables actually exist
-- [ ] **AI fallback model:** `MODELS.fallback` is defined but never called in `generation.ts`. If primary model fails, the entire AI feature crashes. Verify fallback chain is implemented
-- [ ] **Rate limiting:** PRD specifies 3 rate limit tiers (100/min, 50/hour LLM, 20/hour chat). Zero implementation exists. Verify middleware is added before deploy
-- [ ] **Error boundaries:** No React Error Boundary components wrap the diagnostic session, lesson page, or chat. A single failed tRPC call crashes the entire page. Verify `ErrorBoundary` wraps each major feature
-- [ ] **ChatMessage persistence:** Prisma model `ChatMessage` exists in schema but no code reads/writes to it. Chat messages are client-state only. Verify DB persistence is wired up
-- [ ] **SummaryCache persistence:** Prisma model `SummaryCache` exists but is unused. In-memory `Map` is used instead. Verify DB-backed cache before deploy
-- [ ] **Lesson-to-SkillCategory mapping:** Real data has 6 course prefixes (01-06) but SkillCategory enum has only 5 values. Courses 03_ai, 05_ozon, 06_express have no category mapping. Verify mapping or extend enum
-- [ ] **UserProfile creation:** Auth is Supabase, but `UserProfile` Prisma model requires a row to exist before any `protectedProcedure` that joins on userId. No auto-creation hook exists. Verify profile is created on first login
+**Phase to address:** Phase 2 (Billing) + Phase 3 (Paywall UI)
+
+---
+
+### Pitfall 9: Supabase `handle_new_user` Trigger Breaks with Manual Auth Flow
+
+**What goes wrong:**
+The existing Supabase trigger `handle_new_user` fires on `INSERT` into `auth.users` and creates a `UserProfile` row. When implementing manual Yandex OAuth via `supabase.auth.admin.createUser()`, the trigger fires. But:
+1. If using `supabase.auth.admin.updateUserById()` to link Yandex identity to existing user, the trigger does NOT fire (it's an UPDATE, not INSERT), which is correct
+2. If accidentally calling `createUser()` when user already exists, Supabase may return an error or create a duplicate, depending on the email uniqueness constraint
+3. The trigger uses `NEW.raw_user_meta_data->>'full_name'` for the name field. Yandex returns user data in a different format (`real_name`, `first_name`, `last_name`) than Google (`full_name`, `name`)
+
+**Prevention:**
+1. Update `handle_new_user` trigger to handle multiple provider metadata formats:
+   ```sql
+   COALESCE(
+     NEW.raw_user_meta_data->>'full_name',
+     NEW.raw_user_meta_data->>'real_name',
+     NEW.raw_user_meta_data->>'name',
+     NEW.raw_user_meta_data->>'display_name',
+     'User'
+   )
+   ```
+2. Use `ensureUserProfile()` (already exists in `packages/api/src/utils/ensure-user-profile.ts`) as a safety net -- it creates the profile if missing
+3. Test the trigger with Yandex metadata format before deploying
+
+**Phase to address:** Phase 1 (Auth Rework)
+
+---
+
+### Pitfall 10: CloudPayments Recurring Without Receipt (54-FZ Compliance)
+
+**What goes wrong:**
+Russian law (54-FZ) requires issuing an electronic receipt (chek) for every online payment. CloudPayments has a built-in CloudKassir integration for this. If you create recurring subscriptions without configuring receipt generation:
+- Tax authorities can fine the business
+- Users don't receive receipts
+- CloudPayments may block the account for non-compliance
+
+**Prevention:**
+1. Configure CloudKassir (built into CloudPayments, no separate integration needed)
+2. Include `CloudPayments.Receipt` object in payment request with correct tax parameters:
+   - `taxationSystem` (taxation system code)
+   - `items` array with description, price, quantity, tax rate
+3. Test receipt generation in CloudPayments sandbox before going live
+4. Verify receipts arrive at the user's email after each recurring charge
+
+**Phase to address:** Phase 2 (Billing) -- must be configured during initial CloudPayments setup, not retroactively.
+
+**Confidence:** HIGH (54-FZ is mandatory for Russian online payments)
+
+---
+
+### Pitfall 11: Testing Toggle Implemented as Feature Flag Without Proper Isolation
+
+**What goes wrong:**
+The project requirement mentions "testing toggle: enabling/disabling billing without deploy." A naive implementation (`if (process.env.BILLING_ENABLED === 'false') return true` in access check) creates risks:
+1. Toggle accidentally left disabled in production -- all content is free
+2. Toggle state inconsistency between server instances (if using multiple containers/processes)
+3. No audit trail of toggle changes
+4. Toggle doesn't reset subscription state -- when re-enabled, users who accessed content during "free mode" might have inconsistent progress/history
+
+**Prevention:**
+1. Store toggle state in the database, not in environment variables (env vars require restart)
+2. Admin panel toggle with confirmation dialog and audit log
+3. When billing is disabled, still track what would have been blocked (shadow mode):
+   ```typescript
+   if (!billingEnabled) {
+     // Log that this user would have been blocked, but allow access
+     console.log(`[BILLING_SHADOW] User ${userId} accessing paid lesson ${lessonId}`);
+     return { allowed: true, reason: 'billing_disabled' };
+   }
+   ```
+4. Clear cache/state when toggling billing on/off
+
+**Phase to address:** Phase 3 (Paywall) -- design toggle as part of the access service, not as an afterthought.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 12: CloudPayments Widget Styling Conflicts with shadcn/ui
+
+**What goes wrong:**
+CloudPayments payment widget (iframe or popup) injects its own CSS. If the widget is embedded inline (not popup), its styles can conflict with Tailwind CSS / shadcn/ui components. Button styles, input styles, and z-index issues are common.
+
+**Prevention:**
+1. Use CloudPayments popup mode (separate window), not inline iframe
+2. If using checkout widget, isolate it in a page without the main layout
+3. Test widget rendering on mobile -- popup may be blocked by mobile browsers
+
+**Phase to address:** Phase 2 (Billing)
+
+---
+
+### Pitfall 13: Missing Subscription Expiry Handling on Lesson Page
+
+**What goes wrong:**
+User has an active subscription, opens a lesson, starts watching a 60-minute video. Subscription expires during the video (e.g., it was the last day). The video continues playing (already loaded), but any API calls (chat, summary) fail with 403. User experience is confusing.
+
+**Prevention:**
+1. Don't interrupt active video playback -- let the user finish the current video
+2. On the next navigation (going to another lesson), show the paywall
+3. For API calls (chat/summary), check access but show a graceful message: "Subscription expired. Renew to continue using AI assistant."
+4. Cache lesson summary so it remains available even after subscription expires (it was already generated)
+
+**Phase to address:** Phase 3 (Paywall)
+
+---
+
+### Pitfall 14: Rate Limiter in globalThis Breaks Billing Webhook Reliability
+
+**What goes wrong:**
+The existing rate limiter (`packages/api/src/middleware/rate-limit.ts`) uses `globalThis.Map`. CloudPayments webhook retries come from the same IPs at CloudPayments. If the webhook endpoint is rate-limited, CloudPayments gets 429 responses and retries 100 times, all failing. Subscription state is never updated.
+
+**Prevention:**
+1. Exempt webhook endpoints from rate limiting entirely (they're protected by HMAC, not rate limits)
+2. Or create a separate rate limit tier for webhook endpoints with a much higher limit
+3. Webhook endpoint should be at `/api/webhooks/cloudpayments`, separate from the tRPC API routes
+
+**Phase to address:** Phase 2 (Billing)
+
+---
+
+## Phase-Specific Warnings
+
+| Phase | Likely Pitfall | Mitigation |
+|-------|---------------|------------|
+| Phase 1: Auth Rework | Yandex ID not supported by Supabase (Pitfall 1) | Manual server-side OAuth + Supabase Admin API |
+| Phase 1: Auth Rework | Existing users locked out (Pitfall 2) | Gradual transition, account linking by email |
+| Phase 1: Auth Rework | Trigger metadata mismatch (Pitfall 9) | Update `handle_new_user` SQL for multi-provider |
+| Phase 2: Billing | Missing HMAC verification (Pitfall 3) | Implement as first line of webhook handler |
+| Phase 2: Billing | Non-idempotent handlers (Pitfall 4) | WebhookEvent table + transaction ID dedup |
+| Phase 2: Billing | State machine missing (Pitfall 5) | Design subscription states before coding |
+| Phase 2: Billing | Check webhook confusion (Pitfall 7) | Validate but don't grant access in Check |
+| Phase 2: Billing | No receipts / 54-FZ (Pitfall 10) | Configure CloudKassir from day one |
+| Phase 2: Billing | Rate limiter blocking webhooks (Pitfall 14) | Exempt webhook endpoints |
+| Phase 3: Paywall | Scattered access checks (Pitfall 6) | Centralized access service + middleware |
+| Phase 3: Paywall | Hardcoded prices (Pitfall 8) | Server-side price source + Check validation |
+| Phase 3: Paywall | Testing toggle leak (Pitfall 11) | DB-stored toggle with audit log |
+| Phase 3: Paywall | Mid-video expiry (Pitfall 13) | Graceful degradation, don't interrupt playback |
 
 ## Recovery Strategies
 
 | Pitfall | Recovery Cost | Recovery Steps |
 |---------|---------------|----------------|
-| Mock shape mismatch (Pitfall 1) | MEDIUM | Create adapter layer (`toDTO` functions), update shared types, fix failing tests |
-| Partial mock migration (Pitfall 2) | HIGH | Roll back to full-mock, plan migration order, re-migrate atomically with tests |
-| publicProcedure in prod (Pitfall 3) | LOW (if caught quickly) | Hotfix: switch to `protectedProcedure`, deploy. Check OpenRouter usage for abuse |
-| Missing standalone build (Pitfall 4) | LOW | Add `output: 'standalone'` to next.config, rebuild, redeploy |
-| Bad AI questions (Pitfall 5) | MEDIUM | Switch to fallback mock questions, implement validation pipeline, regenerate question bank |
-| Service key leak (Pitfall 6) | HIGH | Rotate Supabase service role key immediately, audit DB for unauthorized changes, add `server-only` import |
+| Yandex ID architecture wrong (Pitfall 1) | HIGH | Rewrite auth flow; if using NextAuth.js, must migrate all session handling |
+| Users locked out (Pitfall 2) | HIGH | Manual account linking via SQL; communicate with affected users; potential data loss |
+| Missing HMAC (Pitfall 3) | LOW (if no exploit) | Add verification, rotate API secret, audit subscription records for fraud |
+| Duplicate subscriptions (Pitfall 4) | MEDIUM | Deduplicate records, refund double charges, add idempotency |
+| State inconsistency (Pitfall 5) | HIGH | Manual audit of all subscriptions, reconcile with CloudPayments dashboard |
+| Scattered access checks (Pitfall 6) | MEDIUM | Refactor to centralized service, may break existing endpoint behavior |
+| 54-FZ non-compliance (Pitfall 10) | HIGH (legal) | Retroactively configure CloudKassir, issue missing receipts, potential fines |
 
-## Pitfall-to-Phase Mapping
+## "Looks Done But Isn't" Checklist (v1.2)
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Mock shape mismatch | Phase 1: Mock-to-DB migration | TypeScript compiles with no `any` casts; integration tests pass |
-| Partial mock migration | Phase 1: Mock-to-DB migration | All tRPC endpoints return data from Prisma, no `globalThis` references remain |
-| publicProcedure exposure | Phase 3: Pre-deploy hardening | `grep "publicProcedure" packages/api/src/routers/ai.ts` returns 0 matches |
-| Missing standalone build | Phase 4: VPS deployment | `ls .next/standalone/server.js` exists; PM2 process stays up for >1 hour |
-| AI question quality | Phase 2: AI question generation | 100 generated questions pass Zod schema validation; manual review of 10 random questions |
-| Service key leak | Phase 3: Pre-deploy hardening | `grep -r "SUPABASE_SERVICE_ROLE" .next/static/` returns nothing |
-| XSS via dangerouslySetInnerHTML | Phase 3: Pre-deploy hardening | AI response containing `<script>alert(1)</script>` renders as escaped text |
-| Missing rate limiting | Phase 3: Pre-deploy hardening | Sending 200 requests in 1 minute returns 429 after 100th |
-| Supabase free tier pause | Phase 4: VPS deployment | Keep-alive cron runs on VPS (not just GitHub Actions); verify with `supabase status` |
+- [ ] **Yandex OAuth flow:** Server-side token exchange works, not just redirect to Yandex
+- [ ] **Account linking:** Same-email Google+Yandex users merge into one UserProfile, not two
+- [ ] **HMAC verification:** Webhook handler rejects requests with invalid signature (test with tampered payload)
+- [ ] **Idempotency:** Same webhook delivered twice creates only one subscription record
+- [ ] **State machine:** Subscription transitions follow defined rules; out-of-order webhooks handled
+- [ ] **Check webhook:** Returns error codes for invalid amounts/currencies (test with modified widget)
+- [ ] **CloudKassir receipts:** User receives email receipt after payment (test in sandbox)
+- [ ] **Access service:** `canAccessLesson()` is the SINGLE source of truth for content access
+- [ ] **Billing toggle:** Admin can disable billing; re-enabling correctly enforces paywall
+- [ ] **Free content:** Diagnostic + first lessons accessible without subscription
+- [ ] **Rate limit exclusion:** Webhook endpoints not rate-limited
+- [ ] **Prices from server:** Frontend displays prices from tRPC, not hardcoded values
+- [ ] **Grace period:** Failed payment doesn't instantly revoke access (3-5 day grace)
 
 ## Sources
 
-- Codebase analysis: `packages/api/src/routers/diagnostic.ts`, `learning.ts`, `ai.ts` (in-memory state patterns)
-- Codebase analysis: `packages/ai/src/generation.ts`, `retrieval.ts`, `openrouter.ts` (AI pipeline)
-- Codebase analysis: `packages/db/prisma/schema.prisma` (schema vs mock divergence)
-- Codebase analysis: `apps/web/src/app/(main)/learn/[id]/page.tsx` (dangerouslySetInnerHTML, chat state)
-- Codebase analysis: `packages/api/src/mocks/courses.ts` (mock data shapes, hardcoded IDs)
-- Project documentation: `MAAL/CLAUDE.md` (known limitations, sprint progress, Supabase issues)
-- Training data: Next.js standalone output, PM2 deployment patterns, Prisma binary targets (MEDIUM confidence)
-- Training data: LLM question generation quality patterns (MEDIUM confidence)
+- [Supabase Custom OAuth providers discussion #417](https://github.com/orgs/supabase/discussions/417) -- confirms Yandex ID not supported, workarounds discussed
+- [Supabase generic OIDC discussion #6547](https://github.com/orgs/supabase/discussions/6547) -- generic OIDC provider support "in progress"
+- [Auth.js Yandex provider](https://authjs.dev/reference/core/providers/yandex) -- confirms Auth.js supports Yandex natively
+- [NextAuth.js Yandex provider](https://next-auth.js.org/providers/yandex) -- alternative auth library with Yandex support
+- [CloudPayments Developer Documentation](https://developers.cloudpayments.ru/en/) -- HMAC verification, webhook types, retry policy (100 attempts), subscription API
+- [CloudPayments recurrent payments](https://cloudpayments.ru/features/recurrent) -- subscription management, retry on failed payments
+- [CloudPayments notifications](https://cloudpayments.ru/docs/notifications) -- Check, Pay, Fail, Recurrent, Cancel webhook types
+- [Payment Webhook Best Practices (Apidog)](https://apidog.com/blog/payment-webhook-best-practices/) -- idempotency, signature verification patterns
+- [Webhooks Best Practices (Medium)](https://medium.com/@xsronhou/webhooks-best-practices-lessons-from-the-trenches-57ade2871b33) -- retry handling, idempotency keys
+- Codebase analysis: `apps/web/src/lib/auth/actions.ts` -- current Google OAuth implementation
+- Codebase analysis: `apps/web/src/middleware.ts` -- current route protection
+- Codebase analysis: `packages/api/src/trpc.ts` -- protectedProcedure, no access/subscription check
+- Codebase analysis: `packages/db/prisma/schema.prisma` -- no Subscription model exists yet
 
 ---
-*Pitfalls research for: MAAL educational platform -- mock-to-real migration, video, AI questions, VPS deploy*
-*Researched: 2026-02-16*
+*Pitfalls research for: MAAL v1.2 Auth Rework + Billing -- Yandex ID, CloudPayments, Paywall*
+*Researched: 2026-03-06*

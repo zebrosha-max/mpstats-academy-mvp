@@ -1,459 +1,876 @@
-# Architecture Research
+# Architecture Patterns: Auth Rework + Billing
 
-**Domain:** Educational platform integration milestone (mock-to-real data, video, AI diagnostics, VPS deploy)
-**Researched:** 2026-02-16
-**Confidence:** HIGH
+**Domain:** Payment-gated educational platform (adding auth migration + billing to existing Next.js/Supabase app)
+**Researched:** 2026-03-06
+**Confidence:** MEDIUM (Yandex ID + Supabase integration has no built-in support; CloudPayments patterns well-documented)
 
-## System Overview
+---
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                       PRESENTATION LAYER                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐     │
-│  │Dashboard │  │Diagnostic│  │ Learning │  │ Profile/Settings │     │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬─────────┘     │
-│       │              │             │                  │               │
-│  ┌────┴──────────────┴─────────────┴──────────────────┴──────────┐   │
-│  │              tRPC Client (TanStack Query cache)                │   │
-│  └───────────────────────────┬────────────────────────────────────┘   │
-├──────────────────────────────┼───────────────────────────────────────┤
-│                       API LAYER (tRPC)                               │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐             │
-│  │ profile  │  │diagnostic│  │ learning │  │    ai    │             │
-│  │ router   │  │ router   │  │ router   │  │  router  │             │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘             │
-│       │              │             │              │                   │
-│  ┌────┴──────────────┴─────────────┴──────┐ ┌────┴──────────────┐    │
-│  │         Prisma Client (DB)             │ │  AI Package (RAG) │    │
-│  └────────────────┬───────────────────────┘ └────┬──────────────┘    │
-├───────────────────┼──────────────────────────────┼───────────────────┤
-│                   │     DATA / SERVICES LAYER    │                   │
-│  ┌────────────────┴────────────┐  ┌──────────────┴───────────────┐   │
-│  │  Supabase PostgreSQL        │  │  External APIs               │   │
-│  │  ├─ UserProfile             │  │  ├─ OpenRouter (LLM)         │   │
-│  │  ├─ DiagnosticSession       │  │  ├─ OpenAI (Embeddings)      │   │
-│  │  ├─ SkillProfile            │  │  ├─ Kinescope (Video)        │   │
-│  │  ├─ Course / Lesson         │  │  └─ Supabase Auth            │   │
-│  │  ├─ LearningPath            │  └──────────────────────────────┘   │
-│  │  ├─ LessonProgress          │                                     │
-│  │  ├─ ContentChunk (pgvector) │                                     │
-│  │  └─ SummaryCache            │                                     │
-│  └─────────────────────────────┘                                     │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
-### Component Responsibilities
-
-| Component | Responsibility | Communicates With |
-|-----------|----------------|-------------------|
-| **Next.js App Router** | SSR pages, middleware auth, route groups | tRPC client, Supabase SSR client |
-| **tRPC Routers** (4 routers) | Type-safe API, auth middleware, business logic | Prisma, AI package, mock storage |
-| **Prisma Client** | ORM queries, schema management, migrations | Supabase PostgreSQL |
-| **AI Package** (`packages/ai/`) | Embedding, vector search, LLM generation | OpenRouter, OpenAI, Supabase RPC |
-| **Mock Layer** (`packages/api/src/mocks/`) | Static courses/questions/dashboard data | Consumed by routers (to be replaced) |
-| **In-Memory Storage** (`globalThis`) | Diagnostic sessions, progress, skill profiles | diagnostic/profile routers (to be replaced) |
-| **Supabase Auth** | User registration, login, session cookies | Middleware, tRPC context |
-| **Kinescope** | Video hosting, iframe player | Lesson pages (via videoUrl/videoId) |
-
-## Current Architecture: What Needs to Change
-
-### Migration Map: Mock to Real
-
-The core integration challenge is replacing three layers of temporary data:
+## Existing Architecture (Unchanged Core)
 
 ```
-CURRENT (Mock)                          TARGET (Real)
-─────────────────                       ─────────────────
-1. Static course/lesson arrays          → Prisma queries to Course/Lesson tables
-   (packages/api/src/mocks/courses.ts)
+apps/web/
+  src/middleware.ts           # Auth guard: Supabase session check, redirect unauthenticated
+  src/app/api/trpc/           # tRPC handler (fetchRequestHandler, injects user into context)
+  src/lib/supabase/           # Supabase SSR client (cookies-based)
+  src/lib/auth/actions.ts     # Server actions: signIn, signUp, signInWithGoogle, signOut
+  src/app/auth/callback/      # OAuth callback: exchangeCodeForSession
 
-2. In-memory diagnostic sessions        → Prisma DiagnosticSession/DiagnosticAnswer
-   (globalThis.mockStorage)               + SkillProfile persistence
-
-3. Static mock questions                 → AI-generated questions from RAG chunks
-   (packages/api/src/mocks/questions.ts)
-
-4. Demo Kinescope videoIds               → Real videoId mapping per lesson
-   ("demo1", "demo2", ...)
-
-5. In-memory summary cache               → SummaryCache table (Prisma)
-   (Map in ai router)
-
-6. Mock dashboard stats                  → Computed from real progress data
-   (packages/api/src/mocks/dashboard.ts)
+packages/api/src/trpc.ts      # Context: { prisma, user }
+                               # Procedures: publicProcedure, protectedProcedure,
+                               #   adminProcedure, aiProcedure, chatProcedure
+packages/api/src/routers/     # profile, diagnostic, learning, ai, admin
+packages/db/prisma/schema.prisma  # 12 models (UserProfile, Course, Lesson, etc.)
 ```
 
-### Component Boundaries for Integration
+**Key integration point:** tRPC context gets `user` from `supabase.auth.getUser()` in the API route handler (`apps/web/src/app/api/trpc/[trpc]/route.ts`). All auth-dependent logic flows from this single injection point.
 
-| Boundary | Current | Target | Interface Change |
-|----------|---------|--------|------------------|
-| `learning.getCourses()` | Reads `MOCK_COURSES` array | `ctx.prisma.course.findMany()` with includes | Return type unchanged (`CourseWithProgress[]`) |
-| `learning.getLesson()` | Reads `MOCK_LESSONS` array | `ctx.prisma.lesson.findUnique()` with progress | Return type unchanged |
-| `learning.updateProgress()` | Writes to in-memory Map | `ctx.prisma.lessonProgress.upsert()` | Return type unchanged |
-| `diagnostic.startSession()` | Creates in-memory session | Choice: keep mock questions OR call AI generator | Return type unchanged, input source changes |
-| `diagnostic.getResults()` | Reads in-memory, writes `globalThis` | `ctx.prisma.diagnosticSession` + `skillProfile.upsert()` | Return type unchanged |
-| `profile.getDashboard()` | `getMockDashboardData()` | Aggregate from real tables | Return type unchanged |
-| `ai.getLessonSummary()` | In-memory cache Map | `ctx.prisma.summaryCache.findUnique()` | Return type unchanged |
-| Kinescope player | `videoUrl: "demo1"` | Real videoId from `lesson.videoId` column | No API change, data change only |
+---
 
-**Key insight:** tRPC router signatures stay the same. All integration happens inside router implementations. Frontend code requires zero changes for data migration.
-
-## Data Flow: Integration Architecture
-
-### Flow 1: Course/Lesson Data (Mock to DB)
+## System Architecture with New Components
 
 ```
-BEFORE:
-  learning.getCourses() → MOCK_COURSES array → hardcoded progress → response
++----------------------------------------------------------------------------+
+|                        PRESENTATION LAYER                                   |
+|  +----------+  +----------+  +----------+  +----------+  +----------+      |
+|  |  Login   |  | Pricing  |  | Paywall  |  | Profile  |  |  Admin   |      |
+|  |(Yandex ID|  |  Page    |  | Overlay  |  |(billing) |  |(billing) |      |
+|  +----+-----+  +----+-----+  +----+-----+  +----+-----+  +----+-----+      |
+|       |              |             |              |              |           |
+|  +----+--------------+-------------+--------------+--------------+------+   |
+|  |              tRPC Client (TanStack Query cache)                      |   |
+|  +------------------------------+---------------------------------------+   |
++------------------------------+--+------------------------------------------+
+|                          API LAYER                                          |
+|                                                                             |
+|  +----------+ +----------+ +----------+ +----------+ +--------------------+ |
+|  | billing  | | learning | |diagnostic| |   ai     | | /api/auth/yandex/* | |
+|  | router   | | router   | | router   | |  router  | | (API routes)       | |
+|  | (NEW)    | | (MOD)    | |          | |          | | (NEW)              | |
+|  +----+-----+ +----+-----+ +----+-----+ +----+-----+ +--------+----------+ |
+|       |             |            |            |                 |            |
+|  +----+-----+ +-----+--------+  |   +--------+----------+     |            |
+|  |CloudPay  | |checkAccess() |  |   |                    |     |            |
+|  |API Client| |(paywall)     |  |   |                    |     |            |
+|  +----+-----+ +-----+--------+  |   |                    |     |            |
+|       |              |           |   |                    |     |            |
++-------+--------------+-----------+---+--------------------+-----+-----------+
+|                        DATA LAYER                                           |
+|  +-----------------------------------------------------------------------+  |
+|  |  Supabase PostgreSQL                                                  |  |
+|  |  +-- UserProfile (existing)                                           |  |
+|  |  +-- Subscription (NEW: userId, planType, status, cpSubscriptionId)   |  |
+|  |  +-- Payment (NEW: cpTransactionId, amount, status, rawPayload)       |  |
+|  |  +-- FeatureFlag (NEW: key, value)                                    |  |
+|  |  +-- Course (MOD: +price, +isFree)                                    |  |
+|  |  +-- ... existing models unchanged ...                                |  |
+|  +-----------------------------------------------------------------------+  |
++---+-----------+-------------+-----------------------------------------------+
+    |           |             |
++---+-------+ +-+----------+ +-+------------+
+|Yandex     | |CloudPay    | |Supabase Auth |
+|OAuth      | |Webhooks +  | |(session mgmt)|
+|oauth.yandex| |Widget     | |              |
++-----------+ +------------+ +--------------+
+      EXTERNAL SERVICES
+```
 
-AFTER:
-  learning.getCourses()
-    → ctx.prisma.course.findMany({
-        include: {
-          lessons: {
-            include: {
-              progress: { where: { path: { userId: ctx.user.id } } }
-            }
+### Component Boundaries (New and Modified)
+
+| Component | Responsibility | Communicates With | Status |
+|-----------|---------------|-------------------|--------|
+| `middleware.ts` | Auth check only (NO paywall here) | Supabase Auth | **Unchanged** |
+| `lib/auth/actions.ts` | signInWithYandex replaces signInWithGoogle | Yandex API routes | **Modified** |
+| `app/auth/callback/route.ts` | Supabase OAuth callback | Supabase Auth | **Unchanged** |
+| `app/api/auth/yandex/route.ts` | Yandex OAuth initiation (redirect) | Yandex OAuth server | **New** |
+| `app/api/auth/yandex/callback/route.ts` | Token exchange + Supabase session creation | Yandex token endpoint, Supabase Admin API | **New** |
+| `lib/auth/yandex.ts` | Yandex OAuth client utilities | Yandex APIs | **New** |
+| `app/api/webhooks/cloudpayments/[type]/route.ts` | Webhook receiver (check/pay/fail/recurrent) | CloudPayments, Prisma | **New** |
+| `lib/cloudpayments/verify.ts` | HMAC-SHA256 signature verification | - | **New** |
+| `lib/cloudpayments/handlers.ts` | Business logic per webhook type | Prisma | **New** |
+| `packages/api/src/routers/billing.ts` | Subscription CRUD, plans, payment history | Prisma, CloudPayments API | **New** |
+| `packages/api/src/lib/feature-flags.ts` | Feature flag reader with in-memory cache | Prisma | **New** |
+| `packages/db/prisma/schema.prisma` | +Subscription, +Payment, +FeatureFlag, Course.price | PostgreSQL | **Modified** |
+| `packages/shared/src/billing.ts` | Plan constants, shared types | - | **New** |
+| `apps/web/src/components/billing/` | Paywall overlay, pricing cards, subscription UI | tRPC billing router | **New** |
+
+---
+
+## 1. Yandex ID Integration Architecture
+
+### Problem: Supabase Does NOT Support Yandex as OAuth Provider
+
+Supabase Auth has a fixed list of 16 supported providers: apple, azure, bitbucket, discord, facebook, github, gitlab, google, keycloak, linkedin, notion, twitch, twitter, slack, spotify, workos. **Yandex is not on this list.**
+
+There is an ongoing discussion about generic OIDC support (GitHub Discussion #6547, #417), but it is not available on hosted Supabase as of March 2026.
+
+**Confidence:** HIGH (verified via Supabase docs and multiple GitHub discussions)
+
+### Rejected Approach: Keycloak Proxy Hack
+
+Some guides suggest configuring Supabase's Keycloak provider with custom URLs pointing to a proxy that forwards to Yandex. This is **fragile and undocumented** -- Supabase uses hardcoded URL patterns for Keycloak discovery. Any Supabase Auth update could silently break it. PKCE state management across two proxies adds complexity with no benefit.
+
+### Recommended Approach: Server-Side OAuth + Supabase Admin API
+
+Handle Yandex OAuth flow entirely in custom API routes. Use Supabase Admin API to create users and generate sessions. This keeps Supabase as the single session manager while bypassing its provider limitation.
+
+**Why this works:** The existing middleware, tRPC context, and all auth checks use `supabase.auth.getUser()` which reads the session cookie. As long as we set a valid Supabase session cookie at the end of our custom Yandex flow, everything downstream works unchanged.
+
+### Yandex OAuth Endpoints
+
+| Endpoint | URL |
+|----------|-----|
+| Authorize | `https://oauth.yandex.com/authorize` |
+| Token | `https://oauth.yandex.com/token` |
+| User Info | `https://login.yandex.ru/info` |
+| App Registration | `https://oauth.yandex.com/` (dashboard) |
+
+**Confidence:** HIGH (official Yandex docs at yandex.com/dev/id/doc/en/)
+
+### Authentication Flow
+
+```
+User clicks "Войти через Яндекс"
+        |
+        v
+[1] GET /api/auth/yandex
+    - Generate random state token (CSRF protection)
+    - Store state in httpOnly cookie (10 min TTL)
+    - Redirect to:
+      https://oauth.yandex.com/authorize?
+        client_id={YANDEX_CLIENT_ID}&
+        response_type=code&
+        redirect_uri={SITE_URL}/api/auth/yandex/callback&
+        state={state}&
+        scope=login:email login:info login:avatar
+        |
+        v
+[2] User logs in on Yandex, authorizes app
+        |
+        v
+[3] GET /api/auth/yandex/callback?code={code}&state={state}
+    - Verify state matches cookie (CSRF check)
+    - DELETE state cookie
+    - POST https://oauth.yandex.com/token
+        body: grant_type=authorization_code&code={code}&
+              client_id={ID}&client_secret={SECRET}
+      -> Receive access_token
+    - GET https://login.yandex.ru/info
+        header: Authorization: OAuth {access_token}
+      -> Receive user profile: { id, login, default_email, display_name,
+                                  default_avatar_id, ... }
+        |
+        v
+[4] Find or Create Supabase User
+    - supabaseAdmin.auth.admin.listUsers() filtered by email
+      OR supabaseAdmin.auth.admin.getUserById() if yandex_id stored
+    - IF user exists:
+        Update user_metadata with yandex_id (for future lookups)
+    - IF user NOT found:
+        supabaseAdmin.auth.admin.createUser({
+          email: yandex_email,
+          email_confirm: true,
+          user_metadata: {
+            full_name: display_name,
+            yandex_id: yandex_user_id,
+            avatar_url: yandex_avatar_url
           }
-        },
-        orderBy: { order: 'asc' }
+        })
+        Note: handle_new_user trigger will create UserProfile automatically
+        |
+        v
+[5] Create Supabase Session
+    - supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email: user_email,
+        options: { redirectTo: '/dashboard' }
       })
-    → map to CourseWithProgress[] (same shape)
-    → response
+    - Extract the token from the generated link
+    - Use supabase.auth.verifyOtp({ token_hash, type: 'magiclink' })
+      to exchange for a real session
+    - Set session cookies via Supabase SSR cookie setter
+    - Redirect to /dashboard
 ```
 
-**Dependency:** Course and Lesson tables must be seeded first (`scripts/seed/`).
-
-### Flow 2: Diagnostic Session Persistence
+### File Structure
 
 ```
-BEFORE:
-  startSession() → mockSessions.set(id, {...}) → in-memory
-  submitAnswer() → session.answers.push({...}) → in-memory
-  getResults()   → calculate from in-memory → globalThis.latestSkillProfiles
-
-AFTER:
-  startSession()
-    → ctx.prisma.diagnosticSession.create({ userId, status: 'IN_PROGRESS' })
-    → generate questions (mock OR AI)
-    → store questions in session metadata (JSON field or separate table)
-
-  submitAnswer()
-    → ctx.prisma.diagnosticAnswer.create({ sessionId, questionId, ... })
-    → ctx.prisma.diagnosticSession.update({ currentQuestion: idx + 1 })
-
-  getResults()
-    → ctx.prisma.diagnosticAnswer.findMany({ where: { sessionId } })
-    → calculate SkillProfile from answers
-    → ctx.prisma.skillProfile.upsert({ where: { userId }, ... })
-    → return DiagnosticResult (same shape)
+apps/web/src/
+  app/api/auth/yandex/
+    route.ts                    # Step 1: Initiate OAuth, redirect to Yandex
+    callback/
+      route.ts                  # Steps 3-5: Token exchange, user creation, session
+  lib/auth/
+    actions.ts                  # Modified: signInWithYandex() replaces signInWithGoogle()
+    yandex.ts                   # New: exchangeYandexCode(), getYandexUserInfo()
+  lib/supabase/
+    admin.ts                    # New: Supabase admin client (service role key)
 ```
 
-**Critical decision:** Where to store generated questions per session. Options:
-1. **JSON field on DiagnosticSession** (simplest, recommended for MVP)
-2. **DiagnosticQuestion table** (normalized, better for analytics later)
+### Environment Variables
 
-Recommendation: JSON field. Questions are ephemeral per session, no cross-session queries needed.
+```env
+# New
+YANDEX_CLIENT_ID=               # From oauth.yandex.com dashboard
+YANDEX_CLIENT_SECRET=           # From oauth.yandex.com dashboard
 
-### Flow 3: AI Question Generation
-
-```
-User clicks "Start Diagnostic"
-    ↓
-diagnostic.startSession()
-    ↓
-questionGenerator.generate({
-    categories: ['ANALYTICS', 'MARKETING', 'CONTENT', 'OPERATIONS', 'FINANCE'],
-    perCategory: 3,
-    difficulties: ['EASY', 'MEDIUM', 'HARD']
-})
-    ↓
-For each category:
-    1. searchChunks({ query: categoryPrompt, limit: 10, threshold: 0.3 })
-    2. Build context from retrieved chunks
-    3. LLM generates 3 questions with options + correct answer
-    4. Validate structure (4 options, correctIndex 0-3, explanation)
-    ↓
-Return 15 questions → store in session → proceed
-    ↓
-FALLBACK: If LLM fails → use MOCK_QUESTIONS from questions.ts
+# Already exists, now also used for Yandex flow
+SUPABASE_SERVICE_ROLE_KEY=      # For admin API (createUser, generateLink)
 ```
 
-**Architecture pattern:** `packages/ai/src/question-generator.ts` as new service file, following the same pattern as `generation.ts`. Called from `diagnostic.startSession()` in the API layer.
+### Critical Constraints
 
-### Flow 4: Kinescope Video Mapping
+1. **Service Role Key security**: `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS. MUST be server-only (no `NEXT_PUBLIC_` prefix). Used only in API routes, never in client code.
 
-```
-Lesson in DB:
-  { id: "01_analytics_m01_start_001", videoId: "abc123", videoUrl: null }
+2. **handle_new_user trigger**: The existing Supabase trigger creates a `UserProfile` row on new user signup. Verify it fires for `admin.createUser()` calls (it should, since the trigger is on `auth.users` INSERT).
 
-Lesson page renders:
-  const { lesson } = trpc.learning.getLesson.useQuery({ lessonId });
+3. **Email matching for migration**: Existing Google OAuth users who now log in with Yandex using the same email address will be matched automatically. Different email = different account (linking UI deferred).
 
-  if (lesson.videoId) {
-    <iframe src={`https://kinescope.io/embed/${lesson.videoId}`} />
-  } else {
-    <VideoPlaceholder message="Видео будет доступно скоро" />
-  }
-```
+4. **Google OAuth removal**: After Yandex is confirmed working, remove Google OAuth from Supabase dashboard (Authentication > Providers) and delete `signInWithGoogle()` from actions.ts.
 
-**No architectural change needed.** The `videoId` field already exists in the Prisma schema. Integration is purely a data operation: populate `videoId` values for each lesson row. This can be done via:
-1. Seed script with mapping CSV/JSON
-2. Admin API endpoint (future)
-3. Direct SQL update
+---
 
-### Flow 5: Summary Cache Migration
+## 2. CloudPayments Webhook Architecture
 
-```
-BEFORE:
-  const summaryCache = new Map<string, {...}>();  // In-memory, lost on restart
+### Webhook Endpoint Design
 
-AFTER:
-  // Check DB cache
-  const cached = await ctx.prisma.summaryCache.findUnique({
-    where: { lessonId }
-  });
+CloudPayments sends HTTP POST requests to configured webhook URLs. URLs are registered per-type in the CloudPayments merchant dashboard.
 
-  if (cached && cached.expiresAt > new Date()) {
-    return { content: cached.summary, fromCache: true };
-  }
+**Confidence:** MEDIUM (official docs + npm library patterns; could not fetch full CloudPayments docs page)
 
-  // Generate and cache
-  const result = await generateLessonSummary(lessonId);
-  await ctx.prisma.summaryCache.upsert({
-    where: { lessonId },
-    update: { summary: result.content, expiresAt: addHours(new Date(), 24) },
-    create: { lessonId, summary: result.content, expiresAt: addHours(new Date(), 24) }
-  });
-```
+### Webhook Types
 
-### Flow 6: VPS Production Deploy
+| Type | Dashboard URL | Purpose |
+|------|-------------|---------|
+| Check | `/api/webhooks/cloudpayments/check` | Pre-authorization validation |
+| Pay | `/api/webhooks/cloudpayments/pay` | Successful payment |
+| Fail | `/api/webhooks/cloudpayments/fail` | Failed payment |
+| Recurrent | `/api/webhooks/cloudpayments/recurrent` | Subscription status change |
+
+### Route Structure
 
 ```
-Build Pipeline:
-  Local/CI: pnpm build → .next/ output
-    ↓
-  SCP/rsync to VPS (79.137.197.90)
-    ↓
-  PM2 ecosystem.config.js:
-    {
-      name: "maal-web",
-      script: "node_modules/.bin/next",
-      args: "start",
-      cwd: "/home/deploy/maal",
-      env: { NODE_ENV: "production", PORT: 3000 }
-    }
-    ↓
-  Nginx reverse proxy:
-    server {
-      listen 443 ssl;
-      server_name academy.mpstats.io;  // or custom domain
-      location / { proxy_pass http://127.0.0.1:3000; }
-    }
-    ↓
-  SSL: Let's Encrypt via certbot
+apps/web/src/
+  app/api/webhooks/cloudpayments/
+    [type]/
+      route.ts                # Dynamic route handler for all webhook types
+  lib/cloudpayments/
+    verify.ts                 # HMAC-SHA256 signature verification
+    handlers.ts               # Handler functions: handleCheck, handlePay, handleFail, handleRecurrent
+    types.ts                  # TypeScript interfaces for CloudPayments payloads
+    client.ts                 # CloudPayments API client (for cancel subscription, etc.)
 ```
 
-**Architecture consideration:** Next.js standalone output mode (`output: 'standalone'` in next.config.js) reduces deployment size from ~500MB node_modules to ~50MB standalone folder.
+### HMAC Signature Verification
 
-## Architectural Patterns
-
-### Pattern 1: Gradual Mock Replacement (Strangler Fig)
-
-**What:** Replace mock data sources one router at a time, keeping the other routers functional with mocks.
-**When:** During integration sprint, to avoid big-bang migration.
-**Trade-offs:** Slower but safer. Each router can be tested independently.
+CloudPayments sends HMAC in `Content-HMAC` and `X-Content-HMAC` headers.
 
 ```typescript
-// Pattern: Try DB first, fall back to mock
-export const learningRouter = router({
-  getCourses: protectedProcedure.query(async ({ ctx }) => {
-    try {
-      const courses = await ctx.prisma.course.findMany({
-        include: { lessons: true },
-        orderBy: { order: 'asc' },
-      });
-      if (courses.length > 0) {
-        return mapToCoursesWithProgress(courses, ctx.user.id);
-      }
-    } catch {
-      // DB not seeded yet
-    }
-    // Fallback to mock
-    return getMockCoursesWithProgress(ctx.user.id);
-  }),
-});
-```
+// apps/web/src/lib/cloudpayments/verify.ts
+import crypto from 'crypto';
 
-### Pattern 2: Service Isolation for AI Question Generation
+export function verifyCloudPaymentsSignature(
+  rawBody: string,
+  signature: string | null
+): boolean {
+  if (!signature) return false;
 
-**What:** New `question-generator.ts` in `packages/ai/src/` follows existing RAG pipeline pattern.
-**When:** Sprint 5 Phase C.
-**Trade-offs:** Adds LLM latency to diagnostic start (~3-5 seconds). Mitigated by fallback to mock questions.
+  const secret = process.env.CLOUDPAYMENTS_API_SECRET!;
+  const computed = crypto
+    .createHmac('sha256', secret)
+    .update(rawBody)
+    .digest('base64');
 
-```typescript
-// packages/ai/src/question-generator.ts
-export async function generateQuestions(options: {
-  categories: SkillCategory[];
-  perCategory: number;
-}): Promise<DiagnosticQuestion[]> {
-  const questions: DiagnosticQuestion[] = [];
-
-  for (const category of options.categories) {
-    // 1. Get relevant chunks for this category
-    const chunks = await searchChunks({
-      query: CATEGORY_PROMPTS[category],
-      limit: 10,
-      threshold: 0.3,
-    });
-
-    // 2. Generate questions via LLM
-    const generated = await generateQuestionsFromContext(category, chunks);
-    questions.push(...generated.slice(0, options.perCategory));
+  // Timing-safe comparison to prevent timing attacks
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(computed),
+      Buffer.from(signature)
+    );
+  } catch {
+    return false; // Different lengths
   }
-
-  return questions;
 }
 ```
 
-### Pattern 3: Standalone Build for VPS
+### Webhook Route Handler
 
-**What:** Use Next.js `output: 'standalone'` to create self-contained deployment artifact.
-**When:** Sprint 4 deploy.
-**Trade-offs:** Requires copying `public/` and `.next/static/` separately. But deployment is much lighter.
+```typescript
+// apps/web/src/app/api/webhooks/cloudpayments/[type]/route.ts
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { type: string } }
+) {
+  // 1. Read raw body (needed for HMAC before parsing)
+  const rawBody = await request.text();
+
+  // 2. Verify HMAC signature
+  const hmac = request.headers.get('Content-HMAC')
+            || request.headers.get('X-Content-HMAC');
+  if (!verifyCloudPaymentsSignature(rawBody, hmac)) {
+    return NextResponse.json({ code: 13 }); // Reject
+  }
+
+  // 3. Parse payload
+  const data = parseWebhookPayload(rawBody);
+
+  // 4. Route to type-specific handler
+  switch (params.type) {
+    case 'check':     return handleCheck(data);
+    case 'pay':       return handlePay(data);
+    case 'fail':      return handleFail(data);
+    case 'recurrent': return handleRecurrent(data);
+    default:
+      return NextResponse.json({ code: 13 });
+  }
+}
+```
+
+**Critical response format:** CloudPayments expects `{ "code": 0 }` for success, `{ "code": 13 }` for rejection. NOT HTTP status codes. Always return 200 OK with the code in the JSON body.
+
+### Idempotency Pattern
+
+```typescript
+async function handlePay(data: CloudPaymentsPayload): Promise<NextResponse> {
+  const txId = String(data.TransactionId);
+
+  // Check if already processed
+  const existing = await prisma.payment.findUnique({
+    where: { cpTransactionId: txId },
+  });
+  if (existing) {
+    return NextResponse.json({ code: 0 }); // Already processed, acknowledge
+  }
+
+  // Process in transaction for atomicity
+  await prisma.$transaction(async (tx) => {
+    // Create payment record
+    await tx.payment.create({
+      data: {
+        cpTransactionId: txId,
+        subscriptionId: /* resolve from AccountId */,
+        amount: Math.round(data.Amount * 100), // Convert to kopecks
+        status: 'COMPLETED',
+        cpPaymentData: data, // Full payload for audit
+      },
+    });
+
+    // Update subscription
+    await tx.subscription.update({
+      where: { id: /* resolve */ },
+      data: {
+        status: 'ACTIVE',
+        currentPeriodEnd: /* calculate next period */,
+      },
+    });
+  });
+
+  return NextResponse.json({ code: 0 });
+}
+```
+
+### AccountId Convention
+
+CloudPayments `AccountId` field identifies the user. Set it when creating the widget charge:
+- Format: `{userId}:{planType}:{courseId?}`
+- Example: `clx1abc:PLATFORM` or `clx1abc:COURSE:01_analytics`
+- Parse in webhook to resolve subscription
+
+### Environment Variables
+
+```env
+CLOUDPAYMENTS_PUBLIC_ID=       # For widget initialization (can be NEXT_PUBLIC_)
+CLOUDPAYMENTS_API_SECRET=      # For HMAC verification + API calls (SERVER ONLY)
+```
+
+---
+
+## 3. Prisma Schema Changes
+
+### New Models
+
+```prisma
+// ============== BILLING ==============
+
+enum SubscriptionStatus {
+  ACTIVE        // Paid and current
+  PAST_DUE      // Payment failed, in grace/retry period
+  CANCELLED     // User cancelled, still active until period end
+  EXPIRED       // Period ended, no access
+}
+
+enum PlanType {
+  COURSE        // Single course subscription
+  PLATFORM      // Full platform access
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  planType           PlanType
+  courseId            String?            // Only for COURSE plans
+  status             SubscriptionStatus @default(ACTIVE)
+
+  // CloudPayments identifiers
+  cpSubscriptionId   String?            @unique
+  cpToken            String?            // Recurrent payment token
+
+  // Billing period
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user               UserProfile        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course             Course?            @relation(fields: [courseId], references: [id])
+  payments           Payment[]
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  subscriptionId  String
+  amount          Int           // Amount in kopecks (RUB * 100)
+  currency        String        @default("RUB")
+  status          PaymentStatus @default(PENDING)
+
+  // CloudPayments data
+  cpTransactionId String        @unique  // Idempotency key
+  cpPaymentData   Json?         // Full webhook payload for audit trail
+
+  createdAt       DateTime      @default(now())
+
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+model FeatureFlag {
+  id        String   @id @default(cuid())
+  key       String   @unique  // "billing_enabled", "yandex_auth_enabled"
+  value     Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}
+```
+
+### Modifications to Existing Models
+
+```prisma
+model UserProfile {
+  // ... existing fields unchanged ...
+  subscriptions  Subscription[]    // ADD: relation to subscriptions
+}
+
+model Course {
+  // ... existing fields unchanged ...
+  price          Int?              // ADD: price in kopecks, null = not for sale individually
+  isFree         Boolean @default(false) // ADD: mark entire course as free
+  subscriptions  Subscription[]    // ADD: relation to subscriptions
+}
+```
+
+### Design Rationale
+
+| Decision | Why |
+|----------|-----|
+| Amount in kopecks (Int) | Avoid floating-point arithmetic. 100 kopecks = 1 RUB. |
+| PlanType enum (COURSE/PLATFORM) | Two subscription tiers without over-engineering. |
+| cpTransactionId unique | Idempotency key -- prevents duplicate processing of retried webhooks. |
+| cpPaymentData Json | Full webhook payload stored for audit. Cheap insurance for debugging. |
+| FeatureFlag in DB (not env) | Changeable without restart/redeploy. Admin UI toggle. |
+| Subscription has status machine | ACTIVE -> PAST_DUE -> EXPIRED, or ACTIVE -> CANCELLED -> EXPIRED. |
+
+---
+
+## 4. Paywall Architecture
+
+### Content Gating Logic
+
+```
+User requests lesson /learn/[id]
+        |
+        v
+[1] Is billing enabled? (FeatureFlag "billing_enabled")
+    NO  --> Grant access (current behavior, everything free)
+    YES --> continue
+        |
+        v
+[2] Is this lesson in free tier?
+    - Course.isFree = true --> Grant access
+    - lesson.order <= FREE_LESSONS_PER_COURSE --> Grant access
+    - Otherwise --> continue
+        |
+        v
+[3] Does user have active subscription?
+    - PLATFORM plan with status ACTIVE or CANCELLED (before period end) --> Grant access
+    - COURSE plan matching this courseId with same status --> Grant access
+    - No match --> Return 'paywall' access level
+```
+
+### Why NOT in Middleware
+
+| Approach | Verdict | Reason |
+|----------|---------|--------|
+| Middleware paywall | **Reject** | Edge runtime cannot use Prisma. Adding fetch calls adds latency to ALL routes. |
+| tRPC procedure paywall | **Accept** | Runs in Node.js runtime. Only adds overhead to content endpoints. |
+| Component-level check | Supplement | UI renders based on tRPC response `access` field. |
+
+**Decision:** Paywall check lives in `learning.getLesson` tRPC procedure. Middleware stays auth-only (unchanged).
+
+### tRPC Integration
+
+The `learning.getLesson` procedure is modified to return an `access` field:
+
+```typescript
+// Simplified -- actual implementation in learning router
+getLesson: protectedProcedure
+  .input(z.object({ lessonId: z.string() }))
+  .query(async ({ ctx, input }) => {
+    const lesson = await ctx.prisma.lesson.findUnique({
+      where: { id: input.lessonId },
+      include: { course: true },
+    });
+
+    const billingEnabled = await isFeatureEnabled(ctx.prisma, 'billing_enabled');
+
+    if (!billingEnabled) {
+      return { ...lesson, access: 'granted' as const };
+    }
+
+    if (lesson.course.isFree || lesson.order <= FREE_LESSONS_PER_COURSE) {
+      return { ...lesson, access: 'granted' as const };
+    }
+
+    const hasAccess = await checkSubscriptionAccess(
+      ctx.prisma, ctx.user.id, lesson.courseId
+    );
+
+    return {
+      ...lesson,
+      access: hasAccess ? 'granted' as const : 'paywall' as const,
+      // Strip sensitive content when paywalled
+      videoId: hasAccess ? lesson.videoId : null,
+    };
+  }),
+```
+
+### Free Tier Constants
+
+```typescript
+// packages/shared/src/billing.ts
+export const FREE_LESSONS_PER_COURSE = 2;  // First N lessons by .order
+export const ALWAYS_FREE_ROUTES = [
+  '/dashboard', '/diagnostic', '/learn', '/profile'
+] as const; // Catalog browsing is free, individual lessons may be gated
+
+export const PLATFORM_MONTHLY_PRICE_KOP = 299_00; // 299 RUB
+```
+
+### Graceful Degradation
+
+```typescript
+async function checkSubscriptionAccess(
+  prisma: PrismaClient,
+  userId: string,
+  courseId: string
+): Promise<boolean> {
+  try {
+    const billingEnabled = await isFeatureEnabled(prisma, 'billing_enabled');
+    if (!billingEnabled) return true;
+
+    const subscription = await prisma.subscription.findFirst({
+      where: {
+        userId,
+        status: { in: ['ACTIVE', 'CANCELLED'] },
+        currentPeriodEnd: { gte: new Date() },
+        OR: [
+          { planType: 'PLATFORM' },
+          { planType: 'COURSE', courseId },
+        ],
+      },
+    });
+    return !!subscription;
+  } catch (error) {
+    console.error('[billing] Access check failed, granting access:', error);
+    return true; // FAIL OPEN -- never lock users out due to billing bugs
+  }
+}
+```
+
+---
+
+## 5. Feature Flag / Testing Toggle
+
+### Design: DB Flag with In-Memory Cache
+
+Use `FeatureFlag` table + globalThis cache (same pattern as existing rate limiter):
+
+```typescript
+// packages/api/src/lib/feature-flags.ts
+const CACHE_TTL = 60_000; // 1 minute
+
+const flagCache: Map<string, { value: boolean; at: number }> =
+  (globalThis as any).__featureFlags ??= new Map();
+
+export async function isFeatureEnabled(
+  prisma: PrismaClient,
+  key: string
+): Promise<boolean> {
+  const cached = flagCache.get(key);
+  if (cached && Date.now() - cached.at < CACHE_TTL) {
+    return cached.value;
+  }
+
+  const flag = await prisma.featureFlag.findUnique({ where: { key } });
+  const value = flag?.value ?? false;
+  flagCache.set(key, { value, at: Date.now() });
+  return value;
+}
+```
+
+### Admin Toggle
+
+Add to existing admin router:
+
+```typescript
+toggleFeatureFlag: adminProcedure
+  .input(z.object({ key: z.string(), value: z.boolean() }))
+  .mutation(async ({ ctx, input }) => {
+    // Clear cache immediately
+    ((globalThis as any).__featureFlags as Map<string, unknown>)?.delete(input.key);
+
+    return ctx.prisma.featureFlag.upsert({
+      where: { key: input.key },
+      update: { value: input.value },
+      create: { key: input.key, value: input.value },
+    });
+  }),
+```
+
+### Seed Data
+
+```sql
+INSERT INTO "FeatureFlag" (id, key, value, "updatedAt")
+VALUES (gen_random_uuid(), 'billing_enabled', false, now());
+```
+
+Start with billing disabled. Enable via admin UI when ready for testing.
+
+---
+
+## 6. Billing tRPC Router
+
+```typescript
+// packages/api/src/routers/billing.ts
+
+export const billingRouter = router({
+  // Current user's active subscription
+  getSubscription: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.subscription.findFirst({
+      where: {
+        userId: ctx.user.id,
+        status: { in: ['ACTIVE', 'CANCELLED'] },
+        currentPeriodEnd: { gte: new Date() },
+      },
+      include: { course: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }),
+
+  // Available plans
+  getPlans: publicProcedure.query(async ({ ctx }) => {
+    const courses = await ctx.prisma.course.findMany({
+      where: { price: { not: null }, isFree: false },
+      select: { id: true, title: true, price: true },
+      orderBy: { order: 'asc' },
+    });
+    return { courses, platformPrice: PLATFORM_MONTHLY_PRICE_KOP };
+  }),
+
+  // Payment history
+  getPaymentHistory: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.payment.findMany({
+      where: { subscription: { userId: ctx.user.id } },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+      include: { subscription: { select: { planType: true, courseId: true } } },
+    });
+  }),
+
+  // Cancel subscription (user action)
+  cancelSubscription: protectedProcedure
+    .input(z.object({ subscriptionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const sub = await ctx.prisma.subscription.findFirst({
+        where: { id: input.subscriptionId, userId: ctx.user.id },
+      });
+      if (!sub) throw new TRPCError({ code: 'NOT_FOUND' });
+
+      // 1. Cancel in CloudPayments via API
+      await cancelCloudPaymentsSubscription(sub.cpSubscriptionId!);
+
+      // 2. Update local status
+      return ctx.prisma.subscription.update({
+        where: { id: sub.id },
+        data: { status: 'CANCELLED', cancelledAt: new Date() },
+      });
+      // Access remains until currentPeriodEnd
+    }),
+});
+```
+
+Root router addition:
+
+```typescript
+// packages/api/src/root.ts
+import { billingRouter } from './routers/billing';
+
+export const appRouter = router({
+  profile: profileRouter,
+  diagnostic: diagnosticRouter,
+  learning: learningRouter,
+  ai: aiRouter,
+  admin: adminRouter,
+  billing: billingRouter,  // NEW
+});
+```
+
+---
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: Migrating All Routers Simultaneously
+### Anti-Pattern 1: Paywall in Middleware
 
-**What people do:** Rewrite all 4 routers to use DB in one commit.
-**Why it's wrong:** If Course seed data is wrong, all routers break at once. No rollback path.
-**Do this instead:** Migrate one router at a time (learning first, then diagnostic, then profile). Keep mock fallbacks during transition.
+**What:** Checking subscription in `middleware.ts`.
+**Why bad:** Edge runtime cannot use Prisma. Adds latency to ALL routes including free pages.
+**Instead:** Check in tRPC procedures for content endpoints only.
 
-### Anti-Pattern 2: AI Questions Without Fallback
+### Anti-Pattern 2: Keycloak Proxy for Yandex
 
-**What people do:** Make `startSession()` fully dependent on LLM generation.
-**Why it's wrong:** LLM can fail (rate limit, timeout, bad response). User stuck on "Starting diagnostic..." forever.
-**Do this instead:** Always have mock questions as fallback. Set a 10-second timeout on AI generation. Log failures for monitoring.
+**What:** Hijacking Supabase's Keycloak config with custom URLs proxying to Yandex.
+**Why bad:** Undocumented hack. Breaks on any Supabase Auth update. PKCE state leaks across proxies.
+**Instead:** Custom API routes + Supabase Admin API.
 
-### Anti-Pattern 3: Storing Questions in a Separate Table for MVP
+### Anti-Pattern 3: Subscription in JWT
 
-**What people do:** Create `DiagnosticQuestion` table, normalize fully.
-**Why it's wrong:** Over-engineering for MVP. Questions are generated per-session, not shared. Adds migration complexity.
-**Do this instead:** Store generated questions as JSON on DiagnosticSession. Refactor to table only if cross-session question analytics is needed.
+**What:** Embedding subscription status in Supabase JWT claims.
+**Why bad:** JWT cached until expiry. Payment/cancellation changes invisible for up to 1 hour. "Paid but paywalled" bugs.
+**Instead:** Query DB per content request (fast with index on userId+status).
 
-### Anti-Pattern 4: Running pnpm install on VPS
+### Anti-Pattern 4: Client-Side Payment API Calls
 
-**What people do:** Clone repo on VPS, run `pnpm install`, build there.
-**Why it's wrong:** VPS has limited RAM (build can OOM). Dependencies may fail on different OS. Slow deployments.
-**Do this instead:** Build locally or in CI. Deploy only the standalone output + static files.
+**What:** Calling CloudPayments REST API from browser.
+**Why bad:** Exposes API secret. Spoofable.
+**Instead:** All CloudPayments API calls server-only. Browser only uses the CP widget (iframe).
 
-### Anti-Pattern 5: Hardcoding Kinescope videoIds in Code
+### Anti-Pattern 5: Storing Card Data
 
-**What people do:** Put videoId mapping in TypeScript constants or mock files.
-**Why it's wrong:** Requires code deployment to change a video. Can not be managed by content team.
-**Do this instead:** Store videoId in Lesson table (already in schema). Update via seed script or admin interface.
+**What:** Saving card numbers, CVV, or expiry in your database.
+**Why bad:** PCI DSS violation. Criminal liability.
+**Instead:** CloudPayments widget handles card data. Store only `cpToken` (opaque recurrent token).
 
-## Integration Points
+### Anti-Pattern 6: Separate Auth System
 
-### External Services
+**What:** Custom JWT/session system for Yandex users alongside Supabase sessions.
+**Why bad:** Two session sources. All existing code (`middleware.ts`, tRPC context, `protectedProcedure`) expects Supabase session.
+**Instead:** Use Supabase as the single session authority. Yandex is only for identity verification.
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| **Supabase PostgreSQL** | Prisma ORM via connection pooler (port 6543) | Use `DIRECT_URL` for migrations only |
-| **Supabase Auth** | SSR cookies via `@supabase/ssr` | Middleware validates, tRPC context injects user |
-| **Supabase pgvector** | RPC function `match_chunks` | Called from `packages/ai/src/retrieval.ts` |
-| **OpenRouter** | OpenAI SDK with custom baseURL | Primary: gemini-2.5-flash, Fallback: gpt-4o-mini |
-| **OpenAI Embeddings** | Via OpenRouter proxy | text-embedding-3-small, 1536 dims |
-| **Kinescope** | iframe embed `https://kinescope.io/embed/{videoId}` | No API needed for MVP, just embed |
+---
 
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Frontend to API | tRPC (HTTP, SuperJSON serialized) | Type-safe, no manual fetch calls |
-| API to Database | Prisma Client (SQL over connection pool) | Singleton, injected via context |
-| API to AI | Direct function import from `@mpstats/ai` | Same process, no network hop |
-| AI to Supabase | `@supabase/supabase-js` client (HTTP REST + RPC) | Uses Service Role Key (bypasses RLS) |
-| AI to OpenRouter | OpenAI SDK (HTTPS) | API key in env var |
-
-## Build Order: Dependency Chain
+## Build Order (Dependency Chain)
 
 ```
-Phase A: Database Foundation (no frontend changes)
-  1. Seed Course + Lesson tables → prerequisite for everything
-  2. Verify Prisma client generates correctly with new data
-  │
-  ↓
-Phase B: Learning Router Migration (safest first)
-  3. Replace MOCK_COURSES/MOCK_LESSONS with Prisma queries
-  4. Replace in-memory progress with LessonProgress table
-  5. Frontend works unchanged (same tRPC return types)
-  │
-  ↓
-Phase C: Kinescope Integration (data-only, no code)
-  6. Populate videoId column in Lesson table
-  7. Update lesson page to handle missing videoId gracefully
-  │
-  ↓
-Phase D: Diagnostic Persistence (medium complexity)
-  8. Migrate DiagnosticSession to Prisma (create/update/query)
-  9. Migrate DiagnosticAnswer to Prisma
-  10. Persist SkillProfile on session completion
-  11. Remove globalThis.mockStorage
-  │
-  ↓
-Phase E: AI Question Generation (highest risk)
-  12. Create question-generator.ts in packages/ai/
-  13. Integrate into diagnostic.startSession() with fallback
-  14. Test generation quality, add retry logic
-  │
-  ↓
-Phase F: Profile/Dashboard Real Data (depends on B+D)
-  15. Compute dashboard stats from real progress + sessions
-  16. Remove MOCK_USER_STATS, MOCK_RECENT_ACTIVITY
-  │
-  ↓
-Phase G: Cache Migration (low priority)
-  17. Move summary cache from Map to SummaryCache table
-  18. Switch AI router endpoints back to protectedProcedure
-  │
-  ↓
-Phase H: VPS Deploy (depends on all above)
-  19. Configure next.config.js standalone output
-  20. Set up PM2 ecosystem config
-  21. Configure Nginx + SSL
-  22. Set env vars on server
-  23. Deploy and smoke test
+Phase 1: Database Foundation (no dependencies)
+    +-- Prisma schema: Subscription, Payment, FeatureFlag
+    +-- Course model: +price, +isFree
+    +-- Migration
+    +-- Seed: FeatureFlag { billing_enabled: false }
+    +-- Seed: Course.price values for each course
+
+Phase 2: Feature Flag System (depends on Phase 1)
+    +-- isFeatureEnabled() utility with globalThis cache
+    +-- Admin toggle procedure in admin router
+    +-- Admin UI: toggle switch for billing_enabled
+
+Phase 3: Yandex ID Auth (depends only on existing auth infra)
+    +-- lib/auth/yandex.ts (OAuth client)
+    +-- lib/supabase/admin.ts (admin client)
+    +-- /api/auth/yandex/route.ts (initiate)
+    +-- /api/auth/yandex/callback/route.ts (complete)
+    +-- signInWithYandex server action
+    +-- Login/register page UI (replace Google button with Yandex)
+    +-- Remove Google OAuth (actions.ts + Supabase dashboard)
+    +-- Test: new user, existing user by email match
+
+Phase 4: CloudPayments Webhooks (depends on Phase 1)
+    +-- lib/cloudpayments/verify.ts (HMAC)
+    +-- lib/cloudpayments/types.ts (payload interfaces)
+    +-- lib/cloudpayments/handlers.ts (business logic)
+    +-- /api/webhooks/cloudpayments/[type]/route.ts
+    +-- Test with CloudPayments sandbox
+
+Phase 5: Billing Router + UI (depends on Phase 1 + 4)
+    +-- packages/api/src/routers/billing.ts
+    +-- Root router: add billing
+    +-- lib/cloudpayments/client.ts (cancel API)
+    +-- CloudPayments widget integration (frontend)
+    +-- Pricing page
+    +-- Profile: subscription management section
+
+Phase 6: Paywall (depends on Phase 1 + 2 + 5 -- MUST BE LAST)
+    +-- checkSubscriptionAccess() utility
+    +-- Modify learning.getLesson: add access check
+    +-- Modify learning.getCourses: add lock indicators
+    +-- Paywall overlay component
+    +-- Free tier logic (first N lessons)
+    +-- E2E: toggle billing on/off, verify access
 ```
 
-**Critical path:** A → B → D → F (learning data needed for dashboard stats, diagnostic persistence needed for profile).
+**Parallelization:** Phase 3 (Yandex auth) and Phase 4 (CloudPayments webhooks) are fully independent and can run in parallel after Phase 1.
 
-**Parallel tracks:** C (Kinescope) can run in parallel with B/D. E (AI questions) can run in parallel with F. G can run anytime.
+**Critical path:** Phase 1 -> Phase 4 -> Phase 5 -> Phase 6
 
-## Scaling Considerations
+---
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| 0-100 users | Current architecture is sufficient. Single Next.js process on VPS. Supabase free tier handles load. |
-| 100-1k users | Move Supabase to Pro tier (no auto-pause). Add PM2 cluster mode (2-4 workers). Consider Redis for summary cache instead of DB. |
-| 1k-10k users | Supabase connection pooling becomes important (pgbouncer). Rate limiting on AI endpoints is mandatory. Consider edge caching for static lesson data. |
+## Scalability Considerations
 
-### First bottleneck: LLM API rate limits
-AI question generation and RAG chat will hit OpenRouter/provider limits first. Mitigation: aggressive caching (summary cache), question pool pre-generation, rate limiting per user.
+| Concern | At 100 users | At 1K users | At 10K users |
+|---------|-------------|-------------|-------------|
+| Subscription DB queries | Direct Prisma, <5ms with index | Same | Consider Redis cache |
+| Feature flag reads | globalThis cache (1 DB hit/min) | Same | Same |
+| Webhook processing | Synchronous in route handler | Same | Async queue (BullMQ) |
+| Yandex OAuth | Direct API calls | Same | Same |
 
-### Second bottleneck: Supabase free tier limits
-Connection limits and potential pausing. Mitigation: upgrade to Pro tier before production launch.
+Current scale does not require Redis or queues. Direct Prisma queries with proper indexes are sufficient.
+
+---
 
 ## Sources
 
-- Codebase analysis: `packages/api/src/routers/*.ts`, `packages/ai/src/*.ts`, `packages/db/prisma/schema.prisma`
-- Existing architecture doc: `.planning/codebase/ARCHITECTURE.md`
-- Existing integrations doc: `.planning/codebase/INTEGRATIONS.md`
-- CLAUDE.md project instructions (Sprint 5 plan, current status)
-- Prisma schema: 12 models defined, Course/Lesson/ContentChunk ready
-- Next.js App Router: standard patterns, no custom deviations
+- [Supabase Auth providers list](https://supabase.com/docs/guides/auth) -- HIGH confidence
+- [Supabase custom OAuth discussion #417](https://github.com/orgs/supabase/discussions/417) -- HIGH confidence
+- [Supabase OIDC discussion #6547](https://github.com/orgs/supabase/discussions/6547) -- HIGH confidence
+- [Supabase Keycloak workaround](https://tylerjulian.substack.com/p/supabase-generic-oidc-authentication) -- MEDIUM confidence
+- [Supabase signInWithIdToken](https://supabase.com/docs/reference/javascript/auth-signinwithidtoken) -- HIGH confidence
+- [Yandex ID OAuth docs](https://yandex.com/dev/id/doc/en/) -- HIGH confidence
+- [Yandex OAuth token endpoint](https://yandex.com/dev/id/doc/en/access) -- HIGH confidence
+- [Yandex user info endpoint](https://yandex.com/dev/id/doc/en/user-information) -- HIGH confidence
+- [CloudPayments developer docs](https://developers.cloudpayments.ru/en/) -- MEDIUM confidence
+- [CloudPayments Node.js client](https://github.com/izatop/cloudpayments) -- MEDIUM confidence
+- [Next.js paywall patterns](https://update.dev/docs/integrations/paywall-nextjs-supabase-stripe) -- MEDIUM confidence
+- [Vercel nextjs-subscription-payments](https://github.com/vercel/nextjs-subscription-payments) -- HIGH confidence
+- [HMAC webhook verification](https://hookdeck.com/webhooks/guides/how-to-implement-sha256-webhook-signature-verification) -- HIGH confidence
+- Existing codebase: middleware.ts, trpc.ts, auth/actions.ts, schema.prisma -- HIGH confidence
 
 ---
-*Architecture research for: MAAL integration milestone*
-*Researched: 2026-02-16*
+*Architecture research for: MAAL v1.2 Auth Rework + Billing*
+*Researched: 2026-03-06*

@@ -1,357 +1,326 @@
-# Stack Research
+# Technology Stack
 
-**Domain:** Educational platform — video integration, VPS deploy, AI question generation
-**Researched:** 2026-02-16
-**Confidence:** MEDIUM (web tools unavailable; versions verified via npm registry; patterns based on training data + codebase analysis)
+**Project:** MAAL v1.2 — Auth Rework + Billing
+**Researched:** 2026-03-06
+**Scope:** Only NEW additions for Yandex ID auth, CloudPayments billing, paywall system. Existing stack (Next.js 14, tRPC, Prisma, Supabase Auth, Turborepo, shadcn/ui) is locked and not re-evaluated.
 
-## Scope
+## Recommended Stack
 
-This research covers **only the additions** needed for Sprints 4-5. The existing stack (Next.js 14, tRPC 11, Supabase, Prisma, Turborepo, OpenRouter, Recharts, shadcn/ui) is already in place and working. We do NOT re-evaluate those choices.
+### Yandex ID OAuth Integration
 
-Three areas researched:
-1. **Kinescope video player integration** in Next.js
-2. **Next.js production deploy** on VPS with PM2/Nginx
-3. **AI-generated assessment questions** from RAG data
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Custom Next.js API routes | N/A | Server-side OAuth 2.0 proxy for Yandex ID | Supabase has NO built-in Yandex provider. Direct API route handles the OAuth flow server-side, then creates/links Supabase user via Admin API. Simpler than Keycloak workaround, avoids dual auth systems. |
+| Supabase Admin API (existing) | @supabase/supabase-js 2.x | Create/link users from Yandex tokens | `supabase.auth.admin.createUser()` and `supabase.auth.admin.generateLink()` to manage users server-side. Keeps all auth in Supabase, RLS policies continue working. |
 
----
+**Confidence: MEDIUM** — Supabase does not natively support Yandex ID. The server-side proxy pattern is well-documented for other custom providers but not specifically verified for Yandex + Supabase combination.
 
-## 1. Kinescope Video Player Integration
+**Yandex OAuth 2.0 Endpoints (verified via official docs):**
+- Authorization: `https://oauth.yandex.ru/authorize`
+- Token exchange: `https://oauth.yandex.ru/token`
+- User info: `https://login.yandex.ru/info?format=json`
+- App registration: `https://oauth.yandex.ru/client/new`
 
-### Recommended Stack
+**Auth Flow:**
+```
+1. User clicks "Войти через Яндекс"
+2. Frontend redirects to /api/auth/yandex
+3. API route redirects to https://oauth.yandex.ru/authorize?client_id=...&response_type=code&redirect_uri=...
+4. User authorizes on Yandex
+5. Yandex redirects to /api/auth/yandex/callback?code=...
+6. API route exchanges code for token (POST https://oauth.yandex.ru/token)
+7. API route fetches user info (GET https://login.yandex.ru/info?format=json)
+8. API route finds or creates Supabase user via Admin API
+9. API route sets Supabase session cookies
+10. Redirect to /dashboard
+```
 
-| Technology | Version | Purpose | Why Recommended | Confidence |
-|------------|---------|---------|-----------------|------------|
-| `@kinescope/player-iframe-api-loader` | 0.9.0 | Typed iframe API for Kinescope player | Most recent package (Dec 2025), TypeScript types included, lightweight loader. Does NOT bundle the player — loads it via iframe which is Kinescope's recommended approach. | HIGH (verified via npm registry) |
-| Plain iframe embed (current) | N/A | Fallback / simplest approach | Already implemented in `learn/[id]/page.tsx`. Works without any npm package. | HIGH (already in codebase) |
+**Google OAuth removal:** Remove Google OAuth provider from Supabase dashboard. Update login page to show only Yandex + email/password. Migration script for existing Google-linked accounts (match by email, link to Yandex ID on next login).
 
-### Decision: Use `@kinescope/player-iframe-api-loader` (0.9.0)
+### CloudPayments Billing
 
-**Rationale:**
-- The project already has a working iframe embed (`https://kinescope.io/embed/${videoId}`). This works but provides zero programmatic control.
-- The iframe API loader adds: play/pause control, seek to timecode (critical for RAG citation links), playback events (for watch progress tracking), and TypeScript types.
-- The alternative React wrapper (`@kinescope/react-kinescope-player` v0.5.4, last updated Apr 2025) is older, lower version, and wraps the same iframe API. The loader is more flexible for Next.js App Router (no SSR issues with iframes).
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| CloudPayments Widget (CDN) | Latest | Payment form UI (iframe, PCI DSS compliant) | Official embed from `widget.cloudpayments.ru`. Handles card data securely via iframe. No PCI scope on our side. Supports Apple Pay, Google Pay. |
+| `cloudpayments` npm | ^4.1.1 | Server-side API client (TypeScript) | Create/cancel/update subscriptions, query payment status. Written in TypeScript with full type definitions. |
+| Webhook handler (custom API route) | N/A | Process CloudPayments notifications | Pay, Fail, Recurrent, Cancel, Refund webhook types. CloudPayments retries 100 times if unreachable. |
+| `crypto` (Node.js built-in) | N/A | HMAC validation of webhook signatures | Verify webhook authenticity using API secret |
 
-### What NOT to use
+**Confidence: HIGH** — CloudPayments API well-documented, npm package exists with TypeScript types, actively maintained.
 
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| `@kinescope/react-kinescope-player` (0.5.4) | Older package, less recently maintained, adds React abstraction over what is already an iframe. In App Router `'use client'` components, direct iframe + API loader is simpler. | `@kinescope/player-iframe-api-loader` or plain iframe |
-| Custom video.js / hls.js player | Kinescope handles DRM/streaming. Building your own player defeats the purpose of using Kinescope. | Kinescope iframe |
-| Server-side rendering of video | Kinescope player is client-only (iframe). Attempting SSR causes hydration errors. | Always render in `'use client'` component |
+**CloudPayments API Details:**
+- Base URL: `https://api.cloudpayments.ru`
+- Auth: HTTP Basic Auth (`publicId:apiSecret`)
+- Key endpoints:
+  - `POST /subscriptions/create` — create recurring subscription
+  - `POST /subscriptions/update` — change plan/amount
+  - `POST /subscriptions/cancel` — cancel subscription
+  - `POST /subscriptions/find` — find by account ID
+- Webhook types: Check, Pay, Fail, Recurrent, Cancel, Confirm, Refund
+- Webhook retry: 100 attempts if merchant server unavailable or returns error
 
-### Installation
+**Widget integration:**
+```html
+<!-- Loaded from CDN, opens as modal iframe -->
+<script src="https://widget.cloudpayments.ru/bundles/checkout"></script>
+```
+Widget stays on page (no redirect). Collects card data in secure iframe. Returns cryptogram for server-side charge. For recurring: first payment creates token, subsequent charges are automatic.
+
+### Paywall / Access Control
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Prisma models (existing) | 5.x | Subscription state in DB | Single source of truth for access decisions. New `Subscription` and `PaymentEvent` models. |
+| Next.js Middleware (existing) | 14.x | Route-level paywall check | Fast check before page render. Reads subscription status from cookie/session. |
+| tRPC middleware (existing) | 11.x | API-level access gating | `subscribedProcedure` that checks active subscription before returning paid content. |
+| Feature flag (env var) | N/A | Toggle billing on/off | `NEXT_PUBLIC_BILLING_ENABLED=true/false`. When false, all content is free. No redeploy needed for env change on VPS. |
+
+**Confidence: HIGH** — Uses existing stack, no new dependencies. Standard access control pattern.
+
+### Supporting Libraries
+
+| Library | Version | Purpose | When to Use |
+|---------|---------|---------|-------------|
+| `cloudpayments` | ^4.1.1 | CloudPayments API client (TypeScript) | All server-side payment operations |
+
+**No new UI libraries needed.** shadcn/ui covers all billing UI requirements:
+- `Dialog` for payment modal wrapper
+- `Badge` for subscription status display
+- `Alert` for paywall banners ("Subscribe to access")
+- `Card` for pricing plans display
+- `Button` for CTA actions
+
+## Alternatives Considered
+
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| Yandex Auth | Server-side OAuth proxy (API routes) | Keycloak provider hijack in Supabase | Fragile, undocumented hack. Supabase Keycloak config lets you set custom URLs, but it's meant for actual Keycloak. Breaks if Supabase changes their Keycloak implementation. |
+| Yandex Auth | Server-side OAuth proxy | NextAuth.js with Yandex provider | Creates TWO auth systems. NextAuth has sessions, Supabase has sessions. RLS policies only work with Supabase sessions. Users end up with inconsistent auth state. |
+| Yandex Auth | Server-side OAuth proxy | Wait for Supabase generic OIDC support | Supabase discussion #6547 shows custom OIDC is planned but no ETA for consumer-side (inbound) providers. Only OAuth 2.1 server (outbound) shipped so far. Can't wait. |
+| Payment provider | CloudPayments | Stripe | Stripe works poorly for Russian market. CloudPayments is Russian, supports Russian banks, ruble payments, local acquiring, 54-FZ receipt compliance. |
+| Payment provider | CloudPayments | YooKassa (YooMoney) | Both viable for Russia. CloudPayments has better developer docs, cleaner API, official TypeScript npm package. YooKassa npm ecosystem is weaker. |
+| Payment widget | CDN script | `@cloudpayments/checkout` npm | CDN is officially recommended by CloudPayments. npm package exists but has fewer weekly downloads and less clear documentation. CDN always loads latest stable version. |
+| Subscription DB | Prisma models in existing DB | Separate billing microservice | Over-engineering for single-product SaaS with <1000 users. Single DB simplifies access checks (JOIN subscription with user in one query). |
+| Feature flags | `NEXT_PUBLIC_BILLING_ENABLED` env var | LaunchDarkly / Flagsmith / Unleash | One boolean toggle does not justify a feature flag service. Env var is zero-cost, zero-dependency, and sufficient. |
+| Paywall check | tRPC middleware (`subscribedProcedure`) | Next.js Middleware only | Middleware is edge-only, can't query Prisma. Need server-side tRPC procedure for full DB access check. Middleware handles redirect logic, tRPC handles data gating. |
+
+## Installation
 
 ```bash
-pnpm add @kinescope/player-iframe-api-loader@^0.9.0 --filter=@mpstats/web
+# CloudPayments server-side API client (only new package)
+pnpm add cloudpayments --filter=@mpstats/api
+
+# No other new packages needed:
+# - Yandex OAuth uses native fetch + existing @supabase/supabase-js
+# - CloudPayments widget loaded from CDN (not npm)
+# - Paywall uses existing Prisma + tRPC + middleware
+# - UI uses existing shadcn/ui components
 ```
 
-### Integration Pattern
+## Environment Variables (New)
 
-```typescript
-// components/video/KinescopePlayer.tsx ('use client')
-// 1. Load iframe API via the loader
-// 2. Create player instance targeting an iframe element
-// 3. Use player.seekTo(seconds) for timecode citations from RAG
-// 4. Listen to player.on('timeupdate') for watch progress tracking
-// 5. Expose onProgress callback to parent for saving to DB
+```bash
+# === Yandex OAuth ===
+YANDEX_CLIENT_ID=              # From https://oauth.yandex.ru/client/new
+YANDEX_CLIENT_SECRET=          # From Yandex OAuth console (NEVER expose to client)
+
+# === CloudPayments ===
+CLOUDPAYMENTS_PUBLIC_ID=       # From CloudPayments dashboard (safe for client)
+CLOUDPAYMENTS_API_SECRET=      # From CloudPayments dashboard (NEVER expose to client)
+
+# === Feature Flag ===
+NEXT_PUBLIC_BILLING_ENABLED=false  # Toggle paywall on/off. "false" = all content free.
 ```
 
-### Key Integration Points
+**Security notes:**
+- `YANDEX_CLIENT_SECRET` and `CLOUDPAYMENTS_API_SECRET` must NOT have `NEXT_PUBLIC_` prefix
+- `CLOUDPAYMENTS_PUBLIC_ID` is safe for client (used in widget initialization)
+- Add to `.env.example`, `.env.production` on VPS, and GitHub Actions secrets
 
-| Feature | How | Complexity |
-|---------|-----|------------|
-| Basic playback | iframe embed (already done) | Done |
-| Timecode seek from RAG citations | `player.seekTo(seconds)` via API loader | Low |
-| Watch progress tracking | `timeupdate` event -> save to Supabase | Medium |
-| Resume from last position | Load `lastWatchedPosition` from DB, `seekTo` on mount | Low |
+## Prisma Schema Additions
 
----
+```prisma
+// ============== BILLING ==============
 
-## 2. Next.js Production Deploy on VPS
+enum SubscriptionStatus {
+  TRIAL         // Free trial period (if applicable)
+  ACTIVE        // Paid and current
+  PAST_DUE      // Payment failed, grace period
+  CANCELLED     // User cancelled, access until currentPeriodEnd
+  EXPIRED       // Period ended, no access
+}
 
-### Recommended Stack
+enum SubscriptionPlan {
+  COURSE        // Single course access
+  PLATFORM      // Full platform access (all courses)
+}
 
-| Technology | Version | Purpose | Why Recommended | Confidence |
-|------------|---------|---------|-----------------|------------|
-| Next.js standalone output | 14.2.x (current) | Self-contained production build | `output: 'standalone'` in next.config.js produces a minimal node server. No need for `node_modules` on VPS — everything is bundled. Standard approach for self-hosted deploy. | HIGH (well-documented Next.js feature) |
-| PM2 | 6.0.14 | Process manager | Auto-restart on crash, cluster mode, log management, zero-downtime reload. Already installed on VPS (`PM2 5.x`). Upgrade to 6.x recommended. | HIGH (verified via npm, standard practice) |
-| Nginx | 1.24+ | Reverse proxy + SSL | Handles HTTPS termination, static file serving, gzip, rate limiting. Standard for Ubuntu VPS. | HIGH (industry standard) |
-| Certbot / Let's Encrypt | latest | SSL certificates | Free, automated SSL renewal. Standard for self-hosted. | HIGH |
-| GitHub Actions | N/A | CI/CD deployment pipeline | Already have `.github/workflows/ci.yml`. Add deploy job that SSH's into VPS, pulls, builds, restarts PM2. | MEDIUM |
+model Subscription {
+  id                  String             @id @default(cuid())
+  userId              String
+  plan                SubscriptionPlan
+  status              SubscriptionStatus @default(ACTIVE)
+  courseId             String?            // Only for COURSE plan, null for PLATFORM
+  cloudpaymentsSubId  String?            @unique // CloudPayments subscription ID
+  cloudpaymentsToken  String?            // Recurring payment token from first charge
+  amount              Decimal            // Price in RUB
+  interval            String             @default("Month") // "Month" or "Year"
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelledAt         DateTime?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
-### Deploy Architecture
+  user   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course?     @relation(fields: [courseId], references: [id])
+  events PaymentEvent[]
 
-```
-Client -> Nginx (:443 HTTPS) -> PM2 (Next.js :3000) -> Supabase (cloud)
-                                                     -> OpenRouter (cloud)
-```
+  @@index([userId])
+  @@index([status])
+  @@index([cloudpaymentsSubId])
+}
 
-### Critical Configuration: `next.config.js`
+model PaymentEvent {
+  id                String   @id @default(cuid())
+  subscriptionId    String?
+  transactionId     String   // CloudPayments transaction ID
+  type              String   // "Pay", "Fail", "Recurrent", "Cancel", "Refund"
+  amount            Decimal
+  currency          String   @default("RUB")
+  status            String   // "Completed", "Declined", "Authorized"
+  rawPayload        Json     // Full webhook payload for audit trail
+  createdAt         DateTime @default(now())
 
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'standalone',  // <-- ADD THIS
-  reactStrictMode: true,
-  transpilePackages: ['@mpstats/api', '@mpstats/db', '@mpstats/shared'],
-  // ... rest unchanged
-};
-```
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
 
-**Why `standalone`:** Without it, Next.js expects the full `node_modules` directory at runtime. With `standalone`, it creates a `.next/standalone/` folder with only the files needed to run, plus a minimal `server.js` entry point. This reduces deploy size from ~500MB to ~50MB.
-
-### PM2 Ecosystem Config
-
-```javascript
-// ecosystem.config.js (root of project on VPS)
-module.exports = {
-  apps: [{
-    name: 'mpstats-academy',
-    script: '.next/standalone/server.js',
-    cwd: '/home/deploy/mpstats-academy',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000,
-      HOSTNAME: '0.0.0.0',
-    },
-    instances: 1,           // Single instance for MVP (VPS resources)
-    exec_mode: 'fork',
-    max_memory_restart: '512M',
-    log_date_format: 'YYYY-MM-DD HH:mm:ss',
-    error_file: '/home/deploy/logs/mpstats-error.log',
-    out_file: '/home/deploy/logs/mpstats-out.log',
-  }],
-};
-```
-
-### Nginx Config Pattern
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name academy.mpstats.io;  # actual domain TBD
-
-    ssl_certificate /etc/letsencrypt/live/academy.mpstats.io/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/academy.mpstats.io/privkey.pem;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    # Static assets from Next.js
-    location /_next/static/ {
-        proxy_pass http://127.0.0.1:3000;
-        expires 365d;
-        add_header Cache-Control "public, immutable";
-    }
+  @@index([subscriptionId])
+  @@index([transactionId])
 }
 ```
 
-### Deploy Script Pattern
+**Existing model additions:**
 
-```bash
-#!/bin/bash
-# deploy.sh — run on VPS or via SSH from CI
-set -e
+```prisma
+// UserProfile — add fields:
+model UserProfile {
+  // ... existing fields ...
+  yandexId       String?        @unique  // Yandex user ID for account linking
+  subscriptions  Subscription[]
+}
 
-cd /home/deploy/mpstats-academy
-git pull origin master
-pnpm install --frozen-lockfile
-pnpm db:generate
-pnpm build
+// Course — add fields:
+model Course {
+  // ... existing fields ...
+  price          Decimal?       @default(0)   // Price in RUB per month, 0 = free
+  isFree         Boolean        @default(false) // Explicitly free course (overrides paywall)
+  subscriptions  Subscription[]
+}
 
-# Copy static assets to standalone (required!)
-cp -r .next/static .next/standalone/.next/static
-cp -r public .next/standalone/public
-
-pm2 reload ecosystem.config.js
+// Lesson — add field:
+model Lesson {
+  // ... existing fields ...
+  isFreePreview  Boolean        @default(false) // Available without subscription (first 1-2 lessons per course)
+}
 ```
 
-### What NOT to use
+## Integration Points with Existing System
 
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| Docker for Next.js (on this VPS) | Adds complexity for a single-app VPS. Docker is already used for n8n. Running Next.js directly with PM2 is simpler and uses less memory. | PM2 + standalone |
-| `next start` directly | No process management, no auto-restart, no log rotation | PM2 wrapping standalone server.js |
-| Vercel / Netlify | Project requirement is self-hosted VPS | PM2 + Nginx |
-| Apache | Nginx is superior for reverse proxy + WebSocket support | Nginx |
-| PM2 cluster mode (multiple instances) | VPS likely has limited RAM. Cluster mode doubles memory. One instance is fine for MVP scale. | Single fork mode, scale later |
+### 1. Supabase Auth Integration
 
-### Version Compatibility
-
-| Package | Compatible With | Notes |
-|---------|-----------------|-------|
-| Next.js 14.2.x | Node.js 20.x | VPS has Node.js 20.19.6 — compatible |
-| PM2 6.0.x | Node.js 20.x | Upgrade from 5.x on VPS: `pnpm add -g pm2@latest` |
-| Prisma 5.x | Node.js 20.x | Needs `prisma generate` on VPS before build |
-| pnpm 9.x | Node.js 20.x | Install on VPS: `corepack enable && corepack prepare pnpm@9.15.0 --activate` |
-
----
-
-## 3. AI-Generated Assessment Questions from RAG Data
-
-### Recommended Stack
-
-| Technology | Version | Purpose | Why Recommended | Confidence |
-|------------|---------|---------|-----------------|------------|
-| OpenRouter (existing) | N/A | LLM provider for question generation | Already configured and working for summary/chat. Same client, same billing. No new dependency. | HIGH (already in codebase) |
-| OpenAI SDK (existing) | ^4.73.0 | API client | Already used in `packages/ai/src/openrouter.ts`. Supports structured outputs via `response_format`. | HIGH |
-| Zod | ^3.23.8 (existing) | Schema validation for LLM output | Already in the project. Use Zod schemas to validate LLM-generated questions match expected format. Rejects malformed output. | HIGH |
-| `google/gemini-2.5-flash` (existing) | N/A | Primary model for generation | Already the default model. Fast, cheap, good at structured output. Perfect for generating quiz questions. | HIGH |
-
-### Architecture: Question Generation Pipeline
-
-```
-RAG Chunks (Supabase) -> Select chunks by skill category
-                      -> Build prompt with schema instructions
-                      -> LLM generates JSON (structured output)
-                      -> Zod validates response
-                      -> Return typed questions
-                      -> Fallback to mock questions on failure
-```
-
-### Key Design Decisions
-
-**Use JSON mode, NOT function calling for question generation:**
-- OpenRouter passes `response_format: { type: "json_object" }` to Gemini
-- Include the Zod schema as instructions in the system prompt
-- Validate the response with `questionSchema.safeParse()`
-- This is simpler and more portable across models than function calling
-
-**Why NOT Vercel AI SDK for this:**
-- Vercel AI SDK (`ai` package, currently v6.0.86) is designed for streaming chat UIs
-- Question generation is a batch operation — send prompt, get structured JSON back
-- The existing OpenAI SDK + OpenRouter setup handles this perfectly
-- Adding Vercel AI SDK would add a dependency for no benefit here
-
-### Question Schema (Zod)
+Yandex OAuth creates Supabase users via Admin API. Key integration:
 
 ```typescript
-// packages/ai/src/question-generator.ts
-import { z } from 'zod';
+// api/auth/yandex/callback — simplified flow
+const yandexUser = await fetchYandexUserInfo(accessToken);
 
-const questionSchema = z.object({
-  questions: z.array(z.object({
-    text: z.string().min(10),
-    category: z.enum(['ANALYTICS', 'MARKETING', 'CONTENT', 'OPERATIONS', 'FINANCE']),
-    difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
-    options: z.array(z.object({
-      text: z.string(),
-      isCorrect: z.boolean(),
-    })).length(4),
-    explanation: z.string(),
-    sourceChunkId: z.string().optional(),
-  })).min(1).max(10),
+// Find existing user by email or yandexId
+let supabaseUser = await findUserByEmail(yandexUser.default_email);
+
+if (!supabaseUser) {
+  // Create new Supabase auth user
+  const { data } = await supabaseAdmin.auth.admin.createUser({
+    email: yandexUser.default_email,
+    email_confirm: true, // Yandex already verified email
+    user_metadata: {
+      name: yandexUser.display_name,
+      avatar_url: yandexUser.default_avatar_id
+        ? `https://avatars.yandex.net/get-yapic/${yandexUser.default_avatar_id}/islands-200`
+        : null,
+      yandex_id: yandexUser.id,
+    },
+  });
+  supabaseUser = data.user;
+}
+
+// Update UserProfile with yandexId
+await prisma.userProfile.upsert({
+  where: { id: supabaseUser.id },
+  update: { yandexId: String(yandexUser.id) },
+  create: { id: supabaseUser.id, yandexId: String(yandexUser.id), name: yandexUser.display_name },
+});
+
+// Generate session and set cookies
+```
+
+### 2. tRPC Router Structure
+
+```typescript
+// New router: packages/api/src/routers/billing.ts
+billingRouter = {
+  getSubscriptions: protectedProcedure,     // User's active subscriptions
+  getPlans: publicProcedure,                 // Available pricing plans
+  createCheckout: protectedProcedure,        // Initiate CloudPayments widget
+  cancelSubscription: protectedProcedure,    // Cancel recurring
+  webhookHandler: publicProcedure,           // CloudPayments webhooks (HMAC validated)
+}
+
+// New middleware: subscribedProcedure
+// Checks user has active subscription for requested content
+subscribedProcedure = protectedProcedure.use(({ ctx, next }) => {
+  // Check BILLING_ENABLED flag first
+  // If disabled, pass through (all content free)
+  // If enabled, verify active subscription
 });
 ```
 
-### Generation Strategy
+### 3. Middleware Paywall Flow
 
-| Aspect | Decision | Rationale |
-|--------|----------|-----------|
-| Chunks per question | 2-3 chunks as context | Enough context for meaningful question, not so much it confuses the model |
-| Questions per session | 10-15 | Matches current mock diagnostic length |
-| Category balance | 2-3 questions per skill axis | Ensures all 5 axes are tested |
-| Difficulty | Start MEDIUM, adapt based on answers | IRT-lite: correct -> HARD, incorrect -> EASY |
-| Caching | Cache generated questions per category+difficulty for 24h | Avoid re-generating identical questions; invalidate when new chunks are added |
-| Fallback | Mock questions from `mocks/questions.ts` | If LLM is down or rate-limited, diagnostic still works |
-| Rate limiting | 1 generation request per user per minute | Prevent abuse; question generation is expensive |
-
-### What NOT to use
-
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| Vercel AI SDK (`ai` package) | Overkill for batch question generation. Designed for streaming chat. Adds ~200KB dependency for no benefit. | Direct OpenAI SDK calls (already in project) |
-| Fine-tuned model | MVP scale doesn't justify fine-tuning cost/complexity. Prompt engineering with RAG context is sufficient. | Few-shot prompting with examples in system prompt |
-| LangChain | Heavy abstraction layer. Project already has a clean, minimal RAG pipeline. LangChain would add complexity without value. | Direct OpenAI SDK + Supabase vector search (existing) |
-| Embedding-based question matching | Generating questions is better than matching pre-made ones. RAG chunks are transcripts, not question banks. | LLM generation from RAG context |
-| Client-side generation | Questions must be generated server-side to prevent cheating (seeing answers in network tab) | tRPC protectedProcedure (server-side only) |
-
----
-
-## Alternatives Considered (Cross-cutting)
-
-| Category | Recommended | Alternative | When to Use Alternative |
-|----------|-------------|-------------|-------------------------|
-| Video player | Kinescope iframe + API loader | Kinescope React wrapper (0.5.4) | If you need a drop-in React component and don't need fine control over iframe lifecycle |
-| Process manager | PM2 6.x | systemd service | If you want zero external dependencies and are comfortable writing systemd units |
-| Reverse proxy | Nginx | Caddy | If you want automatic HTTPS without Certbot (Caddy auto-provisions certs). Slightly simpler config. |
-| LLM for questions | Gemini 2.5 Flash via OpenRouter | GPT-4o-mini via OpenRouter | If Gemini structured output quality is insufficient. GPT-4o-mini is the configured fallback. |
-| Question format | JSON mode + Zod validation | OpenAI function calling | If using OpenAI directly (not via OpenRouter). Function calling is less portable across providers. |
-
----
-
-## Installation Summary
-
-```bash
-# Kinescope (new dependency)
-pnpm add @kinescope/player-iframe-api-loader@^0.9.0 --filter=@mpstats/web
-
-# VPS setup (run on server, not locally)
-npm install -g pm2@latest    # Upgrade PM2 from 5.x to 6.x
-sudo apt install nginx certbot python3-certbot-nginx  # If not already installed
-
-# No new npm packages needed for question generation
-# Uses existing: openai, zod, @supabase/supabase-js
+```typescript
+// middleware.ts additions
+// Lesson pages: check subscription before rendering
+// Free content: diagnostic, first lessons (isFreePreview), profile
+// Paid content: all other lessons, RAG chat (optional)
 ```
 
----
+## What NOT to Add
 
-## Stack Patterns by Variant
-
-**If Kinescope videoIds are not yet available:**
-- Keep the current placeholder UI (already implemented)
-- Build the `KinescopePlayer` component with a mock videoId
-- Wire up timecode seek from RAG citations
-- Swap in real videoIds when received
-
-**If VPS memory is constrained (<2GB):**
-- Use PM2 fork mode (not cluster)
-- Set `max_memory_restart: '512M'`
-- Consider `next.config.js` -> `swcMinify: true` (default in 14.x)
-- Monitor with `pm2 monit`
-
-**If LLM rate limits are hit during question generation:**
-- Implement question cache (Redis or in-memory with TTL)
-- Pre-generate question pools during off-peak hours
-- Fall back to mock questions immediately
-
----
-
-## Version Compatibility Matrix
-
-| Package | Version | Compatible With | Notes |
-|---------|---------|-----------------|-------|
-| Next.js | 14.2.x | Node.js 18-22, React 18 | Current in project. Do NOT upgrade to 15.x during deploy sprint — breaking changes. |
-| PM2 | 6.0.14 | Node.js 16+ | Stable. VPS needs upgrade from 5.x. |
-| `@kinescope/player-iframe-api-loader` | 0.9.0 | Any (loads via script tag) | No framework dependency |
-| `@kinescope/react-kinescope-player` | 0.5.4 | React 16-19 | NOT recommended (see above) |
-| OpenAI SDK | 4.73.0 | Node.js 18+ | Already in project. Works with OpenRouter. |
-| Prisma | 5.x | Node.js 16.13+ | Needs `generate` on VPS. |
-| pnpm | 9.15.0 | Node.js 18.12+ | Must be installed on VPS via corepack. |
-
----
+| Avoid | Why | What Exists Instead |
+|-------|-----|---------------------|
+| NextAuth.js | Creates dual auth system, breaks Supabase RLS, doubles session management | Server-side Yandex OAuth proxy + Supabase Admin API |
+| Stripe | Poor Russian market support, no local acquiring, no 54-FZ compliance | CloudPayments (Russian payment processor) |
+| Redis for subscription caching | Overkill for <1000 users. Prisma query with index is fast enough | Direct Prisma query on `Subscription` table |
+| Separate billing database | Single DB is simpler, allows JOINs for access checks | Prisma models in existing Supabase PostgreSQL |
+| Webhook queue (Bull/BullMQ) | Webhook volume is low (<100/day for MVP). Direct processing is fine | Synchronous webhook handler in API route |
+| Payment analytics dashboard | Admin panel already exists. Add subscription stats there | Extend existing admin routes |
+| Multi-currency support | All users are Russian, all payments in RUB | `currency: "RUB"` default |
 
 ## Sources
 
-- npm registry — `@kinescope/player-iframe-api-loader@0.9.0` (verified 2026-02-16, published 2025-12-05)
-- npm registry — `@kinescope/react-kinescope-player@0.5.4` (verified 2026-02-16, published 2025-04-04)
-- npm registry — `pm2@6.0.14` (verified 2026-02-16)
-- npm registry — `next@16.1.6` latest, project uses `14.2.x` (verified 2026-02-16)
-- npm registry — `openai@6.22.0` latest, project uses `4.73.0` (verified 2026-02-16)
-- npm registry — `ai@6.0.86` (Vercel AI SDK, considered but not recommended)
-- Existing codebase analysis: `packages/ai/src/`, `apps/web/src/app/(main)/learn/[id]/page.tsx`, `next.config.js`, `package.json`
-- Project documentation: `CLAUDE.md`, `docs/02_technical_spec/TECHNICAL_SPEC.md`
-- LOW confidence items: Nginx config patterns, deploy script patterns, question generation prompting strategy (based on training data, not verified against current docs due to web tool restrictions)
+- [Supabase signInWithIdToken docs](https://supabase.com/docs/reference/javascript/auth-signinwithidtoken) — HIGH confidence
+- [Supabase custom OIDC discussion #6547](https://github.com/orgs/supabase/discussions/6547) — MEDIUM confidence (confirms no native Yandex support)
+- [Supabase Keycloak workaround article](https://tylerjulian.substack.com/p/supabase-generic-oidc-authentication) — MEDIUM confidence (not recommended but documented)
+- [Yandex OAuth documentation](https://yandex.com/dev/id/doc/en/concepts/ya-oauth-intro) — HIGH confidence
+- [Yandex user info endpoint](https://yandex.com/dev/id/doc/en/user-information) — HIGH confidence
+- [Auth.js Yandex provider source](https://github.com/nextauthjs/next-auth/blob/main/packages/core/src/providers/yandex.ts) — HIGH confidence (confirms endpoints)
+- [CloudPayments developer docs](https://developers.cloudpayments.ru/en/) — HIGH confidence
+- [cloudpayments npm package](https://www.npmjs.com/package/cloudpayments) — HIGH confidence
+- [@cloudpayments/checkout npm](https://www.npmjs.com/package/@cloudpayments/checkout) — MEDIUM confidence
+- [CloudPayments Node.js client (GitHub)](https://github.com/izatop/cloudpayments) — HIGH confidence
+- [CloudPayments notification handler source](https://github.com/izatop/cloudpayments/blob/master/src/Api/notification.ts) — HIGH confidence
+- [Next.js paywall patterns](https://www.ericburel.tech/blog/static-paid-content-app-router) — MEDIUM confidence
+- [Vercel nextjs-subscription-payments repo](https://github.com/vercel/nextjs-subscription-payments) — HIGH confidence (pattern reference, uses Stripe but architecture applies)
+- [Supabase custom OAuth providers discussion #417](https://github.com/orgs/supabase/discussions/417) — MEDIUM confidence
 
 ---
-*Stack research for: MAAL — Kinescope, VPS Deploy, AI Question Generation*
-*Researched: 2026-02-16*
+*Stack research for: MAAL v1.2 — Yandex ID Auth, CloudPayments Billing, Paywall*
+*Researched: 2026-03-06*

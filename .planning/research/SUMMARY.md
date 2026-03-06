@@ -1,304 +1,188 @@
 # Project Research Summary
 
-**Project:** MPSTATS Academy Adaptive Learning (MAAL) — Sprints 4-5 Integration
-**Domain:** Educational platform integration (mock-to-real data migration, video integration, AI diagnostics, production deployment)
-**Researched:** 2026-02-16
+**Project:** MAAL v1.2 -- Auth Rework + Billing
+**Domain:** OAuth provider migration + SaaS billing for educational platform (Russian market)
+**Researched:** 2026-03-06
 **Confidence:** MEDIUM-HIGH
 
 ## Executive Summary
 
-MAAL is an educational platform for marketplace sellers with adaptive learning driven by AI-powered diagnostics. The project has completed UI development (Sprints 0-2) and RAG integration (Sprint 3). The remaining work focuses on **data layer migration** (replacing in-memory mocks with persistent Prisma/Supabase storage), **video integration** (Kinescope player with timecode deep-linking), **AI question generation** (diagnostic questions derived from RAG chunks), and **production deployment** (VPS with PM2/Nginx).
+MAAL v1.2 adds two major capabilities to an existing Next.js/Supabase education platform: replacing Google OAuth with Yandex ID authentication, and introducing CloudPayments-based subscription billing with content gating. The existing stack (Next.js 14, tRPC, Prisma, Supabase, Turborepo) is locked and well-proven through 6 completed sprints. The new work introduces exactly one new npm dependency (`cloudpayments` server-side client) and two external service integrations (Yandex OAuth, CloudPayments).
 
-The recommended approach is **incremental migration with fallbacks**: replace mock data sources one component at a time, keeping mock fallback logic until all integrations are complete. The highest-risk component is AI question generation, which introduces non-determinism into a critical user flow — this must include validation guardrails and mock fallbacks. The most impactful integration is database persistence — without it, all progress and diagnostic data is lost on server restarts, making the platform unusable in production.
+The recommended approach is conservative and pragmatic. For auth, implement a manual server-side OAuth flow via custom API routes because Supabase does not natively support Yandex ID -- this is the single most important architectural constraint. For billing, use CloudPayments (the Russian market standard) with its CDN-hosted payment widget for PCI compliance and server-side webhook processing for subscription lifecycle management. The paywall should be a soft freemium model: diagnostic and 1-2 intro lessons per course remain free, with a centralized access service gating everything else.
 
-The critical path is: (1) Seed real course/lesson data → (2) Migrate learning progress to database → (3) Migrate diagnostic persistence → (4) Secure endpoints and deploy to VPS. AI question generation and advanced video features can follow as post-launch enhancements. The primary pitfall to avoid is atomic migration failures — migrating one router while leaving cross-dependencies on mock data creates data integrity issues.
+The primary risks are: (1) account migration from Google OAuth to Yandex ID losing user data if not handled via email-based linking, (2) webhook processing bugs (missing HMAC verification, non-idempotent handlers, state machine race conditions) corrupting subscription state, and (3) 54-FZ fiscal receipt non-compliance creating legal liability. All three are well-understood and preventable with the patterns documented in the research. The auth and billing tracks are independent and can be built in parallel, with paywall integration as the final phase.
 
 ## Key Findings
 
 ### Recommended Stack
 
-Three new integrations are required: video player SDK, production deployment architecture, and AI question generation. All leverage existing technologies (Kinescope, Next.js, OpenRouter) to minimize new dependencies.
+Only one new package is needed: `cloudpayments` npm (TypeScript server-side API client). Yandex OAuth uses native `fetch` and the existing `@supabase/supabase-js` Admin API. CloudPayments widget loads from CDN (never bundled). All paywall logic uses existing Prisma, tRPC middleware, and shadcn/ui components. See [STACK.md](./STACK.md) for full details.
 
 **Core additions:**
-- **Kinescope Player Iframe API Loader (0.9.0):** TypeScript-typed API for programmatic video control — enables timecode seek from RAG citations, watch progress tracking. Choose this over React wrapper (older, less flexible for App Router). Plain iframe embed already works, SDK adds programmatic control only.
-- **Next.js standalone output:** `output: 'standalone'` in next.config.js produces minimal production bundle (50MB vs 500MB). Standard pattern for self-hosted deploys, eliminates node_modules on VPS.
-- **PM2 (6.0.14):** Process manager for auto-restart, cluster mode, log management. VPS has PM2 5.x installed — upgrade recommended. Alternative: systemd service (more complex, no cluster mode).
-- **Nginx + Let's Encrypt:** Reverse proxy for HTTPS termination. Standard for Ubuntu VPS. Certbot handles auto SSL renewal.
-
-**No new dependencies for AI question generation:** Use existing OpenRouter + OpenAI SDK + Zod stack. JSON mode with schema validation, not function calling (better portability across LLM providers).
-
-**Version compatibility:** Next.js 14.2.x compatible with Node.js 20.x (VPS has 20.19.6). Prisma 5.x requires `generate` on VPS before build. pnpm must be installed via corepack.
+- **Custom API routes for Yandex OAuth**: server-side OAuth 2.0 proxy because Supabase has no Yandex provider -- manual token exchange + Supabase Admin API user creation
+- **CloudPayments Widget (CDN)**: PCI-compliant payment iframe, supports Apple Pay/Google Pay/SBP, no card data touches our server
+- **CloudPayments server-side client** (`cloudpayments` npm ^4.1.1): subscription create/cancel/update, TypeScript types
+- **Webhook handlers** (custom API routes): HMAC-verified endpoints for Check/Pay/Fail/Recurrent/Cancel events
+- **Feature flag** (DB-stored with in-memory cache): admin-toggleable billing on/off without redeploy
 
 ### Expected Features
 
-Research identified 10 table stakes (must have), 7 differentiators (competitive advantage), and 8 anti-features (commonly requested but problematic). The MVP definition excludes advanced features like adaptive difficulty and full LMS capabilities.
+See [FEATURES.md](./FEATURES.md) for full feature landscape.
 
 **Must have (table stakes):**
-- **TS-1: Dynamic course catalog from DB** — replacing hardcoded mocks, foundation for all other features
-- **TS-2/3: Persistent progress and diagnostics** — data must survive server restarts (critical production blocker)
-- **TS-4: Video player (Kinescope embed)** — core value delivery, depends on external videoId data
-- **TS-6/7/8: Production deployment (VPS, env vars, HTTPS)** — must be accessible online with SSL for Google OAuth
-- **TS-10: Protected routes enforcement** — fix 3 publicProcedure TODOs in ai.ts (security critical)
-- **D-2: Soft access gating** — diagnostic-first UX (core value prop: personalized learning path)
-- **D-3: Personalized path from skill gaps** — weak skill areas prioritized in lesson recommendations
+- Yandex ID one-click OAuth login with email/avatar/name auto-fill
+- Existing Google account migration (match by email, no data loss)
+- CloudPayments recurring subscription (monthly charge without re-entering card)
+- Subscription self-service cancellation (legal requirement)
+- Webhook processing for payment lifecycle (Check, Pay, Fail, Recurrent)
+- 54-FZ fiscal receipts via CloudKassir (legal requirement in Russia)
+- Free diagnostic (always) + free preview lessons (1-2 per course)
+- Locked lesson page with clear subscription CTA
+- Server-side subscription status check (prevent client-side bypass)
+- Billing toggle (enable/disable without code deploy)
 
-**Should have (competitive differentiators):**
-- **D-1: AI-generated diagnostic questions from RAG** — infinite variety, always relevant to actual content (HIGH complexity, post-launch)
-- **D-4: Clickable timecodes that seek video** — deep integration between RAG citations and video player
-- **D-6: Course structure auto-derived from RAG data** — 6 courses / 80+ lessons already in DB, endpoint to expose them
-- **D-7: Summary cache in DB** — SummaryCache Prisma model already exists, trivial migration from in-memory Map
+**Should have (differentiators):**
+- Dual auth (Yandex + email/password fallback)
+- Grace period on failed payments (3-5 days before revoking access)
+- Apple Pay / Google Pay in widget (higher mobile conversion)
+- Subscription pause (reduce churn vs. hard cancel)
+- Plan upgrade path (per-course to full platform)
+- Payment history in profile
 
-**Defer (v2+):**
-- **D-5: Adaptive difficulty (IRT-lite)** — requires large question pool from AI generation first
-- **AF-5: PWA manifest** — responsive web sufficient for MVP, add when mobile metrics justify
-- **AF-6: Gamification (badges, streaks)** — adds complexity, defer until retention data demands it
-
-**Anti-features to avoid:**
-- Real-time collaborative features (WebSocket complexity, low value for solo learners)
-- Custom video player (Kinescope already handles transcoding/DRM/CDN)
-- Multi-language i18n (all content is Russian, translation doubles effort)
-- Microservice architecture (single Next.js app is correct for scale)
+**Defer to v1.3+:**
+- Proration on plan changes
+- Team/corporate plans
+- SBP as separate payment method
+- Dynamic free content rotation
+- Promo codes / discounts
+- Custom admin billing dashboard
 
 ### Architecture Approach
 
-The integration milestone bridges UI (already built) and data layer (Prisma schema exists, tables not populated). The core challenge is replacing three mock layers atomically: static course arrays, in-memory diagnostic sessions (globalThis Maps), and static question pools.
+The architecture extends the existing system with minimal surface area changes. Middleware stays auth-only (no paywall in Edge runtime -- Prisma unavailable there). Paywall enforcement lives in tRPC procedures via a centralized `checkSubscriptionAccess()` service, with a `subscribedProcedure` middleware layer. Webhooks use a single dynamic route (`/api/webhooks/cloudpayments/[type]`) with HMAC verification and idempotent processing via unique transaction ID constraints. Feature flags use a `FeatureFlag` DB table with globalThis in-memory cache (1-minute TTL). See [ARCHITECTURE.md](./ARCHITECTURE.md) for full component diagram and code patterns.
 
-**Major components and migration strategy:**
-
-1. **Learning Router (learning.ts):** Currently reads `MOCK_COURSES` array → migrate to `ctx.prisma.course.findMany()` with progress relations. Replace in-memory `mockProgress` Map → `ctx.prisma.lessonProgress.upsert()`. Safest migration first (no cross-router dependencies).
-
-2. **Diagnostic Router (diagnostic.ts):** Currently uses `globalThis.mockSessions` / `completedSessions` → migrate to `DiagnosticSession` + `DiagnosticAnswer` Prisma models. Store generated questions as JSON field on session (not normalized table — ephemeral per session). Critical: this exports `getLatestSkillProfile()` used by profile router — must migrate before profile.
-
-3. **AI Package (packages/ai/):** Add `question-generator.ts` service following existing RAG pipeline pattern. Called from `diagnostic.startSession()` with fallback to mock questions. Uses same OpenRouter + Zod validation as summary/chat.
-
-4. **Kinescope Integration:** No architectural change — `videoId` field already in Prisma schema. Integration is data-only: populate lesson videoIds via seed script. SDK enables `seekTo(seconds)` for timecode citations from RAG.
-
-5. **VPS Deploy Architecture:** `Client -> Nginx (:443 HTTPS) -> PM2 (Next.js :3000) -> Supabase (cloud)`. Standalone build produces `.next/standalone/server.js` entrypoint. PM2 ecosystem config manages process, Nginx handles SSL termination.
-
-**Key pattern: Strangler Fig migration** — try DB first, fall back to mock if not seeded. Allows partial migration without breaking existing features. Example: `learning.getCourses()` checks if `courses.length > 0` from DB, else returns `getMockCourses()`.
-
-**Critical dependency chain:** Course/Lesson seed must happen first (everything depends on real data). Then learning progress, then diagnostics (exports functions used by profile), then profile dashboard (aggregates from real progress data). AI question generation and video SDK are independent of this chain.
+**Major components:**
+1. **Yandex OAuth routes** (`/api/auth/yandex/*`) -- handle OAuth flow, create/link Supabase users via Admin API, set session cookies
+2. **CloudPayments webhook handler** (`/api/webhooks/cloudpayments/[type]`) -- HMAC-verified, idempotent event processing with Prisma transactions
+3. **Billing tRPC router** (`packages/api/src/routers/billing.ts`) -- subscription CRUD, plans listing, payment history, cancel flow
+4. **Centralized access service** (`checkSubscriptionAccess()`) -- single source of truth for content gating, checks feature flag + free tier + subscription status
+5. **Feature flag system** (`packages/api/src/lib/feature-flags.ts`) -- DB-backed with cache, admin toggle in UI
 
 ### Critical Pitfalls
 
-Six critical pitfalls identified that would block production launch or cause data integrity issues.
+See [PITFALLS.md](./PITFALLS.md) for all 14 pitfalls with prevention strategies.
 
-1. **Mock Data Shape Diverges from Prisma Schema** — `MOCK_COURSES` defines 5 courses (01-05) with computed fields like `progressPercent`. Real DB has 6 courses (including 03_ai, 05_ozon, 06_express) and Prisma returns relations, not computed fields. Fix: create DTO mapping layer (`toDTO()` functions), update SkillCategory enum to include missing courses, write integration tests that validate tRPC response shapes match shared types. **Address in Phase 1 (Mock-to-DB migration), first task before touching routers.**
-
-2. **In-Memory State Not Migrated Atomically** — Three routers share data via `globalThis` and mock imports. Partial migration (e.g., diagnostic to DB while learning stays mock) breaks `recommendedPath` lesson IDs. Fix: map cross-router dependencies, migrate in order (Learning → Diagnostic → Profile), keep mock fallbacks until all migrated. **Address in Phase 1, plan migration order explicitly.**
-
-3. **AI Endpoints Left as publicProcedure in Production** — All `ai.ts` endpoints are `publicProcedure` with TODO comments about SSR cookies. If deployed as-is: unbounded API costs, unauthenticated access to LLM. Fix: resolve SSR cookie propagation, switch to `protectedProcedure`, add rate limiting (PRD specifies 20 msg/hour chat, 50 LLM/hour), remove/protect `searchChunks` debug endpoint. **Address in Phase 3 (Pre-deploy hardening), blocker for deployment.**
-
-4. **Next.js Standalone Build Missing for PM2 Deployment** — No `output: 'standalone'` configured. Without it, VPS needs full node_modules (500MB) and monorepo structure. Prisma generates platform-specific binaries (Windows dev, Linux prod) which fail if not configured. Fix: add standalone output, configure Prisma `binaryTargets`, copy static assets to standalone folder, PM2 points to `standalone/server.js` not `next start`. **Address in Phase 4 (VPS deployment) before first deploy.**
-
-5. **AI Question Generation Without Quality Guardrails** — LLM-generated MCQs can have hallucinated answers, inconsistent difficulty, format violations. Unlike hardcoded mocks, LLM output is non-deterministic. Fix: structured output (JSON mode + Zod schema), validation pipeline (schema → answer verification → difficulty check → dedup), offline question bank generation (not on-the-fly), keep mock fallback, temperature 0.2-0.3. **Address in Phase 2 (AI question generation) — design validation before writing generation code.**
-
-6. **Supabase Service Role Key Exposed in Client Bundle** — `packages/ai/src/retrieval.ts` uses service role key (bypasses RLS). If imported client-side via barrel exports or tree-shaking failure, key leaks to browser. Fix: add `import 'server-only'` to `packages/ai/src/index.ts`, verify env vars lack `NEXT_PUBLIC_` prefix, grep `.next/static/` for key after build. **Address in Phase 3 (Pre-deploy hardening).**
-
-**Honorable mention pitfalls:** XSS via `dangerouslySetInnerHTML` without sanitization (lesson page markdown rendering), no rate limiting on tRPC endpoints, missing error boundaries, Supabase free tier auto-pause (keep-alive already configured).
+1. **Supabase does not support Yandex ID** -- cannot use `signInWithOAuth({ provider: 'yandex' })`. Must build manual server-side OAuth with Admin API. Wrong architecture choice (NextAuth, Keycloak proxy) has HIGH recovery cost.
+2. **Google OAuth users lose access on provider swap** -- existing users matched by email must be linked, not duplicated. Gradual transition required. Never disable Google silently.
+3. **Webhook HMAC verification missing** -- attackers can forge payment confirmations. Implement `crypto.timingSafeEqual` HMAC check as the first line of every webhook handler.
+4. **Non-idempotent webhook handlers** -- CloudPayments retries up to 100 times. Without deduplication by `TransactionId`, duplicate subscriptions and double charges result.
+5. **Subscription state race conditions** -- out-of-order webhooks (Fail arriving after Pay) corrupt status. Use timestamp-based ordering with defined state transitions and pessimistic locking.
+6. **54-FZ fiscal receipt non-compliance** -- legal requirement in Russia. Configure CloudKassir during initial setup. HIGH legal recovery cost if missed.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure with clear dependency ordering:
+Based on combined research, the work splits into 6 phases with two parallel tracks (auth and billing) converging at the paywall phase.
 
-### Phase 1: Database Foundation & Data Migration
-**Rationale:** All integration work depends on real data in the database. Mock-to-DB migration is the critical path. Learning router is safest to migrate first (no cross-router dependencies), diagnostic second (exports to profile), profile last (aggregates from others).
+### Phase 1: Database Foundation
+**Rationale:** All subsequent phases depend on new Prisma models. Zero external dependencies, pure schema work.
+**Delivers:** Subscription, Payment, FeatureFlag models; Course.price and Course.isFree fields; UserProfile.yandexId field; migration applied; seed data (billing_enabled: false, course prices).
+**Addresses:** Data layer for billing, feature flags, free content marking.
+**Avoids:** Pitfall 6 (scattered access checks) by establishing data model first.
 
-**Delivers:**
-- Course/Lesson seed script populating 6 courses, 80+ lessons (derived from `content_chunk.lesson_id`)
-- Learning router migrated to Prisma (courses, lessons, progress persistence)
-- Diagnostic router migrated to Prisma (sessions, answers, skill profiles)
-- Profile router computing dashboard stats from real data
-- Removal of `globalThis` mock storage and `mocks/` imports
+### Phase 2: Feature Flag System
+**Rationale:** Needed before any billing logic so billing can be toggled. Small scope (~1 day), depends only on Phase 1.
+**Delivers:** `isFeatureEnabled()` utility with globalThis cache, admin toggle procedure, admin UI switch.
+**Addresses:** Testing toggle (billing on/off), dev bypass, admin override.
+**Avoids:** Pitfall 11 (toggle without proper isolation).
 
-**Addresses:** TS-1 (DB catalog), TS-2 (persistent progress), TS-3 (persistent diagnostics), D-7 (summary cache in DB)
+### Phase 3: Yandex ID Auth
+**Rationale:** Independent of billing. Can run in parallel with Phase 4. Auth is foundational -- users must be able to log in before paying.
+**Delivers:** Full Yandex OAuth flow (initiate, callback, session creation), account linking by email for existing Google users, updated login/register UI, `handle_new_user` trigger update for multi-provider metadata.
+**Addresses:** All auth table stakes from FEATURES.md.
+**Avoids:** Pitfalls 1 (Supabase limitation), 2 (user lockout), 9 (trigger metadata mismatch).
 
-**Avoids:** Pitfall #1 (schema mismatch — fix DTO mapping first), Pitfall #2 (partial migration — migrate in dependency order)
+### Phase 4: CloudPayments Webhooks
+**Rationale:** Independent of auth. Can run in parallel with Phase 3. Webhooks must work before any UI integration.
+**Delivers:** HMAC verification, idempotent webhook handlers (Check/Pay/Fail/Recurrent), Payment records, subscription lifecycle management, CloudKassir receipt configuration.
+**Addresses:** All billing infrastructure table stakes.
+**Avoids:** Pitfalls 3 (missing HMAC), 4 (non-idempotent handlers), 5 (state machine), 7 (Check confusion), 10 (54-FZ), 14 (rate limiter blocking webhooks).
 
-**Critical tasks:**
-1. Compare Prisma types vs `@mpstats/shared` types, create DTO layer
-2. Seed Course/Lesson tables with lesson_id → SkillCategory mapping (extend enum for 03_ai, 05_ozon, 06_express)
-3. Migrate learning.ts: `getCourses()`, `getLesson()`, `updateProgress()` → Prisma
-4. Migrate diagnostic.ts: `startSession()`, `submitAnswer()`, `getResults()` → Prisma (store questions as JSON field)
-5. Migrate profile.ts: `getDashboard()` aggregates from real tables
-6. Integration tests validating all tRPC endpoints return correct shapes
+### Phase 5: Billing Router + Payment UI
+**Rationale:** Depends on Phase 1 (models) + Phase 4 (webhooks working). Builds the user-facing billing experience.
+**Delivers:** billing tRPC router, CloudPayments widget integration, pricing page, subscription management in profile (status, cancel, payment history).
+**Addresses:** Subscription management features, pricing display, payment flow.
+**Avoids:** Pitfall 8 (hardcoded prices -- serve from DB), Pitfall 12 (widget styling -- use popup mode).
 
-**Complexity:** MEDIUM — schema/models exist, business logic exists in mocks, this is migration not rewrite. Main risk: schema mismatches.
-
-### Phase 2: Video Integration & AI Question Generation
-**Rationale:** Independent of Phase 1 data migration (can run in parallel). Video integration is data-only (populate videoId column). AI question generation is highest-risk feature, needs validation pipeline.
-
-**Delivers:**
-- Kinescope videoId mapping per lesson (via seed script or manual data entry)
-- Video player showing real videos (iframe already implemented)
-- Kinescope Player SDK integration for timecode seek (`player.seekTo(seconds)`)
-- Clickable timecode badges in RAG summary/chat UI
-- `question-generator.ts` service generating MCQs from RAG chunks
-- Validation pipeline: Zod schema → answer verification → difficulty check
-- Mock question fallback if LLM fails
-
-**Addresses:** TS-4 (video player), TS-5 (timecode deep-links), D-4 (clickable timecodes), D-1 (AI question generation), TS-9 (question variety)
-
-**Avoids:** Pitfall #5 (AI quality — validation guardrails + fallback)
-
-**Uses stack:** Kinescope iframe API loader (0.9.0), existing OpenRouter + Zod, JSON mode structured output
-
-**Critical tasks:**
-1. Obtain real Kinescope videoIds from content team (external dependency)
-2. Populate `lesson.videoId` column via seed script
-3. Integrate `@kinescope/player-iframe-api-loader`, replace raw iframe
-4. Implement `seekTo()` handler from timecode badges (postMessage or SDK ref)
-5. Create `packages/ai/src/question-generator.ts` following RAG pipeline pattern
-6. Build validation pipeline (Zod + answer verification against chunk content)
-7. Integrate into `diagnostic.startSession()` with 10s timeout → fallback to mocks
-8. Test generation quality: 100 questions through schema validation, manual review of 10
-
-**Complexity:** AI generation is HIGH (prompt engineering, validation), video integration is LOW-MEDIUM (SDK integration, cross-component communication).
-
-**Research flag:** AI question prompt engineering likely needs iteration during implementation. Consider pre-generating question bank offline vs on-the-fly during sessions.
-
-### Phase 3: Security Hardening & Pre-Deploy Preparation
-**Rationale:** Production blockers that must be resolved before VPS deploy. Security issues (publicProcedure, service key exposure), missing guardrails (rate limiting, error boundaries), UX gaps (error states, loading skeletons).
-
-**Delivers:**
-- All AI endpoints switched to `protectedProcedure` (SSR cookie issue resolved)
-- Rate limiting middleware (100 req/min general, 50 LLM/hour, 20 chat/hour)
-- `server-only` import in `packages/ai/src/index.ts`
-- XSS protection: DOMPurify or react-markdown for AI-generated content (replace dangerouslySetInnerHTML)
-- Error boundaries wrapping diagnostic, lesson, chat features
-- Graceful error states for failed LLM calls
-- UserProfile auto-creation on first login (no manual DB insert required)
-- `searchChunks` debug endpoint removed or admin-protected
-
-**Addresses:** TS-10 (protected routes), D-2 soft gating logic (hasCompletedDiagnostic check), edge case handling
-
-**Avoids:** Pitfall #3 (publicProcedure in prod), Pitfall #6 (service key leak)
-
-**Critical tasks:**
-1. Fix Supabase SSR cookie propagation in tRPC context
-2. Switch `ai.ts` endpoints back to `protectedProcedure`
-3. Implement rate limiting middleware (@upstash/ratelimit or token bucket)
-4. Add `import 'server-only'` to `packages/ai/`, verify with build + grep
-5. Replace `dangerouslySetInnerHTML` with sanitized markdown renderer
-6. Add React Error Boundary components to diagnostic session, lesson page, chat
-7. Implement `hasCompletedDiagnostic()` check, wire up soft gating UI (`LessonLocked.tsx`)
-8. UserProfile upsert hook in auth callback or tRPC middleware
-
-**Complexity:** LOW-MEDIUM — mostly configuration and adding protective layers, not new features.
-
-### Phase 4: VPS Production Deployment
-**Rationale:** All data/features complete, now deploy to production. Standalone build, PM2 process management, Nginx reverse proxy, SSL configuration. Deploy early, iterate features in production.
-
-**Delivers:**
-- Next.js standalone build configured (`output: 'standalone'`)
-- PM2 ecosystem config pointing to standalone server.js
-- Nginx reverse proxy on VPS (79.137.197.90) with SSL (Let's Encrypt)
-- Environment variables configured on VPS (DATABASE_URL, OPENROUTER_API_KEY, SUPABASE_*)
-- Google OAuth redirect URI updated to production domain
-- Deploy script: git pull, pnpm install, build, PM2 reload
-- Smoke tests: auth flow, diagnostic flow, lesson video, RAG chat
-
-**Addresses:** TS-6 (production deploy), TS-7 (env management), TS-8 (HTTPS/SSL)
-
-**Avoids:** Pitfall #4 (standalone build missing)
-
-**Uses stack:** PM2 (6.0.14), Nginx, Certbot, Next.js standalone output
-
-**Critical tasks:**
-1. Add `output: 'standalone'` to next.config.js
-2. Configure Prisma `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]`
-3. Create PM2 ecosystem.config.js (script: standalone/server.js, env vars, log rotation)
-4. Write deploy script: build, copy static assets, PM2 reload
-5. Configure Nginx reverse proxy (port 80/443 → 3000)
-6. Set up Let's Encrypt SSL with certbot
-7. Update Google OAuth redirect URI in Supabase (academy.mpstats.io or custom domain)
-8. Deploy, run smoke tests
-
-**Complexity:** MEDIUM — standard deployment pattern, many steps, first-time setup. Requires domain name pointed to VPS (external dependency).
-
-**External dependency:** Domain name for SSL and Google OAuth. Currently only IP 79.137.197.90.
-
-### Phase 5 (Post-Launch): Enhancements & Analytics
-**Rationale:** Features deferred from MVP that add value after core product is validated. Can be prioritized based on user feedback and analytics.
-
-**Possible features:**
-- D-6: Auto course structure from RAG (dynamic catalog endpoint)
-- D-5: Adaptive difficulty IRT-lite (requires large question pool from Phase 2)
-- Chat history persistence (ChatMessage Prisma model exists, wire up)
-- Watch progress tracking via Kinescope timeupdate events
-- PWA manifest for mobile home screen install
-- Batch question generation for offline question bank
-- Advanced rate limiting per endpoint tier
-- Admin dashboard for content management
-
-**Rationale:** Defer until product-market fit established, user data informs priorities.
+### Phase 6: Paywall + Content Gating
+**Rationale:** MUST be last. Depends on Phases 1, 2, and 5. This is where all pieces converge.
+**Delivers:** `checkSubscriptionAccess()` centralized service, modified `learning.getLesson` with access field, lock icons in catalog, `LessonLocked` component with CTA, free tier logic (first N lessons), E2E test of billing toggle on/off.
+**Addresses:** All paywall features, free content strategy, soft gating.
+**Avoids:** Pitfall 6 (scattered access checks), Pitfall 11 (toggle isolation), Pitfall 13 (mid-video expiry).
 
 ### Phase Ordering Rationale
 
-- **Phase 1 must come first:** Everything depends on real data in DB. No parallelization until course/lesson seed completes.
-- **Phases 2 and 3 can overlap:** Video integration (external videoId dependency) and AI questions (riskiest feature) can develop in parallel with security hardening.
-- **Phase 4 depends on Phases 1-3 complete:** Can't deploy without data migration (production blocker) and security hardening (publicProcedure exposure).
-- **Phase 5 is post-launch:** Based on user feedback and analytics.
-
-**Strangler Fig pattern throughout:** Keep mock fallbacks during Phase 1-2, remove only when confident all migrations work. Allows rollback without breaking app.
-
-**Critical path:** Phase 1 (data migration) → Phase 3 (security) → Phase 4 (deploy). Phase 2 (video/AI) can lag behind if external dependencies (videoIds, prompt quality) take longer than expected.
+- **Phase 1 first:** Pure data layer, no external dependencies, blocks everything else.
+- **Phase 2 early:** Small scope, enables billing toggle for all subsequent testing.
+- **Phases 3 and 4 in parallel:** Auth and billing are completely independent tracks. Parallelizing halves the calendar time.
+- **Phase 5 after Phase 4:** Payment UI needs working webhooks to verify end-to-end flow.
+- **Phase 6 last:** Paywall is the integration layer -- it consumes auth, billing, feature flags, and content models. Building it last means all dependencies are stable.
+- **Each phase can be deployed independently** to production with billing toggle disabled.
 
 ### Research Flags
 
 Phases likely needing deeper research during planning:
-- **Phase 2 (AI question generation):** Prompt engineering for reliable MCQ generation is niche, sparse documentation. May need iteration cycles with real RAG data to tune. Consider `/gsd:research-phase` if initial attempts produce low-quality questions.
-- **Phase 4 (VPS deployment):** Turborepo monorepo deployment patterns with standalone output less documented than single-app Next.js. May need troubleshooting for static asset copying, Prisma binary targets. Standard patterns exist but first-time setup has gotchas.
+- **Phase 3 (Yandex Auth):** Supabase Admin API session creation via `generateLink()` + `verifyOtp()` pattern needs sandbox validation. The exact session-setting mechanism may require experimentation.
+- **Phase 4 (CloudPayments Webhooks):** Exact webhook payload format, HMAC header naming, and CloudKassir receipt configuration require sandbox testing. npm package API surface should be verified against latest version.
 
 Phases with standard patterns (skip research-phase):
-- **Phase 1 (Mock-to-DB migration):** Well-documented Prisma patterns, clear migration path. Research already identified DTO mapping as solution.
-- **Phase 3 (Security hardening):** Standard Next.js + tRPC + Supabase Auth patterns. Rate limiting libraries well-documented.
+- **Phase 1 (DB Foundation):** Standard Prisma schema additions, well-documented.
+- **Phase 2 (Feature Flags):** Simple DB + cache pattern, already used in codebase (globalThis pattern from rate limiter).
+- **Phase 5 (Billing UI):** Standard tRPC router + widget integration, follows existing patterns.
+- **Phase 6 (Paywall):** Well-documented access control patterns, architecture fully specified in research.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Technologies verified via npm registry (Kinescope SDK 0.9.0, PM2 6.0.14), Next.js standalone documented, OpenRouter already working in codebase |
-| Features | MEDIUM-HIGH | Based on codebase analysis (mocks, Prisma schema, existing UI) + training data. Feature priorities clear, but MVP scope could shift based on external dependencies (videoIds) |
-| Architecture | HIGH | Full codebase analysis of routers, Prisma schema, AI package. Migration patterns clear, dependency chain mapped. Integration points well-defined |
-| Pitfalls | MEDIUM | Based on codebase analysis (globalThis storage, publicProcedure TODOs) + training data patterns. Specific issues identified (schema mismatch, partial migration), but unknowns may surface during migration |
+| Stack | HIGH | Only 1 new dependency. Existing stack locked. CloudPayments npm verified. |
+| Features | MEDIUM-HIGH | Yandex OAuth features well-documented. CloudPayments features confirmed via official docs. Paywall patterns from industry benchmarks. |
+| Architecture | MEDIUM | Yandex + Supabase Admin API integration has no precedent examples found. CloudPayments webhook architecture follows standard patterns. Paywall architecture is straightforward. |
+| Pitfalls | HIGH | 14 pitfalls identified from official docs, GitHub discussions, codebase analysis, and industry best practices. |
 
 **Overall confidence:** MEDIUM-HIGH
 
-Confidence is high for technical architecture and integration patterns. Confidence is medium for AI question generation quality (requires empirical testing) and deployment edge cases (first-time Turborepo + standalone setup). External dependencies (Kinescope videoIds, domain name for SSL) introduce schedule risk but not technical risk.
-
 ### Gaps to Address
 
-Areas where research was inconclusive or needs validation during implementation:
-
-- **AI question generation prompt quality:** Research identified validation strategies (Zod schema, answer verification) but actual prompt engineering for reliable MCQ output requires iteration with real RAG data. Plan for 2-3 revision cycles in Phase 2.
-
-- **Lesson_id to SkillCategory mapping:** Real data has 6 courses (01-06) but SkillCategory enum has 5 values. Gap: how to map 03_ai (AI tools), 05_ozon (Ozon marketplace), 06_express (express delivery). Options: (1) extend SkillCategory enum with new categories, (2) map multiple lesson prefixes to existing categories (e.g., 03_ai → CONTENT, 05_ozon → OPERATIONS, 06_express → FINANCE). **Resolution: decide during Phase 1 seed script creation.**
-
-- **Kinescope videoId availability:** Research assumes real videoIds will be provided. If not available, video player remains placeholder (blocker for TS-4). **Mitigation: confirm videoId timeline with content team before starting Phase 2.**
-
-- **Prisma binary target for Ubuntu 24.04:** VPS runs Ubuntu 24.04 LTS, but research did not verify exact Prisma binary target. Common targets: `linux-musl-openssl-3.0.x`, `debian-openssl-3.0.x`. **Resolution: test Prisma generate on VPS during Phase 4, adjust binaryTargets if needed.**
-
-- **Rate limiting implementation:** PRD specifies 3 tiers (100 req/min, 50 LLM/hour, 20 chat/hour). Research did not select specific rate limiting library (@upstash/ratelimit requires Redis, in-memory token bucket simpler for MVP). **Resolution: evaluate options during Phase 3 implementation.**
-
-- **Domain name for production:** Deployment requires domain pointed to VPS IP for SSL and Google OAuth. Assumed domain `academy.mpstats.io` but not confirmed. **Resolution: confirm domain before Phase 4.**
+- **Supabase session creation for custom OAuth:** The exact mechanism for creating a Supabase session after Yandex token exchange needs sandbox testing. `generateLink({ type: 'magiclink' })` -> extract token -> `verifyOtp()` is the documented pattern, but edge cases (existing user, email already confirmed) may surface.
+- **CloudPayments webhook payload structure:** Full payload fields and types need validation against sandbox responses. The npm package TypeScript types should be cross-checked.
+- **CloudKassir setup process:** Receipt configuration (taxation system, VAT rate for education services) requires CloudPayments account setup and may need accountant consultation for correct tax parameters.
+- **Google OAuth deprecation timeline:** Research recommends gradual transition, but the exact timeline depends on user communication strategy -- a product decision, not a technical one.
+- **Pricing structure:** Actual prices (per-course and platform monthly/annual) are business decisions. Need from product owner before Phase 5.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- **Codebase analysis:** Full audit of `packages/api/src/routers/*.ts` (diagnostic, learning, profile, ai), `packages/ai/src/*.ts` (RAG pipeline), `packages/db/prisma/schema.prisma` (12 models), `apps/web/src/app/(main)/*` (UI implementation), `CLAUDE.md` (Sprint 0-3 completion status, known issues)
-- **npm registry (verified 2026-02-16):** `@kinescope/player-iframe-api-loader@0.9.0`, `pm2@6.0.14`, `next@16.1.6` latest vs project `14.2.x`, `openai@6.22.0` latest vs project `4.73.0`
-- **Existing documentation:** `.planning/codebase/ARCHITECTURE.md`, `.planning/codebase/INTEGRATIONS.md`, `docs/02_technical_spec/TECHNICAL_SPEC.md`, Sprint 5 plan in CLAUDE.md
+- [Yandex ID OAuth Documentation](https://yandex.com/dev/id/doc/en/) -- OAuth endpoints, scopes, user info format
+- [Yandex user info API](https://yandex.com/dev/id/doc/en/user-information) -- response fields
+- [Supabase Auth providers](https://supabase.com/docs/guides/auth) -- confirmed Yandex not supported
+- [Supabase Admin API](https://supabase.com/docs/reference/javascript/auth-signinwithidtoken) -- createUser, generateLink
+- [CloudPayments Developer Docs](https://developers.cloudpayments.ru/en/) -- API, webhooks, subscriptions
+- [cloudpayments npm](https://www.npmjs.com/package/cloudpayments) -- TypeScript client, v4.1.1
+- [Vercel nextjs-subscription-payments](https://github.com/vercel/nextjs-subscription-payments) -- architecture patterns
+- Codebase analysis: middleware.ts, trpc.ts, auth/actions.ts, schema.prisma
 
 ### Secondary (MEDIUM confidence)
-- **Next.js deployment patterns:** Standalone output, PM2 ecosystem config, static asset copying (based on training data, not verified against current Next.js 14 docs due to web tool restrictions)
-- **Nginx reverse proxy configuration:** SSL termination, proxy headers, WebSocket upgrade (standard patterns from training data)
-- **LLM question generation quality patterns:** Validation strategies, structured output best practices, temperature settings (based on training data, not domain-specific research)
+- [Supabase custom OIDC discussions #417, #6547](https://github.com/orgs/supabase/discussions/6547) -- confirms generic OIDC not available
+- [CloudPayments Node.js client (GitHub)](https://github.com/izatop/cloudpayments) -- HMAC verification patterns
+- [CloudPayments 54-FZ / CloudKassir](https://cloudpayments.ru/cloud-cheki) -- receipt requirements
+- [Education paywall benchmarks](https://blog.poool.fr/paywalls-for-e-learning-and-online-course-platforms/) -- conversion rates, gating strategies
+- [Next.js paywall patterns](https://www.ericburel.tech/blog/static-paid-content-app-router) -- middleware vs. server-side gating
 
 ### Tertiary (LOW confidence)
-- **Prisma binary targets for Ubuntu 24.04:** Inferred `linux-musl-openssl-3.0.x` based on common targets, needs verification during deployment
-- **Kinescope Player SDK exact API:** Assumed `seekTo(seconds)` method based on package description, not verified against actual SDK docs
+- [Supabase Keycloak workaround](https://tylerjulian.substack.com/p/supabase-generic-oidc-authentication) -- confirmed as fragile, NOT recommended
+- [Auth.js Yandex provider](https://authjs.dev/reference/core/providers/yandex) -- reference only, not recommended for this project
 
 ---
-*Research completed: 2026-02-16*
+*Research completed: 2026-03-06*
 *Ready for roadmap: yes*
