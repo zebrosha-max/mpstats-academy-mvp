@@ -2,16 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-28)
+See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Planning next milestone
+**Current focus:** v1.2 Auth Rework + Billing
 
 ## Current Position
 
-Phase: All complete (v1.0 + v1.1 shipped)
-Status: Between milestones
-Last activity: 2026-02-28 — Completed v1.1 milestone archival
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-06 — Milestone v1.2 started
 
 ## Performance Metrics
 
@@ -43,6 +44,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-28
-Stopped at: Completed v1.1 milestone archival
-Resume file: None — use `/gsd:new-milestone` for next milestone
+Last session: 2026-03-06
+Stopped at: Defining v1.2 requirements
+Resume file: None

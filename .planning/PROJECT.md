@@ -42,6 +42,16 @@
 
 ### Active
 
+**Current Milestone: v1.2 Auth Rework + Billing**
+
+**Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подпиской на курсы и весь продукт, реализовать paywall с бесплатным превью контента.
+
+**Target features:**
+- Auth rework: Яндекс ID вместо Google OAuth, миграция существующего аккаунта
+- Billing: CloudPayments рекуррентные подписки (per-course + full platform)
+- Paywall: бесплатный контент (диагностика, 1-2 урока) vs платный (остальные уроки)
+- Testing toggle: включение/выключение биллинга без деплоя
+
 **Deferred to future milestones:**
 - [ ] Адаптивная сложность вопросов (IRT-lite) на основе предыдущих ответов
 - [ ] Визуализация прогресса навыков между диагностиками
@@ -108,4 +118,4 @@ Watch progress: Kinescope postMessage time tracking, 15s debounced save, auto-re
 | FOUC prevention inline script | localStorage read before React hydration | ✓ Good |
 
 ---
-*Last updated: 2026-02-28 after v1.1 milestone*
+*Last updated: 2026-03-06 after v1.2 milestone start*
