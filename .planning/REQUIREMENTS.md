@@ -67,27 +67,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| BILL-01 | — | Pending |
-| BILL-02 | — | Pending |
-| BILL-03 | — | Pending |
-| BILL-04 | — | Pending |
-| BILL-05 | — | Pending |
-| BILL-06 | — | Pending |
-| PAY-01 | — | Pending |
-| PAY-02 | — | Pending |
-| PAY-03 | — | Pending |
-| PAY-04 | — | Pending |
-| PAY-05 | — | Pending |
+| AUTH-01 | Phase 17 | Pending |
+| AUTH-02 | Phase 17 | Pending |
+| AUTH-03 | Phase 17 | Pending |
+| AUTH-04 | Phase 17 | Pending |
+| BILL-01 | Phase 19 | Pending |
+| BILL-02 | Phase 18 | Pending |
+| BILL-03 | Phase 18 | Pending |
+| BILL-04 | Phase 16 | Pending |
+| BILL-05 | Phase 19 | Pending |
+| BILL-06 | Phase 16 | Pending |
+| PAY-01 | Phase 20 | Pending |
+| PAY-02 | Phase 19 | Pending |
+| PAY-03 | Phase 20 | Pending |
+| PAY-04 | Phase 19 | Pending |
+| PAY-05 | Phase 20 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after initial definition*
+*Last updated: 2026-03-06 after roadmap creation*

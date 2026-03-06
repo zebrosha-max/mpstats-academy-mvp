@@ -4,6 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1-9 (shipped 2026-02-26)
 - ✅ **v1.1 Admin & Polish** — Phases 10-15 (shipped 2026-02-28)
+- 🚧 **v1.2 Auth Rework + Billing** — Phases 16-20 (in progress)
 
 ## Phases
 
@@ -39,7 +40,98 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 </details>
 
+### 🚧 v1.2 Auth Rework + Billing (In Progress)
+
+**Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента.
+
+- [ ] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle
+- [ ] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, миграция Google-аккаунтов, расширяемая архитектура
+- [ ] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей
+- [ ] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле
+- [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
+
+## Phase Details
+
+### Phase 16: Billing Data Foundation
+**Goal**: Платформа имеет модели данных для подписок, платежей и feature flags, готовые к использованию всеми последующими фазами
+**Depends on**: Phase 15 (v1.1 complete)
+**Requirements**: BILL-06, BILL-04
+**Success Criteria** (what must be TRUE):
+  1. Prisma-модели Subscription, Payment, PaymentEvent и FeatureFlag существуют в схеме и мигрированы в Supabase
+  2. Feature flag `billing_enabled` читается из DB и может быть переключён через admin-панель без деплоя
+  3. Поля Course.price и Course.isFree добавлены, seed-данные установлены (billing выключен по умолчанию)
+  4. UserProfile.yandexId поле добавлено для будущей привязки Яндекс-аккаунтов
+**Plans**: TBD
+
+Plans:
+- [ ] 16-01: TBD
+- [ ] 16-02: TBD
+
+### Phase 17: Yandex ID Auth
+**Goal**: Пользователи входят через Яндекс ID вместо Google OAuth, существующие аккаунты мигрированы без потери данных
+**Depends on**: Phase 16 (UserProfile.yandexId field)
+**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
+**Success Criteria** (what must be TRUE):
+  1. Пользователь может нажать "Войти через Яндекс" и авторизоваться через Яндекс ID OAuth flow
+  2. Существующий Google-аккаунт автоматически связывается с Яндекс-аккаунтом по совпадению verified email -- все данные (диагностики, прогресс, профиль) сохраняются
+  3. Кнопка "Войти через Google" убрана из UI, Google OAuth провайдер отключён в Supabase
+  4. OAuth-архитектура реализована через абстракцию провайдера, позволяющую добавить новый провайдер (Точка ID) без переписывания core auth
+  5. Вход через email/password продолжает работать как fallback
+**Plans**: TBD
+
+Plans:
+- [ ] 17-01: TBD
+- [ ] 17-02: TBD
+
+### Phase 18: CloudPayments Webhooks
+**Goal**: Платформа корректно обрабатывает все события жизненного цикла подписки от CloudPayments
+**Depends on**: Phase 16 (Subscription, Payment, PaymentEvent models)
+**Requirements**: BILL-02, BILL-03
+**Success Criteria** (what must be TRUE):
+  1. Webhook endpoint принимает события Check/Pay/Fail/Recurrent/Cancel от CloudPayments с HMAC-SHA256 верификацией
+  2. Обработка идемпотентна -- повторный webhook с тем же TransactionId не создаёт дублей и не ломает состояние подписки
+  3. Подписка корректно переходит между статусами (active, past_due, cancelled, expired) в ответ на события
+  4. Каждый входящий webhook и результат обработки логируется в PaymentEvent для аудита
+**Plans**: TBD
+
+Plans:
+- [ ] 18-01: TBD
+- [ ] 18-02: TBD
+
+### Phase 19: Billing UI + Payment Flow
+**Goal**: Пользователь может выбрать тарифный план, оплатить подписку через CloudPayments и управлять ей в профиле
+**Depends on**: Phase 18 (working webhooks), Phase 16 (models)
+**Requirements**: BILL-01, BILL-05, PAY-02, PAY-04
+**Success Criteria** (what must be TRUE):
+  1. Страница тарифов отображает доступные планы подписки (per-course и full platform) с ценами из DB
+  2. Пользователь может оплатить подписку через CloudPayments widget (iframe) без ввода карточных данных на нашем сайте
+  3. В профиле пользователь видит статус подписки, дату следующего списания и может отменить подписку
+  4. Два режима подписки работают: Режим A (отдельный курс) и Режим B (вся платформа)
+**Plans**: TBD
+
+Plans:
+- [ ] 19-01: TBD
+- [ ] 19-02: TBD
+
+### Phase 20: Paywall + Content Gating
+**Goal**: Платный контент заблокирован для пользователей без подписки, бесплатный контент доступен всем
+**Depends on**: Phase 19 (billing works end-to-end), Phase 16 (feature flag)
+**Requirements**: PAY-01, PAY-03, PAY-05
+**Success Criteria** (what must be TRUE):
+  1. 1-2 первых урока каждого курса доступны бесплатно, остальные показывают lock UI с CTA "Оформи подписку"
+  2. Диагностика навыков остаётся полностью бесплатной для всех пользователей
+  3. Централизованный access service в tRPC проверяет подписку -- обойти paywall через прямой URL невозможно
+  4. При выключенном billing toggle (feature flag) весь контент доступен без ограничений (для тестирования и демо)
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: TBD
+- [ ] 20-02: TBD
+
 ## Progress
+
+**Execution Order:**
+Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase 16 and can execute in parallel. Phases 19 and 20 are sequential after their dependencies.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -59,3 +151,8 @@ Full details: `milestones/v1.1-ROADMAP.md`
 | 13. Watch Progress Tracking | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
+| 16. Billing Data Foundation | v1.2 | 0/? | Not started | - |
+| 17. Yandex ID Auth | v1.2 | 0/? | Not started | - |
+| 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
+| 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
+| 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
