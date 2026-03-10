@@ -151,7 +151,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 13. Watch Progress Tracking | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
-| 16. Billing Data Foundation | 2/2 | Complete   | 2026-03-10 | - |
+| 16. Billing Data Foundation | 2/2 | Complete    | 2026-03-10 | - |
 | 17. Yandex ID Auth | v1.2 | 0/? | Not started | - |
 | 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
