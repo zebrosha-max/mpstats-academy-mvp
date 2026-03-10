@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.2
+milestone_name: Auth Rework + Billing
+status: planning
+stopped_at: Phase 16 context gathered
+last_updated: "2026-03-10T07:56:46.867Z"
+last_activity: 2026-03-06 — Roadmap created for v1.2 milestone (5 phases, 15 requirements)
+progress:
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 80
+---
+
 # Project State
 
 ## Project Reference
@@ -52,6 +68,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Roadmap created for v1.2 (Phases 16-20, 15 requirements mapped)
-Resume file: None
+Last session: 2026-03-10T07:56:46.865Z
+Stopped at: Phase 16 context gathered
+Resume file: .planning/phases/16-billing-data-foundation/16-CONTEXT.md
