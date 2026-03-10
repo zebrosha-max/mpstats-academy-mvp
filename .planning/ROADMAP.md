@@ -80,8 +80,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 17-01-PLAN.md — OAuthProvider abstraction + YandexProvider + Supabase admin client + callback route
-- [ ] 17-02-PLAN.md — Login/register UI replacement (Google -> Yandex) + Google removal + human verify
+- [x] 17-01-PLAN.md — OAuthProvider abstraction + YandexProvider + Supabase admin client + callback route
+- [x] 17-02-PLAN.md — Login/register UI replacement (Google -> Yandex) + Google removal + human verify
 
 ### Phase 18: CloudPayments Webhooks
 **Goal**: Платформа корректно обрабатывает все события жизненного цикла подписки от CloudPayments
@@ -92,11 +92,11 @@ Plans:
   2. Обработка идемпотентна -- повторный webhook с тем же TransactionId не создаёт дублей и не ломает состояние подписки
   3. Подписка корректно переходит между статусами (active, past_due, cancelled, expired) в ответ на события
   4. Каждый входящий webhook и результат обработки логируется в PaymentEvent для аудита
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 18-01: TBD
-- [ ] 18-02: TBD
+- [ ] 18-01-PLAN.md — HMAC verification + webhook route + idempotent payment processing + audit logging
+- [ ] 18-02-PLAN.md — Subscription lifecycle service (state machine) + wire into webhook route
 
 ### Phase 19: Billing UI + Payment Flow
 **Goal**: Пользователь может выбрать тарифный план, оплатить подписку через CloudPayments и управлять ей в профиле
@@ -152,7 +152,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 17. Yandex ID Auth | 2/2 | Complete    | 2026-03-10 | - |
-| 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
+| 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
+| 18. CloudPayments Webhooks | v1.2 | 0/2 | Not started | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
