@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Phase 17 context gathered
-last_updated: "2026-03-10T09:44:25.028Z"
-last_activity: 2026-03-10 — Phase 16 Plan 02 executed (feature flag admin UI)
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-03-10T10:33:00.000Z"
+last_activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
 progress:
   total_phases: 5
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 16 — Billing Data Foundation
+**Current focus:** Phase 17 — Yandex ID Auth (complete)
 
 ## Current Position
 
 Phase: 17 of 20 (Yandex ID Auth)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-03-10 — Phase 17 Plan 01 executed (Yandex OAuth backend)
+Plan: 2 of 2 in current phase (COMPLETE)
+Status: Phase 17 complete
+Last activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
 
 Progress: [██████████] 100% (v1.0 + v1.1 complete, v1.2 phases 16-17 in progress)
 
@@ -62,6 +62,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [17-01]: OAuthProvider interface for extensible server-side OAuth (Yandex now, Tochka later)
 - [17-01]: Supabase session via generateLink(magiclink)+verifyOtp pattern for custom OAuth providers
 - [17-01]: Used @mpstats/db/client singleton in callback route instead of direct PrismaClient
+- [17-02]: Inline SVG for Yandex Ya logo (no external asset dependency)
+- [17-02]: File-system grep tests to enforce no-Google policy at CI level
 
 ### Blockers/Concerns
 
@@ -80,9 +82,10 @@ None.
 | 16    | 01   | 4min     | 2     | 6     |
 | Phase 16 P02 | 3min | 2 tasks | 4 files |
 | 17    | 01   | 5min     | 2     | 6     |
+| 17    | 02   | 3min     | 2     | 3     |
 
 ## Session Continuity
 
-Last session: 2026-03-10T10:04:47Z
-Stopped at: Completed 17-01-PLAN.md
-Resume file: .planning/phases/17-yandex-id-auth/17-02-PLAN.md
+Last session: 2026-03-10T10:33:00Z
+Stopped at: Completed 17-02-PLAN.md
+Resume file: Phase 17 complete, next: Phase 18

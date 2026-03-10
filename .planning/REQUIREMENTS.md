@@ -10,8 +10,8 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 ### Auth Rework
 
 - [x] **AUTH-01**: Пользователь может войти через Яндекс ID (серверный OAuth flow + Supabase Admin API)
-- [ ] **AUTH-02**: Существующий Google-аккаунт мигрирован на email/password (связывание по verified email)
-- [ ] **AUTH-03**: Google OAuth убран из Supabase и UI (кнопки, провайдер)
+- [x] **AUTH-02**: Существующий Google-аккаунт мигрирован на email/password (связывание по verified email)
+- [x] **AUTH-03**: Google OAuth убран из Supabase и UI (кнопки, провайдер)
 - [x] **AUTH-04**: OAuth архитектура расширяема для будущих провайдеров (Точка ID и др.)
 
 ### Billing
@@ -68,8 +68,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AUTH-01 | Phase 17 | Complete |
-| AUTH-02 | Phase 17 | Pending |
-| AUTH-03 | Phase 17 | Pending |
+| AUTH-02 | Phase 17 | Complete |
+| AUTH-03 | Phase 17 | Complete |
 | AUTH-04 | Phase 17 | Complete |
 | BILL-01 | Phase 19 | Pending |
 | BILL-02 | Phase 18 | Pending |

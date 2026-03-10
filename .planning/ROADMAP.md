@@ -45,7 +45,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 **Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента.
 
 - [x] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle (completed 2026-03-10)
-- [ ] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура
+- [x] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура (completed 2026-03-10)
 - [ ] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей
 - [ ] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле
 - [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
@@ -77,7 +77,7 @@ Plans:
   3. Кнопка "Войти через Google" убрана из UI, Google OAuth провайдер отключён в Supabase
   4. OAuth-архитектура реализована через абстракцию провайдера, позволяющую добавить новый провайдер (Точка ID) без переписывания core auth
   5. Вход через email/password продолжает работать как fallback
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 17-01-PLAN.md — OAuthProvider abstraction + YandexProvider + Supabase admin client + callback route
@@ -152,7 +152,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 17. Yandex ID Auth | 1/2 | In Progress|  | - |
+| 17. Yandex ID Auth | 2/2 | Complete   | 2026-03-10 | - |
 | 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
