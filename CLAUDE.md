@@ -527,3 +527,14 @@ docker compose logs --tail=50 -f
 - Nginx `proxy_buffer_size 128k` обязателен для Supabase auth cookies
 - Alpine `localhost` резолвит в IPv6 — использовать `127.0.0.1` в healthcheck
 - Auth callback redirect использует `NEXT_PUBLIC_SITE_URL`, не `request.url`
+
+## Domain Migration Checklist
+
+**При смене домена (с `academyal.duckdns.org` на боевой) обновить:**
+
+- [ ] **Yandex OAuth** — Redirect URI + Host в https://oauth.yandex.ru/ (сейчас: `https://academyal.duckdns.org/api/auth/yandex/callback`)
+- [ ] **Supabase** — Site URL + Redirect URLs в Dashboard (Authentication > URL Configuration)
+- [ ] **`.env.production`** на VPS — `NEXT_PUBLIC_SITE_URL`
+- [ ] **Nginx** — `server_name` в конфиге
+- [ ] **Let's Encrypt** — перевыпустить SSL сертификат
+- [ ] **DuckDNS** — заменить на реальный DNS
