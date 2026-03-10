@@ -1,0 +1,66 @@
+import { describe, it, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const SRC_DIR = path.resolve(__dirname, '../../src');
+const LOGIN_PAGE = path.join(SRC_DIR, 'app/(auth)/login/page.tsx');
+const REGISTER_PAGE = path.join(SRC_DIR, 'app/(auth)/register/page.tsx');
+const ACTIONS_FILE = path.join(SRC_DIR, 'lib/auth/actions.ts');
+
+describe('No Google OAuth references remain', () => {
+  it('login/page.tsx does not contain "signInWithGoogle"', () => {
+    const content = fs.readFileSync(LOGIN_PAGE, 'utf-8');
+    expect(content).not.toContain('signInWithGoogle');
+  });
+
+  it('login/page.tsx does not contain "Google"', () => {
+    const content = fs.readFileSync(LOGIN_PAGE, 'utf-8');
+    expect(content).not.toContain('Google');
+  });
+
+  it('register/page.tsx does not contain "signInWithGoogle"', () => {
+    const content = fs.readFileSync(REGISTER_PAGE, 'utf-8');
+    expect(content).not.toContain('signInWithGoogle');
+  });
+
+  it('register/page.tsx does not contain "Google"', () => {
+    const content = fs.readFileSync(REGISTER_PAGE, 'utf-8');
+    expect(content).not.toContain('Google');
+  });
+
+  it('login/page.tsx imports signInWithYandex from actions', () => {
+    const content = fs.readFileSync(LOGIN_PAGE, 'utf-8');
+    expect(content).toContain('signInWithYandex');
+  });
+
+  it('register/page.tsx imports signInWithYandex from actions', () => {
+    const content = fs.readFileSync(REGISTER_PAGE, 'utf-8');
+    expect(content).toContain('signInWithYandex');
+  });
+
+  it('actions.ts does not export signInWithGoogle', () => {
+    const content = fs.readFileSync(ACTIONS_FILE, 'utf-8');
+    expect(content).not.toContain('signInWithGoogle');
+  });
+
+  it('no signInWithGoogle in any src/ file', () => {
+    const findInDir = (dir: string): string[] => {
+      const results: string[] = [];
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory() && entry.name !== 'node_modules') {
+          results.push(...findInDir(fullPath));
+        } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
+          const content = fs.readFileSync(fullPath, 'utf-8');
+          if (content.includes('signInWithGoogle')) {
+            results.push(fullPath);
+          }
+        }
+      }
+      return results;
+    };
+
+    const matches = findInDir(SRC_DIR);
+    expect(matches).toEqual([]);
+  });
+});
