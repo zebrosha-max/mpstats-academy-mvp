@@ -61,11 +61,11 @@ Full details: `milestones/v1.1-ROADMAP.md`
   2. Feature flag `billing_enabled` читается из DB и может быть переключён через admin-панель без деплоя
   3. Поля Course.price и Course.isFree добавлены, seed-данные установлены (billing выключен по умолчанию)
   4. UserProfile.yandexId поле добавлено для будущей привязки Яндекс-аккаунтов
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 16-01: TBD
-- [ ] 16-02: TBD
+- [ ] 16-01-PLAN.md — Prisma billing models, migration, seed script, feature flag helper
+- [ ] 16-02-PLAN.md — Feature flag admin endpoints + /admin/settings page with toggles
 
 ### Phase 17: Yandex ID Auth
 **Goal**: Пользователи входят через Яндекс ID вместо Google OAuth, существующие аккаунты мигрированы без потери данных
@@ -151,7 +151,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 13. Watch Progress Tracking | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
-| 16. Billing Data Foundation | v1.2 | 0/? | Not started | - |
+| 16. Billing Data Foundation | v1.2 | 0/2 | Not started | - |
 | 17. Yandex ID Auth | v1.2 | 0/? | Not started | - |
 | 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
