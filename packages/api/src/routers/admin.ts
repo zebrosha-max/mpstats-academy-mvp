@@ -7,6 +7,7 @@
  */
 
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 import { router, adminProcedure } from '../trpc';
 import { handleDatabaseError } from '../utils/db-errors';
 import { refreshBankForCategory } from '../utils/question-bank';
@@ -690,4 +691,47 @@ export const adminRouter = router({
 
     return results;
   }),
+
+  /**
+   * List all feature flags, ordered by key.
+   */
+  getFeatureFlags: adminProcedure.query(async ({ ctx }) => {
+    try {
+      return await ctx.prisma.featureFlag.findMany({
+        orderBy: { key: 'asc' },
+      });
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
+
+  /**
+   * Toggle a feature flag on/off by key.
+   */
+  toggleFeatureFlag: adminProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const flag = await ctx.prisma.featureFlag.findUnique({
+          where: { key: input.key },
+        });
+
+        if (!flag) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: `Feature flag "${input.key}" not found`,
+          });
+        }
+
+        const updated = await ctx.prisma.featureFlag.update({
+          where: { key: input.key },
+          data: { enabled: !flag.enabled },
+        });
+
+        return updated;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
 });
