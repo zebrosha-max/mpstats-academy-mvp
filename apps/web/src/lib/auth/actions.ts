@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { YandexProvider } from '@/lib/auth/oauth-providers';
 
 export type AuthResult = {
   error?: string;
@@ -71,32 +73,23 @@ export async function signIn(formData: FormData): Promise<AuthResult> {
   redirect('/dashboard');
 }
 
-// ============== SIGN IN WITH GOOGLE ==============
+// ============== SIGN IN WITH YANDEX ==============
 
-export async function signInWithGoogle(): Promise<AuthResult> {
-  const supabase = await createClient();
+export async function signInWithYandex(): Promise<AuthResult> {
+  const state = crypto.randomUUID();
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-    },
+  // Store state in httpOnly cookie for CSRF verification in callback
+  const cookieStore = await cookies();
+  cookieStore.set('yandex_oauth_state', state, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 600, // 10 minutes
+    path: '/',
   });
 
-  if (error) {
-    console.error('Google sign in error:', error);
-    return { error: error.message };
-  }
-
-  if (data.url) {
-    redirect(data.url);
-  }
-
-  return { success: true };
+  const provider = new YandexProvider();
+  redirect(provider.authorizeUrl(state));
 }
 
 // ============== SIGN OUT ==============
