@@ -19,7 +19,7 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 - [ ] **BILL-01**: CloudPayments widget интегрирован (iframe-виджет, PCI DSS не нужен)
 - [ ] **BILL-02**: Рекуррентные подписки с автопродлением через CloudPayments
 - [ ] **BILL-03**: Webhook handler с HMAC-SHA256 верификацией и идемпотентностью (по TransactionId)
-- [ ] **BILL-04**: Billing toggle — включение/выключение биллинга через DB flag без деплоя
+- [x] **BILL-04**: Billing toggle — включение/выключение биллинга через DB flag без деплоя
 - [ ] **BILL-05**: Управление подпиской в профиле (статус, следующее списание, отмена)
 - [x] **BILL-06**: Prisma модели: Subscription, Payment, PaymentEvent, FeatureFlag
 
@@ -74,7 +74,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BILL-01 | Phase 19 | Pending |
 | BILL-02 | Phase 18 | Pending |
 | BILL-03 | Phase 18 | Pending |
-| BILL-04 | Phase 16 | Pending |
+| BILL-04 | Phase 16 | Complete |
 | BILL-05 | Phase 19 | Pending |
 | BILL-06 | Phase 16 | Complete |
 | PAY-01 | Phase 20 | Pending |
