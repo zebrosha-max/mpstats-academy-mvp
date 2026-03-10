@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Completed 16-02-PLAN.md
-last_updated: "2026-03-10T08:31:02.193Z"
+stopped_at: Phase 17 context gathered
+last_updated: "2026-03-10T09:44:25.028Z"
 last_activity: 2026-03-10 — Phase 16 Plan 02 executed (feature flag admin UI)
 progress:
   total_phases: 5
@@ -79,6 +79,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-10T08:28:03.711Z
-Stopped at: Completed 16-02-PLAN.md
-Resume file: None
+Last session: 2026-03-10T09:44:25.027Z
+Stopped at: Phase 17 context gathered
+Resume file: .planning/phases/17-yandex-id-auth/17-CONTEXT.md
