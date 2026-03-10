@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 16 of 20 (Billing Data Foundation)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 16 complete
-Last activity: 2026-03-10 — Phase 16 Plan 02 executed (feature flag admin UI)
+Phase: 17 of 20 (Yandex ID Auth)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-03-10 — Phase 17 Plan 01 executed (Yandex OAuth backend)
 
-Progress: [██████████] 100% (v1.0 + v1.1 complete, v1.2 phase 16 done)
+Progress: [██████████] 100% (v1.0 + v1.1 complete, v1.2 phases 16-17 in progress)
 
 ## Performance Metrics
 
@@ -59,6 +59,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [16-01]: Feature flags via FeatureFlag model + isFeatureEnabled() safe-default helper
 - [16-01]: All NOT NULL billing fields have defaults for safe migration on existing data
 - [Phase 16]: Feature flag admin: toggleUserField pattern reused for toggleFeatureFlag with TRPCError re-throw
+- [17-01]: OAuthProvider interface for extensible server-side OAuth (Yandex now, Tochka later)
+- [17-01]: Supabase session via generateLink(magiclink)+verifyOtp pattern for custom OAuth providers
+- [17-01]: Used @mpstats/db/client singleton in callback route instead of direct PrismaClient
 
 ### Blockers/Concerns
 
@@ -76,9 +79,10 @@ None.
 |-------|------|----------|-------|-------|
 | 16    | 01   | 4min     | 2     | 6     |
 | Phase 16 P02 | 3min | 2 tasks | 4 files |
+| 17    | 01   | 5min     | 2     | 6     |
 
 ## Session Continuity
 
-Last session: 2026-03-10T09:44:25.027Z
-Stopped at: Phase 17 context gathered
-Resume file: .planning/phases/17-yandex-id-auth/17-CONTEXT.md
+Last session: 2026-03-10T10:04:47Z
+Stopped at: Completed 17-01-PLAN.md
+Resume file: .planning/phases/17-yandex-id-auth/17-02-PLAN.md
