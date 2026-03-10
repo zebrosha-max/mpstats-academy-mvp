@@ -23,6 +23,7 @@ model UserProfile {
   avatarUrl String?
   isAdmin   Boolean  @default(false)
   isActive  Boolean  @default(true)
+  yandexId  String?  @unique // For Phase 17 Yandex ID OAuth binding
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -30,6 +31,7 @@ model UserProfile {
   skillProfile       SkillProfile?
   learningPath       LearningPath?
   chatMessages       ChatMessage[]
+  subscriptions      Subscription[]
 }
 
 // ============== DIAGNOSTIC ==============
@@ -104,8 +106,11 @@ model Course {
   duration    Int      @default(0) // minutes, calculated from lessons
   order       Int      @default(0)
   createdAt   DateTime @default(now())
+  price       Int      @default(0) // rubles, 0 = free
+  isFree      Boolean  @default(true) // explicit flag for queries
 
-  lessons Lesson[]
+  lessons       Lesson[]
+  subscriptions Subscription[]
 }
 
 model Lesson {
@@ -155,6 +160,97 @@ model LearningPath {
 
   user     UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
   progress LessonProgress[]
+}
+
+// ============== BILLING ==============
+
+enum SubscriptionType {
+  COURSE
+  PLATFORM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model SubscriptionPlan {
+  id           String           @id @default(cuid())
+  type         SubscriptionType @unique // one plan per type (COURSE or PLATFORM)
+  name         String // display name ("Подписка на курс" / "Полный доступ")
+  price        Int // rubles, e.g. 4990
+  intervalDays Int              @default(30) // billing cycle
+  isActive     Boolean          @default(true) // can be disabled
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  planId             String
+  courseId            String? // null for PLATFORM, course ID for COURSE
+  status             SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelledAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user     UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan     SubscriptionPlan @relation(fields: [planId], references: [id])
+  course   Course?          @relation(fields: [courseId], references: [id])
+  payments Payment[]
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([courseId])
+}
+
+model Payment {
+  id                 String        @id @default(cuid())
+  subscriptionId     String
+  amount             Int // rubles
+  status             PaymentStatus @default(PENDING)
+  cloudPaymentsTxId  String?       @unique // for Phase 18 idempotency, nullable now
+  paidAt             DateTime?
+  createdAt          DateTime      @default(now())
+
+  subscription Subscription   @relation(fields: [subscriptionId], references: [id])
+  events       PaymentEvent[]
+
+  @@index([subscriptionId])
+  @@index([cloudPaymentsTxId])
+}
+
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  paymentId String
+  type      String // raw event type from CloudPayments ("pay", "fail", etc.)
+  payload   Json // full webhook payload for audit
+  createdAt DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model FeatureFlag {
+  key         String   @id // "billing_enabled", "maintenance_mode"
+  enabled     Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
 }
 
 // ============== RAG ==============
