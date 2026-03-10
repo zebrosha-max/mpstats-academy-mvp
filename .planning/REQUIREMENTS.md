@@ -21,7 +21,7 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 - [ ] **BILL-03**: Webhook handler с HMAC-SHA256 верификацией и идемпотентностью (по TransactionId)
 - [ ] **BILL-04**: Billing toggle — включение/выключение биллинга через DB flag без деплоя
 - [ ] **BILL-05**: Управление подпиской в профиле (статус, следующее списание, отмена)
-- [ ] **BILL-06**: Prisma модели: Subscription, Payment, PaymentEvent, FeatureFlag
+- [x] **BILL-06**: Prisma модели: Subscription, Payment, PaymentEvent, FeatureFlag
 
 ### Paywall
 
@@ -76,7 +76,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BILL-03 | Phase 18 | Pending |
 | BILL-04 | Phase 16 | Pending |
 | BILL-05 | Phase 19 | Pending |
-| BILL-06 | Phase 16 | Pending |
+| BILL-06 | Phase 16 | Complete |
 | PAY-01 | Phase 20 | Pending |
 | PAY-02 | Phase 19 | Pending |
 | PAY-03 | Phase 20 | Pending |

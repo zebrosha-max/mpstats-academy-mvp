@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
-status: planning
-stopped_at: Phase 16 context gathered
-last_updated: "2026-03-10T07:56:46.867Z"
-last_activity: 2026-03-06 — Roadmap created for v1.2 milestone (5 phases, 15 requirements)
+status: executing
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-10T08:17:55Z"
+last_activity: 2026-03-10 — Phase 16 Plan 01 executed (billing schema + migration + seed)
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 80
+  total_plans: 1
+  completed_plans: 1
+  percent: 82
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 16 of 20 (Billing Data Foundation)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-03-06 — Roadmap created for v1.2 milestone (5 phases, 15 requirements)
+Plan: 1 of 1 in current phase (COMPLETE)
+Status: Phase 16 complete
+Last activity: 2026-03-10 — Phase 16 Plan 01 executed (billing schema + migration + seed)
 
-Progress: [████████████████░░░░] 80% (v1.0 + v1.1 complete, v1.2 starting)
+Progress: [████████████████▒░░░] 82% (v1.0 + v1.1 complete, v1.2 phase 16 done)
 
 ## Performance Metrics
 
@@ -55,6 +55,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [v1.2]: Paywall in tRPC procedure, NOT middleware (Edge Runtime cannot use Prisma)
 - [v1.2]: CloudPayments webhooks need HMAC + idempotency by TransactionId
 - [v1.2]: Auth and Billing are independent tracks after Phase 16
+- [16-01]: Baselined existing DB with prisma migrate (0_init) since project used db push
+- [16-01]: Feature flags via FeatureFlag model + isFeatureEnabled() safe-default helper
+- [16-01]: All NOT NULL billing fields have defaults for safe migration on existing data
 
 ### Blockers/Concerns
 
@@ -66,8 +69,14 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 
 None.
 
+## Performance Metrics (v1.2)
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 16    | 01   | 4min     | 2     | 6     |
+
 ## Session Continuity
 
-Last session: 2026-03-10T07:56:46.865Z
-Stopped at: Phase 16 context gathered
-Resume file: .planning/phases/16-billing-data-foundation/16-CONTEXT.md
+Last session: 2026-03-10T08:17:55Z
+Stopped at: Completed 16-01-PLAN.md
+Resume file: .planning/phases/16-billing-data-foundation/16-01-SUMMARY.md
