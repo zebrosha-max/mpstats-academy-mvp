@@ -45,7 +45,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 **Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента.
 
 - [x] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle (completed 2026-03-10)
-- [ ] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, миграция Google-аккаунтов, расширяемая архитектура
+- [ ] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура
 - [ ] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей
 - [ ] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле
 - [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
@@ -65,10 +65,10 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 Plans:
 - [x] 16-01-PLAN.md — Prisma billing models, migration, seed script, feature flag helper
-- [ ] 16-02-PLAN.md — Feature flag admin endpoints + /admin/settings page with toggles
+- [x] 16-02-PLAN.md — Feature flag admin endpoints + /admin/settings page with toggles
 
 ### Phase 17: Yandex ID Auth
-**Goal**: Пользователи входят через Яндекс ID вместо Google OAuth, существующие аккаунты мигрированы без потери данных
+**Goal**: Пользователи входят через Яндекс ID вместо Google OAuth, тестовые аккаунты перерегистрируются, архитектура расширяема для будущих провайдеров
 **Depends on**: Phase 16 (UserProfile.yandexId field)
 **Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
 **Success Criteria** (what must be TRUE):
@@ -77,11 +77,11 @@ Plans:
   3. Кнопка "Войти через Google" убрана из UI, Google OAuth провайдер отключён в Supabase
   4. OAuth-архитектура реализована через абстракцию провайдера, позволяющую добавить новый провайдер (Точка ID) без переписывания core auth
   5. Вход через email/password продолжает работать как fallback
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 17-01: TBD
-- [ ] 17-02: TBD
+- [ ] 17-01-PLAN.md — OAuthProvider abstraction + YandexProvider + Supabase admin client + callback route
+- [ ] 17-02-PLAN.md — Login/register UI replacement (Google -> Yandex) + Google removal + human verify
 
 ### Phase 18: CloudPayments Webhooks
 **Goal**: Платформа корректно обрабатывает все события жизненного цикла подписки от CloudPayments
@@ -151,8 +151,8 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 13. Watch Progress Tracking | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 14. Tech Debt Cleanup | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
-| 16. Billing Data Foundation | 2/2 | Complete    | 2026-03-10 | - |
-| 17. Yandex ID Auth | v1.2 | 0/? | Not started | - |
+| 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
+| 17. Yandex ID Auth | v1.2 | 0/2 | Planned | - |
 | 18. CloudPayments Webhooks | v1.2 | 0/? | Not started | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
