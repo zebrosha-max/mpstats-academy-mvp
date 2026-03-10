@@ -3,6 +3,13 @@ import type { NextRequest } from 'next/server';
 
 import { prisma } from '@mpstats/db/client';
 import { verifyCloudPaymentsHmac } from '@/lib/cloudpayments/hmac';
+import {
+  handlePaymentSuccess,
+  handlePaymentFailure,
+  handleCancellation,
+  handleRecurrentPayment,
+  handleCheck,
+} from '@/lib/cloudpayments/subscription-service';
 import type {
   CloudPaymentsWebhookPayload,
   CloudPaymentsEventType,
@@ -106,7 +113,23 @@ export async function POST(request: NextRequest) {
   const eventType = resolveEventType(request.url, payload);
   const txId = String(payload.TransactionId);
 
+  console.log(
+    `[CloudPayments] ${eventType} for subscription ${payload.InvoiceId}, tx ${payload.TransactionId}`,
+  );
+
   try {
+    // --- Check event: pre-payment validation (no Payment record created) ---
+    if (eventType === 'check') {
+      const accepted = await handleCheck(
+        payload.AccountId,
+        payload.InvoiceId,
+      );
+      if (!accepted) {
+        return NextResponse.json(REJECT);
+      }
+      return NextResponse.json(OK);
+    }
+
     // --- Idempotency check ---
     const existing = await prisma.payment.findUnique({
       where: { cloudPaymentsTxId: txId },
@@ -152,6 +175,31 @@ export async function POST(request: NextRequest) {
         payload: JSON.parse(rawBody),
       },
     });
+
+    // --- Subscription lifecycle dispatch ---
+    switch (eventType) {
+      case 'pay':
+        await handlePaymentSuccess(payload.InvoiceId, {
+          id: paymentId,
+          amount: payload.Amount,
+        });
+        break;
+      case 'fail':
+        await handlePaymentFailure(payload.InvoiceId);
+        break;
+      case 'recurrent':
+        await handleRecurrentPayment(payload.InvoiceId, {
+          id: paymentId,
+          amount: payload.Amount,
+        });
+        break;
+      case 'cancel':
+        await handleCancellation(payload.InvoiceId);
+        break;
+      case 'refund':
+        // Payment status already set to REFUNDED in upsert. No subscription change needed.
+        break;
+    }
 
     return NextResponse.json(OK);
   } catch (error) {
