@@ -46,7 +46,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 - [x] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle (completed 2026-03-10)
 - [x] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура (completed 2026-03-10)
-- [ ] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей
+- [x] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей (completed 2026-03-10)
 - [ ] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле
 - [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
 
@@ -92,7 +92,7 @@ Plans:
   2. Обработка идемпотентна -- повторный webhook с тем же TransactionId не создаёт дублей и не ломает состояние подписки
   3. Подписка корректно переходит между статусами (active, past_due, cancelled, expired) в ответ на события
   4. Каждый входящий webhook и результат обработки логируется в PaymentEvent для аудита
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 18-01-PLAN.md — HMAC verification + webhook route + idempotent payment processing + audit logging
@@ -153,6 +153,6 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 18. CloudPayments Webhooks | 1/2 | In Progress|  | - |
+| 18. CloudPayments Webhooks | 2/2 | Complete   | 2026-03-10 | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |

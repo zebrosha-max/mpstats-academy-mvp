@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Completed 18-01-PLAN.md
-last_updated: "2026-03-10T21:34:22.484Z"
+stopped_at: Completed 18-02-PLAN.md
+last_updated: "2026-03-10T21:37:24Z"
 last_activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 100
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 18 of 20 (CloudPayments Webhooks)
-Plan: 1 of 2 in current phase (COMPLETE)
-Status: Phase 18 in progress
-Last activity: 2026-03-11 — Phase 18 Plan 01 executed (CloudPayments webhook endpoint)
+Plan: 2 of 2 in current phase (COMPLETE)
+Status: Phase 18 COMPLETE
+Last activity: 2026-03-11 — Phase 18 Plan 02 executed (Subscription lifecycle state machine)
 
 Progress: [██████████] 96% (v1.0 + v1.1 complete, v1.2 phases 16-18 in progress)
 
@@ -66,6 +66,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [17-02]: File-system grep tests to enforce no-Google policy at CI level
 - [Phase 18]: Single catch-all webhook route with query param for event type resolution
 - [Phase 18]: Return {code: 0} on DB errors to prevent CloudPayments retry storms
+- [Phase 18]: Recurrent extends from currentPeriodEnd (not now) to avoid billing gaps
+- [Phase 18]: Cancel sets CANCELLED but does NOT expire — access until currentPeriodEnd
 
 ### Blockers/Concerns
 
@@ -86,9 +88,10 @@ None.
 | 17    | 01   | 5min     | 2     | 6     |
 | 17    | 02   | 3min     | 2     | 3     |
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
+| 18    | 02   | 2min     | 2     | 2     |
 
 ## Session Continuity
 
-Last session: 2026-03-10T21:34:22.482Z
-Stopped at: Completed 18-01-PLAN.md
+Last session: 2026-03-10T21:37:24Z
+Stopped at: Completed 18-02-PLAN.md
 Resume file: None
