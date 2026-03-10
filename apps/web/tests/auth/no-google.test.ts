@@ -6,6 +6,7 @@ const SRC_DIR = path.resolve(__dirname, '../../src');
 const LOGIN_PAGE = path.join(SRC_DIR, 'app/(auth)/login/page.tsx');
 const REGISTER_PAGE = path.join(SRC_DIR, 'app/(auth)/register/page.tsx');
 const ACTIONS_FILE = path.join(SRC_DIR, 'lib/auth/actions.ts');
+const LANDING_PAGE = path.join(SRC_DIR, 'app/page.tsx');
 
 describe('No Google OAuth references remain', () => {
   it('login/page.tsx does not contain "signInWithGoogle"', () => {
@@ -41,6 +42,13 @@ describe('No Google OAuth references remain', () => {
   it('actions.ts does not export signInWithGoogle', () => {
     const content = fs.readFileSync(ACTIONS_FILE, 'utf-8');
     expect(content).not.toContain('signInWithGoogle');
+  });
+
+  it('landing page does not contain Google OAuth mentions', () => {
+    const content = fs.readFileSync(LANDING_PAGE, 'utf-8');
+    expect(content).not.toContain('signInWithGoogle');
+    expect(content).not.toContain('Google OAuth');
+    expect(content).not.toContain('Войти через Google');
   });
 
   it('no signInWithGoogle in any src/ file', () => {
