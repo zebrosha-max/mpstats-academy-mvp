@@ -4,14 +4,14 @@ milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
 stopped_at: Completed 18-02-PLAN.md
-last_updated: "2026-03-10T21:37:24Z"
-last_activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
+last_updated: "2026-03-10T21:41:19.223Z"
+last_activity: 2026-03-11 — Phase 18 Plan 02 executed (Subscription lifecycle state machine)
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
   completed_plans: 6
-  percent: 100
+  percent: 96
 ---
 
 # Project State
