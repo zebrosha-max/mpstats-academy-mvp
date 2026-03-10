@@ -5,6 +5,8 @@ import { prisma } from '@mpstats/db/client';
 import { YandexProvider } from '@/lib/auth/oauth-providers';
 import { getSupabaseAdmin } from '@/lib/auth/supabase-admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request): Promise<Response> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -103,7 +105,6 @@ export async function GET(request: Request): Promise<Response> {
         update: { yandexId: userInfo.id },
         create: {
           id: supabaseUser.id,
-          email: userInfo.email,
           name: userInfo.name,
           yandexId: userInfo.id,
         },
