@@ -9,6 +9,7 @@ import {
   Users,
   BookOpen,
   BarChart3,
+  Settings,
   ArrowLeft,
 } from 'lucide-react';
 
@@ -32,6 +33,11 @@ const navItems = [
     title: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
+  },
+  {
+    title: 'Settings',
+    href: '/admin/settings',
+    icon: Settings,
   },
 ];
 
