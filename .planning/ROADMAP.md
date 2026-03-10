@@ -92,7 +92,7 @@ Plans:
   2. Обработка идемпотентна -- повторный webhook с тем же TransactionId не создаёт дублей и не ломает состояние подписки
   3. Подписка корректно переходит между статусами (active, past_due, cancelled, expired) в ответ на события
   4. Каждый входящий webhook и результат обработки логируется в PaymentEvent для аудита
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 18-01-PLAN.md — HMAC verification + webhook route + idempotent payment processing + audit logging
@@ -153,6 +153,6 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 18. CloudPayments Webhooks | v1.2 | 0/2 | Not started | - |
+| 18. CloudPayments Webhooks | 1/2 | In Progress|  | - |
 | 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |

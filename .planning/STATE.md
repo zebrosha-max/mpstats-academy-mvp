@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Phase 18 context gathered
-last_updated: "2026-03-10T11:06:03.918Z"
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-03-10T21:34:22.484Z"
 last_activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 100
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 17 — Yandex ID Auth (complete)
+**Current focus:** Phase 18 — CloudPayments Webhooks (in progress)
 
 ## Current Position
 
-Phase: 17 of 20 (Yandex ID Auth)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 17 complete
-Last activity: 2026-03-10 — Phase 17 Plan 02 executed (Yandex ID UI replacement)
+Phase: 18 of 20 (CloudPayments Webhooks)
+Plan: 1 of 2 in current phase (COMPLETE)
+Status: Phase 18 in progress
+Last activity: 2026-03-11 — Phase 18 Plan 01 executed (CloudPayments webhook endpoint)
 
-Progress: [██████████] 100% (v1.0 + v1.1 complete, v1.2 phases 16-17 in progress)
+Progress: [██████████] 96% (v1.0 + v1.1 complete, v1.2 phases 16-18 in progress)
 
 ## Performance Metrics
 
@@ -64,6 +64,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [17-01]: Used @mpstats/db/client singleton in callback route instead of direct PrismaClient
 - [17-02]: Inline SVG for Yandex Ya logo (no external asset dependency)
 - [17-02]: File-system grep tests to enforce no-Google policy at CI level
+- [Phase 18]: Single catch-all webhook route with query param for event type resolution
+- [Phase 18]: Return {code: 0} on DB errors to prevent CloudPayments retry storms
 
 ### Blockers/Concerns
 
@@ -83,9 +85,10 @@ None.
 | Phase 16 P02 | 3min | 2 tasks | 4 files |
 | 17    | 01   | 5min     | 2     | 6     |
 | 17    | 02   | 3min     | 2     | 3     |
+| Phase 18 P01 | 3min | 2 tasks | 4 files |
 
 ## Session Continuity
 
-Last session: 2026-03-10T11:06:03.916Z
-Stopped at: Phase 18 context gathered
-Resume file: .planning/phases/18-cloudpayments-webhooks/18-CONTEXT.md
+Last session: 2026-03-10T21:34:22.482Z
+Stopped at: Completed 18-01-PLAN.md
+Resume file: None
