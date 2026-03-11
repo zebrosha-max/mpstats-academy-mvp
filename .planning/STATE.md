@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Phase 21 context gathered
-last_updated: "2026-03-11T15:48:47.143Z"
-last_activity: "2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing page, subscription management, conditional nav)"
+stopped_at: Completed 21-02-PLAN.md — Phase 21 complete
+last_updated: "2026-03-11T16:18:34.744Z"
+last_activity: "2026-03-11 — Phase 21 Plan 01 executed (DNS + VPS infrastructure: Nginx, SSL, env, Docker rebuild for platform.mpstats.academy)"
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 10
-  completed_plans: 9
-  percent: 100
+  completed_plans: 10
+  percent: 97
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 21 — Domain migration from DuckDNS to platform.mpstats.academy
+**Current focus:** Phase 21 complete — Domain migration to platform.mpstats.academy done
 
 ## Current Position
 
-Phase: 21 of 22 (Domain Migration)
-Plan: 1 of 2 in current phase
-Status: Plan 21-01 Complete
-Last activity: 2026-03-11 — Phase 21 Plan 01 executed (DNS + VPS infrastructure: Nginx, SSL, env, Docker rebuild for platform.mpstats.academy)
+Phase: 21 of 22 (Domain Migration) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase 21 Complete
+Last activity: 2026-03-11 — Phase 21 Plan 02 executed (OAuth services updated, E2E verified on platform.mpstats.academy)
 
-Progress: [█████████░] 97% (v1.0 + v1.1 + v1.2 in progress)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 complete)
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [19-02]: CardFooter + mt-auto pattern for equal-height plan card button alignment
 - [21-01]: HTTP-only Nginx config before certbot (let certbot add SSL directives automatically)
 - [21-01]: No redirect from old DuckDNS domain — just disabled
+- [Phase 21]: No automated Supabase/Yandex config — requires dashboard access (human-action checkpoint)
 
 ### Blockers/Concerns
 
@@ -103,9 +104,10 @@ None.
 | Phase 19 P01 | 3min | 2 tasks | 6 files |
 | 19    | 02   | 4min     | 2     | 4     |
 | 21    | 01   | 4min     | 2     | 3     |
+| Phase 21 P02 | 5min | 3 tasks | 3 files |
 
 ## Session Continuity
 
-Last session: 2026-03-11T15:48:00.000Z
-Stopped at: Completed 21-01-PLAN.md
-Resume file: .planning/phases/21-domain-migration-from-duckdns-to-platform-mpstats-academy/21-01-SUMMARY.md
+Last session: 2026-03-11T16:18:30.924Z
+Stopped at: Completed 21-02-PLAN.md — Phase 21 complete
+Resume file: None
