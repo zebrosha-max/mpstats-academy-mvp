@@ -261,19 +261,25 @@ export default function LearnPage() {
             </div>
           )}
 
-          {/* Case D: Diagnostic done but no recommended path (edge case) */}
-          {hasDiagnostic && !recommendedPath && (
-            <Card className="shadow-mp-card">
+          {/* Case D: Diagnostic done but empty or no path (all skills above target) */}
+          {hasDiagnostic && (!recommendedPath || (recommendedPath && recommendedPath.lessons.length === 0)) && !isTrackComplete && (
+            <Card className="shadow-mp-card border-mp-green-200 bg-gradient-to-br from-mp-green-50 to-white">
               <CardContent className="py-12 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-mp-gray-100 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-mp-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="w-16 h-16 rounded-2xl bg-mp-green-100 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-mp-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-body text-mp-gray-500">Персональный трек пока не сформирован. Попробуйте пройти диагностику заново.</p>
-                <Link href="/diagnostic" className="mt-4 inline-block">
-                  <Button>Пройти диагностику</Button>
-                </Link>
+                <h2 className="text-heading text-mp-gray-900 mb-2">Отличный результат!</h2>
+                <p className="text-body text-mp-gray-500 mb-6 max-w-md mx-auto">
+                  Все навыки на высоком уровне. Можешь изучать любые курсы или пройти диагностику снова для проверки.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <Button variant="outline" onClick={() => setViewMode('courses')}>Все курсы</Button>
+                  <Link href="/diagnostic">
+                    <Button>Проверить прогресс</Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           )}

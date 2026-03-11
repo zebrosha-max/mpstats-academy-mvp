@@ -176,7 +176,7 @@ export async function getCompletedSessions(prisma: PrismaClient, userId: string)
 // ============== PATH GENERATION ==============
 
 /**
- * Generate full recommended learning path from weak categories (score < 50).
+ * Generate full recommended learning path from categories below TARGET_SCORE.
  * Returns lesson IDs ordered by weakness priority (lowest score first).
  */
 async function generateFullRecommendedPath(
@@ -191,10 +191,10 @@ async function generateFullRecommendedPath(
     { key: 'finance', category: 'FINANCE' },
   ];
 
-  // Sort by weakness (lowest score first)
+  // Sort by weakness (lowest score first), include all below TARGET_SCORE
   const weakCategories = categories
     .map((c) => ({ ...c, score: skillProfile[c.key] }))
-    .filter((c) => c.score < 50)
+    .filter((c) => c.score < TARGET_SCORE)
     .sort((a, b) => a.score - b.score);
 
   const lessonIds: string[] = [];
