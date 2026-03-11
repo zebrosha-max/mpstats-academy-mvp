@@ -3,17 +3,64 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc/client';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 
+const formatDate = (date: string | Date) =>
+  new Date(date).toLocaleDateString('ru-RU');
+
+const formatPrice = (amount: number) =>
+  new Intl.NumberFormat('ru-RU').format(amount);
+
+const paymentStatusMap: Record<string, { label: string; variant: 'success' | 'destructive' | 'warning' }> = {
+  COMPLETED: { label: 'Оплачен', variant: 'success' },
+  FAILED: { label: 'Отклонён', variant: 'destructive' },
+  REFUNDED: { label: 'Возврат', variant: 'warning' },
+  PENDING: { label: 'Ожидание', variant: 'warning' },
+};
+
+const subscriptionStatusMap: Record<string, { label: string; variant: 'success' | 'warning' | 'destructive' }> = {
+  ACTIVE: { label: 'Активна', variant: 'success' },
+  PAST_DUE: { label: 'Просрочена', variant: 'warning' },
+  CANCELLED: { label: 'Отменена', variant: 'destructive' },
+};
+
 export default function ProfilePage() {
   const [name, setName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [cancelMessage, setCancelMessage] = useState('');
 
   const { data: profile, refetch } = trpc.profile.get.useQuery();
   const { data: skillProfile } = trpc.profile.getSkillProfile.useQuery();
+
+  // Billing queries
+  const { data: billingEnabled } = trpc.billing.isEnabled.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const { data: subscription, refetch: refetchSubscription } = trpc.billing.getSubscription.useQuery(undefined, {
+    enabled: !!billingEnabled,
+    retry: false,
+  });
+  const { data: payments } = trpc.billing.getPaymentHistory.useQuery(
+    { limit: 5 },
+    { enabled: !!billingEnabled, retry: false },
+  );
+
+  const cancelSubscription = trpc.billing.cancelSubscription.useMutation({
+    onSuccess: (data) => {
+      setCancelMessage(
+        `Подписка отменена. Доступ сохранится до ${formatDate(data.accessUntil)}.`
+      );
+      refetchSubscription();
+    },
+    onError: (err) => {
+      setCancelMessage(`Ошибка: ${err.message}`);
+    },
+  });
 
   const updateProfile = trpc.profile.update.useMutation({
     onSuccess: () => {
@@ -27,6 +74,17 @@ export default function ProfilePage() {
     setIsSaving(true);
     updateProfile.mutate({ name });
   };
+
+  const handleCancelSubscription = () => {
+    if (!confirm('Вы уверены, что хотите отменить подписку? Доступ сохранится до конца оплаченного периода.')) {
+      return;
+    }
+    setCancelMessage('');
+    cancelSubscription.mutate();
+  };
+
+  const hasActiveSubscription =
+    subscription && ['ACTIVE', 'PAST_DUE'].includes(subscription.status);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -70,6 +128,138 @@ export default function ProfilePage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Subscription section — only if billing enabled */}
+          {billingEnabled && (
+            <div className="space-y-4">
+              {/* Subscription card */}
+              {hasActiveSubscription ? (
+                <Card className="shadow-mp-card">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-heading">Подписка</CardTitle>
+                      <Badge variant={subscriptionStatusMap[subscription.status]?.variant || 'default'}>
+                        {subscriptionStatusMap[subscription.status]?.label || subscription.status}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-body-sm">
+                        <span className="text-mp-gray-500">Тариф</span>
+                        <span className="font-medium text-mp-gray-900">{subscription.plan.name}</span>
+                      </div>
+                      <div className="flex justify-between text-body-sm">
+                        <span className="text-mp-gray-500">Стоимость</span>
+                        <span className="font-medium text-mp-gray-900">
+                          {formatPrice(subscription.plan.price)} / мес
+                        </span>
+                      </div>
+                      {subscription.plan.type === 'COURSE' && subscription.course && (
+                        <div className="flex justify-between text-body-sm">
+                          <span className="text-mp-gray-500">Курс</span>
+                          <span className="font-medium text-mp-gray-900">{subscription.course.title}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-body-sm">
+                        <span className="text-mp-gray-500">
+                          {subscription.status === 'CANCELLED' ? 'Доступ до' : 'Следующее списание'}
+                        </span>
+                        <span className="font-medium text-mp-gray-900">
+                          {formatDate(subscription.currentPeriodEnd)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {cancelMessage && (
+                      <div className="p-3 rounded-lg bg-mp-green-50 text-mp-green-800 text-body-sm border border-mp-green-200">
+                        {cancelMessage}
+                      </div>
+                    )}
+
+                    {subscription.status === 'ACTIVE' && (
+                      <Button
+                        variant="outline"
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                        onClick={handleCancelSubscription}
+                        disabled={cancelSubscription.isPending}
+                      >
+                        {cancelSubscription.isPending ? 'Отмена...' : 'Отменить подписку'}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="shadow-mp-card border-dashed">
+                  <CardContent className="py-8 text-center">
+                    <div className="w-12 h-12 rounded-xl bg-mp-gray-100 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-mp-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h.01M11 15h2M7 15a1 1 0 100-2 1 1 0 000 2zM3 6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" />
+                      </svg>
+                    </div>
+                    <p className="text-body text-mp-gray-500 mb-4">У вас нет активной подписки</p>
+                    <Link href="/pricing">
+                      <Button>Выбрать тариф</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Payment history */}
+              {payments && payments.length > 0 && (
+                <Card className="shadow-mp-card">
+                  <CardHeader>
+                    <CardTitle className="text-heading">История платежей</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-body-sm">
+                        <thead>
+                          <tr className="border-b border-mp-gray-200">
+                            <th className="text-left py-2 text-mp-gray-500 font-medium">Дата</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium">Сумма</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium">Статус</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium">План</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {payments.map((payment) => {
+                            const status = paymentStatusMap[payment.status] || {
+                              label: payment.status,
+                              variant: 'default' as const,
+                            };
+                            return (
+                              <tr key={payment.id} className="border-b border-mp-gray-100 last:border-0">
+                                <td className="py-3 text-mp-gray-900">{formatDate(payment.createdAt)}</td>
+                                <td className="py-3 text-mp-gray-900">{formatPrice(payment.amount)} RUB</td>
+                                <td className="py-3">
+                                  <Badge variant={status.variant} size="sm">{status.label}</Badge>
+                                </td>
+                                <td className="py-3 text-mp-gray-700">
+                                  {payment.subscription?.plan?.name || '-'}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {payments && payments.length === 0 && (
+                <Card className="shadow-mp-card">
+                  <CardHeader>
+                    <CardTitle className="text-heading">История платежей</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-body-sm text-mp-gray-500">История платежей пуста</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
 
           {/* Quick links */}
           <Card className="shadow-mp-card">

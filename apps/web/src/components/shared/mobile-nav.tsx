@@ -3,8 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { trpc } from '@/lib/trpc/client';
 
-const navItems = [
+interface NavItem {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const navItems: NavItem[] = [
   {
     title: 'Главная',
     href: '/dashboard',
@@ -43,13 +50,34 @@ const navItems = [
   },
 ];
 
+const billingNavItem: NavItem = {
+  title: 'Тарифы',
+  href: '/pricing',
+  icon: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h.01M11 15h2M7 15a1 1 0 100-2 1 1 0 000 2zM3 6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" />
+    </svg>
+  ),
+};
+
 export function MobileNav() {
   const pathname = usePathname();
+  const { data: billingEnabled } = trpc.billing.isEnabled.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Build nav items with conditional billing link
+  const items = [...navItems];
+  if (billingEnabled) {
+    // Insert before "Профиль" (last item)
+    items.splice(items.length - 1, 0, billingNavItem);
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-mp-gray-200 md:hidden z-50 shadow-mp-lg">
       <div className="flex justify-around py-2 safe-area-pb">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
           return (

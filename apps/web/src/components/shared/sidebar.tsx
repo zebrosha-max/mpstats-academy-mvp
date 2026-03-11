@@ -4,8 +4,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
+import { trpc } from '@/lib/trpc/client';
 
-const navItems = [
+interface NavItem {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const navItems: NavItem[] = [
   {
     title: 'Главная',
     href: '/dashboard',
@@ -44,8 +51,29 @@ const navItems = [
   },
 ];
 
+const billingNavItem: NavItem = {
+  title: 'Тарифы',
+  href: '/pricing',
+  icon: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h.01M11 15h2M7 15a1 1 0 100-2 1 1 0 000 2zM3 6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" />
+    </svg>
+  ),
+};
+
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: billingEnabled } = trpc.billing.isEnabled.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Build nav items with conditional billing link
+  const items = [...navItems];
+  if (billingEnabled) {
+    // Insert before "Профиль" (last item)
+    items.splice(items.length - 1, 0, billingNavItem);
+  }
 
   return (
     <aside className="w-64 border-r border-mp-gray-200 bg-white hidden md:flex flex-col fixed top-0 left-0 h-screen z-30">
@@ -57,7 +85,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
           return (
