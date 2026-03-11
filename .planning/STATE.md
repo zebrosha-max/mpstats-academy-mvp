@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: executing
-stopped_at: Completed 19-01-PLAN.md
+stopped_at: Completed 19-02-PLAN.md (Phase 19 complete)
 last_updated: "2026-03-11T09:16:03.946Z"
-last_activity: "2026-03-11 — Phase 19 Plan 01 executed (Billing backend: tRPC router + CP helpers)"
+last_activity: "2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing, subscription mgmt, conditional nav)"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 8
-  completed_plans: 7
-  percent: 96
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 19 of 20 (Billing UI & Payment Flow)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-03-11 — Phase 19 Plan 01 executed (Billing backend: tRPC router + CP helpers)
+Plan: 2 of 2 in current phase (COMPLETE)
+Status: Phase 19 Complete
+Last activity: 2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing page, subscription management, conditional nav)
 
-Progress: [██████████] 96% (v1.0 + v1.1 complete, v1.2 phases 16-19 in progress)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 complete)
 
 ## Performance Metrics
 
@@ -69,6 +69,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 18]: Recurrent extends from currentPeriodEnd (not now) to avoid billing gaps
 - [Phase 18]: Cancel sets CANCELLED but does NOT expire — access until currentPeriodEnd
 - [Phase 19]: Inline CP cancel logic in tRPC router instead of cross-package import
+- [19-02]: Pricing page outside (main) layout — own header with back nav, no sidebar
+- [19-02]: Protected queries on public page use retry:false for graceful unauthenticated handling
+- [19-02]: CardFooter + mt-auto pattern for equal-height plan card button alignment
 
 ### Blockers/Concerns
 
@@ -91,9 +94,10 @@ None.
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
 | 18    | 02   | 2min     | 2     | 2     |
 | Phase 19 P01 | 3min | 2 tasks | 6 files |
+| 19    | 02   | 4min     | 2     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-03-11T09:16:03.944Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-03-11T11:23:37Z
+Stopped at: Completed 19-02-PLAN.md (Phase 19 complete)
 Resume file: None

@@ -47,7 +47,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 - [x] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle (completed 2026-03-10)
 - [x] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура (completed 2026-03-10)
 - [x] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей (completed 2026-03-10)
-- [ ] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле
+- [x] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле (completed 2026-03-11)
 - [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
 
 ## Phase Details
@@ -107,7 +107,7 @@ Plans:
   2. Пользователь может оплатить подписку через CloudPayments widget (iframe) без ввода карточных данных на нашем сайте
   3. В профиле пользователь видит статус подписки, дату следующего списания и может отменить подписку
   4. Два режима подписки работают: Режим A (отдельный курс) и Режим B (вся платформа)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 19-01-PLAN.md — Prisma PENDING migration, billing tRPC router, CP widget wrapper, cancel API, seed price update
@@ -154,5 +154,5 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 19. Billing UI + Payment Flow | 1/2 | In Progress|  | - |
+| 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
