@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
-status: executing
-stopped_at: Completed 19-02-PLAN.md (Phase 19 complete)
-last_updated: "2026-03-11T09:16:03.946Z"
-last_activity: "2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing, subscription mgmt, conditional nav)"
+status: completed
+stopped_at: Phase 21 context gathered
+last_updated: "2026-03-11T14:35:07.645Z"
+last_activity: "2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing page, subscription management, conditional nav)"
 progress:
-  total_phases: 5
-  completed_phases: 3
+  total_phases: 6
+  completed_phases: 4
   total_plans: 8
   completed_plans: 8
   percent: 100
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 19 — Billing UI & Payment Flow (in progress)
+**Current focus:** Phase 21 — Domain migration from DuckDNS to platform.mpstats.academy
 
 ## Current Position
 
@@ -79,6 +79,10 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - CloudPayments webhook payload format needs sandbox testing (Phase 18)
 - Pricing structure (actual prices) needed from product owner before Phase 19
 
+### Roadmap Evolution
+
+- Phase 21 added: Domain migration from DuckDNS to platform.mpstats.academy
+
 ### Pending Todos
 
 None.
@@ -98,6 +102,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-11T11:23:37Z
-Stopped at: Completed 19-02-PLAN.md (Phase 19 complete)
-Resume file: None
+Last session: 2026-03-11T14:35:07.643Z
+Stopped at: Phase 21 context gathered
+Resume file: .planning/phases/21-domain-migration-from-duckdns-to-platform-mpstats-academy/21-CONTEXT.md

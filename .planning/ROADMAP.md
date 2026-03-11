@@ -156,3 +156,13 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
+
+### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 20
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 21 to break down)
