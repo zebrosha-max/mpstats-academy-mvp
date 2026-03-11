@@ -95,8 +95,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 18-01-PLAN.md — HMAC verification + webhook route + idempotent payment processing + audit logging
-- [ ] 18-02-PLAN.md — Subscription lifecycle service (state machine) + wire into webhook route
+- [x] 18-01-PLAN.md — HMAC verification + webhook route + idempotent payment processing + audit logging
+- [x] 18-02-PLAN.md — Subscription lifecycle service (state machine) + wire into webhook route
 
 ### Phase 19: Billing UI + Payment Flow
 **Goal**: Пользователь может выбрать тарифный план, оплатить подписку через CloudPayments и управлять ей в профиле
@@ -107,11 +107,11 @@ Plans:
   2. Пользователь может оплатить подписку через CloudPayments widget (iframe) без ввода карточных данных на нашем сайте
   3. В профиле пользователь видит статус подписки, дату следующего списания и может отменить подписку
   4. Два режима подписки работают: Режим A (отдельный курс) и Режим B (вся платформа)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 19-01: TBD
-- [ ] 19-02: TBD
+- [ ] 19-01-PLAN.md — Prisma PENDING migration, billing tRPC router, CP widget wrapper, cancel API, seed price update
+- [ ] 19-02-PLAN.md — Pricing page, profile subscription section, sidebar navigation, CP widget integration + human verify
 
 ### Phase 20: Paywall + Content Gating
 **Goal**: Платный контент заблокирован для пользователей без подписки, бесплатный контент доступен всем
@@ -153,6 +153,6 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 15. Landing Redesign & Theme Toggle | v1.1 | 2/2 | Complete | 2026-02-27 |
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 18. CloudPayments Webhooks | 2/2 | Complete    | 2026-03-10 | - |
-| 19. Billing UI + Payment Flow | v1.2 | 0/? | Not started | - |
+| 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
+| 19. Billing UI + Payment Flow | v1.2 | 0/2 | Not started | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
