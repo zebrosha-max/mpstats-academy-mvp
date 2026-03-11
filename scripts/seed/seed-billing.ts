@@ -3,7 +3,7 @@
  *
  * Creates:
  * - Feature flags (billing_enabled=false, maintenance_mode=false)
- * - Subscription plans (COURSE 4990, PLATFORM 4990)
+ * - Subscription plans (COURSE 2990, PLATFORM 4990)
  * - Updates all courses to price=4990 isFree=false
  *
  * Run:
@@ -44,11 +44,11 @@ async function main() {
   // 2. Subscription plans
   const coursePlan = await prisma.subscriptionPlan.upsert({
     where: { type: 'COURSE' },
-    update: {},
+    update: { price: 2990 },
     create: {
       type: 'COURSE',
       name: 'Подписка на курс',
-      price: 4990,
+      price: 2990,
       intervalDays: 30,
     },
   });
@@ -56,7 +56,7 @@ async function main() {
 
   const platformPlan = await prisma.subscriptionPlan.upsert({
     where: { type: 'PLATFORM' },
-    update: {},
+    update: { price: 4990 },
     create: {
       type: 'PLATFORM',
       name: 'Полный доступ',

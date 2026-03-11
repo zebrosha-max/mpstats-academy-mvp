@@ -170,6 +170,7 @@ enum SubscriptionType {
 }
 
 enum SubscriptionStatus {
+  PENDING
   ACTIVE
   PAST_DUE
   CANCELLED
