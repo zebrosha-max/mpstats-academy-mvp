@@ -1,8 +1,33 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-02-25
+**Last updated:** 2026-03-11
 
-## Last Session (2026-03-05)
+## Last Session (2026-03-11)
+
+**Roadmap planning — 2 новые фазы добавлены через GSD:**
+
+- **Phase 21:** Domain migration from DuckDNS to platform.mpstats.academy
+  - CONTEXT.md создан: DNS на Рег.ру (A-запись platform → VPS), SSL certbot, Nginx, env, OAuth, Docker rebuild
+  - Старый домен academyal.duckdns.org — просто выключить, без редиректа
+- **Phase 22:** Transactional email notifications (billing, auth, system)
+  - Нужен почтовый сервис (Resend / Postmark / etc.) — в проекте нет ни одного
+  - Шаблоны: подтверждение оплаты, продление, неудачный платёж, отмена, кастомные auth-письма
+
+**Следующие шаги:**
+- [ ] `/gsd:plan-phase 21` — спланировать миграцию домена
+- [ ] `/gsd:discuss-phase 22` — обсудить детали email-уведомлений
+- [ ] Phase 20 (Paywall) — ещё не начата
+
+### Previous Session (2026-03-11 earlier)
+
+**Phase 19: Billing UI & Payment Flow — COMPLETE (GSD workflow)**
+
+### Previous Session (2026-03-11 earlier)
+
+**Тест фронтенд-скиллов — альтернативные лендинги:**
+- `/design-wdg` и `/design-uiux` — тестовые лендинги
+
+### Previous Session (2026-03-05)
 
 **Kinescope Player UX Fix + Infinite Re-render Bug Fix:**
 
@@ -362,7 +387,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 
 ## Current Status Summary
 
-**Production deployed:** https://academyal.duckdns.org
+**Production deployed:** https://platform.mpstats.academy
 
 | Sprint / Phase | Status | Completion |
 |----------------|--------|------------|
@@ -501,8 +526,8 @@ cp -r _backup_design_v1/apps/web/* apps/web/
 |----------|----------|
 | VPS IP | 89.208.106.208 |
 | User | deploy (SSH key auth only) |
-| URL | https://academyal.duckdns.org |
-| SSL | Let's Encrypt (expires 2026-05-25, auto-renewal) |
+| URL | https://platform.mpstats.academy |
+| SSL | Let's Encrypt (expires 2026-06-09, auto-renewal) |
 | Reverse Proxy | Nginx 1.24.0 (proxy_buffer_size 128k для Supabase auth) |
 | Container | Docker Compose, image `maal-web`, port 127.0.0.1:3000 |
 | Repo на VPS | `/home/deploy/maal/` (git clone from GitHub) |
@@ -534,7 +559,7 @@ docker compose logs --tail=50 -f
 
 - [ ] **Yandex OAuth** — Redirect URI + Host в https://oauth.yandex.ru/ (сейчас: `https://academyal.duckdns.org/api/auth/yandex/callback`)
 - [ ] **Supabase** — Site URL + Redirect URLs в Dashboard (Authentication > URL Configuration)
-- [ ] **`.env.production`** на VPS — `NEXT_PUBLIC_SITE_URL`
-- [ ] **Nginx** — `server_name` в конфиге
-- [ ] **Let's Encrypt** — перевыпустить SSL сертификат
-- [ ] **DuckDNS** — заменить на реальный DNS
+- [x] **`.env.production`** на VPS — `NEXT_PUBLIC_SITE_URL` (updated 2026-03-11)
+- [x] **Nginx** — `server_name` в конфиге (updated 2026-03-11)
+- [x] **Let's Encrypt** — перевыпустить SSL сертификат (issued 2026-03-11, expires 2026-06-09)
+- [x] **DuckDNS** — заменён на platform.mpstats.academy (2026-03-11)
