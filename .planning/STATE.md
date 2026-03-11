@@ -4,13 +4,13 @@ milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
 stopped_at: Phase 21 context gathered
-last_updated: "2026-03-11T14:35:07.645Z"
+last_updated: "2026-03-11T15:48:47.143Z"
 last_activity: "2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing page, subscription management, conditional nav)"
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
   percent: 100
 ---
 
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 19 of 20 (Billing UI & Payment Flow)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 19 Complete
-Last activity: 2026-03-11 — Phase 19 Plan 02 executed (Billing UI: pricing page, subscription management, conditional nav)
+Phase: 21 of 22 (Domain Migration)
+Plan: 1 of 2 in current phase
+Status: Plan 21-01 Complete
+Last activity: 2026-03-11 — Phase 21 Plan 01 executed (DNS + VPS infrastructure: Nginx, SSL, env, Docker rebuild for platform.mpstats.academy)
 
-Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 complete)
+Progress: [█████████░] 97% (v1.0 + v1.1 + v1.2 in progress)
 
 ## Performance Metrics
 
@@ -72,6 +72,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [19-02]: Pricing page outside (main) layout — own header with back nav, no sidebar
 - [19-02]: Protected queries on public page use retry:false for graceful unauthenticated handling
 - [19-02]: CardFooter + mt-auto pattern for equal-height plan card button alignment
+- [21-01]: HTTP-only Nginx config before certbot (let certbot add SSL directives automatically)
+- [21-01]: No redirect from old DuckDNS domain — just disabled
 
 ### Blockers/Concerns
 
@@ -100,9 +102,10 @@ None.
 | 18    | 02   | 2min     | 2     | 2     |
 | Phase 19 P01 | 3min | 2 tasks | 6 files |
 | 19    | 02   | 4min     | 2     | 4     |
+| 21    | 01   | 4min     | 2     | 3     |
 
 ## Session Continuity
 
-Last session: 2026-03-11T14:35:07.643Z
-Stopped at: Phase 21 context gathered
-Resume file: .planning/phases/21-domain-migration-from-duckdns-to-platform-mpstats-academy/21-CONTEXT.md
+Last session: 2026-03-11T15:48:00.000Z
+Stopped at: Completed 21-01-PLAN.md
+Resume file: .planning/phases/21-domain-migration-from-duckdns-to-platform-mpstats-academy/21-01-SUMMARY.md
