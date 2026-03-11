@@ -74,7 +74,7 @@
 
 **Деплой:** Все фиксы задеплоены на прод, плеер проверен — видео отображается корректно
 
-**Production URL:** https://academyal.duckdns.org
+**Production URL:** https://platform.mpstats.academy
 
 ### Previous Session (2026-02-24)
 
@@ -349,7 +349,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 - [x] Kinescope видео интеграция — 405 видео загружены (209.4 GB), все videoId в DB
 - [x] VPS Infrastructure — Docker, Nginx, UFW, fail2ban, SSL (Phase 05.1)
 - [x] Docker Deploy — multi-stage build, контейнер healthy на VPS
-- [x] HTTPS — academyal.duckdns.org с Let's Encrypt
+- [x] HTTPS — platform.mpstats.academy с Let's Encrypt
 - [x] OAuth fix — Supabase URL Config + auth callback redirect
 - [x] Nginx proxy buffer fix — для Supabase auth cookies
 
@@ -555,10 +555,10 @@ docker compose logs --tail=50 -f
 
 ## Domain Migration Checklist
 
-**При смене домена (с `academyal.duckdns.org` на боевой) обновить:**
+**Domain migration COMPLETE (2026-03-11) -- migrated from `academyal.duckdns.org` to `platform.mpstats.academy`:**
 
-- [ ] **Yandex OAuth** — Redirect URI + Host в https://oauth.yandex.ru/ (сейчас: `https://academyal.duckdns.org/api/auth/yandex/callback`)
-- [ ] **Supabase** — Site URL + Redirect URLs в Dashboard (Authentication > URL Configuration)
+- [x] **Yandex OAuth** — Redirect URI updated to `https://platform.mpstats.academy/api/auth/yandex/callback` (2026-03-11)
+- [x] **Supabase** — Site URL + Redirect URLs updated to platform.mpstats.academy (2026-03-11)
 - [x] **`.env.production`** на VPS — `NEXT_PUBLIC_SITE_URL` (updated 2026-03-11)
 - [x] **Nginx** — `server_name` в конфиге (updated 2026-03-11)
 - [x] **Let's Encrypt** — перевыпустить SSL сертификат (issued 2026-03-11, expires 2026-06-09)

@@ -31,7 +31,7 @@ describe('YandexProvider', () => {
   beforeEach(() => {
     vi.stubEnv('YANDEX_CLIENT_ID', 'test-client-id');
     vi.stubEnv('YANDEX_CLIENT_SECRET', 'test-client-secret');
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academyal.duckdns.org');
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://platform.mpstats.academy');
     provider = new YandexProvider();
   });
 
@@ -48,7 +48,7 @@ describe('YandexProvider', () => {
     expect(parsed.searchParams.get('response_type')).toBe('code');
     expect(parsed.searchParams.get('client_id')).toBe('test-client-id');
     expect(parsed.searchParams.get('redirect_uri')).toBe(
-      'https://academyal.duckdns.org/api/auth/yandex/callback'
+      'https://platform.mpstats.academy/api/auth/yandex/callback'
     );
     expect(parsed.searchParams.get('scope')).toBe('login:email login:info');
     expect(parsed.searchParams.get('state')).toBe('test-state-123');

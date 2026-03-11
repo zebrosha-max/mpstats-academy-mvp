@@ -70,13 +70,13 @@ describe('Yandex OAuth Callback Route', () => {
     vi.clearAllMocks();
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon-key');
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academyal.duckdns.org');
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://platform.mpstats.academy');
   });
 
   it('redirects to /login?error=missing_code when no code param', async () => {
     const { GET } = await import('@/app/api/auth/yandex/callback/route');
 
-    const request = new Request('https://academyal.duckdns.org/api/auth/yandex/callback');
+    const request = new Request('https://platform.mpstats.academy/api/auth/yandex/callback');
     const response = await GET(request);
 
     expect(response.status).toBeGreaterThanOrEqual(300);
@@ -93,7 +93,7 @@ describe('Yandex OAuth Callback Route', () => {
     mockCookieStore.get.mockReturnValue({ value: 'correct-state' });
 
     const request = new Request(
-      'https://academyal.duckdns.org/api/auth/yandex/callback?code=abc&state=wrong-state'
+      'https://platform.mpstats.academy/api/auth/yandex/callback?code=abc&state=wrong-state'
     );
     const response = await GET(request);
 
@@ -189,7 +189,7 @@ describe('Yandex OAuth Callback Route', () => {
     const { GET } = await import('@/app/api/auth/yandex/callback/route');
 
     const request = new Request(
-      'https://academyal.duckdns.org/api/auth/yandex/callback?code=valid-code&state=valid-state'
+      'https://platform.mpstats.academy/api/auth/yandex/callback?code=valid-code&state=valid-state'
     );
     const response = await GET(request);
 
