@@ -156,16 +156,18 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
+| 21. Domain Migration | - | 0/2 | Planned | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 20
-**Plans:** 0 plans
+**Goal:** Перевести production-приложение с временного academyal.duckdns.org на постоянный домен platform.mpstats.academy (DNS, SSL, Nginx, env, OAuth, Docker rebuild, верификация)
+**Requirements**: DOM-01, DOM-02, DOM-03, DOM-04, DOM-05, DOM-06
+**Depends on:** Phase 19 (production app running)
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 21 to break down)
+- [ ] 21-01-PLAN.md — DNS A-record (human), VPS infrastructure (Nginx + SSL + env + Docker rebuild)
+- [ ] 21-02-PLAN.md — External OAuth services update (Supabase + Yandex), test fixtures, docs, E2E verification
 
 ### Phase 22: Transactional email notifications (billing, auth, system)
 
