@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/shared/Logo';
@@ -127,12 +127,14 @@ export default function PricingPage() {
         {/* Header */}
         <header className="bg-white border-b border-mp-gray-200">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Logo size="sm" />
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                Личный кабинет
-              </Button>
+            <Link href="/dashboard" className="flex items-center gap-2 text-mp-gray-600 hover:text-mp-gray-900 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-body-sm">Назад</span>
             </Link>
+            <Logo size="sm" />
+            <div className="w-16" /> {/* Spacer for centering logo */}
           </div>
         </header>
 
@@ -158,10 +160,10 @@ export default function PricingPage() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
             {/* COURSE plan */}
             {coursePlan && (
-              <Card className="shadow-mp-card relative">
+              <Card className="relative h-full flex flex-col">
                 {hasActiveCourseSubscription && (
                   <div className="absolute top-4 right-4">
                     <Badge variant="success">Ваш план</Badge>
@@ -218,9 +220,10 @@ export default function PricingPage() {
                       Конспекты уроков
                     </li>
                   </ul>
-
+                </CardContent>
+                <CardFooter className="mt-auto">
                   {hasActiveCourseSubscription ? (
-                    <Link href="/profile" className="block">
+                    <Link href="/profile" className="block w-full">
                       <Button variant="outline" className="w-full">
                         Управление подпиской
                       </Button>
@@ -234,13 +237,13 @@ export default function PricingPage() {
                       {isProcessing ? 'Обработка...' : 'Оформить подписку'}
                     </Button>
                   )}
-                </CardContent>
+                </CardFooter>
               </Card>
             )}
 
             {/* PLATFORM plan */}
             {platformPlan && (
-              <Card className="shadow-mp-card relative border-2 border-mp-blue-500">
+              <Card className="relative h-full flex flex-col border-2 border-mp-blue-500">
                 <div className="absolute top-4 right-4">
                   {hasActivePlatformSubscription ? (
                     <Badge variant="success">Ваш план</Badge>
@@ -286,9 +289,10 @@ export default function PricingPage() {
                       Персональный план обучения
                     </li>
                   </ul>
-
+                </CardContent>
+                <CardFooter className="mt-auto">
                   {hasActivePlatformSubscription ? (
-                    <Link href="/profile" className="block">
+                    <Link href="/profile" className="block w-full">
                       <Button variant="outline" className="w-full">
                         Управление подпиской
                       </Button>
@@ -303,7 +307,7 @@ export default function PricingPage() {
                       {isProcessing ? 'Обработка...' : 'Оформить подписку'}
                     </Button>
                   )}
-                </CardContent>
+                </CardFooter>
               </Card>
             )}
           </div>
