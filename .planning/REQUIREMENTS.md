@@ -16,19 +16,19 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 
 ### Billing
 
-- [ ] **BILL-01**: CloudPayments widget интегрирован (iframe-виджет, PCI DSS не нужен)
+- [x] **BILL-01**: CloudPayments widget интегрирован (iframe-виджет, PCI DSS не нужен)
 - [x] **BILL-02**: Рекуррентные подписки с автопродлением через CloudPayments
 - [x] **BILL-03**: Webhook handler с HMAC-SHA256 верификацией и идемпотентностью (по TransactionId)
 - [x] **BILL-04**: Billing toggle — включение/выключение биллинга через DB flag без деплоя
-- [ ] **BILL-05**: Управление подпиской в профиле (статус, следующее списание, отмена)
+- [x] **BILL-05**: Управление подпиской в профиле (статус, следующее списание, отмена)
 - [x] **BILL-06**: Prisma модели: Subscription, Payment, PaymentEvent, FeatureFlag
 
 ### Paywall
 
 - [ ] **PAY-01**: Content gating — 1-2 бесплатных урока на курс, остальные заблокированы
-- [ ] **PAY-02**: Страница тарифов с планами подписки и CTA
+- [x] **PAY-02**: Страница тарифов с планами подписки и CTA
 - [ ] **PAY-03**: Lock UI на платных уроках (замки, баннер "Оформи подписку")
-- [ ] **PAY-04**: Два режима подписки — per-course (Режим A) и full platform (Режим B)
+- [x] **PAY-04**: Два режима подписки — per-course (Режим A) и full platform (Режим B)
 - [ ] **PAY-05**: Централизованный access service в tRPC (не в middleware)
 
 ## Future Requirements
@@ -71,16 +71,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-02 | Phase 17 | Complete |
 | AUTH-03 | Phase 17 | Complete |
 | AUTH-04 | Phase 17 | Complete |
-| BILL-01 | Phase 19 | Pending |
+| BILL-01 | Phase 19 | Complete |
 | BILL-02 | Phase 18 | Complete |
 | BILL-03 | Phase 18 | Complete |
 | BILL-04 | Phase 16 | Complete |
-| BILL-05 | Phase 19 | Pending |
+| BILL-05 | Phase 19 | Complete |
 | BILL-06 | Phase 16 | Complete |
 | PAY-01 | Phase 20 | Pending |
-| PAY-02 | Phase 19 | Pending |
+| PAY-02 | Phase 19 | Complete |
 | PAY-03 | Phase 20 | Pending |
-| PAY-04 | Phase 19 | Pending |
+| PAY-04 | Phase 19 | Complete |
 | PAY-05 | Phase 20 | Pending |
 
 **Coverage:**

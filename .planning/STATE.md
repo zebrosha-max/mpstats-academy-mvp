@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
-status: completed
-stopped_at: Phase 19 context gathered
-last_updated: "2026-03-11T08:52:17.446Z"
-last_activity: 2026-03-11 — Phase 18 Plan 02 executed (Subscription lifecycle state machine)
+status: executing
+stopped_at: Completed 19-01-PLAN.md
+last_updated: "2026-03-11T09:16:03.946Z"
+last_activity: "2026-03-11 — Phase 19 Plan 01 executed (Billing backend: tRPC router + CP helpers)"
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
   percent: 96
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 18 — CloudPayments Webhooks (in progress)
+**Current focus:** Phase 19 — Billing UI & Payment Flow (in progress)
 
 ## Current Position
 
-Phase: 18 of 20 (CloudPayments Webhooks)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 18 COMPLETE
-Last activity: 2026-03-11 — Phase 18 Plan 02 executed (Subscription lifecycle state machine)
+Phase: 19 of 20 (Billing UI & Payment Flow)
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-03-11 — Phase 19 Plan 01 executed (Billing backend: tRPC router + CP helpers)
 
-Progress: [██████████] 96% (v1.0 + v1.1 complete, v1.2 phases 16-18 in progress)
+Progress: [██████████] 96% (v1.0 + v1.1 complete, v1.2 phases 16-19 in progress)
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 18]: Return {code: 0} on DB errors to prevent CloudPayments retry storms
 - [Phase 18]: Recurrent extends from currentPeriodEnd (not now) to avoid billing gaps
 - [Phase 18]: Cancel sets CANCELLED but does NOT expire — access until currentPeriodEnd
+- [Phase 19]: Inline CP cancel logic in tRPC router instead of cross-package import
 
 ### Blockers/Concerns
 
@@ -89,9 +90,10 @@ None.
 | 17    | 02   | 3min     | 2     | 3     |
 | Phase 18 P01 | 3min | 2 tasks | 4 files |
 | 18    | 02   | 2min     | 2     | 2     |
+| Phase 19 P01 | 3min | 2 tasks | 6 files |
 
 ## Session Continuity
 
-Last session: 2026-03-11T08:52:17.443Z
-Stopped at: Phase 19 context gathered
-Resume file: .planning/phases/19-billing-ui-payment-flow/19-CONTEXT.md
+Last session: 2026-03-11T09:16:03.944Z
+Stopped at: Completed 19-01-PLAN.md
+Resume file: None

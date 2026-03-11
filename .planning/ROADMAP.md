@@ -107,7 +107,7 @@ Plans:
   2. Пользователь может оплатить подписку через CloudPayments widget (iframe) без ввода карточных данных на нашем сайте
   3. В профиле пользователь видит статус подписки, дату следующего списания и может отменить подписку
   4. Два режима подписки работают: Режим A (отдельный курс) и Режим B (вся платформа)
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 19-01-PLAN.md — Prisma PENDING migration, billing tRPC router, CP widget wrapper, cancel API, seed price update
@@ -154,5 +154,5 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 19. Billing UI + Payment Flow | v1.2 | 0/2 | Not started | - |
+| 19. Billing UI + Payment Flow | 1/2 | In Progress|  | - |
 | 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
