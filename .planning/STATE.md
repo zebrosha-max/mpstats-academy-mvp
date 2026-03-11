@@ -82,6 +82,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 ### Roadmap Evolution
 
 - Phase 21 added: Domain migration from DuckDNS to platform.mpstats.academy
+- Phase 22 added: Transactional email notifications (billing, auth, system)
 
 ### Pending Todos
 
