@@ -48,7 +48,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 - [x] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура (completed 2026-03-10)
 - [x] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей (completed 2026-03-10)
 - [x] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле (completed 2026-03-11)
-- [ ] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service
+- [x] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service (completed 2026-03-12)
 
 ## Phase Details
 
@@ -122,7 +122,7 @@ Plans:
   2. Диагностика навыков остаётся полностью бесплатной для всех пользователей
   3. Централизованный access service в tRPC проверяет подписку -- обойти paywall через прямой URL невозможно
   4. При выключенном billing toggle (feature flag) весь контент доступен без ограничений (для тестирования и демо)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 20-01-PLAN.md — Access service utility + learning router enrichment with locked flags (completed 2026-03-12)
@@ -155,7 +155,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
-| 20. Paywall + Content Gating | v1.2 | 1/2 | In Progress | - |
+| 20. Paywall + Content Gating | 2/2 | Complete   | 2026-03-12 | - |
 | 21. Domain Migration | 2/2 | Complete    | 2026-03-11 | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy

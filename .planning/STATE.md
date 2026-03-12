@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: in_progress
-stopped_at: Phase 20 Plan 01 complete
-last_updated: "2026-03-12T11:19:45Z"
-last_activity: 2026-03-12 — Phase 20 Plan 01 executed (access service + learning router gating)
+stopped_at: Completed 20-02-PLAN.md (checkpoint pending human verify)
+last_updated: "2026-03-12T11:25:39Z"
+last_activity: 2026-03-12 — Phase 20 Plan 02 executed (frontend lock UI + paywall banners + track gating)
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 92
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 20 Paywall + Content Gating — backend access service done, frontend gating next
+**Current focus:** Phase 20 Paywall + Content Gating — frontend lock UI done, awaiting human verification
 
 ## Current Position
 
 Phase: 20 of 22 (Paywall + Content Gating)
-Plan: 1 of 2 in current phase -- COMPLETE
-Status: Phase 20 Plan 01 Complete
-Last activity: 2026-03-12 — Phase 20 Plan 01 executed (access service + learning router gating)
+Plan: 2 of 2 in current phase -- CHECKPOINT (human-verify pending)
+Status: Phase 20 Plan 02 auto tasks complete, awaiting human verification
+Last activity: 2026-03-12 — Phase 20 Plan 02 executed (frontend lock UI + paywall banners + track gating)
 
-Progress: [█████████░] 92% (v1.0 + v1.1 + v1.2 in progress)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 in progress)
 
 ## Performance Metrics
 
@@ -78,6 +78,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [20-01]: FREE_LESSON_THRESHOLD=2: lessons with order<=2 are always free
 - [20-01]: Batch subscription fetch per procedure (not per lesson) for performance
 - [20-01]: getRecommendedPath keeps videoId visible (track preview is frontend-only)
+- [20-02]: Paywall LockOverlay takes priority over DiagnosticGateBanner in render chain
+- [20-02]: Track blur gating: first 3 lessons visible, rest CSS-blurred with pointer-events-none
 
 ### Blockers/Concerns
 
@@ -109,12 +111,13 @@ None.
 | 21    | 01   | 4min     | 2     | 3     |
 | Phase 21 P02 | 5min | 3 tasks | 3 files |
 | 20    | 01   | 3min     | 2     | 3     |
+| 20    | 02   | 3min     | 2     | 6     |
 
 ## Session Continuity
 
-Last session: 2026-03-12T11:19:45Z
-Stopped at: Completed 20-01-PLAN.md
-Resume file: .planning/phases/20-paywall-content-gating/20-02-PLAN.md
+Last session: 2026-03-12T11:25:39Z
+Stopped at: Completed 20-02-PLAN.md (checkpoint: human-verify pending)
+Resume file: .planning/phases/20-paywall-content-gating/20-02-PLAN.md (Task 3 checkpoint)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
