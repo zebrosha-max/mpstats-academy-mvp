@@ -93,6 +93,11 @@ export default function PricingPage() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
+      if (errorMessage === 'UNAUTHORIZED' || errorMessage.includes('UNAUTHORIZED')) {
+        setMessage({ type: 'error', text: 'Для оформления подписки необходимо войти в аккаунт. Перенаправляем...' });
+        setTimeout(() => router.push('/login'), 2000);
+        return;
+      }
       setMessage({ type: 'error', text: errorMessage });
     } finally {
       setIsProcessing(false);

@@ -235,10 +235,10 @@ export default function ProfilePage() {
                                 <td className="py-3">
                                   <Badge variant={status.variant} size="sm">{status.label}</Badge>
                                 </td>
-                                <td className="py-3 text-mp-gray-700">
-                                  {payment.subscription?.plan?.name || '-'}
+                                <td className="py-3 text-mp-gray-700 max-w-[200px]">
+                                  <div>{payment.subscription?.plan?.name || '-'}</div>
                                   {payment.subscription?.course && (
-                                    <span className="text-mp-gray-500"> — {payment.subscription.course.title}</span>
+                                    <div className="text-mp-gray-500 text-xs truncate">{payment.subscription.course.title}</div>
                                   )}
                                 </td>
                               </tr>
