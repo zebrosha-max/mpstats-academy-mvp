@@ -153,6 +153,7 @@ export const billingRouter = router({
         amount: plan.price,
         planName: plan.name,
         description: plan.name,
+        userId: ctx.user.id,
       };
     }),
 

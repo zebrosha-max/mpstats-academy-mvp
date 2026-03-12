@@ -80,7 +80,7 @@ export default function PricingPage() {
         description: result.description,
         amount: result.amount,
         currency: 'RUB',
-        accountId: subscription?.userId || '',
+        accountId: result.userId,
         invoiceId: result.subscriptionId,
         recurrent: { interval: 'Month', period: 1 },
       });
