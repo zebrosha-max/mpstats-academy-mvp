@@ -1,12 +1,14 @@
 /**
  * CloudPayments widget wrapper (new API — widget.start())
+ * Docs: docs/cloudpayments-api-2026-03-12.md
  * Loads via <script src="https://widget.cloudpayments.ru/bundles/cloudpayments">
- * in the page head, then accessed via window.cp
  */
 
 interface WidgetResult {
-  success: boolean;
-  [key: string]: unknown;
+  type: string;
+  status: string;
+  data?: Record<string, unknown>;
+  message?: string;
 }
 
 interface CloudPaymentsWidget {
@@ -27,19 +29,13 @@ declare global {
 }
 
 export interface CPChargeOptions {
-  /** CloudPayments public terminal ID */
   publicId: string;
-  /** Payment description shown to user */
   description: string;
-  /** Amount in rubles */
   amount: number;
-  /** Currency code */
   currency?: string;
-  /** User ID (accountId for CloudPayments) */
   accountId: string;
-  /** Our subscription ID (invoiceId for CloudPayments) */
   invoiceId: string;
-  /** Recurrent payment config */
+  email?: string;
   recurrent?: {
     interval: 'Month' | 'Week' | 'Day';
     period: number;
@@ -54,9 +50,7 @@ export interface CPChargeOptions {
 export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
   return new Promise((resolve) => {
     if (!window.cp) {
-      console.error(
-        'CloudPayments widget not loaded. Add <script src="https://widget.cloudpayments.ru/bundles/cloudpayments"> to page head.',
-      );
+      console.error('CloudPayments widget not loaded');
       resolve(false);
       return;
     }
@@ -68,9 +62,13 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
       description: options.description,
       amount: options.amount,
       currency: options.currency ?? 'RUB',
-      accountId: options.accountId,
-      invoiceId: options.invoiceId,
       paymentSchema: 'Single',
+      externalId: options.invoiceId,
+      retryPayment: true,
+      userInfo: {
+        accountId: options.accountId,
+        ...(options.email ? { email: options.email } : {}),
+      },
     };
 
     if (options.recurrent) {
@@ -84,7 +82,7 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
     widget
       .start(intentParams)
       .then((result) => {
-        resolve(result.success === true);
+        resolve(result.status === 'success');
       })
       .catch(() => {
         resolve(false);
