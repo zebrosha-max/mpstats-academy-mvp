@@ -98,7 +98,7 @@ export const billingRouter = router({
         }
       }
 
-      // Check for existing ACTIVE/PENDING subscription of same type for same course
+      // Check for existing subscription of same type for same course
       const existing = await ctx.prisma.subscription.findFirst({
         where: {
           userId: ctx.user.id,
@@ -107,10 +107,21 @@ export const billingRouter = router({
           ...(input.courseId ? { courseId: input.courseId } : { courseId: null }),
         },
       });
-      if (existing) {
+
+      if (existing?.status === 'ACTIVE') {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: 'You already have an active or pending subscription for this plan',
+          message: 'You already have an active subscription for this plan',
+        });
+      }
+
+      // Replace stale PENDING — user closed widget or payment failed
+      if (existing?.status === 'PENDING') {
+        await ctx.prisma.payment.deleteMany({
+          where: { subscriptionId: existing.id },
+        });
+        await ctx.prisma.subscription.delete({
+          where: { id: existing.id },
         });
       }
 
