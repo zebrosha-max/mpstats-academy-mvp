@@ -101,13 +101,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(REJECT, { status: 403 });
   }
 
-  // --- Parse payload ---
+  // --- Parse payload (CP sends application/x-www-form-urlencoded by default) ---
   let payload: CloudPaymentsWebhookPayload;
   try {
     payload = JSON.parse(rawBody) as CloudPaymentsWebhookPayload;
   } catch {
-    console.error('[CloudPayments] Invalid JSON payload');
-    return NextResponse.json(REJECT, { status: 400 });
+    // CloudPayments sends form-urlencoded, not JSON
+    try {
+      const params = new URLSearchParams(rawBody);
+      const obj: Record<string, unknown> = {};
+      for (const [key, value] of params.entries()) {
+        obj[key] = value;
+      }
+      // Coerce numeric fields from strings
+      if (obj.TransactionId) obj.TransactionId = Number(obj.TransactionId);
+      if (obj.Amount) obj.Amount = Number(obj.Amount);
+      if (obj.ReasonCode) obj.ReasonCode = Number(obj.ReasonCode);
+      if (obj.StatusCode) obj.StatusCode = Number(obj.StatusCode);
+      if (obj.Period) obj.Period = Number(obj.Period);
+      payload = obj as unknown as CloudPaymentsWebhookPayload;
+    } catch {
+      console.error('[CloudPayments] Failed to parse payload');
+      return NextResponse.json(REJECT, { status: 400 });
+    }
   }
 
   const eventType = resolveEventType(request.url, payload);
@@ -172,7 +188,7 @@ export async function POST(request: NextRequest) {
       data: {
         paymentId,
         type: eventType,
-        payload: JSON.parse(rawBody),
+        payload: JSON.parse(JSON.stringify(payload)),
       },
     });
 
