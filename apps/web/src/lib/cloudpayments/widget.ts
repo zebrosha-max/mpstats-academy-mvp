@@ -1,19 +1,24 @@
 /**
- * CloudPayments Checkout widget wrapper
+ * CloudPayments widget wrapper
  * Loads via <script src="https://widget.cloudpayments.ru/bundles/cloudpayments">
  * in the page head, then accessed via window.cp
  */
 
+interface CloudPaymentsCallbacks {
+  onSuccess?: (options: Record<string, unknown>) => void;
+  onFail?: (reason: string, options: Record<string, unknown>) => void;
+  onComplete?: (paymentResult: Record<string, unknown>, options: Record<string, unknown>) => void;
+}
+
 interface CloudPaymentsWidget {
   charge(
     options: Record<string, unknown>,
-    onSuccess: (options: Record<string, unknown>) => void,
-    onFail: (reason: string, options: Record<string, unknown>) => void,
+    callbacks: CloudPaymentsCallbacks,
   ): void;
 }
 
 interface CloudPaymentsConstructor {
-  new (): CloudPaymentsWidget;
+  new (config?: { publicId?: string; language?: string }): CloudPaymentsWidget;
 }
 
 declare global {
@@ -37,8 +42,6 @@ export interface CPChargeOptions {
   accountId: string;
   /** Our subscription ID (invoiceId for CloudPayments) */
   invoiceId: string;
-  /** Widget skin */
-  skin?: string;
   /** Additional data with recurrent config */
   data?: {
     cloudPayments?: {
@@ -64,17 +67,15 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
       return;
     }
 
-    const widget = new window.cp.CloudPayments();
+    const widget = new window.cp.CloudPayments({ publicId: options.publicId });
 
     widget.charge(
       {
-        publicId: options.publicId,
         description: options.description,
         amount: options.amount,
         currency: options.currency ?? 'RUB',
         accountId: options.accountId,
         invoiceId: options.invoiceId,
-        skin: options.skin,
         data: options.data ?? {
           cloudPayments: {
             recurrent: {
@@ -84,11 +85,13 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
           },
         },
       },
-      (_successOptions) => {
-        resolve(true);
-      },
-      (_reason, _failOptions) => {
-        resolve(false);
+      {
+        onSuccess: (_options) => {
+          resolve(true);
+        },
+        onFail: (_reason, _options) => {
+          resolve(false);
+        },
       },
     );
   });
