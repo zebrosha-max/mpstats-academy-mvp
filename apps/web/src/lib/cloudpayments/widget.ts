@@ -1,6 +1,6 @@
 /**
  * CloudPayments Checkout widget wrapper
- * Loads via <script src="https://widget.cloudpayments.ru/bundles/checkout">
+ * Loads via <script src="https://widget.cloudpayments.ru/bundles/cloudpayments">
  * in the page head, then accessed via window.cp
  */
 
@@ -58,7 +58,7 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
   return new Promise((resolve) => {
     if (!window.cp) {
       console.error(
-        'CloudPayments widget not loaded. Add <script src="https://widget.cloudpayments.ru/bundles/checkout"> to page head.',
+        'CloudPayments widget not loaded. Add <script src="https://widget.cloudpayments.ru/bundles/cloudpayments"> to page head.',
       );
       resolve(false);
       return;

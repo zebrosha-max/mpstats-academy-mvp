@@ -118,7 +118,7 @@ export default function PricingPage() {
   return (
     <>
       <Script
-        src="https://widget.cloudpayments.ru/bundles/checkout"
+        src="https://widget.cloudpayments.ru/bundles/cloudpayments"
         strategy="lazyOnload"
         onReady={() => setWidgetReady(true)}
       />
