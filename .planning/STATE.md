@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: completed
-stopped_at: Completed 21-02-PLAN.md — Phase 21 complete
-last_updated: "2026-03-11T16:22:41.598Z"
+stopped_at: Phase 20 context gathered
+last_updated: "2026-03-12T11:01:19.508Z"
 last_activity: 2026-03-11 — Phase 21 Plan 02 executed (OAuth services updated, E2E verified on platform.mpstats.academy)
 progress:
   total_phases: 7
@@ -108,6 +108,42 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-11T16:18:30.924Z
-Stopped at: Completed 21-02-PLAN.md — Phase 21 complete
-Resume file: None
+Last session: 2026-03-12T11:01:19.505Z
+Stopped at: Phase 20 context gathered
+Resume file: .planning/phases/20-paywall-content-gating/20-CONTEXT.md
+
+### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
+
+**7 commits fixing billing end-to-end:**
+
+1. `82427f4` — CP public key missing from Docker build args → widget silent fail
+2. `ea5d6a1` — CP sends form-urlencoded webhooks, not JSON → parse error → "Платёж не может быть принят"
+3. `77efd98` — Cancel sent our CUID to CP API (they expect their ID) → cancel locally instead
+4. `9fdec81` — CANCELLED subscription hidden in profile → now shows with "Доступ до" date
+5. `751da56` — Course name missing in payment history → include course relation
+6. `5eaf750` — Unauthenticated user on /pricing gets raw error → friendly message + redirect to /login; table layout fix for long course names
+
+**Verified on prod (platform.mpstats.academy):**
+- [x] Widget opens from button click
+- [x] Test card 4242...4242 accepted
+- [x] 3D Secure test page works
+- [x] Check webhook → 200, Pay webhook → 200
+- [x] Subscription becomes ACTIVE in profile
+- [x] "Ваш план" badge on /pricing
+- [x] Payment history with course names
+- [x] Cancel subscription → CANCELLED with access-until date
+- [x] Re-subscribe after cancel works
+- [x] currentPeriodEnd = +30 days (confirmed on screenshot)
+
+**Remaining checks — ALL VERIFIED:**
+- [x] /pricing incognito → redirect to /login works
+- [x] Verify table layout fix on profile (course name on separate line)
+
+### Session 2026-03-12 (later) — Pricing Page Bugfixes
+
+**2 commits fixing pricing page for unauthenticated users:**
+
+1. `04c38f7` — Course dropdown empty in incognito: `learning.getCourses` was protectedProcedure → added public `billing.getCourses` (id+title only)
+2. `21ed7a0` — "Not authenticated" error without redirect: protectedProcedure throws message "Not authenticated" but catch checked for "UNAUTHORIZED" → added case-insensitive check
+
+**Next step:** Phase 20: Paywall + Content Gating — `/gsd:plan-phase 20`
