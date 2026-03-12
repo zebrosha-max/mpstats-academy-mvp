@@ -1,0 +1,86 @@
+import type { PrismaClient } from '@mpstats/db';
+import { isFeatureEnabled } from './feature-flags';
+
+const FREE_LESSON_THRESHOLD = 2; // lessons with order <= 2 are free
+
+export interface AccessResult {
+  hasAccess: boolean;
+  reason: 'free_lesson' | 'platform_subscription' | 'course_subscription' | 'billing_disabled' | 'subscription_required';
+  hasPlatformSubscription: boolean;
+}
+
+type SubscriptionWithPlan = {
+  id: string;
+  courseId: string | null;
+  plan: { type: string };
+};
+
+/**
+ * Fetch all active subscriptions for a user.
+ * Includes ACTIVE and CANCELLED (still within billing period).
+ */
+export async function getUserActiveSubscriptions(
+  userId: string,
+  prisma: PrismaClient,
+): Promise<SubscriptionWithPlan[]> {
+  const now = new Date();
+  return prisma.subscription.findMany({
+    where: {
+      userId,
+      status: { in: ['ACTIVE', 'CANCELLED'] },
+      currentPeriodEnd: { gt: now },
+    },
+    select: {
+      id: true,
+      courseId: true,
+      plan: { select: { type: true } },
+    },
+  });
+}
+
+/**
+ * Pure synchronous check: can user access this lesson?
+ */
+export function isLessonAccessible(
+  lesson: { order: number; courseId: string },
+  subscriptions: SubscriptionWithPlan[],
+  billingEnabled: boolean,
+): boolean {
+  if (!billingEnabled) return true;
+  if (lesson.order <= FREE_LESSON_THRESHOLD) return true;
+  if (subscriptions.some((s) => s.plan.type === 'PLATFORM')) return true;
+  if (subscriptions.some((s) => s.plan.type === 'COURSE' && s.courseId === lesson.courseId)) return true;
+  return false;
+}
+
+/**
+ * Full async access check for a single lesson.
+ */
+export async function checkLessonAccess(
+  userId: string,
+  lesson: { order: number; courseId: string },
+  prisma: PrismaClient,
+): Promise<AccessResult> {
+  const billingEnabled = await isFeatureEnabled('billing_enabled');
+
+  if (!billingEnabled) {
+    return { hasAccess: true, reason: 'billing_disabled', hasPlatformSubscription: false };
+  }
+
+  const subscriptions = await getUserActiveSubscriptions(userId, prisma);
+  const hasPlatformSub = subscriptions.some((s) => s.plan.type === 'PLATFORM');
+
+  if (lesson.order <= FREE_LESSON_THRESHOLD) {
+    return { hasAccess: true, reason: 'free_lesson', hasPlatformSubscription: hasPlatformSub };
+  }
+
+  if (hasPlatformSub) {
+    return { hasAccess: true, reason: 'platform_subscription', hasPlatformSubscription: true };
+  }
+
+  if (subscriptions.some((s) => s.plan.type === 'COURSE' && s.courseId === lesson.courseId)) {
+    return { hasAccess: true, reason: 'course_subscription', hasPlatformSubscription: false };
+  }
+
+  return { hasAccess: false, reason: 'subscription_required', hasPlatformSubscription: false };
+}

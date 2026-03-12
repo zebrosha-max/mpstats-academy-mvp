@@ -100,6 +100,7 @@ export interface Lesson {
 export interface LessonWithProgress extends Lesson {
   status: LessonStatus;
   watchedPercent: number;
+  locked?: boolean;
 }
 
 // ============== AI / RAG ==============
