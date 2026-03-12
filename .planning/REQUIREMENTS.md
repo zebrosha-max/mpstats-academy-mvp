@@ -25,11 +25,11 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 
 ### Paywall
 
-- [ ] **PAY-01**: Content gating — 1-2 бесплатных урока на курс, остальные заблокированы
+- [x] **PAY-01**: Content gating — 1-2 бесплатных урока на курс, остальные заблокированы
 - [x] **PAY-02**: Страница тарифов с планами подписки и CTA
 - [ ] **PAY-03**: Lock UI на платных уроках (замки, баннер "Оформи подписку")
 - [x] **PAY-04**: Два режима подписки — per-course (Режим A) и full platform (Режим B)
-- [ ] **PAY-05**: Централизованный access service в tRPC (не в middleware)
+- [x] **PAY-05**: Централизованный access service в tRPC (не в middleware)
 
 ## Future Requirements
 
@@ -77,11 +77,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BILL-04 | Phase 16 | Complete |
 | BILL-05 | Phase 19 | Complete |
 | BILL-06 | Phase 16 | Complete |
-| PAY-01 | Phase 20 | Pending |
+| PAY-01 | Phase 20 | Complete |
 | PAY-02 | Phase 19 | Complete |
 | PAY-03 | Phase 20 | Pending |
 | PAY-04 | Phase 19 | Complete |
-| PAY-05 | Phase 20 | Pending |
+| PAY-05 | Phase 20 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total

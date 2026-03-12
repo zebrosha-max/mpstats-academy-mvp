@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
-status: completed
-stopped_at: Phase 20 context gathered
-last_updated: "2026-03-12T11:01:19.508Z"
-last_activity: 2026-03-11 — Phase 21 Plan 02 executed (OAuth services updated, E2E verified on platform.mpstats.academy)
+status: in_progress
+stopped_at: Phase 20 Plan 01 complete
+last_updated: "2026-03-12T11:19:45Z"
+last_activity: 2026-03-12 — Phase 20 Plan 01 executed (access service + learning router gating)
 progress:
   total_phases: 7
   completed_phases: 5
-  total_plans: 10
-  completed_plans: 10
-  percent: 100
+  total_plans: 12
+  completed_plans: 11
+  percent: 92
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 21 complete — Domain migration to platform.mpstats.academy done
+**Current focus:** Phase 20 Paywall + Content Gating — backend access service done, frontend gating next
 
 ## Current Position
 
-Phase: 21 of 22 (Domain Migration) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase 21 Complete
-Last activity: 2026-03-11 — Phase 21 Plan 02 executed (OAuth services updated, E2E verified on platform.mpstats.academy)
+Phase: 20 of 22 (Paywall + Content Gating)
+Plan: 1 of 2 in current phase -- COMPLETE
+Status: Phase 20 Plan 01 Complete
+Last activity: 2026-03-12 — Phase 20 Plan 01 executed (access service + learning router gating)
 
-Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 complete)
+Progress: [█████████░] 92% (v1.0 + v1.1 + v1.2 in progress)
 
 ## Performance Metrics
 
@@ -75,6 +75,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [21-01]: HTTP-only Nginx config before certbot (let certbot add SSL directives automatically)
 - [21-01]: No redirect from old DuckDNS domain — just disabled
 - [Phase 21]: No automated Supabase/Yandex config — requires dashboard access (human-action checkpoint)
+- [20-01]: FREE_LESSON_THRESHOLD=2: lessons with order<=2 are always free
+- [20-01]: Batch subscription fetch per procedure (not per lesson) for performance
+- [20-01]: getRecommendedPath keeps videoId visible (track preview is frontend-only)
 
 ### Blockers/Concerns
 
@@ -105,12 +108,13 @@ None.
 | 19    | 02   | 4min     | 2     | 4     |
 | 21    | 01   | 4min     | 2     | 3     |
 | Phase 21 P02 | 5min | 3 tasks | 3 files |
+| 20    | 01   | 3min     | 2     | 3     |
 
 ## Session Continuity
 
-Last session: 2026-03-12T11:01:19.505Z
-Stopped at: Phase 20 context gathered
-Resume file: .planning/phases/20-paywall-content-gating/20-CONTEXT.md
+Last session: 2026-03-12T11:19:45Z
+Stopped at: Completed 20-01-PLAN.md
+Resume file: .planning/phases/20-paywall-content-gating/20-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

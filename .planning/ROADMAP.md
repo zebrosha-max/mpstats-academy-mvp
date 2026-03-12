@@ -125,7 +125,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 20-01-PLAN.md — Access service utility + learning router enrichment with locked flags
+- [x] 20-01-PLAN.md — Access service utility + learning router enrichment with locked flags (completed 2026-03-12)
 - [ ] 20-02-PLAN.md — Lock UI components, LessonCard lock icon, banners, track preview gating + human verify
 
 ## Progress
@@ -155,7 +155,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
-| 20. Paywall + Content Gating | v1.2 | 0/2 | Not started | - |
+| 20. Paywall + Content Gating | v1.2 | 1/2 | In Progress | - |
 | 21. Domain Migration | 2/2 | Complete    | 2026-03-11 | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
