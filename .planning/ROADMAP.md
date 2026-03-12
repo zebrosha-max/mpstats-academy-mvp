@@ -40,7 +40,7 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.2 Auth Rework + Billing (In Progress)
+### v1.2 Auth Rework + Billing (In Progress)
 
 **Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента.
 
@@ -122,11 +122,11 @@ Plans:
   2. Диагностика навыков остаётся полностью бесплатной для всех пользователей
   3. Централизованный access service в tRPC проверяет подписку -- обойти paywall через прямой URL невозможно
   4. При выключенном billing toggle (feature flag) весь контент доступен без ограничений (для тестирования и демо)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 20-01: TBD
-- [ ] 20-02: TBD
+- [ ] 20-01-PLAN.md — Access service utility + learning router enrichment with locked flags
+- [ ] 20-02-PLAN.md — Lock UI components, LessonCard lock icon, banners, track preview gating + human verify
 
 ## Progress
 
@@ -155,7 +155,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
-| 20. Paywall + Content Gating | v1.2 | 0/? | Not started | - |
+| 20. Paywall + Content Gating | v1.2 | 0/2 | Not started | - |
 | 21. Domain Migration | 2/2 | Complete    | 2026-03-11 | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
