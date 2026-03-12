@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
+import { LessonCard } from '@/components/learning/LessonCard';
 import { trpc } from '@/lib/trpc/client';
+import type { LessonWithProgress } from '@mpstats/shared';
 
 const PRIORITY_STYLES = {
   HIGH: { badge: 'destructive' as const, label: 'Приоритет' },
@@ -23,6 +25,7 @@ export default function DiagnosticResultsPage() {
     { sessionId: sessionId! },
     { enabled: !!sessionId }
   );
+  const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery();
 
   if (!sessionId) {
     router.push('/diagnostic');
@@ -214,6 +217,59 @@ export default function DiagnosticResultsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Track preview with gating */}
+      {recommendedPath && recommendedPath.lessons.length > 0 && (() => {
+        const showGating = recommendedPath.hasPlatformSubscription === false
+          && recommendedPath.lessons.some(l => l.locked);
+        const visibleCount = showGating ? 3 : recommendedPath.lessons.length;
+        const visibleLessons = recommendedPath.lessons.slice(0, visibleCount);
+        const hiddenLessons = showGating ? recommendedPath.lessons.slice(visibleCount) : [];
+
+        return (
+          <div className="space-y-3">
+            <h3 className="text-heading text-mp-gray-900">Рекомендованные уроки</h3>
+            {visibleLessons.map((lesson, idx) => (
+              <LessonCard
+                key={lesson.id}
+                lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
+                showCourse
+                courseName={lesson.courseName}
+                isRecommended
+                locked={lesson.locked}
+              />
+            ))}
+            {hiddenLessons.length > 0 && (
+              <>
+                <div className="blur-sm pointer-events-none select-none space-y-3">
+                  {hiddenLessons.map((lesson, idx) => (
+                    <LessonCard
+                      key={lesson.id}
+                      lesson={{ ...lesson, title: `${visibleCount + idx + 1}. ${lesson.title}` } as LessonWithProgress}
+                      showCourse
+                      courseName={lesson.courseName}
+                      locked
+                    />
+                  ))}
+                </div>
+                <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
+                  <CardContent className="py-8 text-center">
+                    <h3 className="text-heading text-mp-gray-900 mb-2">
+                      Оформите полный доступ для персонального трека обучения
+                    </h3>
+                    <p className="text-body text-mp-gray-500 mb-4">
+                      Ещё {hiddenLessons.length} уроков доступны с полной подпиской
+                    </p>
+                    <Link href="/pricing">
+                      <Button size="lg">Оформить полный доступ</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

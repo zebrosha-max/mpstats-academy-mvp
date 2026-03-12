@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { VideoPlayer, type PlayerHandle } from '@/components/video/KinescopePlayer';
 import { TimecodeLink } from '@/components/video/TimecodeLink';
 import { DiagnosticGateBanner } from '@/components/learning/DiagnosticGateBanner';
+import { LockOverlay } from '@/components/learning/LockOverlay';
+import { PaywallBanner } from '@/components/learning/PaywallBanner';
 import { CollapsibleSummary } from '@/components/learning/CollapsibleSummary';
 import { trpc } from '@/lib/trpc/client';
 import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
@@ -297,7 +299,9 @@ export default function LessonPage() {
         )}
       </div>
 
-      {hasDiagnostic === false ? (
+      {lesson.locked ? (
+        <LockOverlay lessonTitle={lesson.title} />
+      ) : hasDiagnostic === false ? (
         <DiagnosticGateBanner />
       ) : (
       <div className="grid lg:grid-cols-3 gap-6">
@@ -313,6 +317,11 @@ export default function LessonPage() {
               durationSeconds={lesson.duration ? lesson.duration * 60 : undefined}
             />
           </Card>
+
+          {/* Soft upsell banner for free lessons when billing is active */}
+          {lesson.order <= 2 && totalLessonsInCourse > 2 && data.hasPlatformSubscription === false && (
+            <PaywallBanner remainingFreeCount={Math.max(0, 2 - lesson.order)} />
+          )}
 
           {/* Summary section — under video */}
           {(summaryLoading || summaryError || summaryData?.content) && (
