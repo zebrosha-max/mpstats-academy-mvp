@@ -17,6 +17,17 @@ export const billingRouter = router({
   }),
 
   /**
+   * Get courses list for pricing dropdown (public — no auth required).
+   * Returns only id + title, no progress data.
+   */
+  getCourses: publicProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.course.findMany({
+      select: { id: true, title: true },
+      orderBy: { order: 'asc' },
+    });
+  }),
+
+  /**
    * Get all active subscription plans.
    * Public — pricing page is visible to everyone.
    */

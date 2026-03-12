@@ -30,11 +30,8 @@ export default function PricingPage() {
     refetchOnWindowFocus: false,
   });
 
-  // Fetch courses for dropdown (protected — may fail for unauthenticated)
-  const { data: courses } = trpc.learning.getCourses.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  // Fetch courses for dropdown (public — works for everyone)
+  const { data: courses } = trpc.billing.getCourses.useQuery();
 
   // Initiate payment mutation
   const initiatePayment = trpc.billing.initiatePayment.useMutation();
