@@ -215,47 +215,12 @@ export const billingRouter = router({
       });
     }
 
-    // Call CloudPayments cancel API (inline to avoid cross-package import)
-    const publicId = process.env.CLOUDPAYMENTS_PUBLIC_ID;
-    const apiSecret = process.env.CLOUDPAYMENTS_API_SECRET;
-
-    if (!publicId || !apiSecret) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Payment provider not configured',
-      });
-    }
-
-    const credentials = Buffer.from(`${publicId}:${apiSecret}`).toString('base64');
-
-    try {
-      const response = await fetch('https://api.cloudpayments.ru/subscriptions/cancel', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${credentials}`,
-        },
-        body: JSON.stringify({ Id: subscription.id }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`CP API returned ${response.status}`);
-      }
-
-      const data = (await response.json()) as { Success: boolean; Message?: string };
-
-      if (!data.Success) {
-        throw new Error(data.Message ?? 'CloudPayments cancel failed');
-      }
-    } catch (error) {
-      console.error('CloudPayments cancel error:', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to cancel subscription with payment provider',
-      });
-    }
-
-    // Update subscription status (idempotent — webhook will also arrive)
+    // Cancel locally — CP cancel API requires their subscription ID which
+    // we don't store yet (paymentSchema: 'Single' mode). When switching to
+    // real recurrent billing, store CP subscription ID from webhook Token field
+    // and call https://api.cloudpayments.ru/subscriptions/cancel with it.
+    //
+    // CP cancel webhook (if it arrives) is handled idempotently by our webhook handler.
     const updated = await ctx.prisma.subscription.update({
       where: { id: subscription.id },
       data: {
