@@ -110,8 +110,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 19-01-PLAN.md — Prisma PENDING migration, billing tRPC router, CP widget wrapper, cancel API, seed price update
-- [ ] 19-02-PLAN.md — Pricing page, profile subscription section, sidebar navigation, CP widget integration + human verify
+- [x] 19-01-PLAN.md — Prisma PENDING migration, billing tRPC router, CP widget wrapper, cancel API, seed price update
+- [x] 19-02-PLAN.md — Pricing page, profile subscription section, sidebar navigation, CP widget integration + human verify
 
 ### Phase 20: Paywall + Content Gating
 **Goal**: Платный контент заблокирован для пользователей без подписки, бесплатный контент доступен всем
@@ -126,7 +126,7 @@ Plans:
 
 Plans:
 - [x] 20-01-PLAN.md — Access service utility + learning router enrichment with locked flags (completed 2026-03-12)
-- [ ] 20-02-PLAN.md — Lock UI components, LessonCard lock icon, banners, track preview gating + human verify
+- [x] 20-02-PLAN.md — Lock UI components, LessonCard lock icon, banners, track preview gating + human verify (completed 2026-03-12)
 
 ## Progress
 

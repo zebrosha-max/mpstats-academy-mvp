@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Auth Rework + Billing
 status: in_progress
-stopped_at: Completed 20-02-PLAN.md (checkpoint pending human verify)
-last_updated: "2026-03-12T11:25:39Z"
-last_activity: 2026-03-12 — Phase 20 Plan 02 executed (frontend lock UI + paywall banners + track gating)
+stopped_at: Completed Phase 20 (Paywall + Content Gating)
+last_updated: "2026-03-12T12:45:00Z"
+last_activity: 2026-03-12 — Phase 20 complete (human verification passed, all 6 checks OK)
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 12
   completed_plans: 12
-  percent: 92
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 20 Paywall + Content Gating — frontend lock UI done, awaiting human verification
+**Current focus:** Phase 20 Paywall + Content Gating -- COMPLETE (human verification passed)
 
 ## Current Position
 
-Phase: 20 of 22 (Paywall + Content Gating)
-Plan: 2 of 2 in current phase -- CHECKPOINT (human-verify pending)
-Status: Phase 20 Plan 02 auto tasks complete, awaiting human verification
-Last activity: 2026-03-12 — Phase 20 Plan 02 executed (frontend lock UI + paywall banners + track gating)
+Phase: 20 of 22 (Paywall + Content Gating) -- COMPLETE
+Plan: 2 of 2 in current phase -- COMPLETE
+Status: Phase 20 complete, human verification passed (all 6 checks)
+Last activity: 2026-03-12 — Phase 20 Plan 02 verified and completed
 
 Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 in progress)
 
@@ -111,13 +111,12 @@ None.
 | 21    | 01   | 4min     | 2     | 3     |
 | Phase 21 P02 | 5min | 3 tasks | 3 files |
 | 20    | 01   | 3min     | 2     | 3     |
-| 20    | 02   | 3min     | 2     | 6     |
+| 20    | 02   | 5min     | 3     | 6     |
 
 ## Session Continuity
 
-Last session: 2026-03-12T11:25:39Z
-Stopped at: Completed 20-02-PLAN.md (checkpoint: human-verify pending)
-Resume file: .planning/phases/20-paywall-content-gating/20-02-PLAN.md (Task 3 checkpoint)
+Last session: 2026-03-12T12:45:00Z
+Stopped at: Completed Phase 20 (Paywall + Content Gating)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
