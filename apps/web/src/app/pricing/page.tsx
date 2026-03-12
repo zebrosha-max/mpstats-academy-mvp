@@ -82,11 +82,7 @@ export default function PricingPage() {
         currency: 'RUB',
         accountId: subscription?.userId || '',
         invoiceId: result.subscriptionId,
-        data: {
-          cloudPayments: {
-            recurrent: { interval: 'Month', period: 1 },
-          },
-        },
+        recurrent: { interval: 'Month', period: 1 },
       });
 
       if (success) {

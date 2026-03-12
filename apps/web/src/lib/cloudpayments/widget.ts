@@ -1,24 +1,21 @@
 /**
- * CloudPayments widget wrapper
+ * CloudPayments widget wrapper (new API — widget.start())
  * Loads via <script src="https://widget.cloudpayments.ru/bundles/cloudpayments">
  * in the page head, then accessed via window.cp
  */
 
-interface CloudPaymentsCallbacks {
-  onSuccess?: (options: Record<string, unknown>) => void;
-  onFail?: (reason: string, options: Record<string, unknown>) => void;
-  onComplete?: (paymentResult: Record<string, unknown>, options: Record<string, unknown>) => void;
+interface WidgetResult {
+  success: boolean;
+  [key: string]: unknown;
 }
 
 interface CloudPaymentsWidget {
-  charge(
-    options: Record<string, unknown>,
-    callbacks: CloudPaymentsCallbacks,
-  ): void;
+  start(intentParams: Record<string, unknown>): Promise<WidgetResult>;
+  oncomplete?: (result: WidgetResult) => void;
 }
 
 interface CloudPaymentsConstructor {
-  new (config?: { publicId?: string; language?: string }): CloudPaymentsWidget;
+  new (): CloudPaymentsWidget;
 }
 
 declare global {
@@ -30,7 +27,7 @@ declare global {
 }
 
 export interface CPChargeOptions {
-  /** CloudPayments public ID */
+  /** CloudPayments public terminal ID */
   publicId: string;
   /** Payment description shown to user */
   description: string;
@@ -42,14 +39,11 @@ export interface CPChargeOptions {
   accountId: string;
   /** Our subscription ID (invoiceId for CloudPayments) */
   invoiceId: string;
-  /** Additional data with recurrent config */
-  data?: {
-    cloudPayments?: {
-      recurrent?: {
-        interval: 'Month' | 'Week' | 'Day';
-        period: number;
-      };
-    };
+  /** Recurrent payment config */
+  recurrent?: {
+    interval: 'Month' | 'Week' | 'Day';
+    period: number;
+    amount?: number;
   };
 }
 
@@ -67,32 +61,33 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
       return;
     }
 
-    const widget = new window.cp.CloudPayments({ publicId: options.publicId });
+    const widget = new window.cp.CloudPayments();
 
-    widget.charge(
-      {
-        description: options.description,
-        amount: options.amount,
-        currency: options.currency ?? 'RUB',
-        accountId: options.accountId,
-        invoiceId: options.invoiceId,
-        data: options.data ?? {
-          cloudPayments: {
-            recurrent: {
-              interval: 'Month',
-              period: 1,
-            },
-          },
-        },
-      },
-      {
-        onSuccess: (_options) => {
-          resolve(true);
-        },
-        onFail: (_reason, _options) => {
-          resolve(false);
-        },
-      },
-    );
+    const intentParams: Record<string, unknown> = {
+      publicTerminalId: options.publicId,
+      description: options.description,
+      amount: options.amount,
+      currency: options.currency ?? 'RUB',
+      accountId: options.accountId,
+      invoiceId: options.invoiceId,
+      paymentSchema: 'Single',
+    };
+
+    if (options.recurrent) {
+      intentParams.recurrent = {
+        interval: options.recurrent.interval,
+        period: options.recurrent.period,
+        amount: options.recurrent.amount ?? options.amount,
+      };
+    }
+
+    widget
+      .start(intentParams)
+      .then((result) => {
+        resolve(result.success === true);
+      })
+      .catch(() => {
+        resolve(false);
+      });
   });
 }
