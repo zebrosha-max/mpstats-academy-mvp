@@ -237,6 +237,9 @@ export default function ProfilePage() {
                                 </td>
                                 <td className="py-3 text-mp-gray-700">
                                   {payment.subscription?.plan?.name || '-'}
+                                  {payment.subscription?.course && (
+                                    <span className="text-mp-gray-500"> — {payment.subscription.course.title}</span>
+                                  )}
                                 </td>
                               </tr>
                             );

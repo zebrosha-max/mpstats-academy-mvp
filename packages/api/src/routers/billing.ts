@@ -185,7 +185,7 @@ export const billingRouter = router({
         take: limit,
         include: {
           subscription: {
-            include: { plan: true },
+            include: { plan: true, course: true },
           },
         },
       });
