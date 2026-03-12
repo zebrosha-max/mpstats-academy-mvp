@@ -84,7 +84,7 @@ export default function ProfilePage() {
   };
 
   const hasActiveSubscription =
-    subscription && ['ACTIVE', 'PAST_DUE'].includes(subscription.status);
+    subscription && ['ACTIVE', 'PAST_DUE', 'CANCELLED'].includes(subscription.status);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
