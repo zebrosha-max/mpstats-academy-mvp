@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
+import { getUserActiveSubscriptions, isLessonAccessible, checkLessonAccess } from '../utils/access';
+import { isFeatureEnabled } from '../utils/feature-flags';
 import type { CourseWithProgress, LessonWithProgress } from '@mpstats/shared';
 
 export const learningRouter = router({
@@ -21,6 +23,9 @@ export const learningRouter = router({
         },
         orderBy: { order: 'asc' },
       });
+
+      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
+      const billingEnabled = await isFeatureEnabled('billing_enabled');
 
       return courses.map((course) => {
         const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
@@ -45,20 +50,24 @@ export const learningRouter = router({
           l.progress.some((p) => p.status === 'COMPLETED')
         ).length,
         progressPercent,
-        lessons: course.lessons.map((l) => ({
-          id: l.id,
-          courseId: l.courseId,
-          title: l.title,
-          description: l.description,
-          videoUrl: l.videoUrl || '',
-          videoId: l.videoId,
-          duration: l.duration || 0,
-          order: l.order,
-          skillCategory: l.skillCategory,
-          skillLevel: l.skillLevel,
-          status: l.progress[0]?.status || 'NOT_STARTED',
-          watchedPercent: l.progress[0]?.watchedPercent || 0,
-        })),
+        lessons: course.lessons.map((l) => {
+          const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled);
+          return {
+            id: l.id,
+            courseId: l.courseId,
+            title: l.title,
+            description: l.description,
+            videoUrl: locked ? '' : (l.videoUrl || ''),
+            videoId: locked ? null : l.videoId,
+            duration: l.duration || 0,
+            order: l.order,
+            skillCategory: l.skillCategory,
+            skillLevel: l.skillLevel,
+            status: l.progress[0]?.status || 'NOT_STARTED',
+            watchedPercent: l.progress[0]?.watchedPercent || 0,
+            locked,
+          };
+        }),
       };
       });
     } catch (error) {
@@ -87,6 +96,9 @@ export const learningRouter = router({
 
         if (!course) return null;
 
+        const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
+        const billingEnabled = await isFeatureEnabled('billing_enabled');
+
         const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
         const watchedPercentSum = lessonsWithVideo.reduce((sum, l) => {
           const percent = l.progress[0]?.watchedPercent || 0;
@@ -109,20 +121,24 @@ export const learningRouter = router({
             l.progress.some((p) => p.status === 'COMPLETED')
           ).length,
           progressPercent,
-          lessons: course.lessons.map((l) => ({
-            id: l.id,
-            courseId: l.courseId,
-            title: l.title,
-            description: l.description,
-            videoUrl: l.videoUrl || '',
-            videoId: l.videoId,
-            duration: l.duration || 0,
-            order: l.order,
-            skillCategory: l.skillCategory,
-            skillLevel: l.skillLevel,
-            status: l.progress[0]?.status || 'NOT_STARTED',
-            watchedPercent: l.progress[0]?.watchedPercent || 0,
-          })),
+          lessons: course.lessons.map((l) => {
+            const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled);
+            return {
+              id: l.id,
+              courseId: l.courseId,
+              title: l.title,
+              description: l.description,
+              videoUrl: locked ? '' : (l.videoUrl || ''),
+              videoId: locked ? null : l.videoId,
+              duration: l.duration || 0,
+              order: l.order,
+              skillCategory: l.skillCategory,
+              skillLevel: l.skillLevel,
+              status: l.progress[0]?.status || 'NOT_STARTED',
+              watchedPercent: l.progress[0]?.watchedPercent || 0,
+              locked,
+            };
+          }),
         };
       } catch (error) {
         handleDatabaseError(error);
@@ -143,26 +159,33 @@ export const learningRouter = router({
         },
       });
 
+      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
+      const billingEnabled = await isFeatureEnabled('billing_enabled');
+
       // If no path exists, return all lessons with no progress
       if (!path) {
         const allLessons = await ctx.prisma.lesson.findMany({
           orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
         });
 
-        const lessons: LessonWithProgress[] = allLessons.map((l) => ({
-          id: l.id,
-          courseId: l.courseId,
-          title: l.title,
-          description: l.description,
-          videoUrl: l.videoUrl || '',
-          videoId: l.videoId,
-          duration: l.duration || 0,
-          order: l.order,
-          skillCategory: l.skillCategory,
-          skillLevel: l.skillLevel,
-          status: 'NOT_STARTED' as const,
-          watchedPercent: 0,
-        }));
+        const lessons: LessonWithProgress[] = allLessons.map((l) => {
+          const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
+          return {
+            id: l.id,
+            courseId: l.courseId,
+            title: l.title,
+            description: l.description,
+            videoUrl: locked ? '' : (l.videoUrl || ''),
+            videoId: locked ? null : l.videoId,
+            duration: l.duration || 0,
+            order: l.order,
+            skillCategory: l.skillCategory,
+            skillLevel: l.skillLevel,
+            status: 'NOT_STARTED' as const,
+            watchedPercent: 0,
+            locked,
+          };
+        });
 
         return {
           id: null,
@@ -186,19 +209,21 @@ export const learningRouter = router({
 
       const lessons: LessonWithProgress[] = allLessons.map((l) => {
         const progress = progressMap.get(l.id);
+        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
         return {
           id: l.id,
           courseId: l.courseId,
           title: l.title,
           description: l.description,
-          videoUrl: l.videoUrl || '',
-          videoId: l.videoId,
+          videoUrl: locked ? '' : (l.videoUrl || ''),
+          videoId: locked ? null : l.videoId,
           duration: l.duration || 0,
           order: l.order,
           skillCategory: l.skillCategory,
           skillLevel: l.skillLevel,
           status: progress?.status || 'NOT_STARTED',
           watchedPercent: progress?.watchedPercent || 0,
+          locked,
         };
       });
 
@@ -227,6 +252,10 @@ export const learningRouter = router({
         return null;
       }
 
+      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
+      const billingEnabled = await isFeatureEnabled('billing_enabled');
+      const hasPlatformSubscription = subs.some((s) => s.plan.type === 'PLATFORM');
+
       // Fetch full lesson data for recommended IDs with progress
       const recommendedIds = path.lessons as string[];
       const lessons = await ctx.prisma.lesson.findMany({
@@ -245,21 +274,25 @@ export const learningRouter = router({
       const orderedLessons = recommendedIds
         .map((id) => lessonMap.get(id))
         .filter(Boolean)
-        .map((l) => ({
-          id: l!.id,
-          courseId: l!.courseId,
-          courseName: l!.course.title,
-          title: l!.title,
-          description: l!.description,
-          videoUrl: l!.videoUrl || '',
-          videoId: l!.videoId,
-          duration: l!.duration || 0,
-          order: l!.order,
-          skillCategory: l!.skillCategory,
-          skillLevel: l!.skillLevel,
-          status: (l!.progress[0]?.status || 'NOT_STARTED') as string,
-          watchedPercent: l!.progress[0]?.watchedPercent || 0,
-        }));
+        .map((l) => {
+          const locked = !isLessonAccessible({ order: l!.order, courseId: l!.courseId }, subs, billingEnabled);
+          return {
+            id: l!.id,
+            courseId: l!.courseId,
+            courseName: l!.course.title,
+            title: l!.title,
+            description: l!.description,
+            videoUrl: l!.videoUrl || '',
+            videoId: l!.videoId,
+            duration: l!.duration || 0,
+            order: l!.order,
+            skillCategory: l!.skillCategory,
+            skillLevel: l!.skillLevel,
+            status: (l!.progress[0]?.status || 'NOT_STARTED') as string,
+            watchedPercent: l!.progress[0]?.watchedPercent || 0,
+            locked,
+          };
+        });
 
       const completedCount = orderedLessons.filter((l) => l.status === 'COMPLETED').length;
 
@@ -268,6 +301,7 @@ export const learningRouter = router({
         lessons: orderedLessons,
         totalLessons: orderedLessons.length,
         completedLessons: completedCount,
+        hasPlatformSubscription,
       };
     } catch (error) {
       handleDatabaseError(error);
@@ -298,6 +332,9 @@ export const learningRouter = router({
 
         if (!lesson) return null;
 
+        const access = await checkLessonAccess(ctx.user.id, { order: lesson.order, courseId: lesson.courseId }, ctx.prisma);
+        const locked = !access.hasAccess;
+
         const courseLessons = lesson.course.lessons;
         const currentIndex = courseLessons.findIndex((l) => l.id === lesson.id);
 
@@ -317,20 +354,22 @@ export const learningRouter = router({
             courseId: lesson.courseId,
             title: lesson.title,
             description: lesson.description,
-            videoUrl: lesson.videoUrl || '',
-            videoId: lesson.videoId,
+            videoUrl: locked ? '' : (lesson.videoUrl || ''),
+            videoId: locked ? null : lesson.videoId,
             duration: lesson.duration || 0,
             order: lesson.order,
             skillCategory: lesson.skillCategory,
             skillLevel: lesson.skillLevel,
             status: lesson.progress[0]?.status || 'NOT_STARTED',
             watchedPercent: lesson.progress[0]?.watchedPercent || 0,
+            locked,
           } satisfies LessonWithProgress,
           course: { id: lesson.course.id, title: lesson.course.title, slug: lesson.course.slug },
           nextLesson: nextLessonNav,
           prevLesson: prevLessonNav,
           totalLessonsInCourse: courseLessons.length,
           currentLessonNumber: currentIndex + 1,
+          hasPlatformSubscription: access.hasPlatformSubscription,
         };
       } catch (error) {
         handleDatabaseError(error);
@@ -355,19 +394,22 @@ export const learningRouter = router({
         const inProgress = path.progress.find((p) => p.status === 'IN_PROGRESS');
         if (inProgress) {
           const l = inProgress.lesson;
+          const access = await checkLessonAccess(ctx.user.id, { order: l.order, courseId: l.courseId }, ctx.prisma);
+          const locked = !access.hasAccess;
           return {
             id: l.id,
             courseId: l.courseId,
             title: l.title,
             description: l.description,
-            videoUrl: l.videoUrl || '',
-            videoId: l.videoId,
+            videoUrl: locked ? '' : (l.videoUrl || ''),
+            videoId: locked ? null : l.videoId,
             duration: l.duration || 0,
             order: l.order,
             skillCategory: l.skillCategory,
             skillLevel: l.skillLevel,
             status: 'IN_PROGRESS' as const,
             watchedPercent: inProgress.watchedPercent,
+            locked,
           } satisfies LessonWithProgress;
         }
 
@@ -379,19 +421,22 @@ export const learningRouter = router({
         });
 
         if (nextLesson) {
+          const access = await checkLessonAccess(ctx.user.id, { order: nextLesson.order, courseId: nextLesson.courseId }, ctx.prisma);
+          const locked = !access.hasAccess;
           return {
             id: nextLesson.id,
             courseId: nextLesson.courseId,
             title: nextLesson.title,
             description: nextLesson.description,
-            videoUrl: nextLesson.videoUrl || '',
-            videoId: nextLesson.videoId,
+            videoUrl: locked ? '' : (nextLesson.videoUrl || ''),
+            videoId: locked ? null : nextLesson.videoId,
             duration: nextLesson.duration || 0,
             order: nextLesson.order,
             skillCategory: nextLesson.skillCategory,
             skillLevel: nextLesson.skillLevel,
             status: 'NOT_STARTED' as const,
             watchedPercent: 0,
+            locked,
           } satisfies LessonWithProgress;
         }
       }
@@ -403,19 +448,22 @@ export const learningRouter = router({
 
       if (!firstLesson) return null;
 
+      const access = await checkLessonAccess(ctx.user.id, { order: firstLesson.order, courseId: firstLesson.courseId }, ctx.prisma);
+      const locked = !access.hasAccess;
       return {
         id: firstLesson.id,
         courseId: firstLesson.courseId,
         title: firstLesson.title,
         description: firstLesson.description,
-        videoUrl: firstLesson.videoUrl || '',
-        videoId: firstLesson.videoId,
+        videoUrl: locked ? '' : (firstLesson.videoUrl || ''),
+        videoId: locked ? null : firstLesson.videoId,
         duration: firstLesson.duration || 0,
         order: firstLesson.order,
         skillCategory: firstLesson.skillCategory,
         skillLevel: firstLesson.skillLevel,
         status: 'NOT_STARTED' as const,
         watchedPercent: 0,
+        locked,
       } satisfies LessonWithProgress;
     } catch (error) {
       handleDatabaseError(error);
