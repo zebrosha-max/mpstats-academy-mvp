@@ -163,7 +163,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 19. Billing UI + Payment Flow | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 20. Paywall + Content Gating | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
-| 22. Email Notifications | 1/3 | In Progress|  | - |
+| 22. Email Notifications | 2/3 | In Progress|  | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -189,7 +189,7 @@ Plans:
   5. GitHub Actions cron запускает ежедневную проверку неактивности и истечения подписок
   6. Toast-уведомления (sonner) появляются в UI при оплате и отмене
   7. Feature flag `email_notifications_enabled` контролирует отправку писем
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 22-01-PLAN.md — EMAIL-SPEC.md specification document for email team (9 emails, drafts, variables, flows)

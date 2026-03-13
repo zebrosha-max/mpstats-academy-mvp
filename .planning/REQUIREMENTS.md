@@ -38,12 +38,12 @@ Requirements for Email Notifications phase.
 ### Email Notifications
 
 - [x] **EMAIL-01**: EMAIL-SPEC.md с драфтами 9 писем, переменными и flow-схемами для email-команды
-- [ ] **EMAIL-02**: Carrot Quest API клиент для отправки событий из серверного кода
-- [ ] **EMAIL-03**: Billing email триггеры (оплата, отказ, отмена, рекуррент) через CQ events
+- [x] **EMAIL-02**: Carrot Quest API клиент для отправки событий из серверного кода
+- [x] **EMAIL-03**: Billing email триггеры (оплата, отказ, отмена, рекуррент) через CQ events
 - [ ] **EMAIL-04**: Auth email триггеры (welcome, подтверждение, сброс пароля) через CQ + Supabase Send Email Hook
 - [ ] **EMAIL-05**: Scheduled emails (цепочка неактивности 7/14/30д, напоминание об истечении подписки) через GH Actions cron
-- [ ] **EMAIL-06**: Toast-уведомления в UI при ключевых событиях (sonner)
-- [ ] **EMAIL-07**: Feature flag `email_notifications_enabled` для kill switch
+- [x] **EMAIL-06**: Toast-уведомления в UI при ключевых событиях (sonner)
+- [x] **EMAIL-07**: Feature flag `email_notifications_enabled` для kill switch
 
 ## Future Requirements
 

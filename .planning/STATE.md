@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: EMAIL-SPEC.md created, ready for email team handoff
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-03-13T08:23:31.511Z"
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-03-13T08:25:09.681Z"
 last_activity: 2026-03-13 — Phase 22 Plan 01 completed (EMAIL-SPEC.md)
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 94
 ---
 
@@ -81,6 +81,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [20-02]: Paywall LockOverlay takes priority over DiagnosticGateBanner in render chain
 - [20-02]: Track blur gating: first 3 lessons visible, rest CSS-blurred with pointer-events-none
 - [Phase 22]: noreply@mpstats.academy as sender, CQ events with $ prefix, auth emails via Supabase Hook not CQ
+- [Phase 22]: Feature flag cache with 60s TTL to avoid DB query per email send
+- [Phase 22]: Fire-and-forget email pattern: sendXxxEmail().catch(console.error) -- email failure never breaks billing
 
 ### Blockers/Concerns
 
@@ -114,11 +116,12 @@ None.
 | 20    | 01   | 3min     | 2     | 3     |
 | 20    | 02   | 5min     | 3     | 6     |
 | Phase 22 P01 | 3min | 1 tasks | 1 files |
+| Phase 22 P02 | 3min | 2 tasks | 9 files |
 
 ## Session Continuity
 
-Last session: 2026-03-13T08:23:31.507Z
-Stopped at: Completed 22-01-PLAN.md
+Last session: 2026-03-13T08:25:09.676Z
+Stopped at: Completed 22-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
