@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { TRPCProvider } from '@/lib/trpc/provider';
 import { LandingThemeProvider } from '@/components/shared/ThemeProvider';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <LandingThemeProvider>
           <TRPCProvider>{children}</TRPCProvider>
         </LandingThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
