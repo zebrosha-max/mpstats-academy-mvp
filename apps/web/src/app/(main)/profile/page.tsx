@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc/client';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
+import { toast } from 'sonner';
 
 const formatDate = (date: string | Date) =>
   new Date(date).toLocaleDateString('ru-RU');
@@ -55,10 +56,14 @@ export default function ProfilePage() {
       setCancelMessage(
         `Подписка отменена. Доступ сохранится до ${formatDate(data.accessUntil)}.`
       );
+      toast.success('Подписка отменена', {
+        description: `Доступ сохранится до ${formatDate(data.accessUntil)}.`,
+      });
       refetchSubscription();
     },
     onError: (err) => {
       setCancelMessage(`Ошибка: ${err.message}`);
+      toast.error('Не удалось отменить подписку', { description: err.message });
     },
   });
 

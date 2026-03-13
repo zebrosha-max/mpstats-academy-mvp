@@ -1,4 +1,9 @@
 import { prisma } from '@mpstats/db/client';
+import {
+  sendPaymentSuccessEmail,
+  sendPaymentFailedEmail,
+  sendCancellationEmail,
+} from '@/lib/carrotquest/emails';
 
 /**
  * Subscription lifecycle state machine for CloudPayments webhook events.
@@ -44,6 +49,15 @@ export async function handlePaymentSuccess(
     console.log(
       `[Subscription] Activated ${subscriptionId}, period: ${now.toISOString()} - ${periodEnd.toISOString()}`,
     );
+
+    // Fire-and-forget: send payment success email via CQ
+    sendPaymentSuccessEmail(subscription.userId, {
+      amount: payment.amount,
+      courseName: subscription.plan.title ?? undefined,
+      periodEnd,
+    }).catch((err) =>
+      console.error('[Email] Payment success email failed:', err),
+    );
   } catch (error) {
     console.error(
       `[Subscription] handlePaymentSuccess error for ${subscriptionId}:`,
@@ -66,6 +80,7 @@ export async function handlePaymentFailure(
   try {
     const subscription = await prisma.subscription.findUnique({
       where: { id: subscriptionId },
+      include: { plan: true },
     });
 
     if (!subscription) {
@@ -87,6 +102,13 @@ export async function handlePaymentFailure(
 
       console.log(
         `[Subscription] Set ${subscriptionId} to PAST_DUE (was ${subscription.status})`,
+      );
+
+      // Fire-and-forget: send payment failed email via CQ
+      sendPaymentFailedEmail(subscription.userId, {
+        courseName: subscription.plan.title ?? undefined,
+      }).catch((err) =>
+        console.error('[Email] Payment failed email failed:', err),
       );
     } else {
       console.log(
@@ -134,6 +156,14 @@ export async function handleCancellation(
 
     console.log(
       `[Subscription] Cancelled ${subscriptionId}, access until ${subscription.currentPeriodEnd.toISOString()}`,
+    );
+
+    // Fire-and-forget: send cancellation email via CQ
+    sendCancellationEmail(subscription.userId, {
+      courseName: undefined,
+      accessUntil: subscription.currentPeriodEnd,
+    }).catch((err) =>
+      console.error('[Email] Cancellation email failed:', err),
     );
   } catch (error) {
     console.error(
@@ -185,6 +215,15 @@ export async function handleRecurrentPayment(
 
     console.log(
       `[Subscription] Extended ${subscriptionId}, new period: ${newPeriodStart.toISOString()} - ${newPeriodEnd.toISOString()}`,
+    );
+
+    // Fire-and-forget: send recurrent payment email via CQ
+    sendPaymentSuccessEmail(subscription.userId, {
+      amount: payment.amount,
+      courseName: subscription.plan.title ?? undefined,
+      periodEnd: newPeriodEnd,
+    }).catch((err) =>
+      console.error('[Email] Recurrent payment email failed:', err),
     );
   } catch (error) {
     console.error(

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/shared/Logo';
 import { trpc } from '@/lib/trpc/client';
 import { openPaymentWidget } from '@/lib/cloudpayments/widget';
+import { toast } from 'sonner';
 
 const formatPrice = (amount: number) =>
   new Intl.NumberFormat('ru-RU').format(amount);
@@ -84,9 +85,11 @@ export default function PricingPage() {
 
       if (success) {
         setMessage({ type: 'success', text: 'Оплата принята! Подписка активируется в течение минуты.' });
+        toast.success('Оплата прошла успешно', { description: 'Подписка активирована.' });
         setTimeout(() => router.push('/profile'), 3000);
       } else {
         setMessage({ type: 'error', text: 'Оплата не прошла. Попробуйте снова.' });
+        toast.error('Оплата не прошла', { description: 'Попробуйте снова или выберите другой способ оплаты.' });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
