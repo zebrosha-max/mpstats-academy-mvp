@@ -1,0 +1,46 @@
+name: Email Scheduler
+
+on:
+  schedule:
+    - cron: '0 10 * * *' # Daily at 10:00 UTC
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  send-scheduled-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger email scheduler (with retry)
+        run: |
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i of $MAX_RETRIES..."
+            response=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+              --connect-timeout 30 \
+              --max-time 60 \
+              -X POST \
+              "$SITE_URL/api/cron/email-scheduler" \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              -H "Content-Type: application/json")
+
+            echo "Response code: $response"
+            cat /tmp/response.json 2>/dev/null || true
+            echo ""
+
+            if [ "$response" -eq 200 ]; then
+              echo "Email scheduler completed successfully"
+              exit 0
+            fi
+
+            if [ $i -lt $MAX_RETRIES ]; then
+              echo "Retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          echo "Email scheduler failed after $MAX_RETRIES attempts"
+          exit 1
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
