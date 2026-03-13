@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1-9 (shipped 2026-02-26)
 - ✅ **v1.1 Admin & Polish** — Phases 10-15 (shipped 2026-02-28)
-- 🚧 **v1.2 Auth Rework + Billing** — Phases 16-20 (in progress)
+- ✅ **v1.2 Auth Rework + Billing** — Phases 16-21 (shipped 2026-03-12)
 
 ## Phases
 
@@ -40,15 +40,21 @@ Full details: `milestones/v1.1-ROADMAP.md`
 
 </details>
 
-### v1.2 Auth Rework + Billing (In Progress)
+<details>
+<summary>✅ v1.2 Auth Rework + Billing (Phases 16-21) — SHIPPED 2026-03-12</summary>
 
-**Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента.
+**Milestone Goal:** Заменить Google OAuth на Яндекс ID, построить систему биллинга через CloudPayments с подписками, реализовать paywall с бесплатным превью контента, мигрировать домен.
 
-- [x] **Phase 16: Billing Data Foundation** - Prisma-модели для подписок и платежей + feature flag система для billing toggle (completed 2026-03-10)
-- [x] **Phase 17: Yandex ID Auth** - Серверный OAuth flow через Яндекс ID, замена Google OAuth, расширяемая архитектура (completed 2026-03-10)
-- [x] **Phase 18: CloudPayments Webhooks** - HMAC-верифицированные webhook handlers для подписок и платежей (completed 2026-03-10)
-- [x] **Phase 19: Billing UI + Payment Flow** - CloudPayments виджет, страница тарифов, управление подпиской в профиле (completed 2026-03-11)
-- [x] **Phase 20: Paywall + Content Gating** - Блокировка платного контента, lock UI, централизованный access service (completed 2026-03-12)
+- [x] Phase 16: Billing Data Foundation (2/2 plans) — completed 2026-03-10
+- [x] Phase 17: Yandex ID Auth (2/2 plans) — completed 2026-03-10
+- [x] Phase 18: CloudPayments Webhooks (2/2 plans) — completed 2026-03-10
+- [x] Phase 19: Billing UI + Payment Flow (2/2 plans) — completed 2026-03-11
+- [x] Phase 20: Paywall + Content Gating (2/2 plans) — completed 2026-03-12
+- [x] Phase 21: Domain Migration (2/2 plans) — completed 2026-03-11
+
+Full details: see Phase Details below
+
+</details>
 
 ## Phase Details
 
@@ -154,9 +160,10 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 16. Billing Data Foundation | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 17. Yandex ID Auth | v1.2 | 2/2 | Complete | 2026-03-10 |
 | 18. CloudPayments Webhooks | v1.2 | 2/2 | Complete | 2026-03-10 |
-| 19. Billing UI + Payment Flow | 2/2 | Complete   | 2026-03-11 | - |
-| 20. Paywall + Content Gating | 2/2 | Complete    | 2026-03-12 | - |
-| 21. Domain Migration | 2/2 | Complete    | 2026-03-11 | - |
+| 19. Billing UI + Payment Flow | v1.2 | 2/2 | Complete | 2026-03-11 |
+| 20. Paywall + Content Gating | v1.2 | 2/2 | Complete | 2026-03-12 |
+| 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
+| 22. Email Notifications | v1.3 | 0/3 | Planning | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -171,10 +178,20 @@ Plans:
 
 ### Phase 22: Transactional email notifications (billing, auth, system)
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Платформа отправляет транзакционные email-уведомления через Carrot Quest при всех ключевых событиях (billing, auth, система), auth-письма Supabase переведены на CQ для единого брендинга, scheduled emails для re-engagement
+**Requirements**: EMAIL-01, EMAIL-02, EMAIL-03, EMAIL-04, EMAIL-05, EMAIL-06, EMAIL-07
 **Depends on:** Phase 21
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. EMAIL-SPEC.md содержит драфты всех 9 писем с переменными, CQ event names и flow-схемами
+  2. CQ API клиент отправляет events при billing-событиях (оплата, отказ, отмена, рекуррент)
+  3. Supabase auth emails (confirm, reset) перенаправляются через Send Email Hook на CQ
+  4. Welcome и diagnostic-completed emails триггерятся при соответствующих событиях
+  5. GitHub Actions cron запускает ежедневную проверку неактивности и истечения подписок
+  6. Toast-уведомления (sonner) появляются в UI при оплате и отмене
+  7. Feature flag `email_notifications_enabled` контролирует отправку писем
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 22 to break down)
+- [ ] 22-01-PLAN.md — EMAIL-SPEC.md specification document for email team (9 emails, drafts, variables, flows)
+- [ ] 22-02-PLAN.md — CQ API client + sonner toasts + billing email triggers in webhook handlers
+- [ ] 22-03-PLAN.md — Supabase Send Email Hook + welcome/diagnostic triggers + scheduled emails cron + human verify

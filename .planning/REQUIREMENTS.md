@@ -1,4 +1,4 @@
-# Requirements: MAAL v1.2
+# Requirements: MAAL v1.2 + v1.3
 
 **Defined:** 2026-03-06
 **Core Value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
@@ -31,9 +31,23 @@ Requirements for Auth Rework + Billing milestone. Each maps to roadmap phases.
 - [x] **PAY-04**: Два режима подписки — per-course (Режим A) и full platform (Режим B)
 - [x] **PAY-05**: Централизованный access service в tRPC (не в middleware)
 
+## v1.3 Requirements
+
+Requirements for Email Notifications phase.
+
+### Email Notifications
+
+- [ ] **EMAIL-01**: EMAIL-SPEC.md с драфтами 9 писем, переменными и flow-схемами для email-команды
+- [ ] **EMAIL-02**: Carrot Quest API клиент для отправки событий из серверного кода
+- [ ] **EMAIL-03**: Billing email триггеры (оплата, отказ, отмена, рекуррент) через CQ events
+- [ ] **EMAIL-04**: Auth email триггеры (welcome, подтверждение, сброс пароля) через CQ + Supabase Send Email Hook
+- [ ] **EMAIL-05**: Scheduled emails (цепочка неактивности 7/14/30д, напоминание об истечении подписки) через GH Actions cron
+- [ ] **EMAIL-06**: Toast-уведомления в UI при ключевых событиях (sonner)
+- [ ] **EMAIL-07**: Feature flag `email_notifications_enabled` для kill switch
+
 ## Future Requirements
 
-Deferred to v1.3+. Tracked but not in current roadmap.
+Deferred to v1.4+. Tracked but not in current roadmap.
 
 ### Auth Extensions
 
@@ -60,6 +74,10 @@ Deferred to v1.3+. Tracked but not in current roadmap.
 | Multi-currency | Только RUB |
 | Marketplace модель | Один вендор, не marketplace |
 | Gamification | Усложняет без доказанной ценности |
+| Notification center (колокольчик) | Deferred — отдельная фаза |
+| Browser push notifications | Deferred — требует service worker |
+| Email analytics | Deferred — open rate, click rate |
+| User notification preferences | Deferred — настройки уведомлений |
 
 ## Traceability
 
@@ -82,12 +100,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAY-03 | Phase 20 | Complete |
 | PAY-04 | Phase 19 | Complete |
 | PAY-05 | Phase 20 | Complete |
+| EMAIL-01 | Phase 22 (Plan 01) | Planned |
+| EMAIL-02 | Phase 22 (Plan 02) | Planned |
+| EMAIL-03 | Phase 22 (Plan 02) | Planned |
+| EMAIL-04 | Phase 22 (Plan 03) | Planned |
+| EMAIL-05 | Phase 22 (Plan 03) | Planned |
+| EMAIL-06 | Phase 22 (Plan 02) | Planned |
+| EMAIL-07 | Phase 22 (Plan 02) | Planned |
 
 **Coverage:**
-- v1.2 requirements: 15 total
-- Mapped to phases: 15
+- v1.2 requirements: 15 total, 15 complete
+- v1.3 requirements: 7 total, 0 complete
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after roadmap creation*
+*Last updated: 2026-03-13 after Phase 22 planning*
