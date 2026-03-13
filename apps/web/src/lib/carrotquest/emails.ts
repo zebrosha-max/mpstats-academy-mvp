@@ -107,25 +107,3 @@ export async function sendWelcomeEmail(
   }
 }
 
-export async function sendDiagnosticCompletedEmail(
-  userId: string,
-  data: {
-    scores: Record<string, number>;
-    recommendedPath?: string;
-    resultsUrl: string;
-  },
-): Promise<void> {
-  try {
-    if (!(await isEmailEnabled())) return;
-
-    await cq.trackEvent(userId, '$diagnostic_completed', {
-      scores_json: JSON.stringify(data.scores),
-      recommended_path: data.recommendedPath ?? '',
-      results_url: data.resultsUrl,
-    });
-
-    console.log(`[Email] Diagnostic completed event sent for user ${userId}`);
-  } catch (error) {
-    console.error('[Email] sendDiagnosticCompletedEmail error:', error);
-  }
-}

@@ -25,11 +25,10 @@
 5. [Auth: Welcome](#5-welcome)
 6. [Auth: Подтверждение email](#6-подтверждение-email)
 7. [Auth: Сброс пароля](#7-сброс-пароля)
-8. [System: Диагностика готова](#8-диагностика-готова)
-9. [System: Неактивность (цепочка)](#9-неактивность-цепочка)
-10. [Flow-схемы](#flow-схемы)
-11. [Сводная таблица для Carrot Quest](#сводная-таблица-для-carrot-quest)
-12. [Инструкция для email-команды](#инструкция-для-email-команды)
+8. [System: Неактивность (цепочка)](#8-неактивность-цепочка)
+9. [Flow-схемы](#flow-схемы)
+10. [Сводная таблица для Carrot Quest](#сводная-таблица-для-carrot-quest)
+11. [Инструкция для email-команды](#инструкция-для-email-команды)
 
 ---
 
@@ -399,68 +398,7 @@
 
 ---
 
-## 8. Диагностика готова
-
-| Параметр | Значение |
-|----------|----------|
-| **Тип** | System |
-| **CQ Event** | `$diagnostic_completed` |
-| **Триггер** | Завершение AI-диагностики (после ответа на все вопросы, расчёт профиля навыков) |
-| **Кому** | Пользователю, завершившему диагностику |
-
-### Subject
-
-```
-Ваш профиль навыков готов — посмотрите результаты
-```
-
-### Тело письма
-
-```
-Здравствуйте, {{name}}!
-
-Ваша AI-диагностика завершена. Вот ваш профиль навыков:
-
-Результаты по 5 направлениям:
-- Аналитика: {{score_analytics}} / 100
-- Маркетинг: {{score_marketing}} / 100
-- Контент: {{score_content}} / 100
-- Операции: {{score_operations}} / 100
-- Финансы: {{score_finance}} / 100
-
-На основе результатов мы подобрали для вас персональный трек обучения из {{recommended_count}} уроков.
-
-[Посмотреть результаты]
-
-Начните обучение с рекомендованных уроков — они помогут закрыть пробелы максимально быстро.
-
-С уважением,
-Команда MPSTATS Academy
-```
-
-### CTA
-
-| Текст кнопки | URL |
-|--------------|-----|
-| Посмотреть результаты | `{{results_url}}` |
-
-### Переменные
-
-| Переменная | Источник | Тип |
-|------------|----------|-----|
-| `{{name}}` | UserProfile.name | string |
-| `{{score_analytics}}` | SkillProfile.analytics (0-100) | number |
-| `{{score_marketing}}` | SkillProfile.marketing (0-100) | number |
-| `{{score_content}}` | SkillProfile.content (0-100) | number |
-| `{{score_operations}}` | SkillProfile.operations (0-100) | number |
-| `{{score_finance}}` | SkillProfile.finance (0-100) | number |
-| `{{recommended_count}}` | Кол-во уроков в recommendedPath | number |
-| `{{results_url}}` | `{{platform_url}}/diagnostic/results` | string |
-| `{{platform_url}}` | env NEXT_PUBLIC_SITE_URL | string |
-
----
-
-## 9. Неактивность (цепочка)
+## 8. Неактивность (цепочка)
 
 Цепочка из 3 писем для пользователей, которые не заходили на платформу.
 
@@ -665,10 +603,9 @@ graph LR
 | 5 | `$user_registered` | Welcome | name, diagnostic_url | Auth |
 | 6 | — (Supabase Hook) | Подтверждение email | name, confirm_url | Auth |
 | 7 | — (Supabase Hook) | Сброс пароля | name, reset_url | Auth |
-| 8 | `$diagnostic_completed` | Диагностика готова | name, score_* (5 шт.), recommended_count, results_url | System |
-| 9.1 | `$inactive_7d` | Неактивность 7д | name, last_activity | System |
-| 9.2 | `$inactive_14d` | Неактивность 14д | name, last_activity | System |
-| 9.3 | `$inactive_30d` | Неактивность 30д | name, last_activity | System |
+| 8.1 | `$inactive_7d` | Неактивность 7д | name, last_activity | System |
+| 8.2 | `$inactive_14d` | Неактивность 14д | name, last_activity | System |
+| 8.3 | `$inactive_30d` | Неактивность 30д | name, last_activity | System |
 
 ---
 
@@ -696,8 +633,8 @@ graph LR
 ### Приоритет реализации
 
 1. **Высокий:** #1 Успешная оплата, #5 Welcome, #6 Подтверждение email, #7 Сброс пароля
-2. **Средний:** #2 Отказ платежа, #3 Отмена подписки, #8 Диагностика готова
-3. **Низкий:** #4 Скоро истекает, #9 Неактивность (цепочка)
+2. **Средний:** #2 Отказ платежа, #3 Отмена подписки
+3. **Низкий:** #4 Скоро истекает, #8 Неактивность (цепочка)
 
 ### Важные замечания
 

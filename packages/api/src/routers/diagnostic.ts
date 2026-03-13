@@ -15,59 +15,6 @@ import type {
   DiagnosticQuestion,
 } from '@mpstats/shared';
 
-// ============== DIAGNOSTIC EMAIL (inline CQ call — can't import from apps/web) ==============
-
-/**
- * Send diagnostic completed email via Carrot Quest API.
- * Inline implementation since packages/api can't import from apps/web.
- * Fire-and-forget: errors are logged, never thrown.
- */
-async function sendDiagnosticEmail(
-  userId: string,
-  scores: SkillProfile,
-  sessionId: string,
-): Promise<void> {
-  const apiKey = process.env.CARROTQUEST_API_KEY;
-  if (!apiKey) return; // CQ not configured — skip silently
-
-  // Check feature flag
-  try {
-    const { prisma: p } = await import('@mpstats/db');
-    const flag = await p.featureFlag.findUnique({
-      where: { key: 'email_notifications_enabled' },
-    });
-    if (!flag?.enabled) return;
-  } catch {
-    return; // Feature flag check failed — skip
-  }
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://platform.mpstats.academy';
-  const resultsUrl = `${siteUrl}/diagnostic/results?id=${sessionId}`;
-
-  try {
-    const response = await fetch(`https://api.carrotquest.io/v1/users/${userId}/events`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${apiKey}`,
-      },
-      body: JSON.stringify({
-        event: '$diagnostic_completed',
-        params: {
-          scores_json: JSON.stringify(scores),
-          results_url: resultsUrl,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      console.error(`[Email] CQ diagnostic event error: ${response.status}`);
-    } else {
-      console.log(`[Email] Diagnostic completed event sent for user ${userId}`);
-    }
-  } catch (error) {
-    console.error('[Email] Diagnostic email network error:', error);
-  }
 }
 
 // ============== CONSTANTS ==============
@@ -556,10 +503,6 @@ export const diagnosticRouter = router({
             create: { userId: ctx.user.id, lessons: fullPath },
           });
 
-          // Fire-and-forget: send diagnostic completed email via CQ
-          sendDiagnosticEmail(ctx.user.id, skillProfile, input.sessionId).catch(
-            (err) => console.error('[Email] Diagnostic completed email failed:', err),
-          );
         }
 
         return {

@@ -8,7 +8,6 @@ export type CQEventName =
   | '$subscription_cancelled'
   | '$subscription_expiring'
   | '$user_registered'
-  | '$diagnostic_completed'
   | '$inactive_7d'
   | '$inactive_14d'
   | '$inactive_30d'
