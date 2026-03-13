@@ -11,7 +11,11 @@ export type CQEventName =
   | '$diagnostic_completed'
   | '$inactive_7d'
   | '$inactive_14d'
-  | '$inactive_30d';
+  | '$inactive_30d'
+  // Auth hook events (sent via Supabase Send Email Hook)
+  | '$email_confirmation'
+  | '$password_reset'
+  | '$email_change';
 
 /**
  * Event data payload — flat key-value map sent alongside the event.

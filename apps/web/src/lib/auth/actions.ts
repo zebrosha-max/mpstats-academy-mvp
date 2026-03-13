@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { YandexProvider } from '@/lib/auth/oauth-providers';
+import { sendWelcomeEmail } from '@/lib/carrotquest/emails';
 
 export type AuthResult = {
   error?: string;
@@ -28,7 +29,7 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
     return { error: 'Пароль должен быть минимум 6 символов' };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -42,6 +43,14 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
   if (error) {
     console.error('Sign up error:', error);
     return { error: error.message };
+  }
+
+  // Fire-and-forget welcome email via Carrot Quest
+  if (data.user) {
+    sendWelcomeEmail(data.user.id, {
+      name: name || '',
+      email,
+    }).catch((err) => console.error('[Email] Welcome email failed:', err));
   }
 
   return { success: true };
