@@ -1,31 +1,28 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-11
+**Last updated:** 2026-03-12
 
-## Last Session (2026-03-11)
+## Last Session (2026-03-12)
 
-**Roadmap planning — 2 новые фазы добавлены через GSD:**
+**Milestone v1.2 (Auth Rework + Billing) — SHIPPED:**
+- Phase 20 (Paywall + Content Gating) — verified complete (15/15 must-haves)
+- Phase 21 (Domain Migration) — verified complete (6/6 requirements)
+- ROADMAP.md обновлён: v1.2 помечен как shipped, таблица прогресса исправлена
 
-- **Phase 21:** Domain migration from DuckDNS to platform.mpstats.academy
-  - CONTEXT.md создан: DNS на Рег.ру (A-запись platform → VPS), SSL certbot, Nginx, env, OAuth, Docker rebuild
-  - Старый домен academyal.duckdns.org — просто выключить, без редиректа
-- **Phase 22:** Transactional email notifications (billing, auth, system)
-  - Нужен почтовый сервис (Resend / Postmark / etc.) — в проекте нет ни одного
-  - Шаблоны: подтверждение оплаты, продление, неудачный платёж, отмена, кастомные auth-письма
+**Следующий шаг:**
+- [ ] Phase 22: Transactional email notifications (needs planning)
 
-**Следующие шаги:**
-- [ ] `/gsd:plan-phase 21` — спланировать миграцию домена
-- [ ] `/gsd:discuss-phase 22` — обсудить детали email-уведомлений
-- [ ] Phase 20 (Paywall) — ещё не начата
+### Previous Session (2026-03-12 earlier)
 
-### Previous Session (2026-03-11 earlier)
+**Pricing page bugfixes for unauthenticated users (2 commits deployed):**
+- /pricing в инкогнито — dropdown с курсами + редирект на /login при оплате
+- Таблица истории платежей — layout OK
+- Весь payment flow verified (widget → webhook → subscription → cancel → re-subscribe)
 
-**Phase 19: Billing UI & Payment Flow — COMPLETE (GSD workflow)**
+### Previous Session (2026-03-11)
 
-### Previous Session (2026-03-11 earlier)
-
-**Тест фронтенд-скиллов — альтернативные лендинги:**
-- `/design-wdg` и `/design-uiux` — тестовые лендинги
+**Roadmap planning + Phase 19 (Billing UI) complete + Phase 21 (Domain Migration) complete.**
+- Тест фронтенд-скиллов — `/design-wdg` и `/design-uiux` лендинги
 
 ### Previous Session (2026-03-05)
 
@@ -389,25 +386,11 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 
 **Production deployed:** https://platform.mpstats.academy
 
-| Sprint / Phase | Status | Completion |
-|----------------|--------|------------|
-| Sprint 0: Setup | ✅ Complete | 100% |
-| Sprint 1: Foundation + Auth | ✅ Complete | 95% (QA pending) |
-| Sprint 2: UI Shell | ✅ Complete | 95% (QA pending) |
-| Sprint 2.5: UI Redesign | ✅ Complete | 100% |
-| Sprint 3: RAG Integration | ✅ Complete | 100% |
-| Sprint 4: Deploy + Kinescope | ✅ Complete | 100% |
-| Phase 1: Data Foundation | ✅ Complete | Prisma migration done |
-| Phase 2: AI Question Gen | ✅ Complete | Verified & closed 2026-02-25 |
-| Phase 3: Video Integration | ✅ Complete | 405 videos on Kinescope |
-| Phase 4: Access Control | ⏭️ Skipped | No soft gating |
-| Phase 5: Security Hardening | ⏭️ Skipped | No rate limiting / protectedProcedure |
-| Phase 5.1: VPS Infrastructure | ✅ Complete | Docker + Nginx + SSL |
-| Phase 6: Production Deploy | ✅ Complete | CI/CD + health check + E2E verified |
-
-**Skipped phases (technical debt):**
-- **Phase 4** — нет soft gating (видео доступны без диагностики), нет персонализированного трека
-- **Phase 5** — endpoints не защищены, нет rate limiting, нет sanitization AI output
+| Milestone | Status | Phases |
+|-----------|--------|--------|
+| v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
+| v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
+| v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
@@ -415,11 +398,8 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 - seekTo через postMessage API к iframe
 
 **Next Steps:**
-1. ✅ ~~Auth registration bug~~ — ИСПРАВЛЕНО (2026-02-24), trigger `handle_new_user` обновлён
-2. Подтвердить что сотрудник смог зарегистрироваться
-3. Phase 2: AI Question Generation (когда понадобится)
-4. Phase 4: Access Control (когда понадобится)
-5. Phase 5: Security Hardening (перед публичным запуском)
+1. Phase 22: Transactional email notifications (needs planning)
+2. Phase 5: Security Hardening — rate limiting, sanitization (перед публичным запуском)
 
 ## Key Decisions
 
@@ -429,7 +409,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | Database | Supabase (cloud) | Managed, pgvector, free tier |
 | Dev approach | UI-First | No content blocker for Sprint 0-2 |
 | Progress tracking | Per-task updates | Granular, no lost context |
-| Auth | Supabase Auth + Google OAuth | Proven, easy integration |
+| Auth | Supabase Auth + Yandex ID OAuth | Server-side flow, Google removed |
 | Mock storage | In-memory (globalThis) | Fast dev, no DB dependency for Sprint 0-2 |
 
 ## Known Limitations (Sprint 2)

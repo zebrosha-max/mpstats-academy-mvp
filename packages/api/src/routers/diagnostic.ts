@@ -15,8 +15,6 @@ import type {
   DiagnosticQuestion,
 } from '@mpstats/shared';
 
-}
-
 // ============== CONSTANTS ==============
 
 const TARGET_SCORE = 70;

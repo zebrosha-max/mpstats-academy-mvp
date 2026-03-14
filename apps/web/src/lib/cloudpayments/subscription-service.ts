@@ -53,7 +53,7 @@ export async function handlePaymentSuccess(
     // Fire-and-forget: send payment success email via CQ
     sendPaymentSuccessEmail(subscription.userId, {
       amount: payment.amount,
-      courseName: subscription.plan.title ?? undefined,
+      courseName: subscription.plan.name,
       periodEnd,
     }).catch((err) =>
       console.error('[Email] Payment success email failed:', err),
@@ -106,7 +106,7 @@ export async function handlePaymentFailure(
 
       // Fire-and-forget: send payment failed email via CQ
       sendPaymentFailedEmail(subscription.userId, {
-        courseName: subscription.plan.title ?? undefined,
+        courseName: subscription.plan.name,
       }).catch((err) =>
         console.error('[Email] Payment failed email failed:', err),
       );
@@ -220,7 +220,7 @@ export async function handleRecurrentPayment(
     // Fire-and-forget: send recurrent payment email via CQ
     sendPaymentSuccessEmail(subscription.userId, {
       amount: payment.amount,
-      courseName: subscription.plan.title ?? undefined,
+      courseName: subscription.plan.name,
       periodEnd: newPeriodEnd,
     }).catch((err) =>
       console.error('[Email] Recurrent payment email failed:', err),

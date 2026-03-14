@@ -184,7 +184,7 @@ export default function LearnPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 animate-slide-up" style={{ animationDelay: '50ms' }}>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 animate-slide-up" style={{ animationDelay: '50ms' }}>
         <Card className="shadow-mp-card">
           <CardContent className="py-5 text-center">
             <div className="text-display-sm font-bold text-mp-green-500">{stats.completed}</div>

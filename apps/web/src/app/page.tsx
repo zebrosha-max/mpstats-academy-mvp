@@ -171,7 +171,7 @@ export default function HomePage() {
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--landing-green)] inline-block mr-2 animate-pulse" />
               AI-powered обучение
             </Badge>
-            <h1 className="text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-6">
               Учитесь продавать на маркетплейсах{' '}
               <span className={`bg-gradient-to-r from-[#2C4FF8] via-[var(--landing-gradient-text-via)] to-[var(--landing-gradient-text-to)] bg-clip-text text-transparent animate-gradient-x`}>
                 осмысленно
@@ -195,7 +195,7 @@ export default function HomePage() {
           </div>
 
           {/* Right -- Bento Preview */}
-          <div className="animate-fade-up grid grid-cols-3 gap-3" style={{ animationDelay: '0.15s' }}>
+          <div className="animate-fade-up hidden sm:grid grid-cols-3 gap-3" style={{ animationDelay: '0.15s' }}>
             {/* Skill Radar card */}
             <div className="col-span-2 row-span-2 bg-[var(--landing-card-bg)] border border-[var(--landing-card-border)] rounded-2xl p-5 shadow-xl shadow-[var(--landing-card-shadow)] animate-glow">
               <div className="flex items-center justify-between mb-2">
@@ -359,7 +359,7 @@ export default function HomePage() {
 
       {/* CTA -- always dark */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
-        <div className="relative rounded-3xl overflow-hidden border border-gray-900 p-16 text-center bg-[#0A0F25]">
+        <div className="relative rounded-3xl overflow-hidden border border-gray-900 p-8 sm:p-12 lg:p-16 text-center bg-[#0A0F25]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#2C4FF8]/15 via-transparent to-[#10B981]/10" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#2C4FF8]/5 to-[#10B981]/5 animate-gradient-x" />
           <div className="relative z-10">
@@ -379,7 +379,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-[var(--landing-border)] py-8">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <Logo size="sm" variant={isDark ? 'white' : 'default'} />
           <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
         </div>
