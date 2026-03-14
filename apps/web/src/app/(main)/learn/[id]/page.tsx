@@ -394,56 +394,76 @@ export default function LessonPage() {
           </div>
 
           {/* Navigation */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-mp-gray-200">
-            {prevLesson ? (
-              <Link href={`/learn/${prevLesson.id}`}>
-                <Button variant="outline" size="sm">
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Предыдущий
-                </Button>
-              </Link>
-            ) : (
-              <div />
-            )}
-
+          <div className="pt-4 border-t border-mp-gray-200 space-y-3">
+            {/* Complete button — full width on mobile, hidden on desktop */}
             {lesson.status !== 'COMPLETED' && (
-              <Button
-                variant="success"
-                onClick={() => completeLesson.mutate({ lessonId })}
-                disabled={completeLesson.isPending}
-              >
-                {completeLesson.isPending ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <div className="sm:hidden">
+                <Button
+                  variant="success"
+                  className="w-full"
+                  onClick={() => completeLesson.mutate({ lessonId })}
+                  disabled={completeLesson.isPending}
+                >
+                  {completeLesson.isPending ? 'Сохранение...' : 'Завершить урок'}
+                </Button>
+              </div>
+            )}
+            {/* Prev / Complete (desktop) / Next row */}
+            <div className="flex items-center justify-between">
+              {prevLesson ? (
+                <Link href={`/learn/${prevLesson.id}`}>
+                  <Button variant="outline" size="sm">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
-                    Сохранение...
-                  </>
-                ) : (
-                  'Завершить урок'
-                )}
-              </Button>
-            )}
+                    <span className="hidden sm:inline">Предыдущий</span>
+                    <span className="sm:hidden">Назад</span>
+                  </Button>
+                </Link>
+              ) : (
+                <div />
+              )}
 
-            {nextLesson ? (
-              <Link href={`/learn/${nextLesson.id}`}>
-                <Button variant="outline" size="sm">
-                  Следующий
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              {/* Complete button — inline on desktop only */}
+              {lesson.status !== 'COMPLETED' && (
+                <Button
+                  variant="success"
+                  className="hidden sm:inline-flex"
+                  onClick={() => completeLesson.mutate({ lessonId })}
+                  disabled={completeLesson.isPending}
+                >
+                  {completeLesson.isPending ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Сохранение...
+                    </>
+                  ) : (
+                    'Завершить урок'
+                  )}
                 </Button>
-              </Link>
-            ) : (
-              <Link href="/learn">
-                <Button variant="outline" size="sm">
-                  К списку
-                </Button>
-              </Link>
-            )}
+              )}
+
+              {nextLesson ? (
+                <Link href={`/learn/${nextLesson.id}`}>
+                  <Button variant="outline" size="sm">
+                    <span className="hidden sm:inline">Следующий</span>
+                    <span className="sm:hidden">Далее</span>
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/learn">
+                  <Button variant="outline" size="sm">
+                    К списку
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 

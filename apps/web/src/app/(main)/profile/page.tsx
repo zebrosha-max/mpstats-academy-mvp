@@ -92,7 +92,7 @@ export default function ProfilePage() {
     subscription && ['ACTIVE', 'PAST_DUE', 'CANCELLED'].includes(subscription.status);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 overflow-hidden">
       <div>
         <h1 className="text-display-sm text-mp-gray-900">Профиль</h1>
         <p className="text-body text-mp-gray-500 mt-1">Настройки аккаунта и статистика</p>
@@ -150,24 +150,24 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <div className="flex justify-between text-body-sm">
-                        <span className="text-mp-gray-500">Тариф</span>
-                        <span className="font-medium text-mp-gray-900">{subscription.plan.name}</span>
+                      <div className="flex justify-between gap-4 text-body-sm min-w-0">
+                        <span className="text-mp-gray-500 shrink-0">Тариф</span>
+                        <span className="font-medium text-mp-gray-900 truncate">{subscription.plan.name}</span>
                       </div>
-                      <div className="flex justify-between text-body-sm">
-                        <span className="text-mp-gray-500">Стоимость</span>
+                      <div className="flex justify-between gap-4 text-body-sm">
+                        <span className="text-mp-gray-500 shrink-0">Стоимость</span>
                         <span className="font-medium text-mp-gray-900">
                           {formatPrice(subscription.plan.price)} / мес
                         </span>
                       </div>
                       {subscription.plan.type === 'COURSE' && subscription.course && (
-                        <div className="flex justify-between text-body-sm">
-                          <span className="text-mp-gray-500">Курс</span>
-                          <span className="font-medium text-mp-gray-900">{subscription.course.title}</span>
+                        <div className="flex justify-between gap-4 text-body-sm min-w-0">
+                          <span className="text-mp-gray-500 shrink-0">Курс</span>
+                          <span className="font-medium text-mp-gray-900 truncate">{subscription.course.title}</span>
                         </div>
                       )}
-                      <div className="flex justify-between text-body-sm">
-                        <span className="text-mp-gray-500">
+                      <div className="flex justify-between gap-4 text-body-sm">
+                        <span className="text-mp-gray-500 shrink-0">
                           {subscription.status === 'CANCELLED' ? 'Доступ до' : 'Следующее списание'}
                         </span>
                         <span className="font-medium text-mp-gray-900">
@@ -217,13 +217,13 @@ export default function ProfilePage() {
                     <CardTitle className="text-heading">История платежей</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-body-sm">
+                    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                      <table className="w-full text-body-sm min-w-[400px]">
                         <thead>
                           <tr className="border-b border-mp-gray-200">
-                            <th className="text-left py-2 text-mp-gray-500 font-medium">Дата</th>
-                            <th className="text-left py-2 text-mp-gray-500 font-medium">Сумма</th>
-                            <th className="text-left py-2 text-mp-gray-500 font-medium">Статус</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium whitespace-nowrap pr-3">Дата</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium whitespace-nowrap pr-3">Сумма</th>
+                            <th className="text-left py-2 text-mp-gray-500 font-medium whitespace-nowrap pr-3">Статус</th>
                             <th className="text-left py-2 text-mp-gray-500 font-medium">План</th>
                           </tr>
                         </thead>
@@ -235,13 +235,13 @@ export default function ProfilePage() {
                             };
                             return (
                               <tr key={payment.id} className="border-b border-mp-gray-100 last:border-0">
-                                <td className="py-3 text-mp-gray-900">{formatDate(payment.createdAt)}</td>
-                                <td className="py-3 text-mp-gray-900">{formatPrice(payment.amount)} RUB</td>
-                                <td className="py-3">
+                                <td className="py-3 text-mp-gray-900 whitespace-nowrap pr-3">{formatDate(payment.createdAt)}</td>
+                                <td className="py-3 text-mp-gray-900 whitespace-nowrap pr-3">{formatPrice(payment.amount)} ₽</td>
+                                <td className="py-3 pr-3">
                                   <Badge variant={status.variant} size="sm">{status.label}</Badge>
                                 </td>
-                                <td className="py-3 text-mp-gray-700 max-w-[200px]">
-                                  <div>{payment.subscription?.plan?.name || '-'}</div>
+                                <td className="py-3 text-mp-gray-700 max-w-[150px]">
+                                  <div className="truncate">{payment.subscription?.plan?.name || '-'}</div>
                                   {payment.subscription?.course && (
                                     <div className="text-mp-gray-500 text-xs truncate">{payment.subscription.course.title}</div>
                                   )}
