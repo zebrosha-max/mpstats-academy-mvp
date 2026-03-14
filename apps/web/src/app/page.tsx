@@ -146,16 +146,23 @@ export default function HomePage() {
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 backdrop-blur-md bg-[var(--landing-nav-bg)] border-b border-[var(--landing-border)]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Logo size="md" variant={isDark ? 'white' : 'default'} />
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          {/* Full logo on sm+, icon-only on mobile */}
+          <div className="hidden sm:block">
+            <Logo size="md" variant={isDark ? 'white' : 'default'} />
+          </div>
+          <div className="sm:hidden">
+            <LogoMark size="md" variant={isDark ? 'white' : 'default'} />
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             <Link href="/login" className="text-sm text-[var(--landing-text-muted)] hover:text-[var(--landing-text)] transition-colors">
               Войти
             </Link>
             <Link href="/register">
-              <Button size="sm" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white rounded-lg px-5 shadow-lg shadow-[#2C4FF8]/20">
-                Начать бесплатно
+              <Button size="sm" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white rounded-lg px-3 sm:px-5 shadow-lg shadow-[#2C4FF8]/20">
+                <span className="hidden sm:inline">Начать бесплатно</span>
+                <span className="sm:hidden">Начать</span>
               </Button>
             </Link>
           </div>
@@ -163,31 +170,31 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-24 pb-10 sm:pb-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left -- Text */}
           <div className="animate-fade-up">
-            <Badge className="bg-[var(--landing-badge-bg)] text-[var(--landing-badge-text)] border border-[var(--landing-badge-border)] hover:opacity-80 mb-6">
+            <Badge className="bg-[var(--landing-badge-bg)] text-[var(--landing-badge-text)] border border-[var(--landing-badge-border)] hover:opacity-80 mb-4 sm:mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--landing-green)] inline-block mr-2 animate-pulse" />
               AI-powered обучение
             </Badge>
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-4 sm:mb-6">
               Учитесь продавать на маркетплейсах{' '}
               <span className={`bg-gradient-to-r from-[#2C4FF8] via-[var(--landing-gradient-text-via)] to-[var(--landing-gradient-text-to)] bg-clip-text text-transparent animate-gradient-x`}>
                 осмысленно
               </span>
             </h1>
-            <p className="text-lg text-[var(--landing-text-muted)] leading-relaxed mb-10 max-w-lg">
+            <p className="text-base sm:text-lg text-[var(--landing-text-muted)] leading-relaxed mb-6 sm:mb-10 max-w-lg">
               AI определит ваш текущий уровень и построит персональный трек. Не&nbsp;тратьте время на&nbsp;материал, который вам не&nbsp;нужен.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link href="/register">
-                <Button size="lg" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-8 h-12 rounded-xl shadow-xl shadow-[#2C4FF8]/25 hover:shadow-[#2C4FF8]/40 transition-all">
+                <Button size="lg" className="w-full sm:w-auto bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-6 sm:px-8 h-12 rounded-xl shadow-xl shadow-[#2C4FF8]/25 hover:shadow-[#2C4FF8]/40 transition-all">
                   Пройти диагностику
                 </Button>
               </Link>
               <Link href="#features">
-                <Button size="lg" variant="ghost" className="text-[var(--landing-ghost-text)] hover:text-[var(--landing-ghost-text-hover)] hover:bg-[var(--landing-ghost-hover-bg)] px-8 h-12 rounded-xl">
+                <Button size="lg" variant="ghost" className="w-full sm:w-auto text-[var(--landing-ghost-text)] hover:text-[var(--landing-ghost-text-hover)] hover:bg-[var(--landing-ghost-hover-bg)] px-6 sm:px-8 h-12 rounded-xl">
                   Как это работает
                 </Button>
               </Link>
@@ -275,7 +282,7 @@ export default function HomePage() {
       </div>
 
       {/* Stats */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 py-20">
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((n, i) => (
             <div key={n.label} className="text-center animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
@@ -289,7 +296,7 @@ export default function HomePage() {
       </section>
 
       {/* Bento Features */}
-      <section id="features" className="relative z-10 max-w-7xl mx-auto px-6 py-16">
+      <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="animate-fade-up mb-12">
           <Badge className="bg-[var(--landing-section-badge-bg)] text-[var(--landing-section-badge-text)] border border-[var(--landing-section-badge-border)] hover:opacity-80 mb-4">
             Возможности
@@ -320,7 +327,7 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-24">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
         <div className="animate-fade-up mb-16">
           <Badge className="bg-[var(--landing-section-badge-bg)] text-[var(--landing-section-badge-text)] border border-[var(--landing-section-badge-border)] hover:opacity-80 mb-4">
             Процесс
@@ -346,9 +353,9 @@ export default function HomePage() {
       </section>
 
       {/* Pull Quote */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 py-16 text-center">
+      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
         <div className="animate-fade-up">
-          <p className="text-2xl md:text-3xl font-bold leading-snug tracking-tight text-[var(--landing-quote-text)] mb-4">
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug tracking-tight text-[var(--landing-quote-text)] mb-4">
             &laquo;Не тратьте время на то, что вы уже знаете.
             <br />
             Пусть AI определит, что важно именно для вас.&raquo;
@@ -358,14 +365,14 @@ export default function HomePage() {
       </section>
 
       {/* CTA -- always dark */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-16">
-        <div className="relative rounded-3xl overflow-hidden border border-gray-900 p-8 sm:p-12 lg:p-16 text-center bg-[#0A0F25]">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-900 p-6 sm:p-12 lg:p-16 text-center bg-[#0A0F25]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#2C4FF8]/15 via-transparent to-[#10B981]/10" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#2C4FF8]/5 to-[#10B981]/5 animate-gradient-x" />
           <div className="relative z-10">
             <LogoMark size="xl" variant="white" href={undefined} className="mx-auto mb-6 opacity-30" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Готовы узнать свой уровень?</h2>
-            <p className="text-white/40 text-lg mb-8 max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">Готовы узнать свой уровень?</h2>
+            <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto">
               Бесплатная диагностика за 10 минут. Персональный трек — сразу после.
             </p>
             <Link href="/register">
@@ -379,7 +386,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-[var(--landing-border)] py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <Logo size="sm" variant={isDark ? 'white' : 'default'} />
           <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
         </div>
