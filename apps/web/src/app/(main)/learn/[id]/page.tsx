@@ -273,14 +273,14 @@ export default function LessonPage() {
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-body-sm">
-        <Link href="/learn" className="text-mp-gray-500 hover:text-mp-blue-600 transition-colors">
+      <div className="flex items-center gap-2 text-body-sm min-w-0 overflow-hidden">
+        <Link href="/learn" className="text-mp-gray-500 hover:text-mp-blue-600 transition-colors shrink-0">
           Обучение
         </Link>
-        <span className="text-mp-gray-400">/</span>
-        <span className="text-mp-gray-500">{course?.title}</span>
-        <span className="text-mp-gray-400">/</span>
-        <span className="text-mp-gray-900 font-medium">Урок {currentLessonNumber}</span>
+        <span className="text-mp-gray-400 shrink-0">/</span>
+        <span className="text-mp-gray-500 truncate">{course?.title}</span>
+        <span className="text-mp-gray-400 shrink-0">/</span>
+        <span className="text-mp-gray-900 font-medium shrink-0">Урок {currentLessonNumber}</span>
       </div>
 
       {/* Header */}
@@ -394,7 +394,7 @@ export default function LessonPage() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between pt-4 border-t border-mp-gray-200">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-mp-gray-200">
             {prevLesson ? (
               <Link href={`/learn/${prevLesson.id}`}>
                 <Button variant="outline" size="sm">

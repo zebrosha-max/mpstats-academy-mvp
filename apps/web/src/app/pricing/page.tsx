@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/shared/Logo';
+import { Logo, LogoMark } from '@/components/shared/Logo';
 import { trpc } from '@/lib/trpc/client';
 import { openPaymentWidget } from '@/lib/cloudpayments/widget';
 import { toast } from 'sonner';
@@ -129,14 +129,20 @@ export default function PricingPage() {
         {/* Header */}
         <header className="bg-white border-b border-mp-gray-200">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2 text-mp-gray-600 hover:text-mp-gray-900 transition-colors">
+            <Link href="/dashboard" className="flex items-center gap-2 text-mp-gray-600 hover:text-mp-gray-900 transition-colors shrink-0">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               <span className="text-body-sm">Назад</span>
             </Link>
-            <Logo size="sm" />
-            <div className="w-16" /> {/* Spacer for centering logo */}
+            {/* Full logo on sm+, icon-only on mobile */}
+            <div className="hidden sm:block">
+              <Logo size="sm" />
+            </div>
+            <div className="sm:hidden">
+              <LogoMark size="sm" />
+            </div>
+            <div className="w-16 shrink-0" /> {/* Spacer for centering logo */}
           </div>
         </header>
 
