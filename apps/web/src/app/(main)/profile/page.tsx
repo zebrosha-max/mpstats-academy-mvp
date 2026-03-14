@@ -139,7 +139,7 @@ export default function ProfilePage() {
             <div className="space-y-4">
               {/* Subscription card */}
               {hasActiveSubscription ? (
-                <Card className="shadow-mp-card">
+                <Card className="shadow-mp-card overflow-hidden">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-heading">Подписка</CardTitle>
@@ -212,13 +212,13 @@ export default function ProfilePage() {
 
               {/* Payment history */}
               {payments && payments.length > 0 && (
-                <Card className="shadow-mp-card">
+                <Card className="shadow-mp-card overflow-hidden">
                   <CardHeader>
                     <CardTitle className="text-heading">История платежей</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                      <table className="w-full text-body-sm min-w-[400px]">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-body-sm">
                         <thead>
                           <tr className="border-b border-mp-gray-200">
                             <th className="text-left py-2 text-mp-gray-500 font-medium whitespace-nowrap pr-3">Дата</th>
