@@ -4,15 +4,17 @@
 
 ## Last Session (2026-03-16)
 
-**RLS (Row Level Security) — включён на всех 18 таблицах:**
-- Supabase linter показывал 18 ERROR: все public таблицы без RLS
-- Анализ архитектуры: все данные идут через Prisma (DATABASE_URL) или service_role — RLS не влияет
-- Клиент (React) **никогда** не обращается к Supabase PostgREST напрямую — только через tRPC
-- Стратегия: RLS ON + нулевые политики — PostgREST заблокирован для anon/authenticated ключей
-- Скрипт: `scripts/sql/enable_rls_all_tables.sql`
-- Проверено curl: anon key → `[]` на всех таблицах, service_role → данные возвращаются
+**Security Hardening — RLS + function search_path:**
+- RLS включён на всех 18 таблицах (стратегия: нулевые политики, PostgREST заблокирован)
+- `match_chunks` и `handle_new_user` — добавлен `SET search_path = ''` (Supabase lint 0011)
+- Скрипты: `scripts/sql/enable_rls_all_tables.sql`, `scripts/sql/fix_function_search_paths.sql`
+- Проверено: anon key → `[]`, service_role → данные, все продуктовые флоу работают
 
-**Также:** исправлены устаревшие записи в CLAUDE.md — Phase 5 Security Hardening отмечена как завершённая (была 2026-02-25, но CLAUDE.md говорил "пропущена")
+**Perf: lesson page instant load (splitLink):**
+- Страница урока показывала скелетон 5-10 сек — ждала LLM summary из-за tRPC `httpBatchLink`
+- **Причина:** все запросы батчились в один HTTP-запрос, быстрый `getLesson` (~100ms) ждал медленный `getLessonSummary` (3-10s)
+- **Фикс:** `splitLink` в `apps/web/src/lib/trpc/provider.tsx` — AI-процедуры (`ai.getLessonSummary`, `ai.chat`, `ai.searchChunks`) идут в отдельном батче
+- **Результат:** плеер и контент рендерятся за 1-2 сек, summary подгружается фоном
 
 ### Previous Session (2026-03-14)
 
@@ -433,6 +435,8 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | Progress tracking | Per-task updates | Granular, no lost context |
 | Auth | Supabase Auth + Yandex ID OAuth | Server-side flow, Google removed |
 | Mock storage | In-memory (globalThis) | Fast dev, no DB dependency for Sprint 0-2 |
+| tRPC batching | splitLink (AI vs fast) | AI queries (3-10s) must not block page render |
+| RLS strategy | RLS ON + zero policies | All data via Prisma/service_role, PostgREST blocked |
 
 ## Known Limitations (Sprint 2)
 
