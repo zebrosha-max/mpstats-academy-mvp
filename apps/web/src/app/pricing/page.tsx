@@ -200,11 +200,13 @@ export default function PricingPage() {
                       className="w-full rounded-lg border border-mp-gray-300 bg-white px-3 py-2.5 text-body-sm text-mp-gray-900 focus:border-mp-blue-500 focus:outline-none focus:ring-2 focus:ring-mp-blue-500/20"
                     >
                       <option value="">-- Выберите курс --</option>
-                      {courses?.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.title}
-                        </option>
-                      ))}
+                      {courses
+                        ?.filter((c) => !['04_workshops', '06_express'].includes(c.id))
+                        .map((course) => (
+                          <option key={course.id} value={course.id}>
+                            {course.title}
+                          </option>
+                        ))}
                     </select>
                   </div>
 
@@ -277,6 +279,12 @@ export default function PricingPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       Все 6 курсов (80+ уроков)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Экспресс-курсы и практические воркшопы
                     </li>
                     <li className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
