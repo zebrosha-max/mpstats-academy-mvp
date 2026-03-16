@@ -27,6 +27,14 @@ export default function DiagnosticResultsPage() {
   );
   const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery();
 
+  // Fetch diagnostic history to find the previous session for dual radar
+  const { data: history } = trpc.diagnostic.getHistory.useQuery();
+  const previousSession = history && history.length >= 2 ? history[1] : null;
+  const { data: previousResults } = trpc.diagnostic.getResults.useQuery(
+    { sessionId: previousSession?.id ?? '' },
+    { enabled: !!previousSession }
+  );
+
   if (!sessionId) {
     router.push('/diagnostic');
     return null;
@@ -122,7 +130,20 @@ export default function DiagnosticResultsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SkillRadarChart data={results.skillProfile} />
+          {previousResults && (
+            <div className="text-center mb-4 p-3 bg-mp-green-50 rounded-lg border border-mp-green-200">
+              <p className="text-body font-medium text-mp-green-700">
+                Сравнение с предыдущей диагностикой
+              </p>
+              <p className="text-body-sm text-mp-gray-500">
+                Пунктирная линия — прошлый результат, сплошная — текущий
+              </p>
+            </div>
+          )}
+          <SkillRadarChart
+            data={results.skillProfile}
+            previousData={previousResults?.skillProfile}
+          />
         </CardContent>
       </Card>
 

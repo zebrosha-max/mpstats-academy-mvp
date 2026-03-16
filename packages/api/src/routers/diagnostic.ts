@@ -741,28 +741,14 @@ export const diagnosticRouter = router({
         const correctAnswers = session.answers.filter((a) => a.isCorrect).length;
         const accuracy = Math.round((correctAnswers / session.answers.length) * 100);
 
-        // Read skill profile from DB (already saved on completion)
-        const skillProfile = await getLatestSkillProfile(ctx.prisma, session.userId);
-        if (!skillProfile) {
-          // Recalculate if somehow missing
-          const calculated = calculateSkillProfileFromAnswers(
-            session.answers.map((a) => ({
-              skillCategory: a.skillCategory as SkillCategory,
-              isCorrect: a.isCorrect,
-            })),
-          );
-          const gaps = await calculateSkillGaps(ctx.prisma, calculated);
-          return {
-            sessionId: input.sessionId,
-            completedAt: session.completedAt || new Date(),
-            totalQuestions: session.answers.length,
-            correctAnswers,
-            accuracy,
-            skillProfile: calculated,
-            gaps,
-            recommendedPath: getRecommendedLessonsFromGaps(gaps, 5),
-          };
-        }
+        // Calculate skill profile from this session's own answers (not latest global profile)
+        // This ensures historical sessions return their actual scores for dual radar comparison
+        const skillProfile = calculateSkillProfileFromAnswers(
+          session.answers.map((a) => ({
+            skillCategory: a.skillCategory as SkillCategory,
+            isCorrect: a.isCorrect,
+          })),
+        );
 
         const gaps = await calculateSkillGaps(ctx.prisma, skillProfile);
         return {
