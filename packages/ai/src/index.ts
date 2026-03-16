@@ -22,6 +22,10 @@ export type { ChunkSearchResult, SearchOptions } from './retrieval';
 export { generateLessonSummary, generateChatResponse } from './generation';
 export type { GenerationResult, SourceCitation, ChatMessage } from './generation';
 
+// Lesson tagging (Phase 23) — no server-only, safe for CLI scripts
+export { tagLesson, fetchLessonChunks, clusterTopics, lessonTagSchema } from './tagging';
+export type { LessonTag } from './tagging';
+
 // Question generation
 export { generateDiagnosticQuestions, CATEGORY_TO_COURSES } from './question-generator';
 export type { MockQuestionsFn, GenerateOptions } from './question-generator';
