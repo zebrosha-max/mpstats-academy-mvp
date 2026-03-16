@@ -163,7 +163,8 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 19. Billing UI + Payment Flow | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 20. Paywall + Content Gating | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
-| 22. Email Notifications | 2/3 | In Progress|  | - |
+| 22. Email Notifications | v1.3 | 2/3 | In Progress | - |
+| 23. Diagnostic 2.0 | v1.4 | 0/3 | Planned | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -198,10 +199,19 @@ Plans:
 
 ### Phase 23: Diagnostic 2.0 — personalized learning track with lesson-level topic tagging, question-to-content tracing, and error-based path prioritization
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Пользователь видит прямую связь между ошибками в диагностике и рекомендованными уроками: мульти-категорийная разметка 405 уроков, привязка вопросов к источникам с таймкодами, 4-секционный трек обучения по ошибкам, хинты с таймкодами на страницах уроков, двойной Radar Chart для повторной диагностики
+**Requirements**: DIAG-01, DIAG-02, DIAG-03, DIAG-04, DIAG-05, DIAG-06, DIAG-07, DIAG-08, DIAG-09
 **Depends on:** Phase 22
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Каждый из 405 уроков размечен 1-3 skillCategories, 2-5 топиками и LLM-назначенной сложностью
+  2. Диагностические вопросы содержат sourceChunkIds, sourceLessonIds и sourceTimecodes
+  3. "Мой трек" отображает 4 секции-аккордеона (Ошибки / Углубление / Развитие / Продвинутый) вместо плоского списка
+  4. Страница урока из секции "Ошибки" показывает хинт с кликабельным таймкодом между видео и табами
+  5. При повторной диагностике Radar Chart показывает два полигона (было/стало)
+  6. Старые плоские треки продолжают работать (backward compatibility)
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 23 to break down)
+- [ ] 23-01-PLAN.md — Schema migration (multi-category, topics, sourceData) + shared types + LLM tagging script
+- [ ] 23-02-PLAN.md — Question source tracing + section-based path generation algorithm
+- [ ] 23-03-PLAN.md — Frontend: accordion track sections + diagnostic hints + dual Radar Chart + human verify

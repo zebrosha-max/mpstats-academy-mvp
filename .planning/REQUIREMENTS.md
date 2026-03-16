@@ -1,4 +1,4 @@
-# Requirements: MAAL v1.2 + v1.3
+# Requirements: MAAL v1.2 + v1.3 + v1.4
 
 **Defined:** 2026-03-06
 **Core Value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
@@ -45,9 +45,34 @@ Requirements for Email Notifications phase.
 - [x] **EMAIL-06**: Toast-уведомления в UI при ключевых событиях (sonner)
 - [x] **EMAIL-07**: Feature flag `email_notifications_enabled` для kill switch
 
+## v1.4 Requirements
+
+Requirements for Diagnostic 2.0 — personalized learning track.
+
+### Lesson Tagging
+
+- [ ] **DIAG-01**: Каждый урок размечен 1-3 skillCategories (мульти-категория вместо single)
+- [ ] **DIAG-02**: Каждый урок размечен 2-5 свободных топиков с канонической нормализацией
+- [ ] **DIAG-03**: Сложность уроков назначена LLM (EASY/MEDIUM/HARD вместо hardcoded MEDIUM)
+
+### Question Tracing
+
+- [ ] **DIAG-04**: Диагностические вопросы содержат sourceChunkIds, sourceLessonIds и sourceTimecodes
+- [ ] **DIAG-05**: DiagnosticAnswer хранит sourceData для привязки ошибок к конкретным урокам
+
+### Sectioned Learning Path
+
+- [ ] **DIAG-06**: Трек обучения состоит из 4 секций (Ошибки, Углубление, Развитие, Продвинутый) с порогами 70/85%
+
+### Frontend
+
+- [ ] **DIAG-07**: Аккордеон-секции на странице "Мой трек" с expand/collapse и цветовой кодировкой
+- [ ] **DIAG-08**: Хинт с таймкодом из диагностики на странице урока (dismissible, между плеером и табами)
+- [ ] **DIAG-09**: Двойной Radar Chart (было/стало) при повторной диагностике
+
 ## Future Requirements
 
-Deferred to v1.4+. Tracked but not in current roadmap.
+Deferred to v1.5+. Tracked but not in current roadmap.
 
 ### Auth Extensions
 
@@ -55,7 +80,7 @@ Deferred to v1.4+. Tracked but not in current roadmap.
 
 ### Billing Extensions
 
-- **BILL-07**: 54-ФЗ интеграция через CloudKassir (онлайн-чеки)
+- **BILL-07**: 54-ФЗ интеграция через CloudKassир (онлайн-чеки)
 - **BILL-08**: Промокоды и скидки
 - **BILL-09**: Trial period (бесплатный пробный период)
 
@@ -63,6 +88,14 @@ Deferred to v1.4+. Tracked but not in current roadmap.
 
 - **COMP-01**: Полное accessibility audit (WCAG 2.1 AA)
 - **COMP-02**: Full-app dark mode
+
+### Diagnostic Extensions (deferred from Phase 23)
+
+- **DIAG-10**: Адаптивная сложность вопросов (IRT-lite) на лету
+- **DIAG-11**: Spaced repetition для закрепления вопросов
+- **DIAG-12**: Визуализация истории прогресса между диагностиками (графики роста)
+- **DIAG-13**: Гибкая диагностика (10-100 вопросов, выбор количества)
+- **DIAG-14**: Поиск и фильтрация по топикам уроков
 
 ## Out of Scope
 
@@ -107,12 +140,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EMAIL-05 | Phase 22 (Plan 03) | Planned |
 | EMAIL-06 | Phase 22 (Plan 02) | Planned |
 | EMAIL-07 | Phase 22 (Plan 02) | Planned |
+| DIAG-01 | Phase 23 (Plan 01) | Planned |
+| DIAG-02 | Phase 23 (Plan 01) | Planned |
+| DIAG-03 | Phase 23 (Plan 01) | Planned |
+| DIAG-04 | Phase 23 (Plan 02) | Planned |
+| DIAG-05 | Phase 23 (Plan 02) | Planned |
+| DIAG-06 | Phase 23 (Plan 02) | Planned |
+| DIAG-07 | Phase 23 (Plan 03) | Planned |
+| DIAG-08 | Phase 23 (Plan 03) | Planned |
+| DIAG-09 | Phase 23 (Plan 03) | Planned |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
 - v1.3 requirements: 7 total, 0 complete
+- v1.4 requirements: 9 total, 0 planned
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-13 after Phase 22 planning*
+*Last updated: 2026-03-16 after Phase 23 planning*
