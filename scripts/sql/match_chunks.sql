@@ -13,8 +13,10 @@
 DROP FUNCTION IF EXISTS match_chunks(vector(1536), float, int, text);
 
 -- Create the vector similarity search function
-CREATE OR REPLACE FUNCTION match_chunks(
-  query_embedding vector(1536),
+-- SET search_path = '' prevents search_path injection (Supabase lint 0011)
+-- With empty search_path, all references must be fully qualified
+CREATE OR REPLACE FUNCTION public.match_chunks(
+  query_embedding extensions.vector(1536),
   match_threshold float DEFAULT 0.5,
   match_count int DEFAULT 5,
   filter_lesson_prefix text DEFAULT NULL
@@ -28,6 +30,7 @@ RETURNS TABLE (
   similarity float
 )
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
   RETURN QUERY
@@ -37,16 +40,16 @@ BEGIN
     c.content::text,
     c.timecode_start::int,
     c.timecode_end::int,
-    (1 - (c.embedding <=> query_embedding))::float as similarity
-  FROM content_chunk c
+    (1 - (c.embedding OPERATOR(extensions.<=>) query_embedding))::float as similarity
+  FROM public.content_chunk c
   WHERE
     c.embedding IS NOT NULL
-    AND (1 - (c.embedding <=> query_embedding)) > match_threshold
+    AND (1 - (c.embedding OPERATOR(extensions.<=>) query_embedding)) > match_threshold
     AND (
       filter_lesson_prefix IS NULL
       OR c.lesson_id LIKE filter_lesson_prefix || '%'
     )
-  ORDER BY c.embedding <=> query_embedding
+  ORDER BY c.embedding OPERATOR(extensions.<=>) query_embedding
   LIMIT match_count;
 END;
 $$;
