@@ -1,18 +1,41 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-16
 
-## Last Session (2026-03-12)
+## Last Session (2026-03-16)
 
-**Milestone v1.2 (Auth Rework + Billing) — SHIPPED:**
-- Phase 20 (Paywall + Content Gating) — verified complete (15/15 must-haves)
-- Phase 21 (Domain Migration) — verified complete (6/6 requirements)
-- ROADMAP.md обновлён: v1.2 помечен как shipped, таблица прогресса исправлена
+**RLS (Row Level Security) — включён на всех 18 таблицах:**
+- Supabase linter показывал 18 ERROR: все public таблицы без RLS
+- Анализ архитектуры: все данные идут через Prisma (DATABASE_URL) или service_role — RLS не влияет
+- Клиент (React) **никогда** не обращается к Supabase PostgREST напрямую — только через tRPC
+- Стратегия: RLS ON + нулевые политики — PostgREST заблокирован для anon/authenticated ключей
+- Скрипт: `scripts/sql/enable_rls_all_tables.sql`
+- Проверено curl: anon key → `[]` на всех таблицах, service_role → данные возвращаются
+
+**Также:** исправлены устаревшие записи в CLAUDE.md — Phase 5 Security Hardening отмечена как завершённая (была 2026-02-25, но CLAUDE.md говорил "пропущена")
+
+### Previous Session (2026-03-14)
+
+**Mobile Responsive Audit & Fixes (6 commits deployed):**
+- Viewport meta tag отсутствовал — добавлен `export const viewport: Viewport` в layout.tsx
+- Landing nav: LogoMark на мобилке (полный лого 322px не влезал в 375px экран)
+- Landing hero: текст `text-3xl`, кнопки `flex-col`, padding уменьшен
+- Все секции: `px-4 sm:px-6` для мобильных отступов
+- Lesson page: breadcrumb truncate, навигация — "Завершить" full-width сверху + компактный prev/next
+- Profile page: overflow-hidden на subscription/payment cards, truncate на длинных значениях
+- Pricing page: LogoMark на мобилке (было 241px + кнопка "Назад" слиплись)
+- Global fix: `html,body{overflow-x:hidden}` в globals.css
+- 2 pre-existing бага исправлены: diagnostic.ts syntax error, plan.title→plan.name
+
+**Также исправлено (pre-existing):**
+- `diagnostic.ts:18` — лишняя `}` ломала билд
+- `subscription-service.ts` — `plan.title` (не существует) → `plan.name`
 
 **Следующий шаг:**
 - [ ] Phase 22: Transactional email notifications (needs planning)
+- [ ] Проверить профиль на iPhone после очистки кэша Safari
 
-### Previous Session (2026-03-12 earlier)
+### Previous Session (2026-03-12)
 
 **Pricing page bugfixes for unauthenticated users (2 commits deployed):**
 - /pricing в инкогнито — dropdown с курсами + редирект на /login при оплате
@@ -86,9 +109,9 @@
 - ✅ Plan 06-01: Prisma OpenSSL fix, health endpoint `/api/health`, CI master branch
 - ✅ Plan 06-02: CD pipeline, full E2E verification (12/12 pages)
 
-**Пропущенные фазы (не реализованы, проект задеплоен без них):**
-- Phase 4: Access Control & Personalization — нет soft gating и персонализированного трека
-- Phase 5: Security Hardening — endpoints не защищены protectedProcedure, нет rate limiting
+**Пропущенные фазы (реализованы позже):**
+- Phase 4: Access Control & Personalization — ✅ реализована (soft gating через paywall, Phase 20)
+- Phase 5: Security Hardening — ✅ реализована 2026-02-25 (rate limiting, protectedProcedure, SafeMarkdown, error boundaries)
 
 ### Previous Session (2026-02-24 earlier)
 
@@ -398,8 +421,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 - seekTo через postMessage API к iframe
 
 **Next Steps:**
-1. Phase 22: Transactional email notifications (needs planning)
-2. Phase 5: Security Hardening — rate limiting, sanitization (перед публичным запуском)
+1. Phase 22: Transactional email notifications (paused — waiting for CQ credentials)
 
 ## Key Decisions
 
@@ -433,8 +455,22 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 |-----------|-------|
 | Project URL | `https://saecuecevicwjkpmaoot.supabase.co` |
 | Database | PostgreSQL with pgvector |
-| Auth Providers | Email/Password, Google OAuth |
+| Auth Providers | Email/Password, Yandex ID OAuth |
+| RLS | ✅ Enabled on all 18 tables (zero policies) |
 | Status | ✅ Configured & Working |
+
+### Row Level Security (RLS)
+RLS включён на всех 18 public таблицах (2026-03-16). Стратегия: **нулевые политики**.
+
+**Почему безопасно:**
+- Все данные идут через Prisma (`DATABASE_URL`, роль `postgres`) — обходит RLS
+- AI/RAG идёт через `service_role` key — обходит RLS
+- Trigger `handle_new_user` — `SECURITY DEFINER` — обходит RLS
+- PostgREST (anon key из браузера) → **0 строк**, полная блокировка
+
+**Если в будущем нужен Supabase Realtime или клиентские запросы** — добавить политики точечно под конкретную задачу.
+
+**Скрипт:** `scripts/sql/enable_rls_all_tables.sql`
 
 ### Test User (для локального тестирования)
 | Field | Value |
