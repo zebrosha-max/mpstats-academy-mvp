@@ -26,6 +26,8 @@ export default function DiagnosticSessionPage() {
     { enabled: !!sessionId }
   );
 
+  const [isComplete, setIsComplete] = useState(false);
+
   const submitAnswer = trpc.diagnostic.submitAnswer.useMutation({
     onSuccess: (data) => {
       setFeedback({
@@ -33,18 +35,18 @@ export default function DiagnosticSessionPage() {
         correctIndex: data.correctIndex,
         explanation: data.explanation,
       });
-
-      // Auto-advance after showing feedback
-      setTimeout(() => {
-        if (data.isComplete) {
-          router.push(`/diagnostic/results?id=${sessionId}`);
-        } else {
-          setFeedback(null);
-          refetch();
-        }
-      }, 2000);
+      setIsComplete(data.isComplete);
     },
   });
+
+  const handleNext = () => {
+    if (isComplete) {
+      router.push(`/diagnostic/results?id=${sessionId}`);
+    } else {
+      setFeedback(null);
+      refetch();
+    }
+  };
 
   const handleAnswer = (selectedIndex: number) => {
     if (!sessionState?.currentQuestion || !sessionId) return;
@@ -142,6 +144,7 @@ export default function DiagnosticSessionPage() {
       <Card className="shadow-mp-card">
         <CardContent className="py-8">
           <Question
+            key={sessionState.currentQuestion.id}
             question={sessionState.currentQuestion}
             onAnswer={handleAnswer}
             isSubmitting={submitAnswer.isPending}
@@ -152,8 +155,13 @@ export default function DiagnosticSessionPage() {
 
       {/* Next button after feedback */}
       {feedback && (
-        <div className="text-center text-body-sm text-mp-gray-400">
-          Переход к следующему вопросу...
+        <div className="text-center">
+          <Button onClick={handleNext} size="lg" className="w-full sm:w-auto">
+            {isComplete ? 'Посмотреть результаты' : 'Следующий вопрос'}
+            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Button>
         </div>
       )}
     </div>
