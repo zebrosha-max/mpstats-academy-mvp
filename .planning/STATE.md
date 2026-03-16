@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: EMAIL-SPEC.md created, ready for email team handoff
-stopped_at: Phase 23 context gathered
-last_updated: "2026-03-16T14:11:25.849Z"
-last_activity: 2026-03-13 — Phase 22 Plan 01 completed (EMAIL-SPEC.md)
+status: Phase 23 Plan 01 complete (schema + tagging script)
+stopped_at: Completed 23-01-PLAN.md
+last_updated: "2026-03-16T14:46:44Z"
+last_activity: 2026-03-16 — Phase 23 Plan 01 completed (schema migration + tagging script)
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 6
-  total_plans: 15
-  completed_plans: 14
+  total_plans: 16
+  completed_plans: 15
   percent: 94
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 22 Transactional Email Notifications — Plan 01 complete (EMAIL-SPEC.md)
+**Current focus:** Phase 23 Diagnostic 2.0 — Plan 01 complete (schema + tagging script)
 
 ## Current Position
 
-Phase: 22 of 22 (Transactional Email Notifications)
-Plan: 1 of 3 in current phase -- COMPLETE
-Status: EMAIL-SPEC.md created, ready for email team handoff
-Last activity: 2026-03-13 — Phase 22 Plan 01 completed (EMAIL-SPEC.md)
+Phase: 23 of 23 (Diagnostic 2.0)
+Plan: 1 of 4 in current phase -- COMPLETE
+Status: Phase 23 Plan 01 complete (schema migration + tagging script)
+Last activity: 2026-03-16 — Phase 23 Plan 01 completed (schema migration + tagging script)
 
 Progress: [█████████░] 94% (v1.0 + v1.1 + v1.2 + v1.3 in progress)
 
@@ -83,6 +83,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 22]: noreply@mpstats.academy as sender, CQ events with $ prefix, auth emails via Supabase Hook not CQ
 - [Phase 22]: Feature flag cache with 60s TTL to avoid DB query per email send
 - [Phase 22]: Fire-and-forget email pattern: sendXxxEmail().catch(console.error) -- email failure never breaks billing
+- [23-01]: Keep single skillCategory alongside new skillCategories Json for backward compat (8+ consumers)
+- [23-01]: Tagging.ts has own OpenRouter/Supabase clients (no server-only import) for CLI script compatibility
+- [23-01]: Two-stage topic pipeline: LLM free tagging then LLM clustering into canonical dictionary
 
 ### Blockers/Concerns
 
@@ -118,11 +121,12 @@ None.
 | 20    | 02   | 5min     | 3     | 6     |
 | Phase 22 P01 | 3min | 1 tasks | 1 files |
 | Phase 22 P02 | 3min | 2 tasks | 9 files |
+| 23    | 01   | 4min     | 2     | 6     |
 
 ## Session Continuity
 
-Last session: 2026-03-16T14:11:25.845Z
-Stopped at: Phase 23 context gathered
+Last session: 2026-03-16T14:46:44Z
+Stopped at: Completed 23-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

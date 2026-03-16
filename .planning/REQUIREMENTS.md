@@ -51,9 +51,9 @@ Requirements for Diagnostic 2.0 — personalized learning track.
 
 ### Lesson Tagging
 
-- [ ] **DIAG-01**: Каждый урок размечен 1-3 skillCategories (мульти-категория вместо single)
-- [ ] **DIAG-02**: Каждый урок размечен 2-5 свободных топиков с канонической нормализацией
-- [ ] **DIAG-03**: Сложность уроков назначена LLM (EASY/MEDIUM/HARD вместо hardcoded MEDIUM)
+- [x] **DIAG-01**: Каждый урок размечен 1-3 skillCategories (мульти-категория вместо single)
+- [x] **DIAG-02**: Каждый урок размечен 2-5 свободных топиков с канонической нормализацией
+- [x] **DIAG-03**: Сложность уроков назначена LLM (EASY/MEDIUM/HARD вместо hardcoded MEDIUM)
 
 ### Question Tracing
 

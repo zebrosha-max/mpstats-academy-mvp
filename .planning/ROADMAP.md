@@ -164,7 +164,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 20. Paywall + Content Gating | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 22. Email Notifications | v1.3 | 2/3 | In Progress | - |
-| 23. Diagnostic 2.0 | v1.4 | 0/3 | Planned | - |
+| 23. Diagnostic 2.0 | 1/3 | In Progress|  | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -209,7 +209,7 @@ Plans:
   4. Страница урока из секции "Ошибки" показывает хинт с кликабельным таймкодом между видео и табами
   5. При повторной диагностике Radar Chart показывает два полигона (было/стало)
   6. Старые плоские треки продолжают работать (backward compatibility)
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 23-01-PLAN.md — Schema migration (multi-category, topics, sourceData) + shared types + LLM tagging script
