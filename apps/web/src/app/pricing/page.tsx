@@ -18,7 +18,6 @@ const formatPrice = (amount: number) =>
 export default function PricingPage() {
   const router = useRouter();
   const [widgetReady, setWidgetReady] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -31,9 +30,6 @@ export default function PricingPage() {
     refetchOnWindowFocus: false,
   });
 
-  // Fetch courses for dropdown (public — works for everyone)
-  const { data: courses } = trpc.billing.getCourses.useQuery();
-
   // Initiate payment mutation
   const initiatePayment = trpc.billing.initiatePayment.useMutation();
 
@@ -44,33 +40,20 @@ export default function PricingPage() {
     }
   }, [plans, plansLoading, router]);
 
-  const coursePlan = plans?.find((p) => p.type === 'COURSE');
   const platformPlan = plans?.find((p) => p.type === 'PLATFORM');
-
-  const hasActiveCourseSubscription =
-    subscription &&
-    subscription.plan.type === 'COURSE' &&
-    ['ACTIVE', 'PAST_DUE'].includes(subscription.status) &&
-    subscription.courseId === selectedCourseId;
 
   const hasActivePlatformSubscription =
     subscription &&
     subscription.plan.type === 'PLATFORM' &&
     ['ACTIVE', 'PAST_DUE'].includes(subscription.status);
 
-  const handlePayment = async (planType: 'COURSE' | 'PLATFORM') => {
-    if (planType === 'COURSE' && !selectedCourseId) {
-      setMessage({ type: 'error', text: 'Выберите курс' });
-      return;
-    }
-
+  const handlePayment = async () => {
     setIsProcessing(true);
     setMessage(null);
 
     try {
       const result = await initiatePayment.mutateAsync({
-        planType,
-        courseId: planType === 'COURSE' ? selectedCourseId : undefined,
+        planType: 'PLATFORM',
       });
 
       const success = await openPaymentWidget({
@@ -168,101 +151,21 @@ export default function PricingPage() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
-            {/* COURSE plan */}
-            {coursePlan && (
-              <Card className="relative h-full flex flex-col">
-                {hasActiveCourseSubscription && (
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="success">Ваш план</Badge>
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-heading">{coursePlan.name}</CardTitle>
-                  <p className="text-body-sm text-mp-gray-500">
-                    Доступ к одному курсу на выбор
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-display-sm text-mp-gray-900">
-                    {formatPrice(coursePlan.price)}{' '}
-                    <span className="text-body text-mp-gray-500">/ мес</span>
-                  </div>
-
-                  {/* Course select */}
-                  <div>
-                    <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
-                      Выберите курс
-                    </label>
-                    <select
-                      value={selectedCourseId}
-                      onChange={(e) => setSelectedCourseId(e.target.value)}
-                      className="w-full rounded-lg border border-mp-gray-300 bg-white px-3 py-2.5 text-body-sm text-mp-gray-900 focus:border-mp-blue-500 focus:outline-none focus:ring-2 focus:ring-mp-blue-500/20"
-                    >
-                      <option value="">-- Выберите курс --</option>
-                      {courses?.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <ul className="space-y-2 text-body-sm text-mp-gray-600">
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Все видеоуроки курса
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      AI-помощник по материалам
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Конспекты уроков
-                    </li>
-                  </ul>
-                </CardContent>
-                <CardFooter className="mt-auto">
-                  {hasActiveCourseSubscription ? (
-                    <Link href="/profile" className="block w-full">
-                      <Button variant="outline" className="w-full">
-                        Управление подпиской
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button
-                      className="w-full"
-                      onClick={() => handlePayment('COURSE')}
-                      disabled={isProcessing || !widgetReady || !selectedCourseId}
-                    >
-                      {isProcessing ? 'Обработка...' : 'Оформить подписку'}
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-            )}
-
-            {/* PLATFORM plan */}
+          <div className="max-w-md mx-auto">
+            {/* PLATFORM plan — single plan */}
             {platformPlan && (
-              <Card className="relative h-full flex flex-col border-2 border-mp-blue-500">
+              <Card className="relative flex flex-col border-2 border-mp-blue-500">
                 <div className="absolute top-4 right-4">
                   {hasActivePlatformSubscription ? (
                     <Badge variant="success">Ваш план</Badge>
                   ) : (
-                    <Badge variant="primary">Выгодно</Badge>
+                    <Badge variant="primary">Полный доступ</Badge>
                   )}
                 </div>
                 <CardHeader>
                   <CardTitle className="text-heading">{platformPlan.name}</CardTitle>
                   <p className="text-body-sm text-mp-gray-500">
-                    Полный доступ ко всем курсам
+                    Все курсы, воркшопы и AI-инструменты
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -276,7 +179,13 @@ export default function PricingPage() {
                       <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Все 6 курсов (80+ уроков)
+                      4 основных курса (80+ видеоуроков)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Экспресс-курсы и практические воркшопы
                     </li>
                     <li className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,6 +205,12 @@ export default function PricingPage() {
                       </svg>
                       Персональный план обучения
                     </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Конспекты уроков
+                    </li>
                   </ul>
                 </CardContent>
                 <CardFooter className="mt-auto">
@@ -309,7 +224,7 @@ export default function PricingPage() {
                     <Button
                       variant="featured"
                       className="w-full"
-                      onClick={() => handlePayment('PLATFORM')}
+                      onClick={handlePayment}
                       disabled={isProcessing || !widgetReady}
                     >
                       {isProcessing ? 'Обработка...' : 'Оформить подписку'}
