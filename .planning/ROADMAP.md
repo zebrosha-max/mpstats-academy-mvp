@@ -195,3 +195,13 @@ Plans:
 - [ ] 22-01-PLAN.md — EMAIL-SPEC.md specification document for email team (9 emails, drafts, variables, flows)
 - [ ] 22-02-PLAN.md — CQ API client + sonner toasts + billing email triggers in webhook handlers
 - [ ] 22-03-PLAN.md — Supabase Send Email Hook + welcome/diagnostic triggers + scheduled emails cron + human verify
+
+### Phase 23: Diagnostic 2.0 — personalized learning track with lesson-level topic tagging, question-to-content tracing, and error-based path prioritization
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 22
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 23 to break down)
