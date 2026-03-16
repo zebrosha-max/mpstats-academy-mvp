@@ -55,6 +55,19 @@ export default function LearnPage() {
     }
   }, [hasDiagnostic, diagLoading, viewModeInitialized]);
 
+  // Auto-expand course from URL hash (e.g. /learn#01_analytics)
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash && courses?.some((c) => c.id === hash)) {
+      setExpandedCourses((prev) => new Set(prev).add(hash));
+      setViewMode('courses');
+      // Scroll to course after render
+      setTimeout(() => {
+        document.getElementById(`course-${hash}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [courses]);
+
   // O(1) lookup for recommended lesson IDs
   const recommendedLessonIds = new Set(
     recommendedPath?.lessons.map((l) => l.id) ?? []
@@ -344,7 +357,7 @@ export default function LearnPage() {
               : null);
 
             return (
-              <Card key={course.id} className="shadow-mp-card">
+              <Card key={course.id} id={`course-${course.id}`} className="shadow-mp-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>

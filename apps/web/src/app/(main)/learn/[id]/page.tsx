@@ -278,7 +278,9 @@ export default function LessonPage() {
           Обучение
         </Link>
         <span className="text-mp-gray-400 shrink-0">/</span>
-        <span className="text-mp-gray-500 truncate">{course?.title}</span>
+        <Link href={`/learn#${course?.id}`} className="text-mp-gray-500 hover:text-mp-blue-600 transition-colors truncate">
+          {course?.title}
+        </Link>
         <span className="text-mp-gray-400 shrink-0">/</span>
         <span className="text-mp-gray-900 font-medium shrink-0">Урок {currentLessonNumber}</span>
       </div>
