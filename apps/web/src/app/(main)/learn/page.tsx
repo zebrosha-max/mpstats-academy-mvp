@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,13 @@ const STATUS_FILTERS = [
 
 const INITIAL_LESSONS_SHOWN = 5;
 
+const SECTION_STYLES: Record<string, { icon: string; bgColor: string; borderColor: string; textColor: string; badgeColor: string }> = {
+  errors: { icon: '!', bgColor: 'bg-red-50', borderColor: 'border-red-200', textColor: 'text-red-700', badgeColor: 'bg-red-100 text-red-700' },
+  deepening: { icon: '\u2193', bgColor: 'bg-mp-blue-50', borderColor: 'border-mp-blue-200', textColor: 'text-mp-blue-700', badgeColor: 'bg-mp-blue-100 text-mp-blue-700' },
+  growth: { icon: '\u2191', bgColor: 'bg-mp-green-50', borderColor: 'border-mp-green-200', textColor: 'text-mp-green-700', badgeColor: 'bg-mp-green-100 text-mp-green-700' },
+  advanced: { icon: '\u2605', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200', textColor: 'text-yellow-700', badgeColor: 'bg-yellow-100 text-yellow-700' },
+};
+
 function isDatabaseUnavailable(errorMessage: string): boolean {
   return errorMessage === 'DATABASE_UNAVAILABLE' || errorMessage.includes('DATABASE_UNAVAILABLE');
 }
@@ -38,6 +45,7 @@ export default function LearnPage() {
   const [viewMode, setViewMode] = useState<'path' | 'courses'>('courses');
   const [viewModeInitialized, setViewModeInitialized] = useState(false);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['errors']));
 
   const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
   const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
@@ -87,6 +95,20 @@ export default function LearnPage() {
       return next;
     });
   };
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(sectionId)) next.delete(sectionId);
+      else next.add(sectionId);
+      return next;
+    });
+  };
+
+  const isSectioned = useMemo(
+    () => recommendedPath?.isSectioned === true && !!recommendedPath?.sections,
+    [recommendedPath],
+  );
 
   // Filter lessons
   const filteredLessons = path?.lessons.filter((lesson) => {
@@ -262,57 +284,131 @@ export default function LearnPage() {
 
           {/* Case C: Normal track with lessons */}
           {hasDiagnostic && recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
-            <div className="space-y-3">
-              {(() => {
-                const showGating = recommendedPath.hasPlatformSubscription === false
-                  && recommendedPath.lessons.some(l => l.locked);
-                const visibleCount = showGating ? 3 : recommendedPath.lessons.length;
-                const visibleLessons = recommendedPath.lessons.slice(0, visibleCount);
-                const hiddenLessons = showGating ? recommendedPath.lessons.slice(visibleCount) : [];
+            <div className="space-y-4">
+              {isSectioned ? (
+                /* Sectioned accordion view */
+                <>
+                  {recommendedPath.sections!.map((section) => {
+                    const style = SECTION_STYLES[section.id] || SECTION_STYLES.growth;
+                    const isOpen = expandedSections.has(section.id);
+                    const completedInSection = section.lessons.filter((l: { status: string }) => l.status === 'COMPLETED').length;
 
-                return (
-                  <>
-                    {visibleLessons.map((lesson, idx) => (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
-                        showCourse
-                        courseName={lesson.courseName}
-                        isRecommended
-                        locked={lesson.locked}
-                      />
-                    ))}
-                    {hiddenLessons.length > 0 && (
-                      <>
-                        <div className="blur-sm pointer-events-none select-none space-y-3">
-                          {hiddenLessons.map((lesson, idx) => (
-                            <LessonCard
-                              key={lesson.id}
-                              lesson={{ ...lesson, title: `${visibleCount + idx + 1}. ${lesson.title}` } as LessonWithProgress}
-                              showCourse
-                              courseName={lesson.courseName}
-                              locked
-                            />
-                          ))}
-                        </div>
-                        <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
-                          <CardContent className="py-8 text-center">
-                            <h3 className="text-heading text-mp-gray-900 mb-2">
-                              Получите полный персональный трек
-                            </h3>
-                            <p className="text-body text-mp-gray-500 mb-4">
-                              Ещё {hiddenLessons.length} уроков доступны с полной подпиской
-                            </p>
-                            <Link href="/pricing">
-                              <Button size="lg">Оформить полный доступ</Button>
-                            </Link>
+                    return (
+                      <Card key={section.id} className={`shadow-mp-card ${style.borderColor}`}>
+                        {/* Section header -- clickable to expand/collapse */}
+                        <button
+                          onClick={() => toggleSection(section.id)}
+                          className={`w-full text-left px-6 py-4 flex items-center justify-between ${style.bgColor} rounded-t-lg`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${style.badgeColor}`}>
+                              {style.icon}
+                            </span>
+                            <div>
+                              <h3 className={`text-heading font-semibold ${style.textColor}`}>{section.title}</h3>
+                              <p className="text-body-sm text-mp-gray-500">{section.description}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-body-sm text-mp-gray-500">
+                              {completedInSection}/{section.lessons.length}
+                            </span>
+                            <svg className={`w-5 h-5 text-mp-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </button>
+
+                        {/* Section content -- collapsible */}
+                        {isOpen && (
+                          <CardContent className="pt-3 pb-4">
+                            <div className="grid gap-3">
+                              {section.lessons.map((lesson: LessonWithProgress & { courseName: string; locked: boolean }, idx: number) => (
+                                <LessonCard
+                                  key={lesson.id}
+                                  lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
+                                  showCourse
+                                  courseName={lesson.courseName}
+                                  isRecommended={section.id === 'errors'}
+                                  locked={lesson.locked}
+                                />
+                              ))}
+                            </div>
                           </CardContent>
-                        </Card>
+                        )}
+                      </Card>
+                    );
+                  })}
+                  {/* Re-diagnostic CTA when errors section is fully completed */}
+                  {recommendedPath.sections!.find((s: { id: string }) => s.id === 'errors')?.lessons.every((l: { status: string }) => l.status === 'COMPLETED') && (
+                    <Card className="shadow-mp-card border-mp-green-200 bg-gradient-to-br from-mp-green-50 to-white">
+                      <CardContent className="py-8 text-center">
+                        <h3 className="text-heading text-mp-gray-900 mb-2">Отлично! Все ошибки проработаны</h3>
+                        <p className="text-body text-mp-gray-500 mb-4">
+                          Хочешь проверить, как вырос твой уровень? Пройди диагностику снова!
+                        </p>
+                        <Link href="/diagnostic">
+                          <Button variant="outline">Пройти диагностику снова</Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              ) : (
+                /* Fallback: flat list for old-format paths */
+                <div className="space-y-3">
+                  {(() => {
+                    const showGating = recommendedPath.hasPlatformSubscription === false
+                      && recommendedPath.lessons.some(l => l.locked);
+                    const visibleCount = showGating ? 3 : recommendedPath.lessons.length;
+                    const visibleLessons = recommendedPath.lessons.slice(0, visibleCount);
+                    const hiddenLessons = showGating ? recommendedPath.lessons.slice(visibleCount) : [];
+
+                    return (
+                      <>
+                        {visibleLessons.map((lesson, idx) => (
+                          <LessonCard
+                            key={lesson.id}
+                            lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
+                            showCourse
+                            courseName={lesson.courseName}
+                            isRecommended
+                            locked={lesson.locked}
+                          />
+                        ))}
+                        {hiddenLessons.length > 0 && (
+                          <>
+                            <div className="blur-sm pointer-events-none select-none space-y-3">
+                              {hiddenLessons.map((lesson, idx) => (
+                                <LessonCard
+                                  key={lesson.id}
+                                  lesson={{ ...lesson, title: `${visibleCount + idx + 1}. ${lesson.title}` } as LessonWithProgress}
+                                  showCourse
+                                  courseName={lesson.courseName}
+                                  locked
+                                />
+                              ))}
+                            </div>
+                            <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
+                              <CardContent className="py-8 text-center">
+                                <h3 className="text-heading text-mp-gray-900 mb-2">
+                                  Получите полный персональный трек
+                                </h3>
+                                <p className="text-body text-mp-gray-500 mb-4">
+                                  Ещё {hiddenLessons.length} уроков доступны с полной подпиской
+                                </p>
+                                <Link href="/pricing">
+                                  <Button size="lg">Оформить полный доступ</Button>
+                                </Link>
+                              </CardContent>
+                            </Card>
+                          </>
+                        )}
                       </>
-                    )}
-                  </>
-                );
-              })()}
+                    );
+                  })()}
+                </div>
+              )}
             </div>
           )}
 
