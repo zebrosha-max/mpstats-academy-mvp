@@ -278,7 +278,7 @@ export default function PricingPage() {
                       <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Все 6 курсов (80+ уроков)
+                      Все курсы (400+ видеоуроков)
                     </li>
                     <li className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
