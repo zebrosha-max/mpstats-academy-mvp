@@ -142,7 +142,7 @@ async function generateQuestionsForCategory(
     try {
       const questions = await callLLM(model, category, count, context);
       return questions.map((q, i) =>
-        toDiagnosticQuestion(q, category, i)
+        toDiagnosticQuestion(q, category, i, sampledChunks)
       );
     } catch (err) {
       console.warn(
@@ -257,7 +257,7 @@ function buildSystemPrompt(category: SkillCategory, count: number): string {
 async function fetchRandomChunks(
   coursePrefixes: string[],
   limit: number
-): Promise<Array<{ id: string; content: string; lesson_id: string }>> {
+): Promise<Array<{ id: string; content: string; lesson_id: string; timecode_start: number; timecode_end: number }>> {
   // Build OR filter for multiple prefixes
   const orFilter = coursePrefixes
     .map((prefix) => `lesson_id.like.${prefix}%`)
@@ -265,7 +265,7 @@ async function fetchRandomChunks(
 
   const { data, error } = await supabase
     .from('content_chunk')
-    .select('id, content, lesson_id')
+    .select('id, content, lesson_id, timecode_start, timecode_end')
     .or(orFilter)
     .limit(limit);
 
@@ -283,7 +283,8 @@ async function fetchRandomChunks(
 function toDiagnosticQuestion(
   q: GeneratedQuestion,
   category: SkillCategory,
-  index: number
+  index: number,
+  sourceChunks?: Array<{ id: string; lesson_id: string; timecode_start: number; timecode_end: number }>
 ): DiagnosticQuestion {
   // Remember the correct answer text before shuffling
   const correctAnswer = q.options[q.correctIndex];
@@ -302,6 +303,16 @@ function toDiagnosticQuestion(
     explanation: q.explanation,
     difficulty: q.difficulty,
     skillCategory: category,
+    // Source tracing (Phase 23)
+    ...(sourceChunks ? {
+      sourceChunkIds: sourceChunks.map(c => c.id),
+      sourceLessonIds: [...new Set(sourceChunks.map(c => c.lesson_id))],
+      sourceTimecodes: sourceChunks.map(c => ({
+        lessonId: c.lesson_id,
+        start: c.timecode_start,
+        end: c.timecode_end,
+      })),
+    } : {}),
   };
 }
 
