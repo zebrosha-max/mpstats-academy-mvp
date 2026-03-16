@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { VideoPlayer, type PlayerHandle } from '@/components/video/KinescopePlayer';
 import { TimecodeLink } from '@/components/video/TimecodeLink';
 import { DiagnosticGateBanner } from '@/components/learning/DiagnosticGateBanner';
+import { DiagnosticHint } from '@/components/diagnostic/DiagnosticHint';
 import { LockOverlay } from '@/components/learning/LockOverlay';
 import { PaywallBanner } from '@/components/learning/PaywallBanner';
 import { CollapsibleSummary } from '@/components/learning/CollapsibleSummary';
@@ -67,7 +68,19 @@ export default function LessonPage() {
 
   const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
   const { data: hasDiagnostic } = trpc.diagnostic.hasCompletedDiagnostic.useQuery();
+  const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery(
+    undefined,
+    { enabled: hasDiagnostic === true }
+  );
   const { data: watchProgress } = trpc.learning.getWatchProgress.useQuery({ lessonId });
+
+  // Extract diagnostic hints for this lesson from the errors section
+  const lessonHints = useMemo(() => {
+    if (!recommendedPath?.isSectioned || !recommendedPath.sections) return [];
+    const errorsSection = recommendedPath.sections.find((s: { id: string }) => s.id === 'errors');
+    if (!errorsSection?.hints) return [];
+    return errorsSection.hints.filter((h: { lessonId: string }) => h.lessonId === lessonId);
+  }, [recommendedPath, lessonId]);
 
   // Summary always loads (no longer gated by tab)
   const { data: summaryData, isLoading: summaryLoading, error: summaryError } = trpc.ai.getLessonSummary.useQuery(
@@ -319,6 +332,23 @@ export default function LessonPage() {
               durationSeconds={lesson.duration ? lesson.duration * 60 : undefined}
             />
           </Card>
+
+          {/* Diagnostic hint (only for lessons in Errors section) */}
+          {lessonHints.length > 0 && (
+            <DiagnosticHint
+              lessonId={lessonId}
+              hints={lessonHints}
+              onSeek={(seconds) => {
+                const iframe = document.querySelector('iframe[src*="kinescope"]') as HTMLIFrameElement;
+                if (iframe?.contentWindow) {
+                  iframe.contentWindow.postMessage(
+                    JSON.stringify({ method: 'seekTo', params: [seconds] }),
+                    '*'
+                  );
+                }
+              }}
+            />
+          )}
 
           {/* Soft upsell banner for free lessons when billing is active */}
           {lesson.order <= 2 && totalLessonsInCourse > 2 && data.hasPlatformSubscription === false && (
