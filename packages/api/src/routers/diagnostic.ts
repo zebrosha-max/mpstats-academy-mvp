@@ -13,6 +13,8 @@ import type {
   SkillGap,
   SkillCategory,
   DiagnosticQuestion,
+  SectionedLearningPath,
+  LearningPathSection,
 } from '@mpstats/shared';
 
 // ============== CONSTANTS ==============
@@ -208,6 +210,174 @@ async function generateFullRecommendedPath(
   }
 
   return lessonIds;
+}
+
+// ============== SECTIONED PATH GENERATION (Phase 23) ==============
+
+/**
+ * Category key mapping for SkillProfile lookup.
+ */
+const CATEGORY_KEY_MAP: Record<string, keyof SkillProfile> = {
+  ANALYTICS: 'analytics',
+  MARKETING: 'marketing',
+  CONTENT: 'content',
+  OPERATIONS: 'operations',
+  FINANCE: 'finance',
+};
+
+/**
+ * Generate a 4-section learning path based on skill profile and diagnostic errors.
+ *
+ * Sections:
+ * 1. Errors (Проработка ошибок) — lessons linked to wrong answers via sourceData
+ * 2. Deepening (Углубление) — lessons for weak categories (score < 70)
+ * 3. Growth (Развитие) — lessons for mid categories (70-85)
+ * 4. Advanced (Продвинутый) — HARD lessons for strong categories (> 85)
+ */
+async function generateSectionedPath(
+  prisma: PrismaClient,
+  skillProfile: SkillProfile,
+  sessionId: string,
+  answers: Array<{ isCorrect: boolean; sourceData: any; skillCategory: string; questionId: string }>,
+  sessionQuestions: DiagnosticQuestion[],
+): Promise<SectionedLearningPath> {
+  // Track used lesson IDs across sections to avoid duplicates
+  const usedLessonIds = new Set<string>();
+
+  // ── Section 1: Errors ──
+  const wrongAnswers = answers.filter(
+    a => !a.isCorrect && a.sourceData?.lessonIds?.length > 0
+  );
+  const errorLessonIds = [...new Set(wrongAnswers.flatMap(a => a.sourceData.lessonIds as string[]))];
+
+  // Fetch error lessons and sort by category weakness
+  const errorLessons = errorLessonIds.length > 0
+    ? await prisma.lesson.findMany({
+        where: { id: { in: errorLessonIds } },
+        select: { id: true, skillCategory: true, order: true },
+      })
+    : [];
+
+  // Sort by weakness (lowest skill score first), then by lesson order
+  errorLessons.sort((a, b) => {
+    const aKey = CATEGORY_KEY_MAP[a.skillCategory] || 'analytics';
+    const bKey = CATEGORY_KEY_MAP[b.skillCategory] || 'analytics';
+    const scoreDiff = skillProfile[aKey] - skillProfile[bKey];
+    return scoreDiff !== 0 ? scoreDiff : a.order - b.order;
+  });
+
+  const sortedErrorIds = errorLessons.map(l => l.id);
+  sortedErrorIds.forEach(id => usedLessonIds.add(id));
+
+  // Build hints: for each error lesson, find wrong answers referencing it
+  const questionMap = new Map(sessionQuestions.map(q => [q.id, q]));
+  const hints: LearningPathSection['hints'] = [];
+
+  for (const lessonId of sortedErrorIds) {
+    const relevantAnswers = wrongAnswers.filter(
+      a => (a.sourceData.lessonIds as string[]).includes(lessonId)
+    );
+    for (const answer of relevantAnswers) {
+      const question = questionMap.get(answer.questionId);
+      if (!question) continue;
+      const timecodes = (question.sourceTimecodes || [])
+        .filter(t => t.lessonId === lessonId)
+        .map(t => ({ start: t.start, end: t.end }));
+      if (timecodes.length > 0) {
+        hints.push({ lessonId, questionText: question.question, timecodes });
+      }
+    }
+  }
+
+  // ── Fetch all lessons for sections 2-4 ──
+  const allLessons = await prisma.lesson.findMany({
+    select: { id: true, skillCategory: true, skillCategories: true, skillLevel: true, order: true },
+    orderBy: { order: 'asc' },
+  });
+
+  // Helper: check if lesson's categories overlap with target categories
+  function hasOverlap(lesson: { skillCategory: string; skillCategories: any }, categories: string[]): boolean {
+    const cats = lesson.skillCategories as string[] | null;
+    if (cats && cats.length > 0) {
+      return cats.some(c => categories.includes(c));
+    }
+    // Fallback to single skillCategory
+    return categories.includes(lesson.skillCategory);
+  }
+
+  // ── Section 2: Deepening (score < 70) ──
+  const weakCategories = Object.entries(CATEGORY_KEY_MAP)
+    .filter(([, key]) => skillProfile[key] < 70)
+    .map(([cat]) => cat);
+
+  const deepeningLessons = allLessons.filter(
+    l => !usedLessonIds.has(l.id) && hasOverlap(l, weakCategories)
+  );
+  // Sort by category weakness then order
+  deepeningLessons.sort((a, b) => {
+    const aKey = CATEGORY_KEY_MAP[a.skillCategory] || 'analytics';
+    const bKey = CATEGORY_KEY_MAP[b.skillCategory] || 'analytics';
+    const scoreDiff = skillProfile[aKey] - skillProfile[bKey];
+    return scoreDiff !== 0 ? scoreDiff : a.order - b.order;
+  });
+  const deepeningIds = deepeningLessons.map(l => l.id);
+  deepeningIds.forEach(id => usedLessonIds.add(id));
+
+  // ── Section 3: Growth (score 70-85) ──
+  const midCategories = Object.entries(CATEGORY_KEY_MAP)
+    .filter(([, key]) => skillProfile[key] >= 70 && skillProfile[key] <= 85)
+    .map(([cat]) => cat);
+
+  const growthLessons = allLessons.filter(
+    l => !usedLessonIds.has(l.id) && hasOverlap(l, midCategories)
+  );
+  const growthIds = growthLessons.map(l => l.id);
+  growthIds.forEach(id => usedLessonIds.add(id));
+
+  // ── Section 4: Advanced (score > 85, HARD lessons) ──
+  const strongCategories = Object.entries(CATEGORY_KEY_MAP)
+    .filter(([, key]) => skillProfile[key] > 85)
+    .map(([cat]) => cat);
+
+  const advancedLessons = allLessons.filter(
+    l => !usedLessonIds.has(l.id) && l.skillLevel === 'HARD' && hasOverlap(l, strongCategories)
+  );
+  const advancedIds = advancedLessons.map(l => l.id);
+
+  const allSections: LearningPathSection[] = [
+    {
+      id: 'errors' as const,
+      title: 'Проработка ошибок',
+      description: `${sortedErrorIds.length} уроков по темам, где были ошибки`,
+      lessonIds: sortedErrorIds,
+      hints: hints.length > 0 ? hints : undefined,
+    },
+    {
+      id: 'deepening' as const,
+      title: 'Углубление',
+      description: `${deepeningIds.length} уроков для слабых навыков`,
+      lessonIds: deepeningIds,
+    },
+    {
+      id: 'growth' as const,
+      title: 'Развитие',
+      description: `${growthIds.length} уроков для средних навыков`,
+      lessonIds: growthIds,
+    },
+    {
+      id: 'advanced' as const,
+      title: 'Продвинутый уровень',
+      description: `${advancedIds.length} уроков повышенной сложности`,
+      lessonIds: advancedIds,
+    },
+  ];
+  const sections = allSections.filter(s => s.lessonIds.length > 0);
+
+  return {
+    version: 2,
+    sections,
+    generatedFromSessionId: sessionId,
+  };
 }
 
 // ============== ROUTER ==============
@@ -432,7 +602,7 @@ export const diagnosticRouter = router({
         const isCorrect = input.selectedIndex === question.correctIndex;
         const selectedAnswer = question.options[input.selectedIndex] || '';
 
-        // Save answer to DB
+        // Save answer to DB (with source tracing from Phase 23)
         await ctx.prisma.diagnosticAnswer.create({
           data: {
             sessionId: input.sessionId,
@@ -441,6 +611,12 @@ export const diagnosticRouter = router({
             isCorrect,
             difficulty: question.difficulty,
             skillCategory: question.skillCategory,
+            // Source tracing (Phase 23) — links wrong answers to specific lessons/timecodes
+            sourceData: question.sourceChunkIds ? {
+              chunkIds: question.sourceChunkIds,
+              lessonIds: question.sourceLessonIds || [],
+              timecodes: question.sourceTimecodes || [],
+            } : undefined,
           },
         });
 
@@ -493,12 +669,44 @@ export const diagnosticRouter = router({
             data: { status: 'COMPLETED', completedAt: new Date() },
           });
 
-          // Generate and persist recommended learning path
-          const fullPath = await generateFullRecommendedPath(ctx.prisma, skillProfile);
+          // Generate and persist recommended learning path (sectioned with error tracing)
+          let pathData: any;
+          try {
+            // Fetch all answers with sourceData for section generation
+            const allAnswersWithSource = await ctx.prisma.diagnosticAnswer.findMany({
+              where: { sessionId: input.sessionId },
+              select: { isCorrect: true, sourceData: true, skillCategory: true, questionId: true },
+            });
+
+            // Get question texts from session for hints
+            const sessionData = await ctx.prisma.diagnosticSession.findUnique({
+              where: { id: input.sessionId },
+              select: { questions: true },
+            });
+            const sessionQuestions = (sessionData?.questions as DiagnosticQuestion[] | null) || [];
+
+            pathData = await generateSectionedPath(
+              ctx.prisma,
+              skillProfile,
+              input.sessionId,
+              allAnswersWithSource.map(a => ({
+                isCorrect: a.isCorrect,
+                sourceData: a.sourceData as any,
+                skillCategory: a.skillCategory,
+                questionId: a.questionId,
+              })),
+              sessionQuestions,
+            );
+          } catch (err) {
+            console.error('[diagnostic] Sectioned path generation failed, falling back to flat:', err);
+            const flatPath = await generateFullRecommendedPath(ctx.prisma, skillProfile);
+            pathData = flatPath;
+          }
+
           await ctx.prisma.learningPath.upsert({
             where: { userId: ctx.user.id },
-            update: { lessons: fullPath, generatedAt: new Date() },
-            create: { userId: ctx.user.id, lessons: fullPath },
+            update: { lessons: pathData as any, generatedAt: new Date() },
+            create: { userId: ctx.user.id, lessons: pathData as any },
           });
 
         }

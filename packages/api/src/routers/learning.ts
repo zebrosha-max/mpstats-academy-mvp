@@ -4,6 +4,7 @@ import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
 import { getUserActiveSubscriptions, isLessonAccessible, checkLessonAccess } from '../utils/access';
 import { isFeatureEnabled } from '../utils/feature-flags';
+import { parseLearningPath } from '@mpstats/shared';
 import type { CourseWithProgress, LessonWithProgress } from '@mpstats/shared';
 
 export const learningRouter = router({
@@ -241,6 +242,7 @@ export const learningRouter = router({
   }),
 
   // Get recommended learning path (generated on diagnostic completion)
+  // Supports both old flat string[] format and new SectionedLearningPath (Phase 23)
   getRecommendedPath: protectedProcedure.query(async ({ ctx }) => {
     try {
       const path = await ctx.prisma.learningPath.findUnique({
@@ -248,7 +250,7 @@ export const learningRouter = router({
         select: { lessons: true, generatedAt: true },
       });
 
-      if (!path || !Array.isArray(path.lessons) || path.lessons.length === 0) {
+      if (!path || !path.lessons) {
         return null;
       }
 
@@ -256,43 +258,85 @@ export const learningRouter = router({
       const billingEnabled = await isFeatureEnabled('billing_enabled');
       const hasPlatformSubscription = subs.some((s) => s.plan.type === 'PLATFORM');
 
-      // Fetch full lesson data for recommended IDs with progress
-      const recommendedIds = path.lessons as string[];
+      // Detect format: old string[] or new SectionedLearningPath
+      const parsed = parseLearningPath(path.lessons);
+
+      // Helper to build lesson data object from DB lesson
+      const buildLessonData = (l: any) => {
+        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
+        return {
+          id: l.id,
+          courseId: l.courseId,
+          courseName: l.course.title,
+          title: l.title,
+          description: l.description,
+          videoUrl: l.videoUrl || '',
+          videoId: l.videoId,
+          duration: l.duration || 0,
+          order: l.order,
+          skillCategory: l.skillCategory,
+          skillLevel: l.skillLevel,
+          status: (l.progress[0]?.status || 'NOT_STARTED') as string,
+          watchedPercent: l.progress[0]?.watchedPercent || 0,
+          locked,
+        };
+      };
+
+      // ── New sectioned format (version: 2) ──
+      if (!Array.isArray(parsed) && parsed.version === 2) {
+        const allLessonIds = parsed.sections.flatMap(s => s.lessonIds);
+
+        if (allLessonIds.length === 0) return null;
+
+        const lessons = await ctx.prisma.lesson.findMany({
+          where: { id: { in: allLessonIds } },
+          include: {
+            progress: { where: { path: { userId: ctx.user.id } } },
+            course: { select: { title: true } },
+          },
+        });
+        const lessonMap = new Map(lessons.map(l => [l.id, l]));
+
+        const sectionsWithData = parsed.sections.map(section => ({
+          ...section,
+          lessons: section.lessonIds
+            .map(id => lessonMap.get(id))
+            .filter(Boolean)
+            .map(l => buildLessonData(l)),
+        }));
+
+        const allLessonsFlat = sectionsWithData.flatMap(s => s.lessons);
+        const completedCount = allLessonsFlat.filter(l => l.status === 'COMPLETED').length;
+
+        return {
+          generatedAt: path.generatedAt,
+          sections: sectionsWithData,
+          lessons: allLessonsFlat, // flat list for backward compat
+          totalLessons: allLessonsFlat.length,
+          completedLessons: completedCount,
+          hasPlatformSubscription,
+          isSectioned: true as const,
+        };
+      }
+
+      // ── Old flat format (string[]) ──
+      const recommendedIds = parsed as string[];
+      if (recommendedIds.length === 0) return null;
+
       const lessons = await ctx.prisma.lesson.findMany({
         where: { id: { in: recommendedIds } },
         include: {
-          progress: {
-            where: { path: { userId: ctx.user.id } },
-          },
+          progress: { where: { path: { userId: ctx.user.id } } },
           course: { select: { title: true } },
         },
         orderBy: { order: 'asc' },
       });
 
-      // Preserve the recommended order (by weakness priority)
       const lessonMap = new Map(lessons.map((l) => [l.id, l]));
       const orderedLessons = recommendedIds
         .map((id) => lessonMap.get(id))
         .filter(Boolean)
-        .map((l) => {
-          const locked = !isLessonAccessible({ order: l!.order, courseId: l!.courseId }, subs, billingEnabled);
-          return {
-            id: l!.id,
-            courseId: l!.courseId,
-            courseName: l!.course.title,
-            title: l!.title,
-            description: l!.description,
-            videoUrl: l!.videoUrl || '',
-            videoId: l!.videoId,
-            duration: l!.duration || 0,
-            order: l!.order,
-            skillCategory: l!.skillCategory,
-            skillLevel: l!.skillLevel,
-            status: (l!.progress[0]?.status || 'NOT_STARTED') as string,
-            watchedPercent: l!.progress[0]?.watchedPercent || 0,
-            locked,
-          };
-        });
+        .map(l => buildLessonData(l));
 
       const completedCount = orderedLessons.filter((l) => l.status === 'COMPLETED').length;
 
@@ -302,6 +346,7 @@ export const learningRouter = router({
         totalLessons: orderedLessons.length,
         completedLessons: completedCount,
         hasPlatformSubscription,
+        isSectioned: false as const,
       };
     } catch (error) {
       handleDatabaseError(error);
