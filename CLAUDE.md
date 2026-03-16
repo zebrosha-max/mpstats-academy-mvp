@@ -16,6 +16,22 @@
 - **Фикс:** `splitLink` в `apps/web/src/lib/trpc/provider.tsx` — AI-процедуры (`ai.getLessonSummary`, `ai.chat`, `ai.searchChunks`) идут в отдельном батче
 - **Результат:** плеер и контент рендерятся за 1-2 сек, summary подгружается фоном
 
+**UX: breadcrumb навигация к курсу:**
+- Breadcrumb на странице урока: название курса теперь кликабельная ссылка → `/learn#courseId`
+- Страница `/learn` автоматически раскрывает и скроллит к курсу из URL hash
+- Файлы: `apps/web/src/app/(main)/learn/[id]/page.tsx`, `apps/web/src/app/(main)/learn/page.tsx`
+
+**UX: диагностика — ручное переключение + сброс выделения:**
+- Убран `setTimeout(2000)` авто-переход — заменён на кнопку "Следующий вопрос" / "Посмотреть результаты"
+- Добавлен `key={question.id}` на `<Question>` — React пересоздаёт компонент при смене вопроса, сбрасывая `selectedIndex`
+- Файл: `apps/web/src/app/(main)/diagnostic/session/page.tsx`
+
+**Pricing: экспресс-курсы и воркшопы — только в полном доступе:**
+- Из dropdown "Подписка на курс" убраны `04_workshops` и `06_express` (фильтр по id)
+- В карточку "Полный доступ" добавлено преимущество "Экспресс-курсы и практические воркшопы"
+- Исправлено количество уроков: "Все курсы (400+ видеоуроков)" (реально 405 в базе)
+- Файл: `apps/web/src/app/pricing/page.tsx`
+
 ### Previous Session (2026-03-14)
 
 **Mobile Responsive Audit & Fixes (6 commits deployed):**
