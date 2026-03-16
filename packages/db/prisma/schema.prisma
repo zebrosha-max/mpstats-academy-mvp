@@ -78,6 +78,7 @@ model DiagnosticAnswer {
   difficulty    Difficulty
   skillCategory SkillCategory
   answeredAt    DateTime      @default(now())
+  sourceData    Json?         // { chunkIds: string[], lessonIds: string[], timecodes: [{lessonId, start, end}] }
 
   session DiagnosticSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
@@ -122,8 +123,10 @@ model Lesson {
   videoId       String? // Kinescope video ID (for API)
   duration      Int? // minutes (optional, from manifest)
   order         Int           @default(0)
-  skillCategory SkillCategory
-  skillLevel    Difficulty    @default(MEDIUM)
+  skillCategory  SkillCategory
+  skillCategories Json?          // ["ANALYTICS", "FINANCE"] — multi-category (1-3)
+  topics          Json?          // ["Юнит-экономика", "Маржинальность"] — free-form tags (2-5)
+  skillLevel      Difficulty    @default(MEDIUM)
 
   course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   progress LessonProgress[]

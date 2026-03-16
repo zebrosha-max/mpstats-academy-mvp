@@ -62,6 +62,10 @@ export interface DiagnosticQuestion {
   explanation: string;
   difficulty: Difficulty;
   skillCategory: SkillCategory;
+  // Source tracing (Phase 23)
+  sourceChunkIds?: string[];
+  sourceLessonIds?: string[];
+  sourceTimecodes?: Array<{ lessonId: string; start: number; end: number }>;
 }
 
 export interface DiagnosticAnswer {
@@ -199,6 +203,38 @@ export interface CourseWithProgress extends Course {
   completedLessons: number;
   totalLessons: number;
   progressPercent: number;
+}
+
+// ============== KINESCOPE ==============
+
+// ============== SECTIONED LEARNING PATH (Phase 23) ==============
+
+export interface LearningPathSection {
+  id: 'errors' | 'deepening' | 'growth' | 'advanced';
+  title: string;
+  description: string;
+  lessonIds: string[];
+  hints?: Array<{
+    lessonId: string;
+    questionText: string;
+    timecodes: Array<{ start: number; end: number }>;
+  }>;
+}
+
+export interface SectionedLearningPath {
+  version: 2;
+  sections: LearningPathSection[];
+  generatedFromSessionId: string;
+  previousSkillProfileId?: string;
+}
+
+/** Parse LearningPath.lessons Json — handles both old string[] and new SectionedLearningPath */
+export function parseLearningPath(lessons: unknown): string[] | SectionedLearningPath {
+  if (Array.isArray(lessons)) return lessons; // old format: string[]
+  if (typeof lessons === 'object' && lessons !== null && 'version' in lessons && (lessons as any).version === 2) {
+    return lessons as SectionedLearningPath;
+  }
+  return []; // fallback
 }
 
 // ============== KINESCOPE ==============
