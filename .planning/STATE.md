@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 23 Plan 01 complete (schema + tagging script)
-stopped_at: Completed 23-01-PLAN.md
-last_updated: "2026-03-16T14:46:44Z"
-last_activity: 2026-03-16 — Phase 23 Plan 01 completed (schema migration + tagging script)
+status: Phase 23 Plan 02 complete (source tracing + sectioned path)
+stopped_at: Completed 23-02-PLAN.md
+last_updated: "2026-03-16T14:53:04Z"
+last_activity: 2026-03-16 — Phase 23 Plan 02 completed (question source tracing + sectioned learning path)
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 16
-  completed_plans: 15
-  percent: 94
+  completed_plans: 16
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 23 Diagnostic 2.0 — Plan 01 complete (schema + tagging script)
+**Current focus:** Phase 23 Diagnostic 2.0 — Plan 02 complete (source tracing + sectioned path)
 
 ## Current Position
 
 Phase: 23 of 23 (Diagnostic 2.0)
-Plan: 1 of 4 in current phase -- COMPLETE
-Status: Phase 23 Plan 01 complete (schema migration + tagging script)
-Last activity: 2026-03-16 — Phase 23 Plan 01 completed (schema migration + tagging script)
+Plan: 2 of 4 in current phase -- COMPLETE
+Status: Phase 23 Plan 02 complete (source tracing + sectioned path)
+Last activity: 2026-03-16 — Phase 23 Plan 02 completed (question source tracing + sectioned learning path)
 
 Progress: [█████████░] 94% (v1.0 + v1.1 + v1.2 + v1.3 in progress)
 
@@ -86,6 +86,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [23-01]: Keep single skillCategory alongside new skillCategories Json for backward compat (8+ consumers)
 - [23-01]: Tagging.ts has own OpenRouter/Supabase clients (no server-only import) for CLI script compatibility
 - [23-01]: Two-stage topic pipeline: LLM free tagging then LLM clustering into canonical dictionary
+- [23-02]: Source tracing fields optional on DiagnosticQuestion — mock/FINANCE gracefully omit them
+- [23-02]: generateSectionedPath with try/catch fallback to flat generateFullRecommendedPath
+- [23-02]: getRecommendedPath returns isSectioned flag for frontend format detection
 
 ### Blockers/Concerns
 
@@ -122,11 +125,12 @@ None.
 | Phase 22 P01 | 3min | 1 tasks | 1 files |
 | Phase 22 P02 | 3min | 2 tasks | 9 files |
 | 23    | 01   | 4min     | 2     | 6     |
+| 23    | 02   | 3min     | 2     | 3     |
 
 ## Session Continuity
 
-Last session: 2026-03-16T14:46:44Z
-Stopped at: Completed 23-01-PLAN.md
+Last session: 2026-03-16T14:53:04Z
+Stopped at: Completed 23-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

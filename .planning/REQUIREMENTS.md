@@ -57,12 +57,12 @@ Requirements for Diagnostic 2.0 — personalized learning track.
 
 ### Question Tracing
 
-- [ ] **DIAG-04**: Диагностические вопросы содержат sourceChunkIds, sourceLessonIds и sourceTimecodes
-- [ ] **DIAG-05**: DiagnosticAnswer хранит sourceData для привязки ошибок к конкретным урокам
+- [x] **DIAG-04**: Диагностические вопросы содержат sourceChunkIds, sourceLessonIds и sourceTimecodes
+- [x] **DIAG-05**: DiagnosticAnswer хранит sourceData для привязки ошибок к конкретным урокам
 
 ### Sectioned Learning Path
 
-- [ ] **DIAG-06**: Трек обучения состоит из 4 секций (Ошибки, Углубление, Развитие, Продвинутый) с порогами 70/85%
+- [x] **DIAG-06**: Трек обучения состоит из 4 секций (Ошибки, Углубление, Развитие, Продвинутый) с порогами 70/85%
 
 ### Frontend
 
