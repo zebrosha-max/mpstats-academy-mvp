@@ -334,14 +334,20 @@ async function generateSectionedPath(
   const growthIds = growthLessons.map(l => l.id);
   growthIds.forEach(id => usedLessonIds.add(id));
 
-  // ── Section 4: Advanced (score > 85, HARD lessons) ──
+  // ── Section 4: Advanced (score > 85) ──
+  // Include HARD lessons from strong categories.
+  // Fallback: if no lessons are tagged HARD yet (all MEDIUM default),
+  // include ALL lessons from strong categories so the section isn't empty.
   const strongCategories = Object.entries(CATEGORY_KEY_MAP)
     .filter(([, key]) => skillProfile[key] > 85)
     .map(([cat]) => cat);
 
-  const advancedLessons = allLessons.filter(
-    l => !usedLessonIds.has(l.id) && l.skillLevel === 'HARD' && hasOverlap(l, strongCategories)
+  const strongCategoryLessons = allLessons.filter(
+    l => !usedLessonIds.has(l.id) && hasOverlap(l, strongCategories)
   );
+  const hardOnly = strongCategoryLessons.filter(l => l.skillLevel === 'HARD');
+  // Use HARD-only if tagging has been done, otherwise all strong-category lessons
+  const advancedLessons = hardOnly.length > 0 ? hardOnly : strongCategoryLessons;
   const advancedIds = advancedLessons.map(l => l.id);
 
   const allSections: LearningPathSection[] = [
