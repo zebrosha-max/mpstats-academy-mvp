@@ -13,7 +13,7 @@ import { getMockQuestionsForCategory } from '../mocks/questions';
 // ============== CONSTANTS ==============
 
 export const BANK_TTL_DAYS = 7;
-export const QUESTIONS_PER_BANK_CATEGORY = 30;
+export const QUESTIONS_PER_BANK_CATEGORY = 10;
 
 const ALL_CATEGORIES: SkillCategory[] = [
   'ANALYTICS',

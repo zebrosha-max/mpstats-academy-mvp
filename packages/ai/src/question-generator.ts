@@ -89,13 +89,20 @@ export async function generateDiagnosticQuestions(
     const result = results[i];
     const category = categories[i];
 
-    if (result.status === 'fulfilled' && result.value.length === perCategory) {
-      allQuestions.push(...result.value);
+    if (result.status === 'fulfilled' && result.value.length > 0) {
+      // Accept partial results — LLM may return fewer than requested
+      allQuestions.push(...result.value.slice(0, perCategory));
+      // Supplement with mock if not enough
+      if (result.value.length < perCategory) {
+        const needed = perCategory - result.value.length;
+        console.warn(`[question-generator] ${category}: LLM returned ${result.value.length}/${perCategory}, supplementing ${needed} mock`);
+        allQuestions.push(...fallbackFn(category, needed));
+      }
     } else {
-      // Fallback to mock questions for this category
+      // Complete failure — use mock
       console.warn(
         `[question-generator] LLM failed for ${category}, using mock fallback.`,
-        result.status === 'rejected' ? result.reason : 'Wrong count'
+        result.status === 'rejected' ? (result.reason instanceof Error ? result.reason.message : result.reason) : 'Empty result'
       );
       allQuestions.push(...fallbackFn(category, perCategory));
     }
