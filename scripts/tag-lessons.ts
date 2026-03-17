@@ -47,12 +47,16 @@ interface TagResult {
 async function stage1TagLessons(): Promise<TagResult[]> {
   console.log('\n========== Stage 1: LLM Lesson Tagging ==========\n');
 
-  const lessons = await prisma.lesson.findMany({
-    select: { id: true, title: true, courseId: true },
+  const allLessons = await prisma.lesson.findMany({
+    select: { id: true, title: true, courseId: true, skillCategories: true },
     orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
   });
 
-  console.log(`Found ${lessons.length} lessons\n`);
+  // Skip already-tagged lessons (resume support)
+  const lessons = allLessons.filter(l => !l.skillCategories || (l.skillCategories as any[]).length === 0);
+  const alreadyTagged = allLessons.length - lessons.length;
+
+  console.log(`Found ${allLessons.length} lessons (${alreadyTagged} already tagged, ${lessons.length} remaining)\n`);
 
   const results: TagResult[] = [];
   let skipped = 0;
@@ -90,7 +94,7 @@ async function stage1TagLessons(): Promise<TagResult[]> {
       results.push({ lessonId: lesson.id, tag });
 
       console.log(
-        `[${i + 1}/${lessons.length}] ${lesson.id} -> [${tag.skillCategories.join(', ')}] ${tag.difficulty} | ${tag.topics.join(', ')}`
+        `[${alreadyTagged + i + 1}/${allLessons.length}] ${lesson.id} -> [${tag.skillCategories.join(', ')}] ${tag.difficulty} | ${tag.topics.join(', ')}`
       );
     } catch (err) {
       console.error(

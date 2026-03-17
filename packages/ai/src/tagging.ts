@@ -118,18 +118,26 @@ Respond as JSON: { "skillCategories": [...], "topics": [...], "difficulty": "...
  */
 export async function fetchLessonChunks(lessonId: string, limit = 3): Promise<string[]> {
   const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('content_chunk')
-    .select('content')
-    .eq('lesson_id', lessonId)
-    .order('timecode_start', { ascending: true })
-    .limit(limit);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-  if (error) {
-    throw new Error(`Failed to fetch chunks for ${lessonId}: ${error.message}`);
+  try {
+    const { data, error } = await supabase
+      .from('content_chunk')
+      .select('content')
+      .eq('lesson_id', lessonId)
+      .order('timecode_start', { ascending: true })
+      .limit(limit)
+      .abortSignal(controller.signal);
+
+    if (error) {
+      throw new Error(`Failed to fetch chunks for ${lessonId}: ${error.message}`);
+    }
+
+    return (data || []).map((row: { content: string }) => row.content);
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return (data || []).map((row: { content: string }) => row.content);
 }
 
 /**
