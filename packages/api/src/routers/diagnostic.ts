@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
-import { getBalancedQuestions } from '../mocks/questions';
+import { getBalancedQuestions, getMockQuestionsForCategory } from '../mocks/questions';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
 import { getQuestionsFromBank } from '../utils/question-bank';
@@ -451,13 +451,34 @@ export const diagnosticRouter = router({
         });
       }
 
-      // Get questions from cached bank (DB), fallback to mock
+      // Get questions: prefer AI-generated (with source tracing), fallback to mock
       let questions: DiagnosticQuestion[];
       try {
+        // Try cached bank first
         questions = await getQuestionsFromBank(ctx.prisma, QUESTIONS_PER_SESSION);
+
+        // If all questions are mock (no sourceChunkIds), generate fresh AI questions synchronously
+        const hasAI = questions.some(q => q.sourceChunkIds && q.sourceChunkIds.length > 0);
+        if (!hasAI) {
+          console.log('[diagnostic] Bank returned mock-only, generating AI questions synchronously...');
+          const { generateDiagnosticQuestions } = await import('@mpstats/ai');
+          const aiQuestions = await generateDiagnosticQuestions(
+            (cat, count) => getMockQuestionsForCategory(cat, count),
+            { questionsPerCategory: Math.ceil(QUESTIONS_PER_SESSION / 5) },
+          );
+          // Use AI questions if any have source tracing, otherwise keep mock
+          const aiWithSource = aiQuestions.filter(q => q.sourceChunkIds && q.sourceChunkIds.length > 0);
+          if (aiWithSource.length >= QUESTIONS_PER_SESSION * 0.5) {
+            questions = aiQuestions.slice(0, QUESTIONS_PER_SESSION);
+            console.log(`[diagnostic] Using ${aiWithSource.length}/${aiQuestions.length} AI questions with source tracing`);
+          } else {
+            console.warn(`[diagnostic] AI generated only ${aiWithSource.length} questions with source, keeping mix`);
+            questions = aiQuestions.slice(0, QUESTIONS_PER_SESSION);
+          }
+        }
       } catch (error) {
-        // Complete fallback: if bank retrieval fails, use fully mock-based questions
-        console.error('Question bank retrieval failed, using mock:', error);
+        // Complete fallback: if everything fails, use mock
+        console.error('[diagnostic] Question generation failed, using mock:', error instanceof Error ? error.message : error);
         questions = getBalancedQuestions(QUESTIONS_PER_SESSION);
       }
 
@@ -703,6 +724,12 @@ export const diagnosticRouter = router({
               })),
               sessionQuestions,
             );
+            console.log('[diagnostic] Sectioned path generated:', JSON.stringify({
+              version: (pathData as any).version,
+              sectionCount: (pathData as any).sections?.length,
+              sections: (pathData as any).sections?.map((s: any) => ({ id: s.id, lessons: s.lessonIds?.length })),
+              skillProfile,
+            }));
           } catch (err) {
             console.error('[diagnostic] Sectioned path generation failed, falling back to flat:', err);
             const flatPath = await generateFullRecommendedPath(ctx.prisma, skillProfile);
