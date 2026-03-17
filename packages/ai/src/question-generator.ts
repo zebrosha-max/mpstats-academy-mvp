@@ -26,13 +26,14 @@ export const CATEGORY_TO_COURSES: Record<SkillCategory, string[]> = {
   MARKETING: ['02_ads', '05_ozon'],
   CONTENT: ['03_ai'],
   OPERATIONS: ['04_workshops', '06_express'],
-  FINANCE: [],
+  // FINANCE lessons exist across courses (unit economics in 01_analytics, 05_ozon, etc.)
+  FINANCE: ['01_analytics', '05_ozon', '04_workshops', '06_express'],
 };
 
 const QUESTIONS_PER_CATEGORY = 3;
 const CHUNKS_TO_FETCH = 15; // fetch more, sample fewer
 const CHUNKS_TO_USE = 5;
-const LLM_TIMEOUT_MS = 8000;
+const LLM_TIMEOUT_MS = 15000;
 
 // ============== TYPES ==============
 
