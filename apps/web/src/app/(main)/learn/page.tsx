@@ -323,7 +323,7 @@ export default function LearnPage() {
                         {isOpen && (
                           <CardContent className="pt-3 pb-4">
                             <div className="grid gap-3">
-                              {section.lessons.map((lesson: LessonWithProgress & { courseName: string; locked: boolean }, idx: number) => (
+                              {section.lessons.map((lesson, idx: number) => (
                                 <LessonCard
                                   key={lesson.id}
                                   lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
