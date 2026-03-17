@@ -170,29 +170,54 @@ async function callLLM(
 ): Promise<GeneratedQuestion[]> {
   const systemPrompt = buildSystemPrompt(category, count);
 
-  const response = await openrouter.chat.completions.create(
-    {
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        {
-          role: 'user',
-          content: `Контекст из учебных материалов:\n\n${context}\n\nСгенерируй ${count} вопросов на основе этого контекста.`,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 2048,
-      response_format: {
-        type: 'json_schema' as const,
-        json_schema: {
-          name: 'diagnostic_questions',
-          strict: true,
-          schema: questionJsonSchema,
+  let response;
+  try {
+    // Try structured output first (works with OpenAI models)
+    response = await openrouter.chat.completions.create(
+      {
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          {
+            role: 'user',
+            content: `Контекст из учебных материалов:\n\n${context}\n\nСгенерируй ${count} вопросов на основе этого контекста.`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 2048,
+        response_format: {
+          type: 'json_schema' as const,
+          json_schema: {
+            name: 'diagnostic_questions',
+            strict: true,
+            schema: questionJsonSchema,
+          },
         },
       },
-    },
-    { timeout: LLM_TIMEOUT_MS }
-  );
+      { timeout: LLM_TIMEOUT_MS }
+    );
+  } catch (structuredErr) {
+    // Fallback: some models (Gemini via OpenRouter) don't support json_schema
+    // Use json_object mode instead
+    console.warn(`[question-generator] json_schema failed for ${model}, trying json_object:`,
+      structuredErr instanceof Error ? structuredErr.message : structuredErr);
+    response = await openrouter.chat.completions.create(
+      {
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt + '\n\nОтвечай ТОЛЬКО валидным JSON массивом. Без markdown, без ```.' },
+          {
+            role: 'user',
+            content: `Контекст из учебных материалов:\n\n${context}\n\nСгенерируй ${count} вопросов на основе этого контекста. Верни JSON массив.`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 2048,
+        response_format: { type: 'json_object' as const },
+      },
+      { timeout: LLM_TIMEOUT_MS }
+    );
+  }
 
   const rawContent = response.choices[0]?.message?.content;
   if (!rawContent) {

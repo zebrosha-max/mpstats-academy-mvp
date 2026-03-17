@@ -52,6 +52,14 @@ export async function refreshBankForCategory(
     { categories: [category], questionsPerCategory: QUESTIONS_PER_BANK_CATEGORY },
   );
 
+  // Only save to bank if at least some questions have source tracing (AI-generated)
+  // Mock fallback questions don't have sourceChunkIds — don't pollute the bank with them
+  const aiQuestions = questions.filter(q => q.sourceChunkIds && q.sourceChunkIds.length > 0);
+  if (aiQuestions.length === 0) {
+    console.warn(`[QuestionBank] No AI questions generated for ${category}, skipping bank save`);
+    return;
+  }
+
   const now = new Date();
   const expiresAt = new Date(now.getTime() + BANK_TTL_DAYS * 24 * 60 * 60 * 1000);
 
