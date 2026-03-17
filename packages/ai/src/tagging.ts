@@ -88,8 +88,8 @@ function getSupabase(): SupabaseClient {
 
 // Model configuration (matches openrouter.ts but no server-only import)
 const MODELS = {
-  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'google/gemini-3.1-flash-lite-preview',
-  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3-flash-preview',
+  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4o-mini',
+  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3.1-flash-lite-preview',
 };
 
 // ============== TAGGING SYSTEM PROMPT ==============

@@ -35,10 +35,10 @@ export const openrouter = new Proxy({} as OpenAI, {
 
 // Model configuration
 export const MODELS = {
-  // Primary chat model (fast, cheap)
-  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'google/gemini-3.1-flash-lite-preview',
+  // Primary chat model (reliable structured output, cheap)
+  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4o-mini',
   // Fallback model
-  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3-flash-preview',
+  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3.1-flash-lite-preview',
   // Embedding model (must match what's in Supabase!)
   embedding: 'openai/text-embedding-3-small',
 } as const;
