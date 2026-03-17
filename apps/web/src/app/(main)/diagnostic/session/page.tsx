@@ -22,9 +22,13 @@ export default function DiagnosticSessionPage() {
   const [showSlowHint, setShowSlowHint] = useState(false);
 
   const utils = trpc.useUtils();
-  const { data: sessionState, isLoading } = trpc.diagnostic.getSessionState.useQuery(
+  const { data: sessionState, isLoading, refetch } = trpc.diagnostic.getSessionState.useQuery(
     { sessionId: sessionId! },
-    { enabled: !!sessionId }
+    {
+      enabled: !!sessionId,
+      gcTime: 0,       // Don't cache — always fresh from server
+      staleTime: 0,    // Always considered stale
+    }
   );
 
   const [isComplete, setIsComplete] = useState(false);
@@ -40,13 +44,13 @@ export default function DiagnosticSessionPage() {
     },
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isComplete) {
       router.push(`/diagnostic/results?id=${sessionId}`);
     } else {
       setFeedback(null);
-      // Invalidate cache to force fresh fetch — refetch() can return stale tRPC cache
-      utils.diagnostic.getSessionState.invalidate({ sessionId: sessionId! });
+      // Force fresh server fetch — gcTime:0 ensures no stale cache
+      await refetch();
     }
   };
 
