@@ -52,13 +52,15 @@ export async function refreshBankForCategory(
     { categories: [category], questionsPerCategory: QUESTIONS_PER_BANK_CATEGORY },
   );
 
-  // Only save to bank if at least some questions have source tracing (AI-generated)
-  // Mock fallback questions don't have sourceChunkIds — don't pollute the bank with them
+  // Only save AI-generated questions to bank (those with source tracing)
+  // Mock fallback questions pollute the bank and break the "Errors" section
   const aiQuestions = questions.filter(q => q.sourceChunkIds && q.sourceChunkIds.length > 0);
   if (aiQuestions.length === 0) {
     console.warn(`[QuestionBank] No AI questions generated for ${category}, skipping bank save`);
     return;
   }
+
+  console.log(`[QuestionBank] Saving ${aiQuestions.length} AI questions for ${category} (filtered ${questions.length - aiQuestions.length} mock)`);
 
   const now = new Date();
   const expiresAt = new Date(now.getTime() + BANK_TTL_DAYS * 24 * 60 * 60 * 1000);
@@ -66,13 +68,13 @@ export async function refreshBankForCategory(
   await prisma.questionBank.upsert({
     where: { skillCategory: category },
     update: {
-      questions: questions as any,
+      questions: aiQuestions as any,
       generatedAt: now,
       expiresAt,
     },
     create: {
       skillCategory: category,
-      questions: questions as any,
+      questions: aiQuestions as any,
       generatedAt: now,
       expiresAt,
     },

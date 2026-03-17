@@ -43,6 +43,11 @@ export default function DiagnosticSessionPage() {
       });
       setIsComplete(data.isComplete);
     },
+    onError: (error) => {
+      // Handle auth/network errors gracefully — don't leave user stuck
+      console.error('[diagnostic] submitAnswer error:', error.message);
+      setFeedback(null);
+    },
   });
 
   const handleNext = useCallback(async () => {
@@ -51,21 +56,33 @@ export default function DiagnosticSessionPage() {
       return;
     }
 
-    // Show loading state WHILE keeping feedback visible (so question doesn't "reset" visually)
     setIsTransitioning(true);
 
-    try {
-      // Fetch next question from server FIRST
-      const result = await refetch();
-
-      // Only AFTER we have new data, clear feedback
-      // This ensures React sees new question.id → new key → fresh Question component
-      if (result.data?.currentQuestion) {
-        setFeedback(null);
+    // Retry refetch up to 2 times on failure (Supabase ECONNRESET)
+    let attempts = 0;
+    while (attempts < 3) {
+      try {
+        const result = await refetch();
+        if (result.data?.currentQuestion) {
+          setFeedback(null);
+          break;
+        }
+        // If no currentQuestion (session complete?), check completion
+        if (result.data?.isComplete) {
+          router.push(`/diagnostic/results?id=${sessionId}`);
+          break;
+        }
+        attempts++;
+      } catch {
+        attempts++;
+        if (attempts < 3) {
+          // Wait briefly before retry
+          await new Promise(r => setTimeout(r, 500));
+        }
       }
-    } finally {
-      setIsTransitioning(false);
     }
+
+    setIsTransitioning(false);
   }, [isComplete, sessionId, router, refetch]);
 
   const handleAnswer = useCallback((selectedIndex: number) => {
