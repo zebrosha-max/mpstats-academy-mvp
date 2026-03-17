@@ -93,6 +93,7 @@ export async function getQuestionsFromBank(
 ): Promise<DiagnosticQuestion[]> {
   const perCategory = Math.ceil(count / ALL_CATEGORIES.length);
   const allQuestions: DiagnosticQuestion[] = [];
+  const staleCategories: SkillCategory[] = [];
 
   for (const category of ALL_CATEGORIES) {
     const bank = await prisma.questionBank.findUnique({
@@ -116,12 +117,24 @@ export async function getQuestionsFromBank(
 
     allQuestions.push(...categoryQuestions.slice(0, perCategory));
 
-    // If bank is missing or stale, trigger non-blocking refresh
+    // Collect stale categories for sequential background refresh
     if (!bank || new Date(bank.expiresAt) <= new Date()) {
-      refreshBankForCategory(prisma, category).catch((err) =>
-        console.error(`[QuestionBank] Failed to refresh ${category}:`, err),
-      );
+      staleCategories.push(category);
     }
+  }
+
+  // Trigger sequential non-blocking refresh (not parallel — avoids Supabase connection exhaustion)
+  if (staleCategories.length > 0) {
+    (async () => {
+      for (const cat of staleCategories) {
+        try {
+          await refreshBankForCategory(prisma, cat);
+          console.log(`[QuestionBank] Refreshed ${cat}`);
+        } catch (err) {
+          console.error(`[QuestionBank] Failed to refresh ${cat}:`, err instanceof Error ? err.message : err);
+        }
+      }
+    })();
   }
 
   return shuffleArray(allQuestions);

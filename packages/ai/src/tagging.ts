@@ -88,7 +88,7 @@ function getSupabase(): SupabaseClient {
 
 // Model configuration (matches openrouter.ts but no server-only import)
 const MODELS = {
-  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4o-mini',
+  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4.1-nano',
   fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3.1-flash-lite-preview',
 };
 
