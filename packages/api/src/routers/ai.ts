@@ -15,6 +15,9 @@ import {
   searchChunks,
   type ChatMessage,
 } from '@mpstats/ai';
+import { getUserActiveSubscriptions, isLessonAccessible } from '../utils/access';
+import { isFeatureEnabled } from '../utils/feature-flags';
+import type { SearchLessonResult, SearchSnippet } from '@mpstats/shared';
 
 // In-memory cache for summaries (will be replaced with DB in Sprint 4)
 const summaryCache = new Map<string, {
@@ -140,6 +143,125 @@ export const aiRouter = router({
         count: chunks.length,
         chunks,
       };
+    }),
+
+  /**
+   * Search lessons by semantic query (Phase 30)
+   *
+   * 1. Vector search — get up to 30 chunks
+   * 2. Group by lesson_id, keep top 2 chunks per lesson
+   * 3. Enrich with lesson data from Prisma
+   * 4. Check access (locked/unlocked)
+   * 5. Check recommended path membership
+   * 6. Return top-10 lessons sorted by best similarity
+   */
+  searchLessons: protectedProcedure
+    .input(z.object({
+      query: z.string().min(1).max(500),
+    }))
+    .query(async ({ ctx, input }): Promise<{ query: string; results: SearchLessonResult[]; totalChunks: number }> => {
+      // 1. Vector search — get up to 30 chunks with low threshold for recall
+      const chunks = await searchChunks({
+        query: input.query,
+        limit: 30,
+        threshold: 0.3,
+      });
+
+      if (chunks.length === 0) {
+        return { query: input.query, results: [], totalChunks: 0 };
+      }
+
+      // 2. Group by lesson_id, keep top 2 chunks per lesson (highest similarity)
+      const lessonChunksMap = new Map<string, typeof chunks>();
+      for (const chunk of chunks) {
+        if (!chunk.lesson_id) continue;
+        const existing = lessonChunksMap.get(chunk.lesson_id) || [];
+        if (existing.length < 2) {
+          existing.push(chunk);
+          lessonChunksMap.set(chunk.lesson_id, existing);
+        }
+      }
+
+      // 3. Enrich with lesson data from Prisma
+      const lessonIds = Array.from(lessonChunksMap.keys());
+      const lessons = await ctx.prisma.lesson.findMany({
+        where: { id: { in: lessonIds } },
+        include: {
+          course: { select: { id: true, title: true } },
+          progress: {
+            where: { path: { userId: ctx.user.id } },
+            take: 1,
+          },
+        },
+      });
+
+      // 4. Check access
+      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
+      const billingEnabled = await isFeatureEnabled('billing_enabled');
+
+      // 5. Check recommended path membership
+      const activePath = await ctx.prisma.learningPath.findUnique({
+        where: { userId: ctx.user.id },
+        select: { lessons: true },
+      });
+      const recommendedLessonIds = new Set<string>();
+      if (activePath?.lessons) {
+        const parsed = activePath.lessons;
+        if (Array.isArray(parsed)) {
+          (parsed as string[]).forEach((id) => recommendedLessonIds.add(id));
+        } else if (typeof parsed === 'object' && parsed !== null && 'sections' in (parsed as object)) {
+          const sections = (parsed as any).sections;
+          if (Array.isArray(sections)) {
+            sections.forEach((s: any) => {
+              if (Array.isArray(s.lessonIds)) {
+                s.lessonIds.forEach((id: string) => recommendedLessonIds.add(id));
+              }
+            });
+          }
+        }
+      }
+
+      // 6. Merge and sort by best chunk similarity
+      const results: SearchLessonResult[] = lessons.map((lesson) => {
+        const chunkList = lessonChunksMap.get(lesson.id) || [];
+        const locked = !isLessonAccessible(
+          { order: lesson.order, courseId: lesson.courseId },
+          subs,
+          billingEnabled,
+        );
+
+        const snippets: SearchSnippet[] = chunkList.map((c) => ({
+          content: c.content.length > 200 ? c.content.slice(0, 200) + '...' : c.content,
+          timecodeStart: c.timecode_start,
+          timecodeEnd: c.timecode_end,
+          similarity: c.similarity,
+        }));
+
+        return {
+          lesson: {
+            id: lesson.id,
+            courseId: lesson.courseId,
+            title: lesson.title,
+            duration: lesson.duration || 0,
+            order: lesson.order,
+            skillCategory: lesson.skillCategory as any,
+            skillLevel: (lesson.skillLevel || 'MEDIUM') as any,
+            skillCategories: (lesson.skillCategories as string[] | null) ?? [],
+            topics: (lesson.topics as string[] | null) ?? [],
+          },
+          course: lesson.course,
+          snippets,
+          bestSimilarity: snippets.length > 0 ? Math.max(...snippets.map((s) => s.similarity)) : 0,
+          watchedPercent: lesson.progress[0]?.watchedPercent || 0,
+          status: (lesson.progress[0]?.status || 'NOT_STARTED') as any,
+          locked,
+          inRecommendedPath: recommendedLessonIds.has(lesson.id),
+        };
+      })
+      .sort((a, b) => b.bestSimilarity - a.bestSimilarity)
+      .slice(0, 10);
+
+      return { query: input.query, results, totalChunks: chunks.length };
     }),
 
   /**
