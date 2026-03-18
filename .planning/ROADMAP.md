@@ -248,13 +248,21 @@ Plans:
 
 ### Phase 27: SEO + Custom Error Pages — sitemap, robots.txt, OG-теги, брендированные 404/500
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Сайт корректно индексируется поисковиками (sitemap, robots.txt), ссылки красиво отображаются в соцсетях (OG-теги с брендированным изображением), каждая страница имеет уникальный title/description, error-страницы брендированы логотипом MPSTATS Academy
+**Requirements**: SEO-01, SEO-02, SEO-03, SEO-04, SEO-05, SEO-06
 **Depends on:** Phase 26
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. sitemap.xml содержит 4 публичные страницы (/, /pricing, /login, /register)
+  2. robots.txt блокирует /dashboard, /learn, /diagnostic, /profile, /admin, /api
+  3. Root layout имеет OG-теги (og:image, og:locale ru_RU, og:type website) и title template
+  4. Каждый route group имеет уникальный title и description через metadata в layout файлах
+  5. Error-страницы (404, error, global-error) показывают логотип MPSTATS Academy
+  6. 404 страница ведёт на / (не /dashboard)
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 27 to break down)
+- [ ] 27-01-PLAN.md — SEO foundation: root metadata with OG tags + title template, sitemap.ts, robots.ts, OG image
+- [ ] 27-02-PLAN.md — Error page branding (Logo on 404/500), per-page metadata via layouts, visual verification
 
 ### Phase 28: Боевой CloudPayments — переключение с тестовых на production credentials
 

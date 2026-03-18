@@ -1,14 +1,15 @@
 /**
- * Admin Router — Superuser-only procedures for MPSTATS Academy admin panel.
+ * Admin Router — Admin panel procedures for MPSTATS Academy.
  *
- * All procedures use adminProcedure (requires isAdmin=true).
- * Endpoints: getDashboardStats, getUsers, toggleUserField, getCourses, updateLessonOrder,
- *   moveCourseToPosition, updateCourseTitle, updateLessonTitle
+ * Most procedures use adminProcedure (requires ADMIN or SUPERADMIN role).
+ * Privileged operations (changeUserRole, toggleUserField) use superadminProcedure.
+ * Endpoints: getDashboardStats, getUsers, toggleUserField, changeUserRole, getCourses,
+ *   updateLessonOrder, moveCourseToPosition, updateCourseTitle, updateLessonTitle
  */
 
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { router, adminProcedure } from '../trpc';
+import { router, adminProcedure, superadminProcedure } from '../trpc';
 import { handleDatabaseError } from '../utils/db-errors';
 import { refreshBankForCategory } from '../utils/question-bank';
 import { createClient } from '@supabase/supabase-js';
@@ -264,20 +265,27 @@ export const adminRouter = router({
     }),
 
   /**
-   * Toggle a boolean field on UserProfile.
-   * Currently supports: isAdmin.
-   * TODO: Add isActive support when field is used in access control.
+   * Toggle isActive on UserProfile. SUPERADMIN only.
+   * Self-deactivation is not allowed.
    */
-  toggleUserField: adminProcedure
+  toggleUserField: superadminProcedure
     .input(
       z.object({
         userId: z.string(),
-        field: z.enum(['isAdmin', 'isActive']),
+        field: z.enum(['isActive']),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const { userId, field } = input;
+
+        // Self-deactivation guard
+        if (field === 'isActive' && userId === ctx.user.id) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Cannot deactivate your own account',
+          });
+        }
 
         const profile = await ctx.prisma.userProfile.findUnique({
           where: { id: userId },
@@ -285,7 +293,7 @@ export const adminRouter = router({
         });
 
         if (!profile) {
-          throw new Error(`User ${userId} not found`);
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
         }
 
         const currentValue = (profile as unknown as Record<string, boolean>)[field];
@@ -297,8 +305,45 @@ export const adminRouter = router({
 
         return updated;
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         handleDatabaseError(error);
       }
+    }),
+
+  /**
+   * Change a user's role. SUPERADMIN only.
+   * Self-demotion guard: SUPERADMIN cannot change own role.
+   */
+  changeUserRole: superadminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        role: z.enum(['USER', 'ADMIN', 'SUPERADMIN']),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId, role } = input;
+
+      // Self-demotion guard
+      if (userId === ctx.user.id) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Cannot change your own role',
+        });
+      }
+
+      const profile = await ctx.prisma.userProfile.findUnique({
+        where: { id: userId },
+      });
+      if (!profile) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+
+      const updated = await ctx.prisma.userProfile.update({
+        where: { id: userId },
+        data: { role },
+      });
+      return updated;
     }),
 
   /**

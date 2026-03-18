@@ -4,11 +4,13 @@ import { useState, useCallback } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 
+type Role = 'USER' | 'ADMIN' | 'SUPERADMIN';
+
 interface UserRow {
   id: string;
   name: string | null;
   email: string | null;
-  isAdmin: boolean;
+  role: Role;
   isActive: boolean;
   createdAt: Date;
   _count: { diagnosticSessions: number };
@@ -62,47 +64,83 @@ function Toggle({
   );
 }
 
+const ROLE_LABELS: Record<Role, string> = {
+  USER: 'User',
+  ADMIN: 'Admin',
+  SUPERADMIN: 'Super',
+};
+
+const ROLE_COLORS: Record<Role, string> = {
+  USER: 'bg-mp-gray-100 text-mp-gray-700',
+  ADMIN: 'bg-mp-blue-100 text-mp-blue-700',
+  SUPERADMIN: 'bg-mp-pink-100 text-mp-pink-700',
+};
+
+function RoleSelect({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: Role;
+  onChange: (role: Role) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value as Role)}
+      disabled={disabled}
+      className={cn(
+        'text-xs font-medium px-2 py-1 rounded-md border-0 cursor-pointer transition-colors',
+        ROLE_COLORS[value],
+        disabled && 'opacity-50 cursor-not-allowed',
+      )}
+    >
+      <option value="USER">User</option>
+      <option value="ADMIN">Admin</option>
+      <option value="SUPERADMIN">Super</option>
+    </select>
+  );
+}
+
 export function UserTable({ users, totalCount, page, totalPages, onPageChange }: UserTableProps) {
   const utils = trpc.useUtils();
+
   const toggleField = trpc.admin.toggleUserField.useMutation({
     onSuccess: () => {
       utils.admin.getUsers.invalidate();
     },
   });
 
-  // Optimistic state: track pending toggles
-  const [optimistic, setOptimistic] = useState<Record<string, Record<string, boolean>>>({});
+  const changeRole = trpc.admin.changeUserRole.useMutation({
+    onSuccess: () => {
+      utils.admin.getUsers.invalidate();
+    },
+  });
 
-  const handleToggle = useCallback(
-    (userId: string, field: 'isAdmin' | 'isActive', currentValue: boolean) => {
-      // Optimistic update
-      setOptimistic((prev) => ({
-        ...prev,
-        [userId]: { ...prev[userId], [field]: !currentValue },
-      }));
+  // Optimistic state for isActive toggles
+  const [optimisticActive, setOptimisticActive] = useState<Record<string, boolean>>({});
+  // Optimistic state for role changes
+  const [optimisticRole, setOptimisticRole] = useState<Record<string, Role>>({});
+
+  const handleToggleActive = useCallback(
+    (userId: string, currentValue: boolean) => {
+      setOptimisticActive((prev) => ({ ...prev, [userId]: !currentValue }));
 
       toggleField.mutate(
-        { userId, field },
+        { userId, field: 'isActive' },
         {
           onError: () => {
-            // Revert optimistic
-            setOptimistic((prev) => {
+            setOptimisticActive((prev) => {
               const copy = { ...prev };
-              if (copy[userId]) {
-                delete copy[userId][field];
-                if (Object.keys(copy[userId]).length === 0) delete copy[userId];
-              }
+              delete copy[userId];
               return copy;
             });
           },
           onSettled: () => {
-            // Clear optimistic after server responds
-            setOptimistic((prev) => {
+            setOptimisticActive((prev) => {
               const copy = { ...prev };
-              if (copy[userId]) {
-                delete copy[userId][field];
-                if (Object.keys(copy[userId]).length === 0) delete copy[userId];
-              }
+              delete copy[userId];
               return copy;
             });
           },
@@ -112,10 +150,40 @@ export function UserTable({ users, totalCount, page, totalPages, onPageChange }:
     [toggleField],
   );
 
-  const getFieldValue = (userId: string, field: string, serverValue: boolean) => {
-    if (optimistic[userId] && field in optimistic[userId]) {
-      return optimistic[userId][field];
-    }
+  const handleRoleChange = useCallback(
+    (userId: string, newRole: Role) => {
+      setOptimisticRole((prev) => ({ ...prev, [userId]: newRole }));
+
+      changeRole.mutate(
+        { userId, role: newRole },
+        {
+          onError: () => {
+            setOptimisticRole((prev) => {
+              const copy = { ...prev };
+              delete copy[userId];
+              return copy;
+            });
+          },
+          onSettled: () => {
+            setOptimisticRole((prev) => {
+              const copy = { ...prev };
+              delete copy[userId];
+              return copy;
+            });
+          },
+        },
+      );
+    },
+    [changeRole],
+  );
+
+  const getActiveValue = (userId: string, serverValue: boolean) => {
+    if (userId in optimisticActive) return optimisticActive[userId];
+    return serverValue;
+  };
+
+  const getRoleValue = (userId: string, serverValue: Role) => {
+    if (userId in optimisticRole) return optimisticRole[userId];
     return serverValue;
   };
 
@@ -138,7 +206,7 @@ export function UserTable({ users, totalCount, page, totalPages, onPageChange }:
               <th className="px-4 py-3 text-xs font-semibold text-mp-gray-500 uppercase tracking-wider">Registered</th>
               <th className="px-4 py-3 text-xs font-semibold text-mp-gray-500 uppercase tracking-wider text-center">Diagnostics</th>
               <th className="px-4 py-3 text-xs font-semibold text-mp-gray-500 uppercase tracking-wider text-center">Active</th>
-              <th className="px-4 py-3 text-xs font-semibold text-mp-gray-500 uppercase tracking-wider text-center">Admin</th>
+              <th className="px-4 py-3 text-xs font-semibold text-mp-gray-500 uppercase tracking-wider text-center">Role</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-mp-gray-100">
@@ -178,18 +246,18 @@ export function UserTable({ users, totalCount, page, totalPages, onPageChange }:
                 {/* isActive toggle */}
                 <td className="px-4 py-3 text-center">
                   <Toggle
-                    checked={getFieldValue(user.id, 'isActive', user.isActive)}
-                    onChange={() => handleToggle(user.id, 'isActive', user.isActive)}
+                    checked={getActiveValue(user.id, user.isActive)}
+                    onChange={() => handleToggleActive(user.id, user.isActive)}
                     disabled={toggleField.isPending}
                   />
                 </td>
 
-                {/* isAdmin toggle */}
+                {/* Role selector */}
                 <td className="px-4 py-3 text-center">
-                  <Toggle
-                    checked={getFieldValue(user.id, 'isAdmin', user.isAdmin)}
-                    onChange={() => handleToggle(user.id, 'isAdmin', user.isAdmin)}
-                    disabled={toggleField.isPending}
+                  <RoleSelect
+                    value={getRoleValue(user.id, user.role)}
+                    onChange={(role) => handleRoleChange(user.id, role)}
+                    disabled={changeRole.isPending}
                   />
                 </td>
               </tr>
