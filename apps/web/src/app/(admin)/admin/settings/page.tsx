@@ -4,6 +4,8 @@ import { trpc } from '@/lib/trpc/client';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 /** Pretty-print feature flag keys: billing_enabled -> Billing Enabled */
 function formatFlagKey(key: string): string {
@@ -14,7 +16,17 @@ function formatFlagKey(key: string): string {
 }
 
 export default function SettingsPage() {
-  const flags = trpc.admin.getFeatureFlags.useQuery();
+  const router = useRouter();
+  const flags = trpc.admin.getFeatureFlags.useQuery(undefined, {
+    retry: false,
+  });
+
+  // If FORBIDDEN (ADMIN, not SUPERADMIN), redirect
+  useEffect(() => {
+    if (flags.error?.data?.code === 'FORBIDDEN') {
+      router.replace('/admin');
+    }
+  }, [flags.error, router]);
   const toggle = trpc.admin.toggleFeatureFlag.useMutation({
     onSuccess: () => flags.refetch(),
   });

@@ -28,7 +28,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-mp-gray-50">
       {/* Admin Sidebar — fixed on desktop */}
-      <AdminSidebar />
+      <AdminSidebar userRole={profile.role} />
 
       {/* Main content area */}
       <div className="md:ml-64 flex flex-col min-h-screen">

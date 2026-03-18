@@ -740,7 +740,7 @@ export const adminRouter = router({
   /**
    * List all feature flags, ordered by key.
    */
-  getFeatureFlags: adminProcedure.query(async ({ ctx }) => {
+  getFeatureFlags: superadminProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.featureFlag.findMany({
         orderBy: { key: 'asc' },
@@ -753,7 +753,7 @@ export const adminRouter = router({
   /**
    * Toggle a feature flag on/off by key.
    */
-  toggleFeatureFlag: adminProcedure
+  toggleFeatureFlag: superadminProcedure
     .input(z.object({ key: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {

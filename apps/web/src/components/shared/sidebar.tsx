@@ -89,9 +89,7 @@ export function Sidebar() {
     // Insert before "Профиль" (last item)
     items.splice(items.length - 1, 0, billingNavItem);
   }
-  if (myProfile?.role === 'ADMIN' || myProfile?.role === 'SUPERADMIN') {
-    items.push(adminNavItem);
-  }
+  const isAdmin = myProfile?.role === 'ADMIN' || myProfile?.role === 'SUPERADMIN';
 
   return (
     <aside className="w-64 border-r border-mp-gray-200 bg-white hidden md:flex flex-col fixed top-0 left-0 h-screen z-30">
@@ -130,7 +128,26 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-mp-gray-200">
+      <div className="p-4 border-t border-mp-gray-200 space-y-1">
+        {isAdmin && (
+          <Link
+            href={adminNavItem.href}
+            className={cn(
+              'flex items-center gap-3 px-3 py-2.5 rounded-lg text-body-sm font-medium transition-all duration-200',
+              pathname.startsWith('/admin')
+                ? 'bg-mp-blue-50 text-mp-blue-600 shadow-mp-sm'
+                : 'text-mp-gray-600 hover:bg-mp-gray-100 hover:text-mp-gray-900'
+            )}
+          >
+            <span className={cn(
+              'transition-colors',
+              pathname.startsWith('/admin') ? 'text-mp-blue-500' : 'text-mp-gray-400'
+            )}>
+              {adminNavItem.icon}
+            </span>
+            {adminNavItem.title}
+          </Link>
+        )}
         <div className="px-3 py-2 text-caption text-mp-gray-400">
           MPSTATS Academy v1.0
         </div>

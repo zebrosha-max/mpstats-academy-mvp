@@ -18,30 +18,35 @@ const navItems = [
     title: 'Dashboard',
     href: '/admin',
     icon: LayoutDashboard,
+    superadminOnly: false,
   },
   {
     title: 'Users',
     href: '/admin/users',
     icon: Users,
+    superadminOnly: false,
   },
   {
     title: 'Content',
     href: '/admin/content',
     icon: BookOpen,
+    superadminOnly: false,
   },
   {
     title: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
+    superadminOnly: false,
   },
   {
     title: 'Settings',
     href: '/admin/settings',
     icon: Settings,
+    superadminOnly: true,
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ userRole }: { userRole: string }) {
   const pathname = usePathname();
 
   return (
@@ -57,7 +62,9 @@ export function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
+        {navItems
+          .filter((item) => !item.superadminOnly || userRole === 'SUPERADMIN')
+          .map((item) => {
           const isActive =
             pathname === item.href ||
             (item.href !== '/admin' && pathname.startsWith(item.href + '/'));
