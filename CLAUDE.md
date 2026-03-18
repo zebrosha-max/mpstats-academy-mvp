@@ -1,8 +1,60 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-16
+**Last updated:** 2026-03-18
 
-## Last Session (2026-03-16)
+## Last Session (2026-03-18, session 3)
+
+**Phase 22 — Carrot Quest Integration (code complete, deployed, testing tomorrow):**
+- CQ credentials received from email team, full integration deployed
+- CQ JS widget added to root layout `<head>` (app ID: `57576-5a5343ec7aac68d788dabb2569`)
+- `CarrotQuestIdentify` component — HMAC-SHA256 user auth in (main) layout
+- Supabase Send Email Hook fixed: Standard Webhooks verification (not JWT!)
+- CQ API client: form-encoded requests, `by_user_id=true` for Supabase UUIDs
+- Event names without `$` prefix: `User Registered`, `Payment Success`, `Email Confirmation`, etc.
+- Props format: `operations=[{op,key,value}]` array
+- `$email`/`$name` set on user registration via `setUserProps`
+- Feature flag `email_notifications_enabled` = true
+- First event `User Registered` for `clients@mpstats.academy` confirmed in CQ dashboard
+- **Next:** test all events, configure CQ automation rules, upload HTML email templates
+
+**CQ API Gotchas (critical):**
+- API = `application/x-www-form-urlencoded`, NOT JSON
+- Event names with `$` are reserved (system events) — use plain names
+- Props = `operations` param with JSON array `[{op, key, value}]`
+- Supabase HTTPS hooks = Standard Webhooks (webhook-id/timestamp/signature headers), secret format `v1,whsec_BASE64KEY`
+- Supabase free tier email rate limit — 3/hour per project, increase in Dashboard
+
+**Файлы:**
+- `apps/web/src/lib/carrotquest/client.ts` — CQ API client (form-encoded, by_user_id)
+- `apps/web/src/lib/carrotquest/emails.ts` — email helpers with setUserProps
+- `apps/web/src/lib/carrotquest/types.ts` — event name types
+- `apps/web/src/app/api/webhooks/supabase-email/route.ts` — Standard Webhooks verification
+- `apps/web/src/components/shared/CarrotQuestIdentify.tsx` — frontend HMAC auth
+- `apps/web/src/app/layout.tsx` — CQ widget script
+- `apps/web/src/app/(main)/layout.tsx` — HMAC generation + CarrotQuestIdentify
+
+### Previous Session (2026-03-18, session 2)
+
+**Phase 27 — SEO + Custom Error Pages (complete + deployed):**
+- sitemap, robots, OG-tags, 404/error pages, Yandex Webmaster verification
+
+**Phase 31 — Admin Roles (complete + deployed):**
+- `enum Role { USER ADMIN SUPERADMIN }` заменяет `isAdmin: Boolean`
+- `adminProcedure` (ADMIN+SUPERADMIN) + `superadminProcedure` (только SUPERADMIN) в tRPC
+- Paywall bypass для ADMIN/SUPERADMIN в `access.ts`
+- `changeUserRole` — только SUPERADMIN, с self-demotion guard
+- Settings (feature flags) — только SUPERADMIN
+- UserTable: dropdown ролей для SUPERADMIN, read-only badges для ADMIN
+- "Админка" в футере sidebar (не в основном меню)
+- SUPERADMIN: e.n.vasilyev@yandex.ru, evasilev@mpstats.io
+- Миграция: `scripts/sql/migrate_isadmin_to_role.sql` выполнена на Supabase
+
+**Roadmap — 8 pre-release фаз добавлены (24-31):**
+- 24: Support Contact, 25: Legal + Cookie Consent, 26: Яндекс Метрика
+- 27: SEO + Custom Error Pages (✅), 28: Боевой CP, 29: Sentry
+- 30: Content Discovery (smart search + фильтры), 31: Admin Roles (✅)
+
+### Previous Session (2026-03-16)
 
 **Security Hardening — RLS + function search_path:**
 - RLS включён на всех 18 таблицах (стратегия: нулевые политики, PostgREST заблокирован)
