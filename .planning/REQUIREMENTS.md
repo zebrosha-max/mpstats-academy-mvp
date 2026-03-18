@@ -98,9 +98,21 @@ Requirements for SEO + Custom Error Pages phase.
 - [x] **SEO-05**: Error-страницы (404, 500, global-error) показывают логотип MPSTATS Academy, 404 ведёт на /
 - [x] **SEO-06**: Yandex Webmaster верификация через мета-тег в root layout
 
+## v1.7 Requirements
+
+Requirements for Content Discovery phase.
+
+### Content Discovery
+
+- [x] **SEARCH-01**: Семантический поиск по урокам через vector search (top-10 уроков с 1-2 фрагментами и таймкодами)
+- [x] **SEARCH-02**: 7 фильтров (категория, статус, темы, сложность, длительность, курс, маркетплейс) работают в режимах поиска, курсов и трека
+- [x] **SEARCH-03**: Клик на таймкод фрагмента открывает урок на нужной позиции видео (seekTo)
+- [x] **SEARCH-04**: Уроки из рекомендованного трека показывают badge "В вашем треке" в результатах поиска
+- [x] **SEARCH-05**: Очистка поиска (X или backspace) возвращает к режиму курсов/трека
+
 ## Future Requirements
 
-Deferred to v1.6+. Tracked but not in current roadmap.
+Deferred to v1.7+. Tracked but not in current roadmap.
 
 ### Auth Extensions
 
@@ -123,7 +135,7 @@ Deferred to v1.6+. Tracked but not in current roadmap.
 - **DIAG-11**: Spaced repetition для закрепления вопросов
 - **DIAG-12**: Визуализация истории прогресса между диагностиками (графики роста)
 - **DIAG-13**: Гибкая диагностика (10-100 вопросов, выбор количества)
-- **DIAG-14**: Поиск и фильтрация по топикам уроков
+- ~~**DIAG-14**: Поиск и фильтрация по топикам уроков~~ → covered by SEARCH-02 (Phase 30)
 
 ## Out of Scope
 
@@ -191,6 +203,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEO-04 | Phase 27 (Plan 02) | Complete |
 | SEO-05 | Phase 27 (Plan 02) | Complete |
 | SEO-06 | Phase 27 (Plan 02) | Complete |
+| SEARCH-01 | Phase 30 (Plan 01, 02) | Complete |
+| SEARCH-02 | Phase 30 (Plan 01, 02) | Complete |
+| SEARCH-03 | Phase 30 (Plan 02) | Complete |
+| SEARCH-04 | Phase 30 (Plan 01, 02) | Complete |
+| SEARCH-05 | Phase 30 (Plan 02) | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
@@ -198,8 +215,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.4 requirements: 9 total, 9 complete
 - v1.5 requirements: 8 total, 0 planned
 - v1.6 requirements: 6 total, 6 complete
+- v1.7 requirements: 5 total, 5 complete
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-18 after Phase 27 completion*
+*Last updated: 2026-03-18 after Phase 30 completion*
