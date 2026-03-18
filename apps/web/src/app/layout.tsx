@@ -14,8 +14,28 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'MPSTATS Academy',
-  description: 'Образовательная платформа для селлеров маркетплейсов',
+  title: {
+    default: 'MPSTATS Academy — образовательная платформа для селлеров',
+    template: '%s | MPSTATS Academy',
+  },
+  description: 'Образовательная платформа для селлеров маркетплейсов. AI-диагностика навыков, персонализированный трек обучения, 400+ видеоуроков.',
+  metadataBase: new URL('https://platform.mpstats.academy'),
+  openGraph: {
+    type: 'website',
+    locale: 'ru_RU',
+    siteName: 'MPSTATS Academy',
+    title: 'MPSTATS Academy — образовательная платформа для селлеров',
+    description: 'AI-диагностика навыков, персонализированный трек обучения, 400+ видеоуроков для селлеров маркетплейсов.',
+    url: 'https://platform.mpstats.academy',
+    images: [
+      {
+        url: '/og-default.png',
+        width: 1200,
+        height: 630,
+        alt: 'MPSTATS Academy',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
