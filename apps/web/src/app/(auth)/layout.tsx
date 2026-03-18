@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import { Logo } from '@/components/shared/Logo';
+
+export const metadata: Metadata = {
+  title: 'Авторизация',
+  description: 'Войдите или зарегистрируйтесь на платформе MPSTATS Academy для доступа к курсам по маркетплейсам.',
+};
 
 export default function AuthLayout({
   children,

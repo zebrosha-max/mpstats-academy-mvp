@@ -1,9 +1,19 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Sidebar } from '@/components/shared/sidebar';
 import { MobileNav } from '@/components/shared/mobile-nav';
 import { UserNav } from '@/components/shared/user-nav';
 import { LogoMark } from '@/components/shared/Logo';
+
+export const metadata: Metadata = {
+  title: 'Личный кабинет',
+  description: 'Ваш персональный кабинет MPSTATS Academy: диагностика навыков, обучение, прогресс.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function MainLayout({
   children,
