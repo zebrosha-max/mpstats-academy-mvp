@@ -129,12 +129,12 @@ export async function generateChatResponse(
   message: string,
   history: ChatMessage[] = []
 ): Promise<GenerationResult> {
-  // 1. Search for relevant chunks (threshold lowered to 0.3 for better recall)
+  // 1. Search for relevant chunks (threshold 0.5 — lower values cause Supabase free tier to timeout on large result sets)
   const relevantChunks = await searchChunks({
     query: message,
     lessonId,
     limit: 5,
-    threshold: 0.3,
+    threshold: 0.5,
   });
 
   // 2. Build context with citations

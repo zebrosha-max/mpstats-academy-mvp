@@ -160,11 +160,11 @@ export const aiRouter = router({
       query: z.string().min(1).max(500),
     }))
     .query(async ({ ctx, input }): Promise<{ query: string; results: SearchLessonResult[]; totalChunks: number }> => {
-      // 1. Vector search — get up to 30 chunks with low threshold for recall
+      // 1. Vector search — get up to 30 chunks (threshold 0.5 — lower values timeout on Supabase free tier)
       const chunks = await searchChunks({
         query: input.query,
         limit: 30,
-        threshold: 0.3,
+        threshold: 0.5,
       });
 
       if (chunks.length === 0) {
