@@ -101,7 +101,7 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
               )}
 
               {/* Meta */}
-              <div className="flex items-center gap-3 mt-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
                 <span className={cn('px-2 py-0.5 rounded-md text-caption font-medium', CATEGORY_COLORS[lesson.skillCategory])}>
                   {CATEGORY_LABELS[lesson.skillCategory]}
                 </span>
