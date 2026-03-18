@@ -286,13 +286,20 @@ Plans:
 
 ### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Пользователь находит нужный контент через семантический поиск по проблеме/боли и расширенную фильтрацию (топики, сложность, длительность, курс, маркетплейс), результаты показывают релевантные фрагменты с таймкодами, уроки из рекомендованного трека маркируются badge "В вашем треке"
+**Requirements**: SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04, SEARCH-05
 **Depends on:** Phase 29
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Пользователь вводит запрос-боль в поисковую строку на /learn и получает top-10 релевантных уроков с 1-2 фрагментами и таймкодами
+  2. 7 фильтров (категория, статус, топики, сложность, длительность, курс, маркетплейс) работают в режимах поиска, курсов и трека
+  3. Клик на таймкод фрагмента открывает урок на нужной позиции видео
+  4. Уроки из рекомендованного трека показывают badge "В вашем треке" в результатах
+  5. Очистка поиска возвращает к обычному режиму курсов/трека
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 30 to break down)
+- [ ] 30-01-PLAN.md — Backend: searchLessons tRPC endpoint, getCourses extension (topics/skillCategories/skillLevel), splitLink update
+- [ ] 30-02-PLAN.md — Frontend: SearchBar + FilterPanel + SearchResultCard components, /learn page integration, timecode deep-link + human verify
 
 ### Phase 31: Admin Roles — разделение admin/superadmin, управление доступом команды
 
@@ -306,7 +313,7 @@ Plans:
   4. changeUserRole мутация доступна только SUPERADMIN с запретом само-разжалования
   5. UserTable показывает role dropdown для SUPERADMIN и read-only badge для ADMIN
   6. Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
-**Plans:** 2/2 plans complete
+**Plans:** 2 plans
 
 Plans:
 - [x] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
