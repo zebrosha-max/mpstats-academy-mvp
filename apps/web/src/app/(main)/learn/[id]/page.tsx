@@ -60,6 +60,12 @@ export default function LessonPage() {
     document.getElementById('video-player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
+  // Deep-link timecode from search results (?t=3759)
+  const searchTimecode = typeof window !== 'undefined'
+    ? parseInt(new URLSearchParams(window.location.search).get('t') || '', 10)
+    : NaN;
+  const hasSearchTimecode = !isNaN(searchTimecode) && searchTimecode > 0;
+
   // Watch progress: position tracking refs (no re-renders)
   const lastPositionRef = useRef<number>(0);
   const lastDurationRef = useRef<number>(0);
@@ -190,28 +196,24 @@ export default function LessonPage() {
   });
 
   // Timecode deep-link from search results (Phase 30)
+  // Uses same postMessage format as diagnostic hints (JSON.stringify)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get('t');
-    if (t) {
-      const seconds = parseInt(t, 10);
-      if (!isNaN(seconds) && seconds > 0) {
-        const attemptSeek = (retries = 0) => {
-          const iframe = document.querySelector('iframe[src*="kinescope.io"]') as HTMLIFrameElement | null;
-          if (iframe?.contentWindow) {
-            iframe.contentWindow.postMessage(
-              { method: 'seekTo', value: seconds },
-              'https://kinescope.io'
-            );
-          } else if (retries < 10) {
-            setTimeout(() => attemptSeek(retries + 1), 500);
-          }
-        };
-        setTimeout(() => attemptSeek(), 1000);
+    if (!hasSearchTimecode) return;
+    const attemptSeek = (retries = 0) => {
+      const iframe = document.querySelector('iframe[src*="kinescope"]') as HTMLIFrameElement | null;
+      if (iframe?.contentWindow) {
+        iframe.contentWindow.postMessage(
+          JSON.stringify({ method: 'seekTo', params: [searchTimecode] }),
+          '*'
+        );
+      } else if (retries < 15) {
+        setTimeout(() => attemptSeek(retries + 1), 500);
       }
-    }
-  }, []);
+    };
+    // Wait for iframe to load — initialTime handles initial position,
+    // this is a fallback for cases where Kinescope ignores initialTime
+    setTimeout(() => attemptSeek(), 2000);
+  }, [hasSearchTimecode, searchTimecode]);
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -352,7 +354,7 @@ export default function LessonPage() {
               ref={playerRef}
               videoId={lesson.videoId}
               onTimeUpdate={handleTimeUpdate}
-              initialTime={watchProgress?.lastPosition}
+              initialTime={hasSearchTimecode ? searchTimecode : watchProgress?.lastPosition}
               durationSeconds={lesson.duration ? lesson.duration * 60 : undefined}
             />
           </Card>
