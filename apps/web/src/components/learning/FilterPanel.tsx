@@ -163,7 +163,7 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
         {availableTopics.length > 0 && (
           <Popover>
             <PopoverTrigger asChild>
-              <button className={cn(
+              <button data-no-ring className={cn(
                 'px-3 py-1 rounded-md border text-body-sm whitespace-nowrap transition-colors',
                 'focus:outline-none focus:border-mp-gray-400',
                 filters.topics.length > 0

@@ -355,6 +355,12 @@ html, body {
   a:focus-visible {
     @apply outline-none ring-2 ring-mp-blue-500 ring-offset-2;
   }
+
+  /* Select/input in filter panels — subtle border instead of ring */
+  select:focus-visible,
+  [data-no-ring]:focus-visible {
+    @apply ring-0 ring-offset-0 border-mp-gray-400;
+  }
 }
 
 /* ===== Smooth Scrolling ===== */
