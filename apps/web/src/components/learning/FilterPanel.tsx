@@ -103,7 +103,7 @@ function SelectFilter({ value, onChange, options, className }: {
       onChange={(e) => onChange(e.target.value)}
       className={cn(
         'px-3 py-1 rounded-md border border-mp-gray-200 text-body-sm bg-white text-mp-gray-700',
-        'focus:outline-none focus:border-mp-blue-400 focus:ring-1 focus:ring-mp-blue-400',
+        'focus:outline-none focus:border-mp-gray-400',
         'appearance-none cursor-pointer',
         className
       )}
@@ -165,7 +165,7 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
             <PopoverTrigger asChild>
               <button className={cn(
                 'px-3 py-1 rounded-md border text-body-sm whitespace-nowrap transition-colors',
-                'focus:outline-none focus:border-mp-blue-400 focus:ring-1 focus:ring-mp-blue-400',
+                'focus:outline-none focus:border-mp-gray-400',
                 filters.topics.length > 0
                   ? 'border-mp-blue-300 bg-mp-blue-50 text-mp-blue-700'
                   : 'border-mp-gray-200 bg-white text-mp-gray-600 hover:bg-mp-gray-50'
