@@ -5,6 +5,9 @@ const CQ_API_BASE = 'https://api.carrotquest.io/v1';
 /**
  * Carrot Quest API client for server-side event tracking.
  *
+ * Uses by_user_id=true so we can pass our Supabase UUIDs directly
+ * instead of CQ's internal numeric IDs.
+ *
  * Fire-and-forget pattern: errors are logged but never thrown.
  * If API key is missing, all methods are no-ops (safe for dev/staging).
  */
@@ -34,7 +37,8 @@ export class CarrotQuestClient {
     body: Record<string, unknown>,
   ): Promise<void> {
     try {
-      const response = await fetch(`${CQ_API_BASE}${path}`, {
+      const url = `${CQ_API_BASE}${path}${path.includes('?') ? '&' : '?'}by_user_id=true`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

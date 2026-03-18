@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { createHmac } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { Sidebar } from '@/components/shared/sidebar';
 import { MobileNav } from '@/components/shared/mobile-nav';
 import { UserNav } from '@/components/shared/user-nav';
 import { LogoMark } from '@/components/shared/Logo';
+import { CarrotQuestIdentify } from '@/components/shared/CarrotQuestIdentify';
 
 export const metadata: Metadata = {
   title: 'Личный кабинет',
@@ -27,6 +29,12 @@ export default async function MainLayout({
   if (!user) {
     redirect('/login');
   }
+
+  // Generate HMAC hash for Carrot Quest user identification
+  const cqUserAuthKey = process.env.CARROTQUEST_USER_AUTH_KEY || '';
+  const cqHash = cqUserAuthKey
+    ? createHmac('sha256', cqUserAuthKey).update(user.id).digest('hex')
+    : '';
 
   return (
     <div className="min-h-screen bg-mp-gray-50">
@@ -57,6 +65,16 @@ export default async function MainLayout({
 
       {/* Mobile navigation */}
       <MobileNav />
+
+      {/* Carrot Quest user identification */}
+      {cqHash && (
+        <CarrotQuestIdentify
+          userId={user.id}
+          hash={cqHash}
+          email={user.email}
+          name={user.user_metadata?.full_name || user.user_metadata?.name}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 import { cq } from '@/lib/carrotquest/client';
 
 export const dynamic = 'force-dynamic';
@@ -9,28 +10,36 @@ export const dynamic = 'force-dynamic';
  * Supabase calls this endpoint instead of sending built-in auth emails.
  * We forward the email action to Carrot Quest for branded email delivery.
  *
- * Hook payload:
- * {
- *   user: { id, email, ... },
- *   email_data: { email_action_type, token_hash, redirect_to, site_url }
- * }
+ * Supabase sends a JWT (HS256) signed with SUPABASE_HOOK_SECRET in the
+ * Authorization: Bearer <jwt> header. We verify the JWT with jose.
  *
  * IMPORTANT: Always return 200 — returning an error breaks the auth flow.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify authorization
+    // Verify JWT from Supabase
     const authHeader = request.headers.get('authorization');
-    const expectedSecret = process.env.SUPABASE_HOOK_SECRET;
+    const hookSecret = process.env.SUPABASE_HOOK_SECRET;
 
-    if (!expectedSecret) {
+    if (!hookSecret) {
       console.error('[SupabaseEmailHook] SUPABASE_HOOK_SECRET not configured');
       return NextResponse.json({});
     }
 
-    if (authHeader !== `Bearer ${expectedSecret}`) {
-      console.error('[SupabaseEmailHook] Invalid authorization header');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const token = authHeader?.replace('Bearer ', '');
+    if (!token) {
+      console.error('[SupabaseEmailHook] Missing authorization header');
+      // Return 200 to not break auth flow in case of misconfiguration
+      return NextResponse.json({});
+    }
+
+    try {
+      const secret = new TextEncoder().encode(hookSecret);
+      await jwtVerify(token, secret);
+    } catch (jwtError) {
+      console.error('[SupabaseEmailHook] JWT verification failed:', jwtError);
+      // Return 200 to not break auth flow — log for debugging
+      return NextResponse.json({});
     }
 
     const body = await request.json();

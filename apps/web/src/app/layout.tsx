@@ -55,6 +55,12 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('landing-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-landing-theme',t)}catch(e){}})()`,
           }}
         />
+        {/* Carrot Quest widget */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `!function(){function t(t,e){return function(){window.carrotquestasync.push(t,arguments)}}if("undefined"==typeof carrotquest){var e=document.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://cdn.carrotquest.app/api.min.js",document.getElementsByTagName("head")[0].appendChild(e),window.carrotquest={},window.carrotquestasync=[],carrotquest.settings={};for(var n=["connect","track","identify","auth","onReady","addCallback","removeCallback","trackMessageInteraction"],a=0;a<n.length;a++)carrotquest[n[a]]=t(n[a])}}(),carrotquest.connect("57576-5a5343ec7aac68d788dabb2569");`,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <LandingThemeProvider>
