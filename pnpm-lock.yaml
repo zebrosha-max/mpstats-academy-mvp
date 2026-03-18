@@ -177,6 +177,9 @@ importers:
 
   packages/ai:
     dependencies:
+      '@mpstats/db':
+        specifier: workspace:*
+        version: link:../db
       '@mpstats/shared':
         specifier: workspace:*
         version: link:../shared

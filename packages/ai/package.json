@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mpstats/db": "workspace:*",
     "@mpstats/shared": "workspace:*",
     "@supabase/supabase-js": "^2.46.0",
     "openai": "^4.73.0",
