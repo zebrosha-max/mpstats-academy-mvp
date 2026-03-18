@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 30-01-PLAN.md (Content Discovery backend — searchLessons endpoint)
-last_updated: "2026-03-18T09:37:53.913Z"
-last_activity: 2026-03-18 — Phase 30 Plan 01 complete (searchLessons endpoint + shared types)
+stopped_at: Completed 30-02-PLAN.md (Content Discovery frontend — search UI, filters, timecode deep-link)
+last_updated: "2026-03-18T10:30:00.000Z"
+last_activity: 2026-03-18 — Phase 30 complete (Content Discovery — backend + frontend shipped)
 progress:
   total_phases: 16
   completed_phases: 9
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 30 Content Discovery — Plan 01 complete (backend), Plan 02 pending (frontend)
+**Current focus:** Phase 30 Content Discovery — complete (backend + frontend shipped)
 
 ## Current Position
 
-Phase: 30 of 31 (Content Discovery — Plan 01 complete)
-Plan: 1 of 2 in current phase (DONE)
-Status: Phase 30 Plan 01 complete — semantic search backend shipped
-Last activity: 2026-03-18 — Phase 30 Plan 01 complete (searchLessons endpoint + types)
+Phase: 30 of 31 (Content Discovery — COMPLETE)
+Plan: 2 of 2 in current phase (DONE)
+Status: Phase 30 complete — Content Discovery shipped (backend + frontend)
+Last activity: 2026-03-18 — Phase 30 complete (search UI, filters, timecode deep-link)
 
-Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31 + Phase 30-01)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31 + Phase 30)
 
 ## Performance Metrics
 
@@ -101,6 +101,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 31]: Settings page restricted to SUPERADMIN via superadminProcedure (not adminProcedure)
 - [30-01]: findUnique for LearningPath (userId @unique, no isActive field) instead of findFirst+isActive
 - [30-01]: protectedProcedure for searchLessons — splitLink AI_PROCEDURES handles batching separation
+- [30-02]: Switched vector search from Supabase RPC to Prisma raw SQL (RPC timeout at threshold 0.3)
+- [30-02]: Raised vector similarity threshold 0.3→0.5 to reduce noise and avoid timeouts
+- [30-02]: Timecode deep-link conditional on ?t= param presence (preserves saved watch position)
 
 ### Blockers/Concerns
 
@@ -153,11 +156,12 @@ None.
 | Phase 27 P02 | 5min | 3 tasks | 8 files |
 | Phase 31 P02 | 4min | 3 tasks | 6 files |
 | 30    | 01   | 4min     | 2     | 4     |
+| 30    | 02   | 25min    | 3     | 14    |
 
 ## Session Continuity
 
-Last session: 2026-03-18T09:55:00Z
-Stopped at: Completed 30-01-PLAN.md (Content Discovery backend — searchLessons endpoint)
+Last session: 2026-03-18T10:30:00Z
+Stopped at: Completed 30-02-PLAN.md (Content Discovery frontend — search UI, filters, timecode deep-link)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

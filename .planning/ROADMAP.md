@@ -295,11 +295,11 @@ Plans:
   3. Клик на таймкод фрагмента открывает урок на нужной позиции видео
   4. Уроки из рекомендованного трека показывают badge "В вашем треке" в результатах
   5. Очистка поиска возвращает к обычному режиму курсов/трека
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 30-01-PLAN.md — Backend: searchLessons tRPC endpoint, getCourses extension (topics/skillCategories/skillLevel), splitLink update (completed 2026-03-18)
-- [ ] 30-02-PLAN.md — Frontend: SearchBar + FilterPanel + SearchResultCard components, /learn page integration, timecode deep-link + human verify
+- [x] 30-02-PLAN.md — Frontend: SearchBar + FilterPanel + SearchResultCard components, /learn page integration, timecode deep-link + human verify (completed 2026-03-18)
 
 ### Phase 31: Admin Roles — разделение admin/superadmin, управление доступом команды
 
