@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const EXAMPLE_QUERIES = [
   'Как снизить рекламные расходы',
@@ -19,6 +19,14 @@ interface SearchBarProps {
 
 export function SearchBar({ onSearch, onClear, isSearching, hasResults }: SearchBarProps) {
   const [inputValue, setInputValue] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
@@ -72,7 +80,7 @@ export function SearchBar({ onSearch, onClear, isSearching, hasResults }: Search
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="Опишите проблему, например: как снизить ДРР"
+          placeholder={isMobile ? 'Поиск по урокам...' : 'Опишите проблему, например: как снизить ДРР на Wildberries'}
           className="flex-1 h-full bg-transparent text-body text-mp-gray-900 placeholder:text-mp-gray-400 focus:outline-none"
         />
 
