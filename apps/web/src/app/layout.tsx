@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   },
   description: 'Образовательная платформа для селлеров маркетплейсов. AI-диагностика навыков, персонализированный трек обучения, 400+ видеоуроков.',
   metadataBase: new URL('https://platform.mpstats.academy'),
+  verification: {
+    yandex: 'ca2450fe5fe87a68',
+  },
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
