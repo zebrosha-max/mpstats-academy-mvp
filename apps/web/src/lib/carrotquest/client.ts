@@ -32,19 +32,24 @@ export class CarrotQuestClient {
     return true;
   }
 
+  /**
+   * Send form-encoded POST request to CQ API.
+   * CQ API expects application/x-www-form-urlencoded, NOT JSON.
+   */
   private async request(
     path: string,
-    body: Record<string, unknown>,
+    formFields: Record<string, string>,
   ): Promise<void> {
     try {
-      const url = `${CQ_API_BASE}${path}${path.includes('?') ? '&' : '?'}by_user_id=true`;
+      const url = `${CQ_API_BASE}${path}`;
+      const body = new URLSearchParams(formFields);
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Token ${this.apiKey}`,
         },
-        body: JSON.stringify(body),
+        body: body.toString(),
       });
 
       if (!response.ok) {
@@ -60,6 +65,7 @@ export class CarrotQuestClient {
 
   /**
    * Track a named event for a user. Used to trigger CQ automation rules.
+   * Uses by_user_id=true so we can pass Supabase UUIDs.
    */
   async trackEvent(
     userId: string,
@@ -68,14 +74,20 @@ export class CarrotQuestClient {
   ): Promise<void> {
     if (!this.isConfigured()) return;
 
-    await this.request(`/users/${userId}/events`, {
+    const fields: Record<string, string> = {
       event,
-      params: params ?? {},
-    });
+      by_user_id: 'true',
+    };
+    if (params && Object.keys(params).length > 0) {
+      fields.params = JSON.stringify(params);
+    }
+
+    await this.request(`/users/${userId}/events`, fields);
   }
 
   /**
    * Set user properties (e.g. name, email, plan).
+   * Uses by_user_id=true so we can pass Supabase UUIDs.
    */
   async setUserProps(
     userId: string,
@@ -83,7 +95,14 @@ export class CarrotQuestClient {
   ): Promise<void> {
     if (!this.isConfigured()) return;
 
-    await this.request(`/users/${userId}/props`, props);
+    const fields: Record<string, string> = {
+      by_user_id: 'true',
+    };
+    for (const [key, value] of Object.entries(props)) {
+      fields[key] = String(value);
+    }
+
+    await this.request(`/users/${userId}/props`, fields);
   }
 }
 

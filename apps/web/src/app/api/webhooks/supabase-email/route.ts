@@ -1,24 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { cq } from '@/lib/carrotquest/client';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * Supabase Send Email Hook handler.
+ * Supabase Send Email Hook handler (Standard Webhooks verification).
  *
- * Supabase calls this endpoint instead of sending built-in auth emails.
- * We forward the email action to Carrot Quest for branded email delivery.
+ * Supabase HTTPS hooks use Standard Webhooks spec:
+ * - webhook-id, webhook-timestamp, webhook-signature headers
+ * - Secret format: "v1,whsec_BASE64KEY"
+ * - Signature: HMAC-SHA256 of "${id}.${timestamp}.${body}"
  *
- * Supabase sends a JWT (HS256) signed with SUPABASE_HOOK_SECRET in the
- * Authorization: Bearer <jwt> header. We verify the JWT with jose.
+ * We forward auth email actions to Carrot Quest for branded delivery.
  *
  * IMPORTANT: Always return 200 — returning an error breaks the auth flow.
  */
+
+function verifyWebhookSignature(
+  rawBody: string,
+  headers: Headers,
+  secret: string,
+): boolean {
+  const msgId = headers.get('webhook-id');
+  const timestamp = headers.get('webhook-timestamp');
+  const signatures = headers.get('webhook-signature');
+
+  if (!msgId || !timestamp || !signatures) return false;
+
+  // Extract base64 key from "v1,whsec_BASE64KEY" format
+  const parts = secret.split(',');
+  const keyPart = parts[parts.length - 1]; // "whsec_BASE64KEY"
+  const base64Key = keyPart.replace('whsec_', '');
+  const key = Buffer.from(base64Key, 'base64');
+
+  // Compute expected signature
+  const signedContent = `${msgId}.${timestamp}.${rawBody}`;
+  const computed = createHmac('sha256', key)
+    .update(signedContent)
+    .digest('base64');
+  const expected = `v1,${computed}`;
+
+  // Compare against all signatures in header (space-separated)
+  return signatures.split(' ').some((sig) => {
+    try {
+      return timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+    } catch {
+      return false;
+    }
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Verify JWT from Supabase
-    const authHeader = request.headers.get('authorization');
     const hookSecret = process.env.SUPABASE_HOOK_SECRET;
 
     if (!hookSecret) {
@@ -26,27 +60,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({});
     }
 
-    const token = authHeader?.replace('Bearer ', '');
-    if (!token) {
-      console.error('[SupabaseEmailHook] Missing authorization header');
-      // Return 200 to not break auth flow in case of misconfiguration
-      return NextResponse.json({});
-    }
+    // Read raw body for signature verification
+    const rawBody = await request.text();
 
-    try {
-      const secret = new TextEncoder().encode(hookSecret);
-      await jwtVerify(token, secret);
-    } catch (jwtError) {
-      console.error('[SupabaseEmailHook] JWT verification failed:', jwtError);
+    // Verify Standard Webhooks signature
+    if (!verifyWebhookSignature(rawBody, request.headers, hookSecret)) {
+      console.error('[SupabaseEmailHook] Webhook signature verification failed');
       // Return 200 to not break auth flow — log for debugging
       return NextResponse.json({});
     }
 
-    const body = await request.json();
+    const body = JSON.parse(rawBody);
     const { user, email_data } = body;
 
     if (!user?.id || !email_data?.email_action_type) {
-      console.error('[SupabaseEmailHook] Invalid payload:', JSON.stringify(body));
+      console.error('[SupabaseEmailHook] Invalid payload:', rawBody.slice(0, 500));
       return NextResponse.json({});
     }
 
@@ -57,7 +85,6 @@ export async function POST(request: NextRequest) {
 
     switch (email_action_type) {
       case 'signup': {
-        // Email confirmation — "click to confirm your email address"
         await cq.trackEvent(user.id, '$email_confirmation' as any, {
           confirm_url: confirmUrl,
           email: user.email || '',
@@ -67,7 +94,6 @@ export async function POST(request: NextRequest) {
       }
 
       case 'recovery': {
-        // Password reset
         await cq.trackEvent(user.id, '$password_reset' as any, {
           reset_url: confirmUrl,
           email: user.email || '',
@@ -77,7 +103,6 @@ export async function POST(request: NextRequest) {
       }
 
       case 'email_change': {
-        // Email change confirmation
         await cq.trackEvent(user.id, '$email_change' as any, {
           confirm_url: confirmUrl,
           email: user.email || '',
