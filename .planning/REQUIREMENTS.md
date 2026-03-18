@@ -85,6 +85,19 @@ Requirements for Admin Roles phase.
 - [x] **ROLE-07**: UserTable показывает role dropdown (SUPERADMIN) или badge (ADMIN) с privilege-aware контролами
 - [x] **ROLE-08**: Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
 
+## v1.6 Requirements
+
+Requirements for SEO + Custom Error Pages phase.
+
+### SEO & Meta
+
+- [x] **SEO-01**: Root layout имеет OG-теги (og:title, og:description, og:image, og:url, og:type, og:locale=ru_RU) и title template "Page | MPSTATS Academy"
+- [x] **SEO-02**: sitemap.xml содержит 4 публичные страницы (/, /pricing, /login, /register)
+- [x] **SEO-03**: robots.txt блокирует protected routes (/dashboard, /learn, /diagnostic, /profile, /admin, /api)
+- [x] **SEO-04**: Каждый route group имеет уникальный title и description через layout metadata
+- [x] **SEO-05**: Error-страницы (404, 500, global-error) показывают логотип MPSTATS Academy, 404 ведёт на /
+- [x] **SEO-06**: Yandex Webmaster верификация через мета-тег в root layout
+
 ## Future Requirements
 
 Deferred to v1.6+. Tracked but not in current roadmap.
@@ -172,14 +185,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROLE-06 | Phase 31 (Plan 02) | Planned |
 | ROLE-07 | Phase 31 (Plan 02) | Planned |
 | ROLE-08 | Phase 31 (Plan 02) | Planned |
+| SEO-01 | Phase 27 (Plan 01) | Complete |
+| SEO-02 | Phase 27 (Plan 01) | Complete |
+| SEO-03 | Phase 27 (Plan 01) | Complete |
+| SEO-04 | Phase 27 (Plan 02) | Complete |
+| SEO-05 | Phase 27 (Plan 02) | Complete |
+| SEO-06 | Phase 27 (Plan 02) | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
 - v1.3 requirements: 7 total, 5 complete
 - v1.4 requirements: 9 total, 9 complete
 - v1.5 requirements: 8 total, 0 planned
+- v1.6 requirements: 6 total, 6 complete
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-18 after Phase 31 planning*
+*Last updated: 2026-03-18 after Phase 27 completion*
