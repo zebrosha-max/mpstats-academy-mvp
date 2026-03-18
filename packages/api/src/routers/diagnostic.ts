@@ -310,9 +310,11 @@ async function generateSectionedPath(
   const GROWTH_LIMIT = 20;     // Top 20 for mid-level skills
   const ADVANCED_LIMIT = 15;   // Top 15 for strong skills
 
-  // ── Section 2: Deepening (score < 70) ──
+  // ── Section 2: Deepening (score < 67%) ──
+  // With 3 questions per category, possible scores: 0%, 33%, 67%, 100%
+  // < 67 means 0% or 33% (0 or 1 correct out of 3)
   const weakCategories = Object.entries(CATEGORY_KEY_MAP)
-    .filter(([, key]) => skillProfile[key] < 70)
+    .filter(([, key]) => skillProfile[key] < 67)
     .map(([cat]) => cat);
 
   const deepeningLessons = allLessons.filter(
@@ -328,9 +330,10 @@ async function generateSectionedPath(
   const deepeningIds = deepeningLessons.slice(0, DEEPENING_LIMIT).map(l => l.id);
   deepeningIds.forEach(id => usedLessonIds.add(id));
 
-  // ── Section 3: Growth (score 70-85) ──
+  // ── Section 3: Growth (score 67-99%) ──
+  // 67% = 2 out of 3 correct — decent but room to grow
   const midCategories = Object.entries(CATEGORY_KEY_MAP)
-    .filter(([, key]) => skillProfile[key] >= 70 && skillProfile[key] <= 85)
+    .filter(([, key]) => skillProfile[key] >= 67 && skillProfile[key] < 100)
     .map(([cat]) => cat);
 
   const growthLessons = allLessons.filter(
@@ -339,10 +342,10 @@ async function generateSectionedPath(
   const growthIds = growthLessons.slice(0, GROWTH_LIMIT).map(l => l.id);
   growthIds.forEach(id => usedLessonIds.add(id));
 
-  // ── Section 4: Advanced (score > 85) ──
-  // Only MEDIUM and HARD lessons from strong categories (no EASY introductory content).
+  // ── Section 4: Advanced (score = 100%) ──
+  // 100% = 3 out of 3 correct — mastered, only advanced content
   const strongCategories = Object.entries(CATEGORY_KEY_MAP)
-    .filter(([, key]) => skillProfile[key] > 85)
+    .filter(([, key]) => skillProfile[key] >= 100)
     .map(([cat]) => cat);
 
   const strongCategoryLessons = allLessons.filter(
