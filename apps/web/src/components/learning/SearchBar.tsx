@@ -26,6 +26,15 @@ export function SearchBar({ onSearch, onClear, isSearching, hasResults }: Search
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
+    // If user clears input manually (backspace), reset search
+    if (val === '') {
+      onClear();
+    }
+  };
+
   const handleClear = () => {
     setInputValue('');
     onClear();
@@ -61,7 +70,7 @@ export function SearchBar({ onSearch, onClear, isSearching, hasResults }: Search
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Опишите проблему, например: как снизить ДРР на Wildberries"
           className="flex-1 h-full bg-transparent text-body text-mp-gray-900 placeholder:text-mp-gray-400 focus:outline-none"
