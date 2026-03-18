@@ -4,14 +4,15 @@ import 'server-only';
  * Vector retrieval service
  *
  * Searches content_chunk table using pgvector similarity.
- * Uses Supabase RPC function `match_chunks` for efficient search.
+ * Uses Prisma raw SQL (direct TCP) instead of Supabase RPC (PostgREST HTTP)
+ * because PostgREST times out on vector searches with large result sets.
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { prisma } from '@mpstats/db/client';
 import { embedQuery } from './embeddings';
 
-// Lazy-initialized Supabase client to avoid build-time errors
-// (env vars are not available during Next.js "Collecting page data" phase)
+// Lazy-initialized Supabase client (still used for getChunksForLesson)
 let _supabase: SupabaseClient | null = null;
 
 function getSupabaseClient(): SupabaseClient {
@@ -53,6 +54,9 @@ export interface SearchOptions {
 /**
  * Search for relevant content chunks using vector similarity
  *
+ * Uses Prisma raw SQL (direct TCP connection to PostgreSQL) instead of
+ * Supabase PostgREST RPC which times out on vector searches.
+ *
  * @param options - Search parameters
  * @returns Array of matching chunks with similarity scores
  */
@@ -64,20 +68,28 @@ export async function searchChunks(
   // 1. Embed the query
   const queryEmbedding = await embedQuery(query);
 
-  // 2. Search via Supabase RPC
-  const { data, error } = await supabase.rpc('match_chunks', {
-    query_embedding: queryEmbedding,
-    match_threshold: threshold,
-    match_count: limit,
-    filter_lesson_prefix: lessonId || null,
-  });
+  // 2. Search via Prisma raw SQL (direct TCP, not PostgREST)
+  const embeddingStr = `[${queryEmbedding.join(',')}]`;
 
-  if (error) {
-    console.error('Vector search error:', error);
-    throw new Error(`Vector search failed: ${error.message}`);
-  }
+  const lessonFilter = lessonId ? `AND c.lesson_id LIKE '${lessonId}%'` : '';
 
-  return (data || []) as ChunkSearchResult[];
+  const results = await prisma.$queryRawUnsafe<ChunkSearchResult[]>(`
+    SELECT
+      c.id::text as id,
+      c.lesson_id::text as lesson_id,
+      c.content::text as content,
+      c.timecode_start::int as timecode_start,
+      c.timecode_end::int as timecode_end,
+      (1 - (c.embedding <=> '${embeddingStr}'::vector))::float as similarity
+    FROM content_chunk c
+    WHERE c.embedding IS NOT NULL
+      AND (1 - (c.embedding <=> '${embeddingStr}'::vector)) > ${threshold}
+      ${lessonFilter}
+    ORDER BY c.embedding <=> '${embeddingStr}'::vector
+    LIMIT ${limit}
+  `);
+
+  return results;
 }
 
 /**
