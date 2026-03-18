@@ -318,3 +318,13 @@ Plans:
 Plans:
 - [x] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
 - [x] 31-02-PLAN.md — Frontend: admin layout, UserTable role UI, sidebar admin link + human verify (completed 2026-03-18)
+
+### Phase 32: Custom Track Management — ручное управление персональным треком (добавить/удалить уроки)
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 31
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 32 to break down)

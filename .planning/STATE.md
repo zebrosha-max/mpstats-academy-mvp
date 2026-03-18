@@ -124,6 +124,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - Phase 29 added: Sentry Monitoring — мониторинг ошибок в продакшене
 - Phase 30 added: Content Discovery — smart search, фильтры, персональный трек
 - Phase 31 added: Admin Roles — admin/superadmin, управление доступом команды
+- Phase 32 added: Custom Track Management — ручное управление персональным треком (добавить/удалить уроки)
 
 ### Pending Todos
 
