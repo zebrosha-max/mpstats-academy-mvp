@@ -76,11 +76,11 @@ Requirements for Admin Roles phase.
 
 ### Admin Roles
 
-- [ ] **ROLE-01**: Prisma enum Role { USER ADMIN SUPERADMIN } заменяет boolean isAdmin
-- [ ] **ROLE-02**: adminProcedure разрешает ADMIN и SUPERADMIN, superadminProcedure — только SUPERADMIN
-- [ ] **ROLE-03**: ADMIN и SUPERADMIN обходят paywall (admin_bypass в checkLessonAccess)
-- [ ] **ROLE-04**: changeUserRole мутация с защитой SUPERADMIN-only и запретом само-разжалования
-- [ ] **ROLE-05**: toggleUserField (isActive) ограничен SUPERADMIN-only
+- [x] **ROLE-01**: Prisma enum Role { USER ADMIN SUPERADMIN } заменяет boolean isAdmin
+- [x] **ROLE-02**: adminProcedure разрешает ADMIN и SUPERADMIN, superadminProcedure — только SUPERADMIN
+- [x] **ROLE-03**: ADMIN и SUPERADMIN обходят paywall (admin_bypass в checkLessonAccess)
+- [x] **ROLE-04**: changeUserRole мутация с защитой SUPERADMIN-only и запретом само-разжалования
+- [x] **ROLE-05**: toggleUserField (isActive) ограничен SUPERADMIN-only
 - [ ] **ROLE-06**: Admin layout проверяет role вместо isAdmin, показывает role badge
 - [ ] **ROLE-07**: UserTable показывает role dropdown (SUPERADMIN) или badge (ADMIN) с privilege-aware контролами
 - [ ] **ROLE-08**: Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN

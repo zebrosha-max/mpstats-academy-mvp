@@ -309,5 +309,5 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
+- [x] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
 - [ ] 31-02-PLAN.md — Frontend: admin layout, UserTable role UI, sidebar admin link + human verify

@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 23 of 31 (Diagnostic 2.0 — complete, next: Phase 24)
-Plan: 3 of 3 in current phase -- COMPLETE
-Status: Phase 23 Plan 03 complete (frontend UI — accordion track, hints, dual radar)
-Last activity: 2026-03-17 — Phase 23 Plan 03 completed (accordion track, diagnostic hints, dual Radar Chart)
+Phase: 31 of 31 (Admin Roles — Plan 01 complete, next: Plan 02)
+Plan: 1 of 2 in current phase
+Status: Phase 31 Plan 01 complete (Role enum, superadminProcedure, paywall bypass, changeUserRole)
+Last activity: 2026-03-18 — Phase 31 Plan 01 completed (backend role system)
 
-Progress: [██████████] 97% (v1.0 + v1.1 + v1.2 + Phase 23 complete)
+Progress: [██████████] 97% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31-01)
 
 ## Performance Metrics
 
@@ -91,6 +91,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [23-02]: getRecommendedPath returns isSectioned flag for frontend format detection
 - [23-03]: Errors section open by default in accordion, permanent localStorage hint dismissal
 - [23-03]: Dual Radar Chart via previousData prop with dashed "before" + solid "after" polygons
+- [31-01]: Three-level Role enum (USER/ADMIN/SUPERADMIN) replaces boolean isAdmin
+- [31-01]: adminProcedure for ADMIN+SUPERADMIN, superadminProcedure for SUPERADMIN-only
+- [31-01]: Self-demotion and self-deactivation guards prevent SUPERADMIN lockout
 
 ### Blockers/Concerns
 
@@ -137,11 +140,12 @@ None.
 | 23    | 01   | 4min     | 2     | 6     |
 | 23    | 02   | 3min     | 2     | 3     |
 | 23    | 03   | 5min     | 3     | 6     |
+| 31    | 01   | 4min     | 2     | 7     |
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:35:41.589Z
-Stopped at: Phase 30 context gathered
+Last session: 2026-03-18T08:50:00.000Z
+Stopped at: Phase 31 Plan 01 complete — backend role system
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
