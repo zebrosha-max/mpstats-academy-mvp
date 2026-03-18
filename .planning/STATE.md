@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 27-01-PLAN.md (SEO Foundation)
-last_updated: "2026-03-18T08:57:50.919Z"
-last_activity: 2026-03-18 — Phase 31 Plan 01 completed (backend role system)
+status: verifying
+stopped_at: Completed 27-02-PLAN.md (Error pages + metadata + Yandex verification)
+last_updated: "2026-03-18T09:02:20.404Z"
+last_activity: 2026-03-18 — Phase 31 Plan 02 completed (privilege-aware admin UI)
 progress:
   total_phases: 16
-  completed_phases: 7
-  total_plans: 22
-  completed_plans: 19
-  percent: 97
+  completed_phases: 9
+  total_plans: 23
+  completed_plans: 21
+  percent: 98
 ---
 
 # Project State
@@ -97,6 +97,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [31-02]: Profile query reused for role detection in sidebar/mobile-nav (no new endpoint)
 - [31-02]: Privilege-aware UI: SUPERADMIN sees dropdowns/toggles, ADMIN sees read-only badges
 - [Phase 27]: Title template '%s | MPSTATS Academy' + metadataBase for correct OG URL resolution
+- [Phase 27]: Next.js Metadata API verification.yandex for Yandex Webmaster meta tag
 
 ### Blockers/Concerns
 
@@ -146,11 +147,12 @@ None.
 | 31    | 01   | 4min     | 2     | 7     |
 | 31    | 02   | 4min     | 2     | 5     |
 | Phase 27 P01 | 3min | 2 tasks | 5 files |
+| Phase 27 P02 | 5min | 3 tasks | 8 files |
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:57:27.000Z
-Stopped at: Phase 31 Plan 02 — checkpoint:human-verify (Task 3 pending)
+Last session: 2026-03-18T09:02:20.398Z
+Stopped at: Completed 27-02-PLAN.md (Error pages + metadata + Yandex verification)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

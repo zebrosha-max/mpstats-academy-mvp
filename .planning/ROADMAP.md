@@ -258,7 +258,7 @@ Plans:
   4. Каждый route group имеет уникальный title и description через metadata в layout файлах
   5. Error-страницы (404, error, global-error) показывают логотип MPSTATS Academy
   6. 404 страница ведёт на / (не /dashboard)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 27-01-PLAN.md — SEO foundation: root metadata with OG tags + title template, sitemap.ts, robots.ts, OG image
