@@ -451,8 +451,8 @@ export default function LearnPage() {
                           <CardContent className="pt-3 pb-4">
                             <div className="grid gap-3">
                               {section.lessons
-                                .filter((lesson: LessonWithProgress) => filterLesson(lesson))
-                                .map((lesson: LessonWithProgress, idx: number) => (
+                                .filter((lesson) => filterLesson(lesson as LessonWithProgress))
+                                .map((lesson, idx: number) => (
                                 <LessonCard
                                   key={lesson.id}
                                   lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
@@ -496,8 +496,8 @@ export default function LearnPage() {
                     return (
                       <>
                         {visibleLessons
-                          .filter((lesson: LessonWithProgress) => filterLesson(lesson))
-                          .map((lesson: LessonWithProgress, idx: number) => (
+                          .filter((lesson) => filterLesson(lesson as LessonWithProgress))
+                          .map((lesson, idx: number) => (
                           <LessonCard
                             key={lesson.id}
                             lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
