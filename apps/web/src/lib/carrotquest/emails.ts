@@ -96,12 +96,18 @@ export async function sendWelcomeEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
+    // Set user identity in CQ so they're searchable by email/name
+    await cq.setUserProps(userId, {
+      '$email': data.email,
+      '$name': data.name,
+    });
+
     await cq.trackEvent(userId, 'User Registered', {
       name: data.name,
       email: data.email,
     });
 
-    console.log(`[Email] Welcome event sent for user ${userId}`);
+    console.log(`[Email] Welcome event + props sent for user ${userId}`);
   } catch (error) {
     console.error('[Email] sendWelcomeEmail error:', error);
   }

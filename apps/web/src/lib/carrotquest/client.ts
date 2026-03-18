@@ -86,7 +86,8 @@ export class CarrotQuestClient {
   }
 
   /**
-   * Set user properties (e.g. name, email, plan).
+   * Set user properties (e.g. $name, $email).
+   * CQ expects operations=[{op, key, value}] format.
    * Uses by_user_id=true so we can pass Supabase UUIDs.
    */
   async setUserProps(
@@ -95,14 +96,16 @@ export class CarrotQuestClient {
   ): Promise<void> {
     if (!this.isConfigured()) return;
 
-    const fields: Record<string, string> = {
-      by_user_id: 'true',
-    };
-    for (const [key, value] of Object.entries(props)) {
-      fields[key] = String(value);
-    }
+    const operations = Object.entries(props).map(([key, value]) => ({
+      op: 'update_or_create',
+      key,
+      value: String(value),
+    }));
 
-    await this.request(`/users/${userId}/props`, fields);
+    await this.request(`/users/${userId}/props`, {
+      operations: JSON.stringify(operations),
+      by_user_id: 'true',
+    });
   }
 }
 
