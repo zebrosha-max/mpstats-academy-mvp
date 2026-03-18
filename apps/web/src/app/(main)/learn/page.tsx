@@ -5,26 +5,13 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LessonCard } from '@/components/learning/LessonCard';
+import { SearchBar } from '@/components/learning/SearchBar';
+import { FilterPanel, type FilterState, DEFAULT_FILTERS } from '@/components/learning/FilterPanel';
+import { SearchResultCard } from '@/components/learning/SearchResultCard';
 import { CourseLockBanner } from '@/components/learning/PaywallBanner';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
-import type { SkillCategory, LessonWithProgress } from '@mpstats/shared';
-
-const CATEGORY_FILTERS: { value: SkillCategory | 'ALL'; label: string; color: string }[] = [
-  { value: 'ALL', label: 'Все', color: 'bg-mp-gray-100 text-mp-gray-700' },
-  { value: 'ANALYTICS', label: 'Аналитика', color: 'bg-mp-blue-100 text-mp-blue-700' },
-  { value: 'MARKETING', label: 'Маркетинг', color: 'bg-mp-green-100 text-mp-green-700' },
-  { value: 'CONTENT', label: 'Контент', color: 'bg-mp-pink-100 text-mp-pink-700' },
-  { value: 'OPERATIONS', label: 'Операции', color: 'bg-orange-100 text-orange-700' },
-  { value: 'FINANCE', label: 'Финансы', color: 'bg-yellow-100 text-yellow-700' },
-];
-
-const STATUS_FILTERS = [
-  { value: 'ALL', label: 'Все уроки' },
-  { value: 'NOT_STARTED', label: 'Не начатые' },
-  { value: 'IN_PROGRESS', label: 'В процессе' },
-  { value: 'COMPLETED', label: 'Завершённые' },
-];
+import type { LessonWithProgress } from '@mpstats/shared';
 
 const INITIAL_LESSONS_SHOWN = 5;
 
@@ -40,12 +27,14 @@ function isDatabaseUnavailable(errorMessage: string): boolean {
 }
 
 export default function LearnPage() {
-  const [categoryFilter, setCategoryFilter] = useState<SkillCategory | 'ALL'>('ALL');
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [viewMode, setViewMode] = useState<'path' | 'courses'>('courses');
   const [viewModeInitialized, setViewModeInitialized] = useState(false);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['errors']));
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
   const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
   const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
@@ -53,6 +42,12 @@ export default function LearnPage() {
   const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery(
     undefined,
     { enabled: hasDiagnostic === true }
+  );
+
+  // Search query
+  const { data: searchResults, isLoading: searchLoading, error: searchError } = trpc.ai.searchLessons.useQuery(
+    { query: searchQuery },
+    { enabled: searchQuery.length > 0 }
   );
 
   // Smart default: show "Мой трек" if user has completed diagnostic
@@ -69,7 +64,6 @@ export default function LearnPage() {
     if (hash && courses?.some((c) => c.id === hash)) {
       setExpandedCourses((prev) => new Set(prev).add(hash));
       setViewMode('courses');
-      // Scroll to course after render
       setTimeout(() => {
         document.getElementById(`course-${hash}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
@@ -80,6 +74,80 @@ export default function LearnPage() {
   const recommendedLessonIds = new Set(
     recommendedPath?.lessons.map((l) => l.id) ?? []
   );
+
+  // Extract available topics from courses data
+  const availableTopics = useMemo(() => {
+    if (!courses) return [];
+    const topicCount = new Map<string, number>();
+    courses.forEach(course => {
+      course.lessons.forEach(lesson => {
+        const topics = ((lesson as unknown) as Record<string, unknown>).topics as string[] | undefined;
+        if (topics) {
+          topics.forEach(t => topicCount.set(t, (topicCount.get(t) || 0) + 1));
+        }
+      });
+    });
+    return Array.from(topicCount.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(([topic]) => topic);
+  }, [courses]);
+
+  // Extract available courses for dropdown
+  const availableCourses = useMemo(() => {
+    if (!courses) return [];
+    return courses.map(c => ({ id: c.id, title: c.title }));
+  }, [courses]);
+
+  // Filter search results client-side
+  const filteredSearchResults = useMemo(() => {
+    if (!searchResults?.results) return [];
+    return searchResults.results.filter(r => {
+      if (filters.category !== 'ALL' && r.lesson.skillCategory !== filters.category) return false;
+      if (filters.status !== 'ALL' && r.status !== filters.status) return false;
+      if (filters.difficulty !== 'ALL' && r.lesson.skillLevel !== filters.difficulty) return false;
+      if (filters.courseId !== 'ALL' && r.lesson.courseId !== filters.courseId) return false;
+      if (filters.duration !== 'ALL') {
+        const d = r.lesson.duration;
+        if (filters.duration === 'short' && d > 10) return false;
+        if (filters.duration === 'medium' && (d <= 10 || d > 30)) return false;
+        if (filters.duration === 'long' && d <= 30) return false;
+      }
+      if (filters.topics.length > 0) {
+        if (!filters.topics.some(t => r.lesson.topics.includes(t))) return false;
+      }
+      if (filters.marketplace !== 'ALL') {
+        const mpKeywords = filters.marketplace === 'WB'
+          ? ['wildberries', 'wb'] : ['ozon'];
+        if (!r.lesson.topics.some(t => mpKeywords.some(kw => t.toLowerCase().includes(kw)))) return false;
+      }
+      return true;
+    });
+  }, [searchResults, filters]);
+
+  // Unified filter function for courses/track views
+  const filterLesson = (lesson: LessonWithProgress) => {
+    if (filters.category !== 'ALL' && lesson.skillCategory !== filters.category) return false;
+    if (filters.status !== 'ALL' && lesson.status !== filters.status) return false;
+    if (filters.difficulty !== 'ALL' && (((lesson as unknown) as Record<string, unknown>).skillLevel as string || 'MEDIUM') !== filters.difficulty) return false;
+    if (filters.duration !== 'ALL') {
+      const d = lesson.duration;
+      if (filters.duration === 'short' && d > 10) return false;
+      if (filters.duration === 'medium' && (d <= 10 || d > 30)) return false;
+      if (filters.duration === 'long' && d <= 30) return false;
+    }
+    if (filters.topics.length > 0) {
+      const lt = (((lesson as unknown) as Record<string, unknown>).topics as string[] | undefined) ?? [];
+      if (!filters.topics.some(t => lt.includes(t))) return false;
+    }
+    if (filters.marketplace !== 'ALL') {
+      const lt = (((lesson as unknown) as Record<string, unknown>).topics as string[] | undefined) ?? [];
+      const mpKw = filters.marketplace === 'WB' ? ['wildberries', 'wb'] : ['ozon'];
+      if (!lt.some(t => mpKw.some(kw => t.toLowerCase().includes(kw)))) return false;
+    }
+    if (filters.courseId !== 'ALL' && ((lesson as unknown) as Record<string, unknown>).courseId !== filters.courseId) return false;
+    return true;
+  };
 
   const isLoading = coursesLoading || pathLoading || (diagLoading && !viewModeInitialized);
   const error = coursesError || pathError;
@@ -109,13 +177,6 @@ export default function LearnPage() {
     () => recommendedPath?.isSectioned === true && !!recommendedPath?.sections,
     [recommendedPath],
   );
-
-  // Filter lessons
-  const filteredLessons = path?.lessons.filter((lesson) => {
-    if (categoryFilter !== 'ALL' && lesson.skillCategory !== categoryFilter) return false;
-    if (statusFilter !== 'ALL' && lesson.status !== statusFilter) return false;
-    return true;
-  }) || [];
 
   // Stats
   const stats = {
@@ -182,7 +243,7 @@ export default function LearnPage() {
         </div>
         {!viewModeInitialized ? (
           <div className="h-10 bg-mp-gray-200 rounded-lg w-48 animate-pulse" />
-        ) : (
+        ) : searchQuery.length === 0 && (
           <div className="flex gap-2">
             <Button
               variant={viewMode === 'path' ? 'default' : 'outline'}
@@ -202,8 +263,24 @@ export default function LearnPage() {
         )}
       </div>
 
-      {/* Track progress bar (only in "Мой трек" view with data) */}
-      {viewMode === 'path' && recommendedPath && recommendedPath.totalLessons > 0 && (
+      {/* Search Bar */}
+      <SearchBar
+        onSearch={(q) => setSearchQuery(q)}
+        onClear={() => setSearchQuery('')}
+        isSearching={searchLoading}
+        hasResults={searchQuery.length > 0}
+      />
+
+      {/* Filters */}
+      <FilterPanel
+        filters={filters}
+        onFiltersChange={setFilters}
+        availableTopics={availableTopics}
+        availableCourses={availableCourses}
+      />
+
+      {/* Track progress bar (only in "Мой трек" view with data, not in search mode) */}
+      {searchQuery.length === 0 && viewMode === 'path' && recommendedPath && recommendedPath.totalLessons > 0 && (
         <div className="animate-slide-up" style={{ animationDelay: '25ms' }}>
           <div className="flex justify-between text-body-sm text-mp-gray-600 mb-2">
             <span>Прогресс трека</span>
@@ -219,30 +296,80 @@ export default function LearnPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 animate-slide-up" style={{ animationDelay: '50ms' }}>
-        <Card className="shadow-mp-card">
-          <CardContent className="py-5 text-center">
-            <div className="text-display-sm font-bold text-mp-green-500">{stats.completed}</div>
-            <div className="text-body-sm text-mp-gray-500">Завершено</div>
-          </CardContent>
-        </Card>
-        <Card className="shadow-mp-card">
-          <CardContent className="py-5 text-center">
-            <div className="text-display-sm font-bold text-mp-blue-500">{stats.inProgress}</div>
-            <div className="text-body-sm text-mp-gray-500">В процессе</div>
-          </CardContent>
-        </Card>
-        <Card className="shadow-mp-card">
-          <CardContent className="py-5 text-center">
-            <div className="text-display-sm font-bold text-mp-gray-900">{stats.total}</div>
-            <div className="text-body-sm text-mp-gray-500">Всего</div>
-          </CardContent>
-        </Card>
-      </div>
+      {searchQuery.length === 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 animate-slide-up" style={{ animationDelay: '50ms' }}>
+          <Card className="shadow-mp-card">
+            <CardContent className="py-5 text-center">
+              <div className="text-display-sm font-bold text-mp-green-500">{stats.completed}</div>
+              <div className="text-body-sm text-mp-gray-500">Завершено</div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-mp-card">
+            <CardContent className="py-5 text-center">
+              <div className="text-display-sm font-bold text-mp-blue-500">{stats.inProgress}</div>
+              <div className="text-body-sm text-mp-gray-500">В процессе</div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-mp-card">
+            <CardContent className="py-5 text-center">
+              <div className="text-display-sm font-bold text-mp-gray-900">{stats.total}</div>
+              <div className="text-body-sm text-mp-gray-500">Всего</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {viewMode === 'path' ? (
+      {searchQuery.length > 0 ? (
+        /* Search Results View */
+        <div>
+          {searchLoading && (
+            <p className="text-body-sm text-mp-gray-500">Ищем релевантные уроки...</p>
+          )}
+          {searchError && (
+            <p className="text-body-sm text-red-500">Не удалось выполнить поиск. Попробуйте ещё раз.</p>
+          )}
+          {!searchLoading && searchResults && (
+            <>
+              <p className="text-body-sm text-mp-gray-500 mb-3" aria-live="polite">
+                {filteredSearchResults.length} уроков найдено
+              </p>
+              {filteredSearchResults.length > 0 ? (
+                <div className="space-y-3" aria-busy={searchLoading}>
+                  {filteredSearchResults.map((result, i) => (
+                    <div key={result.lesson.id} className="animate-slide-up" style={{ animationDelay: `${i * 50}ms` }}>
+                      <SearchResultCard result={result} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Empty search state */
+                <div className="py-12 text-center">
+                  <svg className="w-16 h-16 text-mp-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <h3 className="text-heading text-mp-gray-900 mb-2">Ничего не найдено</h3>
+                  <p className="text-body text-mp-gray-500 mb-4">
+                    Попробуйте переформулировать запрос или выберите один из популярных топиков
+                  </p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {availableTopics.slice(0, 5).map(topic => (
+                      <button
+                        key={topic}
+                        onClick={() => setSearchQuery(topic)}
+                        className="px-3 py-1 rounded-full bg-mp-gray-100 text-body-sm text-mp-gray-600 hover:bg-mp-gray-200 cursor-pointer transition-colors"
+                      >
+                        {topic}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ) : viewMode === 'path' ? (
         <>
-          {/* Case A: No diagnostic completed — show CTA banner */}
+          {/* Case A: No diagnostic completed -- show CTA banner */}
           {hasDiagnostic === false && (
             <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
               <CardContent className="py-12 text-center">
@@ -262,7 +389,7 @@ export default function LearnPage() {
             </Card>
           )}
 
-          {/* Case B: Track complete — congratulatory message */}
+          {/* Case B: Track complete -- congratulatory message */}
           {hasDiagnostic && isTrackComplete && (
             <Card className="shadow-mp-card border-mp-green-200 bg-gradient-to-br from-mp-green-50 to-white">
               <CardContent className="py-12 text-center">
@@ -323,12 +450,14 @@ export default function LearnPage() {
                         {isOpen && (
                           <CardContent className="pt-3 pb-4">
                             <div className="grid gap-3">
-                              {section.lessons.map((lesson, idx: number) => (
+                              {section.lessons
+                                .filter((lesson: LessonWithProgress) => filterLesson(lesson))
+                                .map((lesson: LessonWithProgress, idx: number) => (
                                 <LessonCard
                                   key={lesson.id}
                                   lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
                                   showCourse
-                                  courseName={lesson.courseName}
+                                  courseName={((lesson as unknown) as Record<string, unknown>).courseName as string}
                                   isRecommended={section.id === 'errors'}
                                   locked={lesson.locked}
                                 />
@@ -366,12 +495,14 @@ export default function LearnPage() {
 
                     return (
                       <>
-                        {visibleLessons.map((lesson, idx) => (
+                        {visibleLessons
+                          .filter((lesson: LessonWithProgress) => filterLesson(lesson))
+                          .map((lesson: LessonWithProgress, idx: number) => (
                           <LessonCard
                             key={lesson.id}
                             lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
                             showCourse
-                            courseName={lesson.courseName}
+                            courseName={((lesson as unknown) as Record<string, unknown>).courseName as string}
                             isRecommended
                             locked={lesson.locked}
                           />
@@ -384,7 +515,7 @@ export default function LearnPage() {
                                   key={lesson.id}
                                   lesson={{ ...lesson, title: `${visibleCount + idx + 1}. ${lesson.title}` } as LessonWithProgress}
                                   showCourse
-                                  courseName={lesson.courseName}
+                                  courseName={((lesson as unknown) as Record<string, unknown>).courseName as string}
                                   locked
                                 />
                               ))}
@@ -439,11 +570,20 @@ export default function LearnPage() {
         /* Courses view */
         <div className="space-y-6">
           {courses?.map((course) => {
+            // Apply filters to lessons in course view
+            const filteredCourseLessons = course.lessons.filter(lesson => filterLesson(lesson));
+            if (filteredCourseLessons.length === 0 && (filters.category !== 'ALL' || filters.status !== 'ALL' || filters.topics.length > 0 || filters.difficulty !== 'ALL' || filters.duration !== 'ALL' || filters.marketplace !== 'ALL')) {
+              return null; // Hide empty courses when filters are active
+            }
+
             const isExpanded = expandedCourses.has(course.id);
             const visibleLessons = isExpanded
-              ? course.lessons
-              : course.lessons.slice(0, INITIAL_LESSONS_SHOWN);
-            const hiddenCount = course.lessons.length - INITIAL_LESSONS_SHOWN;
+              ? filteredCourseLessons
+              : filteredCourseLessons.slice(0, INITIAL_LESSONS_SHOWN);
+            const hiddenCount = filteredCourseLessons.length - INITIAL_LESSONS_SHOWN;
+
+            // Skip if courseId filter is active and doesn't match
+            if (filters.courseId !== 'ALL' && course.id !== filters.courseId) return null;
 
             // Find first lesson to continue watching
             const continueLesson = course.lessons.find(
@@ -526,7 +666,7 @@ export default function LearnPage() {
                       >
                         {isExpanded
                           ? 'Скрыть'
-                          : `Показать все ${course.lessons.length} уроков`}
+                          : `Показать все ${filteredCourseLessons.length} уроков`}
                       </Button>
                     </div>
                   )}

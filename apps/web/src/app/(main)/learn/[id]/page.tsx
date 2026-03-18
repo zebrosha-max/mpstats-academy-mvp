@@ -189,6 +189,30 @@ export default function LessonPage() {
     },
   });
 
+  // Timecode deep-link from search results (Phase 30)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('t');
+    if (t) {
+      const seconds = parseInt(t, 10);
+      if (!isNaN(seconds) && seconds > 0) {
+        const attemptSeek = (retries = 0) => {
+          const iframe = document.querySelector('iframe[src*="kinescope.io"]') as HTMLIFrameElement | null;
+          if (iframe?.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { method: 'seekTo', value: seconds },
+              'https://kinescope.io'
+            );
+          } else if (retries < 10) {
+            setTimeout(() => attemptSeek(retries + 1), 500);
+          }
+        };
+        setTimeout(() => attemptSeek(), 1000);
+      }
+    }
+  }, []);
+
   // Auto-scroll chat to bottom
   useEffect(() => {
     if (chatContainerRef.current) {
