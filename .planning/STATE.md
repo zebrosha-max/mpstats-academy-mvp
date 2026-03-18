@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 31 of 31 (Admin Roles — Plan 01 complete, next: Plan 02)
-Plan: 1 of 2 in current phase
-Status: Phase 31 Plan 01 complete (Role enum, superadminProcedure, paywall bypass, changeUserRole)
-Last activity: 2026-03-18 — Phase 31 Plan 01 completed (backend role system)
+Phase: 31 of 31 (Admin Roles — Plan 02 complete, checkpoint pending)
+Plan: 2 of 2 in current phase
+Status: Phase 31 Plan 02 automated tasks complete (frontend role UI), checkpoint:human-verify pending
+Last activity: 2026-03-18 — Phase 31 Plan 02 completed (privilege-aware admin UI)
 
-Progress: [██████████] 97% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31-01)
+Progress: [██████████] 98% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31)
 
 ## Performance Metrics
 
@@ -94,6 +94,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [31-01]: Three-level Role enum (USER/ADMIN/SUPERADMIN) replaces boolean isAdmin
 - [31-01]: adminProcedure for ADMIN+SUPERADMIN, superadminProcedure for SUPERADMIN-only
 - [31-01]: Self-demotion and self-deactivation guards prevent SUPERADMIN lockout
+- [31-02]: Profile query reused for role detection in sidebar/mobile-nav (no new endpoint)
+- [31-02]: Privilege-aware UI: SUPERADMIN sees dropdowns/toggles, ADMIN sees read-only badges
 - [Phase 27]: Title template '%s | MPSTATS Academy' + metadataBase for correct OG URL resolution
 
 ### Blockers/Concerns
@@ -142,12 +144,13 @@ None.
 | 23    | 02   | 3min     | 2     | 3     |
 | 23    | 03   | 5min     | 3     | 6     |
 | 31    | 01   | 4min     | 2     | 7     |
+| 31    | 02   | 4min     | 2     | 5     |
 | Phase 27 P01 | 3min | 2 tasks | 5 files |
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:57:50.914Z
-Stopped at: Completed 27-01-PLAN.md (SEO Foundation)
+Last session: 2026-03-18T08:57:27.000Z
+Stopped at: Phase 31 Plan 02 — checkpoint:human-verify (Task 3 pending)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

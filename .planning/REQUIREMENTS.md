@@ -81,9 +81,9 @@ Requirements for Admin Roles phase.
 - [x] **ROLE-03**: ADMIN и SUPERADMIN обходят paywall (admin_bypass в checkLessonAccess)
 - [x] **ROLE-04**: changeUserRole мутация с защитой SUPERADMIN-only и запретом само-разжалования
 - [x] **ROLE-05**: toggleUserField (isActive) ограничен SUPERADMIN-only
-- [ ] **ROLE-06**: Admin layout проверяет role вместо isAdmin, показывает role badge
-- [ ] **ROLE-07**: UserTable показывает role dropdown (SUPERADMIN) или badge (ADMIN) с privilege-aware контролами
-- [ ] **ROLE-08**: Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
+- [x] **ROLE-06**: Admin layout проверяет role вместо isAdmin, показывает role badge
+- [x] **ROLE-07**: UserTable показывает role dropdown (SUPERADMIN) или badge (ADMIN) с privilege-aware контролами
+- [x] **ROLE-08**: Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
 
 ## Future Requirements
 
