@@ -117,9 +117,12 @@ export default function LearnPage() {
         if (!filters.topics.some(t => r.lesson.topics.includes(t))) return false;
       }
       if (filters.marketplace !== 'ALL') {
-        const mpKeywords = filters.marketplace === 'WB'
-          ? ['wildberries', 'wb'] : ['ozon'];
-        if (!r.lesson.topics.some(t => mpKeywords.some(kw => t.toLowerCase().includes(kw)))) return false;
+        if (filters.marketplace === 'OZON') {
+          if (r.lesson.courseId !== '05_ozon') return false;
+        } else {
+          // WB = everything except OZON course
+          if (r.lesson.courseId === '05_ozon') return false;
+        }
       }
       return true;
     });
@@ -141,9 +144,13 @@ export default function LearnPage() {
       if (!filters.topics.some(t => lt.includes(t))) return false;
     }
     if (filters.marketplace !== 'ALL') {
-      const lt = (((lesson as unknown) as Record<string, unknown>).topics as string[] | undefined) ?? [];
-      const mpKw = filters.marketplace === 'WB' ? ['wildberries', 'wb'] : ['ozon'];
-      if (!lt.some(t => mpKw.some(kw => t.toLowerCase().includes(kw)))) return false;
+      const courseId = ((lesson as unknown) as Record<string, unknown>).courseId as string || '';
+      if (filters.marketplace === 'OZON') {
+        if (courseId !== '05_ozon') return false;
+      } else {
+        // WB = everything except OZON course
+        if (courseId === '05_ozon') return false;
+      }
     }
     if (filters.courseId !== 'ALL' && ((lesson as unknown) as Record<string, unknown>).courseId !== filters.courseId) return false;
     return true;

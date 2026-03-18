@@ -32,26 +32,26 @@ interface FilterPanelProps {
   availableCourses: { id: string; title: string }[];
 }
 
-const CATEGORY_FILTERS: { value: SkillCategory | 'ALL'; label: string; color: string }[] = [
-  { value: 'ALL', label: 'Все', color: 'bg-mp-gray-100 text-mp-gray-700' },
-  { value: 'ANALYTICS', label: 'Аналитика', color: 'bg-mp-blue-100 text-mp-blue-700' },
-  { value: 'MARKETING', label: 'Маркетинг', color: 'bg-mp-green-100 text-mp-green-700' },
-  { value: 'CONTENT', label: 'Контент', color: 'bg-mp-pink-100 text-mp-pink-700' },
-  { value: 'OPERATIONS', label: 'Операции', color: 'bg-orange-100 text-orange-700' },
-  { value: 'FINANCE', label: 'Финансы', color: 'bg-yellow-100 text-yellow-700' },
+const CATEGORY_OPTIONS: { value: SkillCategory | 'ALL'; label: string }[] = [
+  { value: 'ALL', label: 'Все' },
+  { value: 'ANALYTICS', label: 'Аналитика' },
+  { value: 'MARKETING', label: 'Маркетинг' },
+  { value: 'CONTENT', label: 'Контент' },
+  { value: 'OPERATIONS', label: 'Операции' },
+  { value: 'FINANCE', label: 'Финансы' },
 ];
 
-const STATUS_FILTERS = [
-  { value: 'ALL', label: 'Все уроки' },
+const STATUS_OPTIONS = [
+  { value: 'ALL', label: 'Все' },
   { value: 'NOT_STARTED', label: 'Не начатые' },
   { value: 'IN_PROGRESS', label: 'В процессе' },
   { value: 'COMPLETED', label: 'Завершённые' },
 ];
 
-const MARKETPLACE_FILTERS = [
-  { value: 'ALL', label: 'Все', color: 'bg-mp-gray-50 text-mp-gray-700' },
-  { value: 'WB', label: 'WB', color: 'bg-purple-100 text-purple-700' },
-  { value: 'OZON', label: 'OZON', color: 'bg-blue-100 text-blue-700' },
+const MARKETPLACE_OPTIONS = [
+  { value: 'ALL', label: 'Все' },
+  { value: 'WB', label: 'Wildberries' },
+  { value: 'OZON', label: 'Ozon' },
 ];
 
 function isNonDefault(filters: FilterState): boolean {
@@ -63,6 +63,56 @@ function isNonDefault(filters: FilterState): boolean {
     filters.duration !== 'ALL' ||
     filters.courseId !== 'ALL' ||
     filters.marketplace !== 'ALL'
+  );
+}
+
+function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
+      <span className="text-caption text-mp-gray-500 font-medium w-24 shrink-0">{label}</span>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
+    </div>
+  );
+}
+
+function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'px-3 py-1 rounded-md text-body-sm whitespace-nowrap transition-colors',
+        active
+          ? 'bg-mp-blue-600 text-white'
+          : 'bg-mp-gray-100 text-mp-gray-600 hover:bg-mp-gray-200'
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SelectFilter({ value, onChange, options, className }: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  className?: string;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={cn(
+        'px-3 py-1 rounded-md border border-mp-gray-200 text-body-sm bg-white text-mp-gray-700',
+        'focus:outline-none focus:border-mp-blue-400 focus:ring-1 focus:ring-mp-blue-400',
+        'appearance-none cursor-pointer',
+        className
+      )}
+      style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', paddingRight: '28px' }}
+    >
+      {options.map(o => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
   );
 }
 
@@ -79,163 +129,136 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
   };
 
   return (
-    <div className="flex flex-wrap gap-2 items-center overflow-x-auto">
-      {/* Category pills */}
-      {CATEGORY_FILTERS.map(cat => (
-        <button
-          key={cat.value}
-          onClick={() => update({ category: cat.value })}
-          className={cn(
-            'px-3 py-2 rounded-full text-body-sm whitespace-nowrap transition-colors',
-            filters.category === cat.value ? cat.color : 'bg-mp-gray-50 text-mp-gray-500'
-          )}
-        >
-          {cat.label}
-        </button>
-      ))}
+    <div className="space-y-3 py-3 px-4 bg-mp-gray-50 rounded-lg border border-mp-gray-100">
+      {/* Row 1: Category */}
+      <FilterGroup label="Категория">
+        {CATEGORY_OPTIONS.map(cat => (
+          <Pill key={cat.value} active={filters.category === cat.value} onClick={() => update({ category: cat.value })}>
+            {cat.label}
+          </Pill>
+        ))}
+      </FilterGroup>
 
-      {/* Separator */}
-      <div className="w-px h-6 bg-mp-gray-200 hidden sm:block" />
+      {/* Row 2: Status */}
+      <FilterGroup label="Статус">
+        {STATUS_OPTIONS.map(st => (
+          <Pill key={st.value} active={filters.status === st.value} onClick={() => update({ status: st.value })}>
+            {st.label}
+          </Pill>
+        ))}
+      </FilterGroup>
 
-      {/* Status pills */}
-      {STATUS_FILTERS.map(st => (
-        <button
-          key={st.value}
-          onClick={() => update({ status: st.value })}
-          className={cn(
-            'px-3 py-2 rounded-full text-body-sm whitespace-nowrap transition-colors',
-            filters.status === st.value
-              ? 'bg-mp-blue-100 text-mp-blue-700'
-              : 'bg-mp-gray-50 text-mp-gray-500'
-          )}
-        >
-          {st.label}
-        </button>
-      ))}
+      {/* Row 3: Marketplace */}
+      <FilterGroup label="Маркетплейс">
+        {MARKETPLACE_OPTIONS.map(mp => (
+          <Pill key={mp.value} active={filters.marketplace === mp.value} onClick={() => update({ marketplace: mp.value })}>
+            {mp.label}
+          </Pill>
+        ))}
+      </FilterGroup>
 
-      {/* Separator */}
-      <div className="w-px h-6 bg-mp-gray-200 hidden sm:block" />
-
-      {/* Topics multi-select */}
-      {availableTopics.length > 0 && (
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className={cn(
-              'px-3 py-2 rounded-lg border text-body-sm whitespace-nowrap transition-colors',
-              filters.topics.length > 0
-                ? 'border-mp-blue-200 bg-mp-blue-50 text-mp-blue-700 font-semibold'
-                : 'border-mp-gray-200 bg-white text-mp-gray-600'
-            )}>
-              {filters.topics.length > 0
-                ? `Топики +${filters.topics.length}`
-                : 'Все топики'}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Поиск по топикам..." />
-              <CommandList>
-                <CommandEmpty>Не найдено</CommandEmpty>
-                {availableTopics.map(topic => (
-                  <CommandItem
-                    key={topic}
-                    value={topic}
-                    onSelect={() => toggleTopic(topic)}
-                    className="cursor-pointer"
-                  >
-                    <div className={cn(
-                      'mr-2 flex h-4 w-4 items-center justify-center rounded border',
-                      filters.topics.includes(topic)
-                        ? 'border-mp-blue-600 bg-mp-blue-600'
-                        : 'border-mp-gray-300'
-                    )}>
-                      {filters.topics.includes(topic) && (
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="text-body-sm">{topic}</span>
-                  </CommandItem>
-                ))}
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      )}
-
-      {/* Difficulty dropdown */}
-      <select
-        value={filters.difficulty}
-        onChange={(e) => update({ difficulty: e.target.value })}
-        className={cn(
-          'px-3 py-2 rounded-lg border border-mp-gray-200 text-body-sm bg-white transition-colors',
-          filters.difficulty !== 'ALL' && 'font-semibold'
+      {/* Row 4: Dropdowns */}
+      <FilterGroup label="Параметры">
+        {/* Topics */}
+        {availableTopics.length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className={cn(
+                'px-3 py-1 rounded-md border text-body-sm whitespace-nowrap transition-colors',
+                'focus:outline-none focus:border-mp-blue-400 focus:ring-1 focus:ring-mp-blue-400',
+                filters.topics.length > 0
+                  ? 'border-mp-blue-300 bg-mp-blue-50 text-mp-blue-700'
+                  : 'border-mp-gray-200 bg-white text-mp-gray-600 hover:bg-mp-gray-50'
+              )}>
+                {filters.topics.length > 0
+                  ? `Темы: ${filters.topics.length}`
+                  : 'Все темы'}
+                <svg className="inline-block w-3 h-3 ml-1.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0" align="start" sideOffset={4}>
+              <Command>
+                <CommandInput placeholder="Найти тему..." />
+                <CommandList className="max-h-48">
+                  <CommandEmpty>Не найдено</CommandEmpty>
+                  {availableTopics.map(topic => (
+                    <CommandItem
+                      key={topic}
+                      value={topic}
+                      onSelect={() => toggleTopic(topic)}
+                      className="cursor-pointer"
+                    >
+                      <div className={cn(
+                        'mr-2 flex h-4 w-4 items-center justify-center rounded border',
+                        filters.topics.includes(topic)
+                          ? 'border-mp-blue-600 bg-mp-blue-600'
+                          : 'border-mp-gray-300'
+                      )}>
+                        {filters.topics.includes(topic) && (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-body-sm">{topic}</span>
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         )}
-      >
-        <option value="ALL">Сложность</option>
-        <option value="EASY">Легкий</option>
-        <option value="MEDIUM">Средний</option>
-        <option value="HARD">Сложный</option>
-      </select>
 
-      {/* Duration dropdown */}
-      <select
-        value={filters.duration}
-        onChange={(e) => update({ duration: e.target.value })}
-        className={cn(
-          'px-3 py-2 rounded-lg border border-mp-gray-200 text-body-sm bg-white transition-colors',
-          filters.duration !== 'ALL' && 'font-semibold'
+        {/* Difficulty */}
+        <SelectFilter
+          value={filters.difficulty}
+          onChange={(v) => update({ difficulty: v })}
+          options={[
+            { value: 'ALL', label: 'Сложность' },
+            { value: 'EASY', label: 'Лёгкий' },
+            { value: 'MEDIUM', label: 'Средний' },
+            { value: 'HARD', label: 'Сложный' },
+          ]}
+        />
+
+        {/* Duration */}
+        <SelectFilter
+          value={filters.duration}
+          onChange={(v) => update({ duration: v })}
+          options={[
+            { value: 'ALL', label: 'Длительность' },
+            { value: 'short', label: 'До 10 мин' },
+            { value: 'medium', label: '10–30 мин' },
+            { value: 'long', label: '30+ мин' },
+          ]}
+        />
+
+        {/* Course */}
+        {availableCourses.length > 0 && (
+          <SelectFilter
+            value={filters.courseId}
+            onChange={(v) => update({ courseId: v })}
+            options={[
+              { value: 'ALL', label: 'Все курсы' },
+              ...availableCourses.map(c => ({ value: c.id, label: c.title })),
+            ]}
+            className="max-w-[220px]"
+          />
         )}
-      >
-        <option value="ALL">Длительность</option>
-        <option value="short">До 10 мин</option>
-        <option value="medium">10-30 мин</option>
-        <option value="long">30+ мин</option>
-      </select>
+      </FilterGroup>
 
-      {/* Course dropdown */}
-      {availableCourses.length > 0 && (
-        <select
-          value={filters.courseId}
-          onChange={(e) => update({ courseId: e.target.value })}
-          className={cn(
-            'px-3 py-2 rounded-lg border border-mp-gray-200 text-body-sm bg-white transition-colors max-w-[200px]',
-            filters.courseId !== 'ALL' && 'font-semibold'
-          )}
-        >
-          <option value="ALL">Все курсы</option>
-          {availableCourses.map(c => (
-            <option key={c.id} value={c.id}>{c.title}</option>
-          ))}
-        </select>
-      )}
-
-      {/* Separator */}
-      <div className="w-px h-6 bg-mp-gray-200 hidden sm:block" />
-
-      {/* Marketplace pills */}
-      {MARKETPLACE_FILTERS.map(mp => (
-        <button
-          key={mp.value}
-          onClick={() => update({ marketplace: mp.value })}
-          className={cn(
-            'px-3 py-2 rounded-full text-body-sm whitespace-nowrap transition-colors',
-            filters.marketplace === mp.value ? mp.color : 'bg-mp-gray-50 text-mp-gray-500'
-          )}
-        >
-          {mp.label}
-        </button>
-      ))}
-
-      {/* Reset link */}
+      {/* Reset */}
       {isNonDefault(filters) && (
-        <button
-          onClick={() => onFiltersChange(DEFAULT_FILTERS)}
-          className="text-body-sm text-mp-blue-600 hover:underline cursor-pointer whitespace-nowrap"
-        >
-          Сбросить фильтры
-        </button>
+        <div className="flex justify-end pt-1">
+          <button
+            onClick={() => onFiltersChange(DEFAULT_FILTERS)}
+            className="text-body-sm text-mp-blue-600 hover:underline cursor-pointer"
+          >
+            Сбросить все фильтры
+          </button>
+        </div>
       )}
     </div>
   );
