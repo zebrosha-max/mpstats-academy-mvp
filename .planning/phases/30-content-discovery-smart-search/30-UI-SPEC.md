@@ -42,20 +42,20 @@ Declared values (must be multiples of 4):
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| xs | 4px | Icon gaps, inline padding |
+| xs | 4px | Icon gaps, inline padding, chip padding-y |
 | sm | 8px | Compact element spacing, filter pill padding-y |
 | md | 16px | Default element spacing, card content padding |
 | lg | 24px | Section padding, filter panel vertical gaps |
 | xl | 32px | Layout gaps between major sections |
 | 2xl | 48px | Page-level spacing (header to content) |
 
-Exceptions: Filter pills use `px-3 py-1.5` (12px/6px) -- consistent with existing `CATEGORY_FILTERS` pattern on /learn page.
+Exceptions: none
 
 ---
 
 ## Typography
 
-All values from existing `tailwind.config.ts` MPSTATS typography scale:
+All values from existing `tailwind.config.ts` MPSTATS typography scale. 4 sizes, 2 weights:
 
 | Role | Size | Weight | Line Height | Tailwind Class |
 |------|------|--------|-------------|----------------|
@@ -63,19 +63,18 @@ All values from existing `tailwind.config.ts` MPSTATS typography scale:
 | Body Small | 14px (0.875rem) | 400 (regular) | 1.5 | `text-body-sm` |
 | Caption | 12px (0.75rem) | 400 (regular) | 1.4 | `text-caption` |
 | Heading | 20px (1.25rem) | 600 (semibold) | 1.4 | `text-heading` |
-| Display Small | 36px (2.25rem) | 700 (bold) | 1.2 | `text-display-sm` |
 
 Phase-specific usage:
 - **Search bar placeholder**: `text-body`, `text-mp-gray-400`
 - **Example query chips**: `text-body-sm`, `text-mp-gray-600`
-- **Filter labels**: `text-body-sm`, `font-medium`, `text-mp-gray-700`
+- **Filter labels**: `text-body-sm`, `font-semibold`, `text-mp-gray-700`
 - **Search result lesson title**: `text-heading`, `text-mp-gray-900`
 - **Search result course name**: `text-body-sm`, `text-mp-gray-500`
 - **Search result snippet text**: `text-body-sm`, `text-mp-gray-600`
-- **Search result timecode**: `text-body-sm`, `font-medium`, `text-mp-blue-600`
+- **Search result timecode**: `text-body-sm`, `font-semibold`, `text-mp-blue-600`
 - **Topic tags on result cards**: `text-caption`, via Badge component
-- **Difficulty badge**: `text-caption`, `font-medium`
-- **"В вашем треке" badge**: `text-caption`, `font-medium`
+- **Difficulty badge**: `text-caption`, `font-semibold`
+- **"В вашем треке" badge**: `text-caption`, `font-semibold`
 - **Empty state heading**: `text-heading`, `text-mp-gray-900`
 - **Empty state body**: `text-body`, `text-mp-gray-500`
 
@@ -115,6 +114,10 @@ All topic tags use neutral styling: `bg-mp-gray-100 text-mp-gray-700` (consisten
 
 ## Component Inventory
 
+### Primary Visual Focal Point: SearchBar
+
+The SearchBar is the primary visual focal point of this phase. It occupies the top of the /learn page, full-width, with 48px height and prominent focus ring. All other UI elements (filters, results, example queries) are subordinate to it.
+
 ### 1. SearchBar
 
 | Property | Value |
@@ -125,7 +128,7 @@ All topic tags use neutral styling: `bg-mp-gray-100 text-mp-gray-700` (consisten
 | Border | `border border-mp-gray-200`, `rounded-lg` |
 | Focus | `ring-2 ring-mp-blue-500 ring-offset-2` |
 | Icon | Search magnifying glass (inline SVG), left side, `text-mp-gray-400` |
-| Clear button | X icon, right side, visible only when input has text, `text-mp-gray-400 hover:text-mp-gray-600` |
+| Clear button | X icon, right side, visible only when input has text, `text-mp-gray-400 hover:text-mp-gray-600`, `aria-label="Очистить поиск"` |
 | Placeholder | "Опишите проблему, например: как снизить ДРР на Wildberries" |
 | Submit | Enter key (no submit button) |
 | Loading | Replace search icon with spinner (`animate-spin`) while embedding + search in progress |
@@ -167,8 +170,10 @@ Filter controls:
 | Курс | Single-select dropdown | Все / 6 course titles |
 | Маркетплейс | Pills | Все / WB / OZON |
 
+**Filter pill style (all pills):** `px-3 py-2 rounded-full text-body-sm` (8px vertical padding). Active pill uses category-specific color, inactive uses `bg-mp-gray-50`.
+
 **Multi-select topic dropdown spec:**
-- Trigger: Button with text "Топики" + count badge when selected (`+3`)
+- Trigger: Button with text "Все топики" + count badge when selected (`+3`)
 - Dropdown: shadcn `Popover` + `Command` (Combobox pattern)
 - Inside: `CommandInput` for searching topics + `CommandList` with checkboxes
 - Selected topics shown as removable chips below filter row (or inline)
@@ -202,17 +207,17 @@ Card anatomy (top to bottom):
 **Snippet block styling:**
 - Container: `mt-3 space-y-2 border-t border-mp-gray-100 pt-3`
 - Each snippet: `flex gap-2`
-- Timecode: `text-body-sm font-medium text-mp-blue-600 hover:text-mp-blue-700 whitespace-nowrap cursor-pointer` -- links to `/learn/{lessonId}?t={seconds}`
+- Timecode: `text-body-sm font-semibold text-mp-blue-600 hover:text-mp-blue-700 whitespace-nowrap cursor-pointer` -- links to `/learn/{lessonId}?t={seconds}`
 - Snippet text: `text-body-sm text-mp-gray-600 line-clamp-2`
 - Quote icon: small `"` glyph in `text-mp-gray-300` before snippet text
 
 **"В вашем треке" badge:**
-- `inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium border border-mp-blue-200 bg-mp-blue-50 text-mp-blue-700`
+- `inline-flex items-center gap-1 px-2 py-1 rounded-md text-caption font-semibold border border-mp-blue-200 bg-mp-blue-50 text-mp-blue-700`
 - Checkmark icon (inline SVG, 12px) before text
 
 **Locked lesson in search results:**
 - Lock icon (inline SVG) next to lesson title
-- Timecode links replaced with "Оформите подписку" text in `text-mp-gray-400`
+- Timecode links replaced with "Доступно по подписке" text in `text-mp-gray-400`
 - Card has `opacity-75` treatment
 
 ### 5. EmptySearchState
@@ -238,7 +243,7 @@ Card anatomy (top to bottom):
 | Empty search popular topics | Render top-5 topic chips (same style as ExampleQueries) |
 | Error state (search failed) | "Не удалось выполнить поиск. Попробуйте ещё раз." |
 | Filter reset link | "Сбросить фильтры" |
-| Topic dropdown trigger | "Топики" (with count badge: "+3") |
+| Topic dropdown trigger | "Все топики" (with count badge when selected: "+3") |
 | Topic dropdown search placeholder | "Поиск по топикам..." |
 | Results count | "{N} уроков найдено" (`text-body-sm text-mp-gray-500`, above result cards) |
 | "В вашем треке" badge | "В вашем треке" |
@@ -246,6 +251,7 @@ Card anatomy (top to bottom):
 | Duration labels | До 10 мин / 10-30 мин / 30+ мин |
 | Marketplace labels | WB / OZON |
 | Locked snippet replacement | "Доступно по подписке" |
+| Clear button aria | `aria-label="Очистить поиск"` |
 
 ---
 
@@ -305,6 +311,7 @@ No third-party registries declared.
 | Concern | Implementation |
 |---------|----------------|
 | Search input | `role="search"`, `aria-label="Поиск по урокам"` |
+| Search clear button | `aria-label="Очистить поиск"` on the X button |
 | Search submit | Enter key triggers search (announced via `aria-live="polite"` on results count) |
 | Filter pills | `role="radiogroup"` with `role="radio"` + `aria-checked` per pill |
 | Topic multi-select | shadcn Command handles `aria-multiselectable`, keyboard navigation |
