@@ -305,6 +305,11 @@ async function generateSectionedPath(
     return categories.includes(lesson.skillCategory);
   }
 
+  // Section limits: keep track focused, not overwhelming
+  const DEEPENING_LIMIT = 30;  // Top 30 lessons for weak skills
+  const GROWTH_LIMIT = 20;     // Top 20 for mid-level skills
+  const ADVANCED_LIMIT = 15;   // Top 15 for strong skills
+
   // ── Section 2: Deepening (score < 70) ──
   const weakCategories = Object.entries(CATEGORY_KEY_MAP)
     .filter(([, key]) => skillProfile[key] < 70)
@@ -313,14 +318,14 @@ async function generateSectionedPath(
   const deepeningLessons = allLessons.filter(
     l => !usedLessonIds.has(l.id) && hasOverlap(l, weakCategories)
   );
-  // Sort by category weakness then order
+  // Sort by category weakness then order, take top N
   deepeningLessons.sort((a, b) => {
     const aKey = CATEGORY_KEY_MAP[a.skillCategory] || 'analytics';
     const bKey = CATEGORY_KEY_MAP[b.skillCategory] || 'analytics';
     const scoreDiff = skillProfile[aKey] - skillProfile[bKey];
     return scoreDiff !== 0 ? scoreDiff : a.order - b.order;
   });
-  const deepeningIds = deepeningLessons.map(l => l.id);
+  const deepeningIds = deepeningLessons.slice(0, DEEPENING_LIMIT).map(l => l.id);
   deepeningIds.forEach(id => usedLessonIds.add(id));
 
   // ── Section 3: Growth (score 70-85) ──
@@ -331,24 +336,24 @@ async function generateSectionedPath(
   const growthLessons = allLessons.filter(
     l => !usedLessonIds.has(l.id) && hasOverlap(l, midCategories)
   );
-  const growthIds = growthLessons.map(l => l.id);
+  const growthIds = growthLessons.slice(0, GROWTH_LIMIT).map(l => l.id);
   growthIds.forEach(id => usedLessonIds.add(id));
 
   // ── Section 4: Advanced (score > 85) ──
-  // Include HARD lessons from strong categories.
-  // Fallback: if no lessons are tagged HARD yet (all MEDIUM default),
-  // include ALL lessons from strong categories so the section isn't empty.
+  // Only MEDIUM and HARD lessons from strong categories (no EASY introductory content).
   const strongCategories = Object.entries(CATEGORY_KEY_MAP)
     .filter(([, key]) => skillProfile[key] > 85)
     .map(([cat]) => cat);
 
   const strongCategoryLessons = allLessons.filter(
-    l => !usedLessonIds.has(l.id) && hasOverlap(l, strongCategories)
+    l => !usedLessonIds.has(l.id)
+      && hasOverlap(l, strongCategories)
+      && l.skillLevel !== 'EASY'  // Exclude introductory lessons
   );
   const hardOnly = strongCategoryLessons.filter(l => l.skillLevel === 'HARD');
-  // Use HARD-only if tagging has been done, otherwise all strong-category lessons
-  const advancedLessons = hardOnly.length > 0 ? hardOnly : strongCategoryLessons;
-  const advancedIds = advancedLessons.map(l => l.id);
+  // Prefer HARD, fallback to MEDIUM+HARD (but never EASY)
+  const advancedLessons = hardOnly.length >= 5 ? hardOnly : strongCategoryLessons;
+  const advancedIds = advancedLessons.slice(0, ADVANCED_LIMIT).map(l => l.id);
 
   const allSections: LearningPathSection[] = [
     {
@@ -361,7 +366,7 @@ async function generateSectionedPath(
     {
       id: 'deepening' as const,
       title: 'Углубление',
-      description: `${deepeningIds.length} уроков для слабых навыков`,
+      description: `${deepeningIds.length} ${deepeningIds.length === 1 ? 'урок' : deepeningIds.length < 5 ? 'урока' : 'уроков'} для слабых навыков`,
       lessonIds: deepeningIds,
     },
     {
