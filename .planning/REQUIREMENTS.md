@@ -1,4 +1,4 @@
-# Requirements: MAAL v1.2 + v1.3 + v1.4
+# Requirements: MAAL v1.2 + v1.3 + v1.4 + v1.5
 
 **Defined:** 2026-03-06
 **Core Value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
@@ -70,9 +70,24 @@ Requirements for Diagnostic 2.0 — personalized learning track.
 - [x] **DIAG-08**: Хинт с таймкодом из диагностики на странице урока (dismissible, между плеером и табами)
 - [x] **DIAG-09**: Двойной Radar Chart (было/стало) при повторной диагностике
 
+## v1.5 Requirements
+
+Requirements for Admin Roles phase.
+
+### Admin Roles
+
+- [ ] **ROLE-01**: Prisma enum Role { USER ADMIN SUPERADMIN } заменяет boolean isAdmin
+- [ ] **ROLE-02**: adminProcedure разрешает ADMIN и SUPERADMIN, superadminProcedure — только SUPERADMIN
+- [ ] **ROLE-03**: ADMIN и SUPERADMIN обходят paywall (admin_bypass в checkLessonAccess)
+- [ ] **ROLE-04**: changeUserRole мутация с защитой SUPERADMIN-only и запретом само-разжалования
+- [ ] **ROLE-05**: toggleUserField (isActive) ограничен SUPERADMIN-only
+- [ ] **ROLE-06**: Admin layout проверяет role вместо isAdmin, показывает role badge
+- [ ] **ROLE-07**: UserTable показывает role dropdown (SUPERADMIN) или badge (ADMIN) с privilege-aware контролами
+- [ ] **ROLE-08**: Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
+
 ## Future Requirements
 
-Deferred to v1.5+. Tracked but not in current roadmap.
+Deferred to v1.6+. Tracked but not in current roadmap.
 
 ### Auth Extensions
 
@@ -140,22 +155,31 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EMAIL-05 | Phase 22 (Plan 03) | Planned |
 | EMAIL-06 | Phase 22 (Plan 02) | Planned |
 | EMAIL-07 | Phase 22 (Plan 02) | Planned |
-| DIAG-01 | Phase 23 (Plan 01) | Planned |
-| DIAG-02 | Phase 23 (Plan 01) | Planned |
-| DIAG-03 | Phase 23 (Plan 01) | Planned |
-| DIAG-04 | Phase 23 (Plan 02) | Planned |
-| DIAG-05 | Phase 23 (Plan 02) | Planned |
-| DIAG-06 | Phase 23 (Plan 02) | Planned |
-| DIAG-07 | Phase 23 (Plan 03) | Planned |
-| DIAG-08 | Phase 23 (Plan 03) | Planned |
-| DIAG-09 | Phase 23 (Plan 03) | Planned |
+| DIAG-01 | Phase 23 (Plan 01) | Complete |
+| DIAG-02 | Phase 23 (Plan 01) | Complete |
+| DIAG-03 | Phase 23 (Plan 01) | Complete |
+| DIAG-04 | Phase 23 (Plan 02) | Complete |
+| DIAG-05 | Phase 23 (Plan 02) | Complete |
+| DIAG-06 | Phase 23 (Plan 02) | Complete |
+| DIAG-07 | Phase 23 (Plan 03) | Complete |
+| DIAG-08 | Phase 23 (Plan 03) | Complete |
+| DIAG-09 | Phase 23 (Plan 03) | Complete |
+| ROLE-01 | Phase 31 (Plan 01) | Planned |
+| ROLE-02 | Phase 31 (Plan 01) | Planned |
+| ROLE-03 | Phase 31 (Plan 01) | Planned |
+| ROLE-04 | Phase 31 (Plan 01) | Planned |
+| ROLE-05 | Phase 31 (Plan 01) | Planned |
+| ROLE-06 | Phase 31 (Plan 02) | Planned |
+| ROLE-07 | Phase 31 (Plan 02) | Planned |
+| ROLE-08 | Phase 31 (Plan 02) | Planned |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
-- v1.3 requirements: 7 total, 0 complete
-- v1.4 requirements: 9 total, 0 planned
+- v1.3 requirements: 7 total, 5 complete
+- v1.4 requirements: 9 total, 9 complete
+- v1.5 requirements: 8 total, 0 planned
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-16 after Phase 23 planning*
+*Last updated: 2026-03-18 after Phase 31 planning*

@@ -215,3 +215,91 @@ Plans:
 - [x] 23-01-PLAN.md — Schema migration (multi-category, topics, sourceData) + shared types + LLM tagging script
 - [x] 23-02-PLAN.md — Question source tracing + section-based path generation algorithm
 - [x] 23-03-PLAN.md — Frontend: accordion track sections + diagnostic hints + dual Radar Chart + human verify (completed 2026-03-17)
+
+### Phase 24: Support Contact — функционал связи со службой поддержки
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 23
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 24 to break down)
+
+### Phase 25: Legal + Cookie Consent — оферта, политика конфиденциальности, пользовательское соглашение, баннер кук
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 24
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 25 to break down)
+
+### Phase 26: Яндекс Метрика — интеграция аналитики
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 25
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 26 to break down)
+
+### Phase 27: SEO + Custom Error Pages — sitemap, robots.txt, OG-теги, брендированные 404/500
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 26
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 27 to break down)
+
+### Phase 28: Боевой CloudPayments — переключение с тестовых на production credentials
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 27
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 28 to break down)
+
+### Phase 29: Sentry Monitoring — мониторинг ошибок в продакшене
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 28
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 29 to break down)
+
+### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 29
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 30 to break down)
+
+### Phase 31: Admin Roles — разделение admin/superadmin, управление доступом команды
+
+**Goal:** Трёхуровневая иерархия ролей (USER / ADMIN / SUPERADMIN) с paywall bypass для админов, защитой привилегий и обновлённым UI админки
+**Requirements**: ROLE-01, ROLE-02, ROLE-03, ROLE-04, ROLE-05, ROLE-06, ROLE-07, ROLE-08
+**Depends on:** Phase 30
+**Success Criteria** (what must be TRUE):
+  1. Prisma enum Role { USER ADMIN SUPERADMIN } заменяет boolean isAdmin в UserProfile
+  2. adminProcedure разрешает ADMIN и SUPERADMIN, superadminProcedure — только SUPERADMIN
+  3. ADMIN и SUPERADMIN обходят paywall через admin_bypass в checkLessonAccess
+  4. changeUserRole мутация доступна только SUPERADMIN с запретом само-разжалования
+  5. UserTable показывает role dropdown для SUPERADMIN и read-only badge для ADMIN
+  6. Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
+**Plans:** 2 plans
+
+Plans:
+- [ ] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
+- [ ] 31-02-PLAN.md — Frontend: admin layout, UserTable role UI, sidebar admin link + human verify
