@@ -298,7 +298,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 30-01-PLAN.md — Backend: searchLessons tRPC endpoint, getCourses extension (topics/skillCategories/skillLevel), splitLink update
+- [x] 30-01-PLAN.md — Backend: searchLessons tRPC endpoint, getCourses extension (topics/skillCategories/skillLevel), splitLink update (completed 2026-03-18)
 - [ ] 30-02-PLAN.md — Frontend: SearchBar + FilterPanel + SearchResultCard components, /learn page integration, timecode deep-link + human verify
 
 ### Phase 31: Admin Roles — разделение admin/superadmin, управление доступом команды
@@ -317,4 +317,4 @@ Plans:
 
 Plans:
 - [x] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations
-- [ ] 31-02-PLAN.md — Frontend: admin layout, UserTable role UI, sidebar admin link + human verify
+- [x] 31-02-PLAN.md — Frontend: admin layout, UserTable role UI, sidebar admin link + human verify (completed 2026-03-18)

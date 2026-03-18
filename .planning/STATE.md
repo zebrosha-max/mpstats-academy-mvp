@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 31-02-PLAN.md (Admin roles frontend — checkpoint approved)
+stopped_at: Completed 30-01-PLAN.md (Content Discovery backend — searchLessons endpoint)
 last_updated: "2026-03-18T09:37:53.913Z"
-last_activity: 2026-03-18 — Phase 31 Plan 02 checkpoint approved, SUMMARY finalized
+last_activity: 2026-03-18 — Phase 30 Plan 01 complete (searchLessons endpoint + shared types)
 progress:
   total_phases: 16
   completed_phases: 9
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 31 Admin Roles — COMPLETE (both plans, checkpoint approved)
+**Current focus:** Phase 30 Content Discovery — Plan 01 complete (backend), Plan 02 pending (frontend)
 
 ## Current Position
 
-Phase: 31 of 31 (Admin Roles — COMPLETE, both plans)
-Plan: 2 of 2 in current phase (DONE)
-Status: Phase 31 complete — three-level RBAC shipped (checkpoint approved)
-Last activity: 2026-03-18 — Phase 31 Plan 02 checkpoint approved, SUMMARY finalized
+Phase: 30 of 31 (Content Discovery — Plan 01 complete)
+Plan: 1 of 2 in current phase (DONE)
+Status: Phase 30 Plan 01 complete — semantic search backend shipped
+Last activity: 2026-03-18 — Phase 30 Plan 01 complete (searchLessons endpoint + types)
 
-Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31 + Phase 30-01)
 
 ## Performance Metrics
 
@@ -99,6 +99,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 27]: Title template '%s | MPSTATS Academy' + metadataBase for correct OG URL resolution
 - [Phase 27]: Next.js Metadata API verification.yandex for Yandex Webmaster meta tag
 - [Phase 31]: Settings page restricted to SUPERADMIN via superadminProcedure (not adminProcedure)
+- [30-01]: findUnique for LearningPath (userId @unique, no isActive field) instead of findFirst+isActive
+- [30-01]: protectedProcedure for searchLessons — splitLink AI_PROCEDURES handles batching separation
 
 ### Blockers/Concerns
 
@@ -150,11 +152,12 @@ None.
 | Phase 27 P01 | 3min | 2 tasks | 5 files |
 | Phase 27 P02 | 5min | 3 tasks | 8 files |
 | Phase 31 P02 | 4min | 3 tasks | 6 files |
+| 30    | 01   | 4min     | 2     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-03-18T09:33:37.742Z
-Stopped at: Completed 31-02-PLAN.md (Admin roles frontend — checkpoint approved)
+Last session: 2026-03-18T09:55:00Z
+Stopped at: Completed 30-01-PLAN.md (Content Discovery backend — searchLessons endpoint)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
