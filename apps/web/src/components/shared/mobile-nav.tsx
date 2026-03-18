@@ -50,6 +50,17 @@ const navItems: NavItem[] = [
   },
 ];
 
+const adminNavItem: NavItem = {
+  title: 'Админка',
+  href: '/admin',
+  icon: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+};
+
 const billingNavItem: NavItem = {
   title: 'Тарифы',
   href: '/pricing',
@@ -66,12 +77,19 @@ export function MobileNav() {
     retry: false,
     refetchOnWindowFocus: false,
   });
+  const { data: myProfile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
-  // Build nav items with conditional billing link
+  // Build nav items with conditional billing and admin links
   const items = [...navItems];
   if (billingEnabled) {
     // Insert before "Профиль" (last item)
     items.splice(items.length - 1, 0, billingNavItem);
+  }
+  if (myProfile?.role === 'ADMIN' || myProfile?.role === 'SUPERADMIN') {
+    items.push(adminNavItem);
   }
 
   return (

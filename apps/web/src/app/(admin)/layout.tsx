@@ -42,6 +42,9 @@ export default async function AdminLayout({
               <span className="text-body-sm text-mp-gray-500">
                 {user.email}
               </span>
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-mp-blue-100 text-mp-blue-700">
+                {profile.role === 'SUPERADMIN' ? 'Superadmin' : 'Admin'}
+              </span>
               <div className="w-8 h-8 rounded-full bg-mp-blue-100 flex items-center justify-center">
                 <span className="text-xs font-medium text-mp-blue-700">
                   {(user.email?.[0] || 'A').toUpperCase()}
