@@ -74,8 +74,8 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
   return (
     <Link href={`/learn/${lesson.id}`}>
       <Card className="shadow-mp-card hover:shadow-mp-card-hover transition-all duration-300 cursor-pointer h-full hover:-translate-y-0.5">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-4">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-start gap-3 sm:gap-4">
             {/* Status icon or lock icon */}
             <div className={cn('flex-shrink-0 mt-1', isLocked ? 'text-mp-gray-400' : status.color)}>
               {isLocked ? LOCK_ICON : status.icon}

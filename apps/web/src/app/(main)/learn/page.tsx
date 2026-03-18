@@ -455,8 +455,8 @@ export default function LearnPage() {
 
                         {/* Section content -- collapsible */}
                         {isOpen && (
-                          <CardContent className="pt-3 pb-4">
-                            <div className="grid gap-3">
+                          <CardContent className="pt-3 pb-4 px-3 sm:px-6 overflow-hidden">
+                            <div className="grid gap-2 sm:gap-3">
                               {section.lessons
                                 .filter((lesson) => filterLesson(lesson as LessonWithProgress))
                                 .map((lesson, idx: number) => (
@@ -651,8 +651,8 @@ export default function LearnPage() {
                     </div>
                   )}
                 </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3">
+                <CardContent className="px-3 sm:px-6 overflow-hidden">
+                  <div className="grid gap-2 sm:gap-3">
                     {visibleLessons.map((lesson, idx) => (
                       <LessonCard
                         key={lesson.id}
