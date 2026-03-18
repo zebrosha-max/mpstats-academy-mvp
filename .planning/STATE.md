@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 30 UI-SPEC approved
-last_updated: "2026-03-18T08:56:44.077Z"
+stopped_at: Completed 27-01-PLAN.md (SEO Foundation)
+last_updated: "2026-03-18T08:57:50.919Z"
 last_activity: 2026-03-18 — Phase 31 Plan 01 completed (backend role system)
 progress:
   total_phases: 16
   completed_phases: 7
   total_plans: 22
-  completed_plans: 18
+  completed_plans: 19
   percent: 97
 ---
 
@@ -94,6 +94,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [31-01]: Three-level Role enum (USER/ADMIN/SUPERADMIN) replaces boolean isAdmin
 - [31-01]: adminProcedure for ADMIN+SUPERADMIN, superadminProcedure for SUPERADMIN-only
 - [31-01]: Self-demotion and self-deactivation guards prevent SUPERADMIN lockout
+- [Phase 27]: Title template '%s | MPSTATS Academy' + metadataBase for correct OG URL resolution
 
 ### Blockers/Concerns
 
@@ -141,11 +142,12 @@ None.
 | 23    | 02   | 3min     | 2     | 3     |
 | 23    | 03   | 5min     | 3     | 6     |
 | 31    | 01   | 4min     | 2     | 7     |
+| Phase 27 P01 | 3min | 2 tasks | 5 files |
 
 ## Session Continuity
 
-Last session: 2026-03-18T08:56:44.071Z
-Stopped at: Phase 30 UI-SPEC approved
+Last session: 2026-03-18T08:57:50.914Z
+Stopped at: Completed 27-01-PLAN.md (SEO Foundation)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
