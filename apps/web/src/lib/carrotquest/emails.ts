@@ -42,7 +42,7 @@ export async function sendPaymentSuccessEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, '$payment_success', {
+    await cq.trackEvent(userId, 'Payment Success', {
       amount: data.amount,
       course_name: data.courseName ?? '',
       period_end: data.periodEnd.toISOString(),
@@ -61,7 +61,7 @@ export async function sendPaymentFailedEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, '$payment_failed', {
+    await cq.trackEvent(userId, 'Payment Failed', {
       course_name: data.courseName ?? '',
     });
 
@@ -78,7 +78,7 @@ export async function sendCancellationEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, '$subscription_cancelled', {
+    await cq.trackEvent(userId, 'Subscription Cancelled', {
       course_name: data.courseName ?? '',
       access_until: data.accessUntil.toISOString(),
     });
@@ -96,7 +96,7 @@ export async function sendWelcomeEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, '$user_registered', {
+    await cq.trackEvent(userId, 'User Registered', {
       name: data.name,
       email: data.email,
     });

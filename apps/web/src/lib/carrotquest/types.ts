@@ -3,18 +3,18 @@
  * Each event maps to a CQ automation rule that sends the email.
  */
 export type CQEventName =
-  | '$payment_success'
-  | '$payment_failed'
-  | '$subscription_cancelled'
-  | '$subscription_expiring'
-  | '$user_registered'
-  | '$inactive_7d'
-  | '$inactive_14d'
-  | '$inactive_30d'
+  | 'Payment Success'
+  | 'Payment Failed'
+  | 'Subscription Cancelled'
+  | 'Subscription Expiring'
+  | 'User Registered'
+  | 'Inactive 7d'
+  | 'Inactive 14d'
+  | 'Inactive 30d'
   // Auth hook events (sent via Supabase Send Email Hook)
-  | '$email_confirmation'
-  | '$password_reset'
-  | '$email_change';
+  | 'Email Confirmation'
+  | 'Password Reset'
+  | 'Email Change';
 
 /**
  * Event data payload — flat key-value map sent alongside the event.

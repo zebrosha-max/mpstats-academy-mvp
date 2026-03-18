@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     switch (email_action_type) {
       case 'signup': {
-        await cq.trackEvent(user.id, '$email_confirmation' as any, {
+        await cq.trackEvent(user.id, 'Email Confirmation', {
           confirm_url: confirmUrl,
           email: user.email || '',
         });
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'recovery': {
-        await cq.trackEvent(user.id, '$password_reset' as any, {
+        await cq.trackEvent(user.id, 'Password Reset', {
           reset_url: confirmUrl,
           email: user.email || '',
         });
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'email_change': {
-        await cq.trackEvent(user.id, '$email_change' as any, {
+        await cq.trackEvent(user.id, 'Email Change', {
           confirm_url: confirmUrl,
           email: user.email || '',
           new_email: email_data.new_email || '',

@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     for (const sub of expiringSubs) {
       try {
-        await cq.trackEvent(sub.userId, '$subscription_expiring', {
+        await cq.trackEvent(sub.userId, 'Subscription Expiring', {
           name: sub.user.name || '',
           course_name: sub.course?.title || sub.plan.name,
           access_until: sub.currentPeriodEnd.toISOString(),
@@ -115,15 +115,15 @@ export async function POST(request: NextRequest) {
       if (!user.last_activity) continue;
 
       const lastActivity = new Date(user.last_activity);
-      let event: '$inactive_7d' | '$inactive_14d' | '$inactive_30d' | null = null;
+      let event: 'Inactive 7d' | 'Inactive 14d' | 'Inactive 30d' | null = null;
 
       // Check thresholds (most severe first, but only send the matching tier)
       if (lastActivity < thirtyDaysAgo) {
-        event = '$inactive_30d';
+        event = 'Inactive 30d';
       } else if (lastActivity < fourteenDaysAgo) {
-        event = '$inactive_14d';
+        event = 'Inactive 14d';
       } else if (lastActivity < sevenDaysAgo) {
-        event = '$inactive_7d';
+        event = 'Inactive 7d';
       }
 
       if (event) {
@@ -134,9 +134,9 @@ export async function POST(request: NextRequest) {
             return_url: `${siteUrl}/learn`,
           });
 
-          if (event === '$inactive_7d') results.inactive_7d++;
-          else if (event === '$inactive_14d') results.inactive_14d++;
-          else if (event === '$inactive_30d') results.inactive_30d++;
+          if (event === 'Inactive 7d') results.inactive_7d++;
+          else if (event === 'Inactive 14d') results.inactive_14d++;
+          else if (event === 'Inactive 30d') results.inactive_30d++;
         } catch (error) {
           console.error(`[EmailScheduler] Inactivity event failed for user ${user.id}:`, error);
         }
