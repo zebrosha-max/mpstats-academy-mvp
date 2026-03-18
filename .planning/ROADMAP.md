@@ -313,7 +313,7 @@ Plans:
   4. changeUserRole мутация доступна только SUPERADMIN с запретом само-разжалования
   5. UserTable показывает role dropdown для SUPERADMIN и read-only badge для ADMIN
   6. Sidebar и MobileNav показывают условную ссылку "Админка" для ADMIN/SUPERADMIN
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 31-01-PLAN.md — Schema migration (Role enum), tRPC middleware, access bypass, role management mutations

@@ -50,8 +50,8 @@ completed: 2026-03-18
 - **Duration:** 4 min
 - **Started:** 2026-03-18T08:53:37Z
 - **Completed:** 2026-03-18T08:57:27Z
-- **Tasks:** 2 (of 3, checkpoint pending)
-- **Files modified:** 5
+- **Tasks:** 3 (all complete, checkpoint approved)
+- **Files modified:** 6
 
 ## Accomplishments
 - Admin layout header shows role badge (Superadmin/Admin) next to user email
@@ -64,6 +64,8 @@ completed: 2026-03-18
 
 1. **Task 1: Admin layout + sidebar/mobile admin link** - `d74f7f0` (feat)
 2. **Task 2: UserTable role dropdown + privilege-aware controls** - `c583e85` (feat)
+3. **Task 3: Verify complete role system** - checkpoint:human-verify approved
+4. **Post-checkpoint fix: Settings restricted to SUPERADMIN** - `385b214` (fix)
 
 ## Files Created/Modified
 - `apps/web/src/app/(admin)/layout.tsx` - Added role badge next to email in admin header
@@ -79,7 +81,19 @@ completed: 2026-03-18
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 2 - Missing Critical] Settings page restricted to SUPERADMIN**
+- **Found during:** Post-checkpoint review
+- **Issue:** Settings page (feature flags) was accessible to ADMIN users via adminProcedure, but feature flags should only be manageable by SUPERADMIN
+- **Fix:** Changed getFeatureFlags/toggleFeatureFlag to superadminProcedure, hid Settings link in AdminSidebar for ADMIN role, moved main sidebar admin link to footer
+- **Files modified:** packages/api/src/routers/admin.ts, apps/web/src/app/(admin)/layout.tsx, apps/web/src/components/shared/sidebar.tsx
+- **Committed in:** `385b214`
+
+---
+
+**Total deviations:** 1 auto-fixed (1 missing critical)
+**Impact on plan:** Security improvement - feature flags are privileged operations. No scope creep.
 
 ## Issues Encountered
 None.
@@ -88,9 +102,16 @@ None.
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Task 3 (checkpoint:human-verify) pending - full role system needs manual verification
-- SQL migration from Plan 01 must be run before testing
-- All automated tasks complete, ready for human verification
+- Phase 31 fully complete (both plans)
+- SQL migration from Plan 01 must be run on prod before deploying
+- All role system verified and approved by human
+
+## Self-Check: PASSED
+
+- [x] Commit d74f7f0 (Task 1) found
+- [x] Commit c583e85 (Task 2) found
+- [x] Commit 385b214 (post-checkpoint fix) found
+- [x] SUMMARY.md exists
 
 ---
 *Phase: 31-admin-roles-admin-superadmin*

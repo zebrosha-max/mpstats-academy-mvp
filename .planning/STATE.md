@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 27-02-PLAN.md (Error pages + metadata + Yandex verification)
-last_updated: "2026-03-18T09:10:26.811Z"
+stopped_at: Completed 31-02-PLAN.md (Admin roles frontend — checkpoint approved)
+last_updated: "2026-03-18T09:33:37.746Z"
 last_activity: 2026-03-18 — Phase 31 Plan 02 completed (privilege-aware admin UI)
 progress:
   total_phases: 16
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 23 Diagnostic 2.0 — COMPLETE (all 3 plans)
+**Current focus:** Phase 31 Admin Roles — COMPLETE (both plans, checkpoint approved)
 
 ## Current Position
 
-Phase: 31 of 31 (Admin Roles — Plan 02 complete, checkpoint pending)
-Plan: 2 of 2 in current phase
-Status: Phase 31 Plan 02 automated tasks complete (frontend role UI), checkpoint:human-verify pending
-Last activity: 2026-03-18 — Phase 31 Plan 02 completed (privilege-aware admin UI)
+Phase: 31 of 31 (Admin Roles — COMPLETE, both plans)
+Plan: 2 of 2 in current phase (DONE)
+Status: Phase 31 complete — three-level RBAC shipped (checkpoint approved)
+Last activity: 2026-03-18 — Phase 31 Plan 02 checkpoint approved, SUMMARY finalized
 
-Progress: [██████████] 98% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31)
+Progress: [██████████] 100% (v1.0 + v1.1 + v1.2 + Phase 23 + Phase 31)
 
 ## Performance Metrics
 
@@ -98,6 +98,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [31-02]: Privilege-aware UI: SUPERADMIN sees dropdowns/toggles, ADMIN sees read-only badges
 - [Phase 27]: Title template '%s | MPSTATS Academy' + metadataBase for correct OG URL resolution
 - [Phase 27]: Next.js Metadata API verification.yandex for Yandex Webmaster meta tag
+- [Phase 31]: Settings page restricted to SUPERADMIN via superadminProcedure (not adminProcedure)
 
 ### Blockers/Concerns
 
@@ -148,11 +149,12 @@ None.
 | 31    | 02   | 4min     | 2     | 5     |
 | Phase 27 P01 | 3min | 2 tasks | 5 files |
 | Phase 27 P02 | 5min | 3 tasks | 8 files |
+| Phase 31 P02 | 4min | 3 tasks | 6 files |
 
 ## Session Continuity
 
-Last session: 2026-03-18T09:02:20.398Z
-Stopped at: Completed 27-02-PLAN.md (Error pages + metadata + Yandex verification)
+Last session: 2026-03-18T09:33:37.742Z
+Stopped at: Completed 31-02-PLAN.md (Admin roles frontend — checkpoint approved)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
