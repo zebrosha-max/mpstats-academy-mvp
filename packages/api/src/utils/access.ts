@@ -5,7 +5,7 @@ const FREE_LESSON_THRESHOLD = 2; // lessons with order <= 2 are free
 
 export interface AccessResult {
   hasAccess: boolean;
-  reason: 'free_lesson' | 'platform_subscription' | 'course_subscription' | 'billing_disabled' | 'subscription_required';
+  reason: 'free_lesson' | 'platform_subscription' | 'course_subscription' | 'billing_disabled' | 'subscription_required' | 'admin_bypass';
   hasPlatformSubscription: boolean;
 }
 
@@ -65,6 +65,15 @@ export async function checkLessonAccess(
 
   if (!billingEnabled) {
     return { hasAccess: true, reason: 'billing_disabled', hasPlatformSubscription: false };
+  }
+
+  // Admin/Superadmin bypass — full access regardless of subscription
+  const userProfile = await prisma.userProfile.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (userProfile?.role === 'ADMIN' || userProfile?.role === 'SUPERADMIN') {
+    return { hasAccess: true, reason: 'admin_bypass', hasPlatformSubscription: false };
   }
 
   const subscriptions = await getUserActiveSubscriptions(userId, prisma);

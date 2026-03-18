@@ -38,18 +38,32 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
-// Admin procedure — requires isAdmin=true in UserProfile
+// Admin procedure — requires role ADMIN or SUPERADMIN
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const profile = await ctx.prisma.userProfile.findUnique({
     where: { id: ctx.user.id },
-    select: { isAdmin: true },
+    select: { role: true },
   });
 
-  if (!profile || profile.isAdmin !== true) {
+  if (!profile || (profile.role !== 'ADMIN' && profile.role !== 'SUPERADMIN')) {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
 
-  return next({ ctx });
+  return next({ ctx: { ...ctx, userRole: profile.role } });
+});
+
+// Superadmin procedure — requires role SUPERADMIN only
+export const superadminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const profile = await ctx.prisma.userProfile.findUnique({
+    where: { id: ctx.user.id },
+    select: { role: true },
+  });
+
+  if (!profile || profile.role !== 'SUPERADMIN') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Superadmin access required' });
+  }
+
+  return next({ ctx: { ...ctx, userRole: profile.role } });
 });
 
 // AI procedures with rate limiting (built on top of protectedProcedure)

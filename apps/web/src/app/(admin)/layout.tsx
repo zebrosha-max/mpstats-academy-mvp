@@ -15,13 +15,13 @@ export default async function AdminLayout({
     redirect('/login');
   }
 
-  // Check isAdmin flag in UserProfile
+  // Check role in UserProfile — ADMIN or SUPERADMIN required
   const profile = await prisma.userProfile.findUnique({
     where: { id: user.id },
-    select: { isAdmin: true },
+    select: { role: true },
   });
 
-  if (!profile || !profile.isAdmin) {
+  if (!profile || (profile.role !== 'ADMIN' && profile.role !== 'SUPERADMIN')) {
     redirect('/dashboard');
   }
 

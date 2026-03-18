@@ -17,11 +17,17 @@ datasource db {
 // ============== USER PROFILE ==============
 // Auth is managed by Supabase, this is the extended profile
 
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
 model UserProfile {
   id        String   @id // Matches Supabase auth.users.id
   name      String?
   avatarUrl String?
-  isAdmin   Boolean  @default(false)
+  role      Role     @default(USER)
   isActive  Boolean  @default(true)
   yandexId  String?  @unique // For Phase 17 Yandex ID OAuth binding
   createdAt DateTime @default(now())
