@@ -22,6 +22,8 @@ interface UserTableProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  currentUserRole: Role;
+  currentUserId: string;
 }
 
 function formatDate(date: Date): string {
@@ -76,6 +78,14 @@ const ROLE_COLORS: Record<Role, string> = {
   SUPERADMIN: 'bg-mp-pink-100 text-mp-pink-700',
 };
 
+function RoleBadge({ role }: { role: Role }) {
+  return (
+    <span className={cn('text-xs font-medium px-2 py-0.5 rounded-full', ROLE_COLORS[role])}>
+      {ROLE_LABELS[role]}
+    </span>
+  );
+}
+
 function RoleSelect({
   value,
   onChange,
@@ -103,7 +113,7 @@ function RoleSelect({
   );
 }
 
-export function UserTable({ users, totalCount, page, totalPages, onPageChange }: UserTableProps) {
+export function UserTable({ users, totalCount, page, totalPages, onPageChange, currentUserRole, currentUserId }: UserTableProps) {
   const utils = trpc.useUtils();
 
   const toggleField = trpc.admin.toggleUserField.useMutation({
@@ -243,22 +253,32 @@ export function UserTable({ users, totalCount, page, totalPages, onPageChange }:
                   </span>
                 </td>
 
-                {/* isActive toggle */}
+                {/* isActive toggle — SUPERADMIN only */}
                 <td className="px-4 py-3 text-center">
-                  <Toggle
-                    checked={getActiveValue(user.id, user.isActive)}
-                    onChange={() => handleToggleActive(user.id, user.isActive)}
-                    disabled={toggleField.isPending}
-                  />
+                  {currentUserRole === 'SUPERADMIN' ? (
+                    <Toggle
+                      checked={getActiveValue(user.id, user.isActive)}
+                      onChange={() => handleToggleActive(user.id, user.isActive)}
+                      disabled={toggleField.isPending || user.id === currentUserId}
+                    />
+                  ) : (
+                    <span className={cn('text-xs font-medium', user.isActive ? 'text-mp-green-600' : 'text-mp-gray-400')}>
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  )}
                 </td>
 
-                {/* Role selector */}
+                {/* Role — dropdown for SUPERADMIN, badge for ADMIN */}
                 <td className="px-4 py-3 text-center">
-                  <RoleSelect
-                    value={getRoleValue(user.id, user.role)}
-                    onChange={(role) => handleRoleChange(user.id, role)}
-                    disabled={changeRole.isPending}
-                  />
+                  {currentUserRole === 'SUPERADMIN' ? (
+                    <RoleSelect
+                      value={getRoleValue(user.id, user.role)}
+                      onChange={(role) => handleRoleChange(user.id, role)}
+                      disabled={changeRole.isPending || user.id === currentUserId}
+                    />
+                  ) : (
+                    <RoleBadge role={user.role} />
+                  )}
                 </td>
               </tr>
             ))}

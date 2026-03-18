@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
 
+type Role = 'USER' | 'ADMIN' | 'SUPERADMIN';
+
 export default function UsersPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -23,6 +25,12 @@ export default function UsersPage() {
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
+
+  // Fetch current user profile to determine role for privilege-aware controls
+  const { data: myProfile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   const users = trpc.admin.getUsers.useQuery({
     search: debouncedSearch || undefined,
@@ -85,6 +93,8 @@ export default function UsersPage() {
             page={users.data?.page ?? 1}
             totalPages={users.data?.totalPages ?? 1}
             onPageChange={setPage}
+            currentUserRole={(myProfile?.role as Role) ?? 'USER'}
+            currentUserId={myProfile?.id ?? ''}
           />
         )}
       </Card>
