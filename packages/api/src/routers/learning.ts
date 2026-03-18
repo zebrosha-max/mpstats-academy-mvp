@@ -67,6 +67,8 @@ export const learningRouter = router({
             status: l.progress[0]?.status || 'NOT_STARTED',
             watchedPercent: l.progress[0]?.watchedPercent || 0,
             locked,
+            topics: (l.topics as string[] | null) ?? [],
+            skillCategories: (l.skillCategories as string[] | null) ?? [],
           };
         }),
       };

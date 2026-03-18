@@ -105,6 +105,8 @@ export interface LessonWithProgress extends Lesson {
   status: LessonStatus;
   watchedPercent: number;
   locked?: boolean;
+  topics?: string[];           // Phase 30: canonical topic tags
+  skillCategories?: string[];  // Phase 30: multi-category tags
 }
 
 // ============== AI / RAG ==============
@@ -203,6 +205,39 @@ export interface CourseWithProgress extends Course {
   completedLessons: number;
   totalLessons: number;
   progressPercent: number;
+}
+
+// ============== SEARCH RESULTS (Phase 30) ==============
+
+export interface SearchSnippet {
+  content: string;         // truncated to 200 chars
+  timecodeStart: number;   // seconds
+  timecodeEnd: number;     // seconds
+  similarity: number;
+}
+
+export interface SearchLessonResult {
+  lesson: {
+    id: string;
+    courseId: string;
+    title: string;
+    duration: number;
+    order: number;
+    skillCategory: SkillCategory;
+    skillLevel: Difficulty;
+    skillCategories: string[];
+    topics: string[];
+  };
+  course: {
+    id: string;
+    title: string;
+  };
+  snippets: SearchSnippet[];
+  bestSimilarity: number;
+  watchedPercent: number;
+  status: LessonStatus;
+  locked: boolean;
+  inRecommendedPath: boolean;
 }
 
 // ============== KINESCOPE ==============
