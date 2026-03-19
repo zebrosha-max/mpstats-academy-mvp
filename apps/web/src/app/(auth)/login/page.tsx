@@ -4,6 +4,8 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { signIn, signInWithYandex } from '@/lib/auth/actions';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +23,7 @@ function LoginForm() {
     setLoading(true);
     setError(null);
 
+    reachGoal(METRIKA_GOALS.LOGIN, { method: 'email' });
     const result = await signIn(formData);
 
     if (result?.error) {
@@ -33,6 +36,7 @@ function LoginForm() {
     setLoading(true);
     setError(null);
 
+    reachGoal(METRIKA_GOALS.LOGIN, { method: 'yandex' });
     const result = await signInWithYandex();
 
     if (result?.error) {

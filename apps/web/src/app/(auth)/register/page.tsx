@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signUp, signInWithYandex } from '@/lib/auth/actions';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,6 +34,7 @@ export default function RegisterPage() {
       setError(result.error);
       setLoading(false);
     } else if (result?.success) {
+      reachGoal(METRIKA_GOALS.SIGNUP, { method: 'email' });
       router.push('/verify');
     }
   }
@@ -40,6 +43,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
+    reachGoal(METRIKA_GOALS.SIGNUP, { method: 'yandex' });
     const result = await signInWithYandex();
 
     if (result?.error) {

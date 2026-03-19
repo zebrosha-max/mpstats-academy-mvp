@@ -14,6 +14,8 @@ import { LockOverlay } from '@/components/learning/LockOverlay';
 import { PaywallBanner } from '@/components/learning/PaywallBanner';
 import { CollapsibleSummary } from '@/components/learning/CollapsibleSummary';
 import { trpc } from '@/lib/trpc/client';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
 import { cn } from '@/lib/utils';
 
@@ -79,6 +81,17 @@ export default function LessonPage() {
     { enabled: hasDiagnostic === true }
   );
   const { data: watchProgress } = trpc.learning.getWatchProgress.useQuery({ lessonId });
+
+  // Track lesson open in Metrika
+  useEffect(() => {
+    if (data?.lesson) {
+      reachGoal(METRIKA_GOALS.LESSON_OPEN, {
+        courseId: data.course?.id,
+        lessonId: data.lesson.id,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.lesson?.id]);
 
   // Extract diagnostic hints for this lesson from the errors section
   const lessonHints = useMemo(() => {

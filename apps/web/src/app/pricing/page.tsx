@@ -11,6 +11,8 @@ import { Logo, LogoMark } from '@/components/shared/Logo';
 import { trpc } from '@/lib/trpc/client';
 import { openPaymentWidget } from '@/lib/cloudpayments/widget';
 import { toast } from 'sonner';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 
 const formatPrice = (amount: number) =>
   new Intl.NumberFormat('ru-RU').format(amount);
@@ -36,6 +38,11 @@ export default function PricingPage() {
 
   // Initiate payment mutation
   const initiatePayment = trpc.billing.initiatePayment.useMutation();
+
+  // Track pricing page view in Metrika
+  useEffect(() => {
+    reachGoal(METRIKA_GOALS.PRICING_VIEW);
+  }, []);
 
   // Redirect if billing disabled (empty plans array)
   useEffect(() => {
@@ -84,6 +91,7 @@ export default function PricingPage() {
       });
 
       if (success) {
+        reachGoal(METRIKA_GOALS.PAYMENT, { planType, amount: result.amount, currency: 'RUB' });
         setMessage({ type: 'success', text: 'Оплата принята! Подписка активируется в течение минуты.' });
         toast.success('Оплата прошла успешно', { description: 'Подписка активирована.' });
         setTimeout(() => router.push('/profile'), 3000);

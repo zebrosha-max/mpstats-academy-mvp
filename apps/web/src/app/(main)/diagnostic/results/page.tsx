@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { trpc } from '@/lib/trpc/client';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import type { LessonWithProgress } from '@mpstats/shared';
 
 const PRIORITY_STYLES = {
@@ -34,6 +37,13 @@ export default function DiagnosticResultsPage() {
     { sessionId: previousSession?.id ?? '' },
     { enabled: !!previousSession }
   );
+
+  // Track diagnostic completion in Metrika
+  useEffect(() => {
+    if (results?.accuracy !== undefined) {
+      reachGoal(METRIKA_GOALS.DIAGNOSTIC_COMPLETE, { avgScore: results.accuracy });
+    }
+  }, [results?.accuracy]);
 
   if (!sessionId) {
     router.push('/diagnostic');

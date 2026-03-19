@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { useTheme } from '@/components/shared/ThemeProvider';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 
 /* -- Data ------------------------------------------------ */
 
@@ -159,7 +161,7 @@ export default function HomePage() {
             <Link href="/login" className="text-sm text-[var(--landing-text-muted)] hover:text-[var(--landing-text)] transition-colors">
               Войти
             </Link>
-            <Link href="/register">
+            <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'nav' })}>
               <Button size="sm" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white rounded-lg px-3 sm:px-5 shadow-lg shadow-[#2C4FF8]/20">
                 <span className="hidden sm:inline">Начать бесплатно</span>
                 <span className="sm:hidden">Начать</span>
@@ -188,7 +190,7 @@ export default function HomePage() {
               AI определит ваш текущий уровень и построит персональный трек. Не&nbsp;тратьте время на&nbsp;материал, который вам не&nbsp;нужен.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link href="/register">
+              <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'hero' })}>
                 <Button size="lg" className="w-full sm:w-auto bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-6 sm:px-8 h-12 rounded-xl shadow-xl shadow-[#2C4FF8]/25 hover:shadow-[#2C4FF8]/40 transition-all">
                   Пройти диагностику
                 </Button>
@@ -375,7 +377,7 @@ export default function HomePage() {
             <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto">
               Бесплатная диагностика за 10 минут. Персональный трек — сразу после.
             </p>
-            <Link href="/register">
+            <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'footer' })}>
               <Button size="lg" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-10 h-14 rounded-xl text-lg shadow-[0_0_40px_rgba(44,79,248,0.4)] hover:shadow-[0_0_60px_rgba(44,79,248,0.6)] transition-all">
                 Начать бесплатно
               </Button>

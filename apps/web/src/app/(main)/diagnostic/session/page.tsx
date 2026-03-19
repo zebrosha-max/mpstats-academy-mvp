@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Question } from '@/components/diagnostic/Question';
 import { ProgressBar } from '@/components/diagnostic/ProgressBar';
 import { trpc } from '@/lib/trpc/client';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
 
 export default function DiagnosticSessionPage() {
   const router = useRouter();
@@ -110,6 +112,13 @@ export default function DiagnosticSessionPage() {
       router.push(`/diagnostic/results?id=${sessionId}`);
     }
   }, [sessionState?.isComplete, sessionId, router]);
+
+  // Track diagnostic start in Metrika
+  useEffect(() => {
+    if (sessionState?.currentQuestion && sessionState.currentQuestionIndex === 0) {
+      reachGoal(METRIKA_GOALS.DIAGNOSTIC_START);
+    }
+  }, [sessionState?.currentQuestion, sessionState?.currentQuestionIndex]);
 
   // Show slow hint after 3 seconds of loading
   useEffect(() => {
