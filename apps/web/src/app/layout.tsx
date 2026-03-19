@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import { TRPCProvider } from '@/lib/trpc/provider';
 import { LandingThemeProvider } from '@/components/shared/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
+import { YandexMetrika } from '@koiztech/next-yandex-metrika';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -67,6 +68,15 @@ export default function RootLayout({
           <TRPCProvider>{children}</TRPCProvider>
         </LandingThemeProvider>
         <Toaster />
+        {process.env.NODE_ENV === 'production' && (
+          <YandexMetrika
+            clickmap={true}
+            trackLinks={true}
+            accurateTrackBounce={true}
+            webvisor={true}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );

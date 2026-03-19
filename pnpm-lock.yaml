@@ -35,6 +35,9 @@ importers:
       '@kinescope/react-kinescope-player':
         specifier: ^0.5.4
         version: 0.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@koiztech/next-yandex-metrika':
+        specifier: ^0.0.8
+        version: 0.0.8(next@14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mpstats/api':
         specifier: workspace:*
         version: link:../../packages/api
@@ -911,6 +914,13 @@ packages:
     peerDependencies:
       react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@koiztech/next-yandex-metrika@0.0.8':
+    resolution: {integrity: sha512-F4CTLgElAvtOC3u5XOuc3berFToqr7plaAWvksOVSXP0t1dkN6FlBG4YHVDw9SRoqrUeDWttXbKlxz7bSdXcqQ==}
+    peerDependencies:
+      next: ^14.2.25
+      react: ^18.3.1
+      react-dom: ^18.3.1
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
@@ -4726,6 +4736,12 @@ snapshots:
 
   '@kinescope/react-kinescope-player@0.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@koiztech/next-yandex-metrika@0.0.8(next@14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      next: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
