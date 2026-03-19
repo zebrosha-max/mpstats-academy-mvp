@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   verification: {
     yandex: 'ca2450fe5fe87a68',
   },
+  other: {
+    'yandex-verification': 'e98fa8cbfa8c4e26',
+  },
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
@@ -68,8 +71,9 @@ export default function RootLayout({
           <TRPCProvider>{children}</TRPCProvider>
         </LandingThemeProvider>
         <Toaster />
-        {process.env.NODE_ENV === 'production' && (
+        {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_YANDEX_ID && (
           <YandexMetrika
+            yid={Number(process.env.NEXT_PUBLIC_YANDEX_ID)}
             clickmap={true}
             trackLinks={true}
             accurateTrackBounce={true}
