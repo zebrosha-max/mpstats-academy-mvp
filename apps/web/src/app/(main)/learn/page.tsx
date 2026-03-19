@@ -17,6 +17,20 @@ import type { LessonWithProgress } from '@mpstats/shared';
 
 const INITIAL_LESSONS_SHOWN = 5;
 
+function pluralLessons(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return `${n} урок`;
+  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return `${n} урока`;
+  return `${n} уроков`;
+}
+
+const SECTION_DESCRIPTIONS: Record<string, (count: number) => string> = {
+  custom: (n) => pluralLessons(n),
+  errors: (n) => `${pluralLessons(n)} по темам, где были ошибки`,
+  deepening: (n) => `${pluralLessons(n)} для слабых навыков`,
+  growth: (n) => `${pluralLessons(n)} для средних навыков`,
+  advanced: (n) => `${pluralLessons(n)} повышенной сложности`,
+};
+
 const SECTION_STYLES: Record<string, { icon: string; bgColor: string; borderColor: string; textColor: string; badgeColor: string }> = {
   errors: { icon: '!', bgColor: 'bg-red-50', borderColor: 'border-red-200', textColor: 'text-red-700', badgeColor: 'bg-red-100 text-red-700' },
   deepening: { icon: '\u2193', bgColor: 'bg-mp-blue-50', borderColor: 'border-mp-blue-200', textColor: 'text-mp-blue-700', badgeColor: 'bg-mp-blue-100 text-mp-blue-700' },
@@ -542,7 +556,7 @@ export default function LearnPage() {
                             </span>
                             <div>
                               <h3 className={`text-heading font-semibold ${style.textColor}`}>{section.title}</h3>
-                              <p className="text-body-sm text-mp-gray-500">{section.description}</p>
+                              <p className="text-body-sm text-mp-gray-500">{(SECTION_DESCRIPTIONS[section.id] || SECTION_DESCRIPTIONS.growth)(section.lessons.length)}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
