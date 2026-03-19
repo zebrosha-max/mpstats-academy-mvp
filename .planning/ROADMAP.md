@@ -165,6 +165,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 22. Email Notifications | v1.3 | 2/3 | In Progress | - |
 | 23. Diagnostic 2.0 | v1.3 | 3/3 | Complete | 2026-03-17 |
+| 26. Yandex Metrika | v1.3 | 1/1 | Complete | 2026-03-19 |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -250,10 +251,10 @@ Plans:
   3. Dockerfile содержит ARG+ENV для NEXT_PUBLIC_YANDEX_ID (build-time inlining)
   4. 8 целей созданы в дашборде Метрики как "JavaScript event"
   5. Счётчик подтверждён в production (mc.yandex.ru запросы в DevTools)
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 26-01-PLAN.md — Analytics module (constants + helper + types), YandexMetrika in layout, goal wiring in 7 pages, Dockerfile/env, dashboard goals
+- [x] 26-01-PLAN.md — Analytics module (constants + helper + types), YandexMetrika in layout, goal wiring in 7 pages, Dockerfile/env, dashboard goals (completed 2026-03-19)
 
 ### Phase 27: SEO + Custom Error Pages — sitemap, robots.txt, OG-теги, брендированные 404/500
 
