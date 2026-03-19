@@ -236,16 +236,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEARCH-03 | Phase 30 (Plan 02) | Complete |
 | SEARCH-04 | Phase 30 (Plan 01, 02) | Complete |
 | SEARCH-05 | Phase 30 (Plan 02) | Complete |
-| TRACK-01 | Phase 32 (Plan 01) | Planned |
-| TRACK-02 | Phase 32 (Plan 01) | Planned |
-| TRACK-03 | Phase 32 (Plan 01) | Planned |
-| TRACK-04 | Phase 32 (Plan 01) | Planned |
-| TRACK-05 | Phase 32 (Plan 01) | Planned |
-| TRACK-06 | Phase 32 (Plan 02) | Planned |
-| TRACK-07 | Phase 32 (Plan 02) | Planned |
-| TRACK-08 | Phase 32 (Plan 02) | Planned |
-| TRACK-09 | Phase 32 (Plan 02) | Planned |
-| TRACK-10 | Phase 32 (Plan 02) | Planned |
+| TRACK-01 | Phase 32 (Plan 01) | Complete |
+| TRACK-02 | Phase 32 (Plan 01) | Complete |
+| TRACK-03 | Phase 32 (Plan 01) | Complete |
+| TRACK-04 | Phase 32 (Plan 01) | Complete |
+| TRACK-05 | Phase 32 (Plan 01) | Complete |
+| TRACK-06 | Phase 32 (Plan 02) | Complete |
+| TRACK-07 | Phase 32 (Plan 02) | Complete |
+| TRACK-08 | Phase 32 (Plan 02) | Complete |
+| TRACK-09 | Phase 32 (Plan 02) | Complete |
+| TRACK-10 | Phase 32 (Plan 02) | Complete |
 | SUPP-01 | Phase 24 (Plan 01) | Planned |
 | SUPP-02 | Phase 24 (Plan 01) | Planned |
 | SUPP-03 | Phase 24 (Plan 01) | Planned |
@@ -258,7 +258,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.5 requirements: 8 total, 0 planned
 - v1.6 requirements: 6 total, 6 complete
 - v1.7 requirements: 5 total, 5 complete
-- v1.8 requirements: 10 total, 0 planned
+- v1.8 requirements: 10 total, 10 complete
 - v1.9 requirements: 4 total, 0 planned
 - Unmapped: 0
 

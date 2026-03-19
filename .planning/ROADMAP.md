@@ -341,8 +341,8 @@ Plans:
   5. Секция "Мои уроки" отображается первой с фиолетовым стилем
   6. "Перестроить трек" перегенерирует AI-секции, сохраняя "Мои уроки"
   7. Завершение диагностики не перезаписывает custom-секцию
-**Plans:** 2/2 plans complete
+**Plans:** 2/2 plans complete (completed 2026-03-19)
 
 Plans:
-- [ ] 32-01-PLAN.md — Type extensions (custom section, addedAt) + 3 tRPC mutations + diagnostic integration
-- [ ] 32-02-PLAN.md — Frontend: LessonCard toggle, remove buttons, rebuild dialog, optimistic updates + human verify
+- [x] 32-01-PLAN.md — Type extensions (custom section, addedAt) + 3 tRPC mutations + diagnostic integration (completed 2026-03-19)
+- [x] 32-02-PLAN.md — Frontend: LessonCard toggle, remove buttons, rebuild dialog, optimistic updates + human verify (completed 2026-03-19)

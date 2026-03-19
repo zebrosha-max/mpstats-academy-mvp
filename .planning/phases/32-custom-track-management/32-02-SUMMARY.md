@@ -34,6 +34,7 @@ key-decisions:
 patterns-established:
   - "No-op callback pattern: pass () => {} for visual-only toggle state"
   - "Optimistic update with prev snapshot rollback on tRPC mutations"
+  - "Dynamic section descriptions computed from current lesson count (not static from generation)"
 
 requirements-completed: [TRACK-06, TRACK-07, TRACK-08, TRACK-09, TRACK-10]
 
@@ -66,6 +67,7 @@ Each task was committed atomically:
 
 1. **Task 1: Add track toggle to LessonCard and custom section style** - `95a4e9d` (feat)
 2. **Task 2: Wire mutations, optimistic updates, rebuild button, toast feedback** - `677047e` (feat)
+3. **Task 3: Verify track management end-to-end** - checkpoint approved, bugfix `c42dd24` (fix)
 
 ## Files Created/Modified
 - `apps/web/src/components/ui/alert-dialog.tsx` - New shadcn AlertDialog component (radix-based)
@@ -97,8 +99,18 @@ Each task was committed atomically:
 
 ---
 
-**Total deviations:** 2 auto-fixed (1 blocking, 1 bug)
-**Impact on plan:** Both essential for correct functionality. No scope creep.
+**3. [Rule 1 - Bug] Section descriptions showed static count from generation time**
+- **Found during:** Task 3 (human verification)
+- **Issue:** AI section subtitles displayed lesson count from when path was generated, not current count after manual add/remove
+- **Fix:** Added dynamic SECTION_DESCRIPTIONS computed from current section.lessons.length
+- **Files modified:** apps/web/src/app/(main)/learn/page.tsx
+- **Verification:** User confirmed descriptions update dynamically after add/remove
+- **Committed in:** c42dd24 (separate bugfix commit)
+
+---
+
+**Total deviations:** 3 auto-fixed (1 blocking, 2 bugs)
+**Impact on plan:** All essential for correct functionality. No scope creep.
 
 ## Issues Encountered
 None
@@ -106,9 +118,27 @@ None
 ## User Setup Required
 None - no external service configuration required.
 
+## Checkpoint Result
+
+**Task 3 (human-verify):** APPROVED with one bug found and fixed.
+
+- User verified add/remove/rebuild flow end-to-end
+- Bug found: AI section subtitles showed static lesson count from generation time, not current count after manual changes
+- Fix committed: `c42dd24` -- dynamic SECTION_DESCRIPTIONS computed from current section.lessons.length
+- Locked lesson test skipped (admin user on localhost bypasses paywall) -- will test on prod later
+
 ## Next Phase Readiness
-- Full track management UI complete pending human verification (Task 3 checkpoint)
-- All mutations compile and integrate with Plan 01 backend
+- Phase 32 complete: backend mutations + frontend UI shipped and verified
+- Custom track management fully functional: add, remove, rebuild with optimistic updates
+- Ready for production deploy
+
+## Self-Check: PASSED
+
+- [x] apps/web/src/components/learning/LessonCard.tsx - FOUND
+- [x] apps/web/src/app/(main)/learn/page.tsx - FOUND
+- [x] Commit 95a4e9d - FOUND
+- [x] Commit 677047e - FOUND
+- [x] Commit c42dd24 - FOUND
 
 ---
 *Phase: 32-custom-track-management*
