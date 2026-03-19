@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { SearchBar } from '@/components/learning/SearchBar';
 import { FilterPanel, type FilterState, DEFAULT_FILTERS } from '@/components/learning/FilterPanel';
@@ -40,10 +42,7 @@ export default function LearnPage() {
   const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
   const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
   const { data: hasDiagnostic, isLoading: diagLoading } = trpc.diagnostic.hasCompletedDiagnostic.useQuery();
-  const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery(
-    undefined,
-    { enabled: hasDiagnostic === true }
-  );
+  const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery();
 
   // Search query
   const { data: searchResults, isLoading: searchLoading, error: searchError } = trpc.ai.searchLessons.useQuery(
@@ -75,6 +74,78 @@ export default function LearnPage() {
   const recommendedLessonIds = new Set(
     recommendedPath?.lessons.map((l) => l.id) ?? []
   );
+
+  // O(1) lookup for lessons in user's track (all sections)
+  const trackLessonIds = useMemo(() => {
+    if (!recommendedPath?.sections) return new Set<string>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new Set(recommendedPath.sections.flatMap((s: any) => s.lessons.map((l: any) => l.id as string)));
+  }, [recommendedPath]);
+
+  // Track management mutations
+  const utils = trpc.useUtils();
+
+  const addToTrackMutation = trpc.learning.addToTrack.useMutation({
+    onMutate: async ({ lessonId }) => {
+      await utils.learning.getRecommendedPath.cancel();
+      const prev = utils.learning.getRecommendedPath.getData();
+      utils.learning.getRecommendedPath.setData(undefined, (old: typeof prev) => {
+        if (!old) return old;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sections: any[] = old.sections ? [...old.sections.map((s: any) => ({ ...s, lessons: [...s.lessons] }))] : [];
+        let customIdx = sections.findIndex((s: any) => s.id === 'custom');
+        if (customIdx < 0) {
+          sections.unshift({ id: 'custom', title: 'Мои уроки', description: '0', lessons: [], lessonIds: [] });
+          customIdx = 0;
+        }
+        // Try to find lesson data from courses
+        const lessonData = courses?.flatMap(c => c.lessons).find(l => l.id === lessonId);
+        const alreadyExists = sections[customIdx].lessons.some((l: any) => l.id === lessonId);
+        if (!alreadyExists && lessonData) {
+          sections[customIdx] = { ...sections[customIdx], lessons: [...sections[customIdx].lessons, lessonData] };
+        }
+        return { ...old, sections, isSectioned: true } as any;
+      });
+      return { prev };
+    },
+    onError: (_err: unknown, _vars: unknown, ctx: any) => {
+      if (ctx?.prev) utils.learning.getRecommendedPath.setData(undefined, ctx.prev);
+      toast.error('Не удалось добавить урок');
+    },
+    onSuccess: () => toast.success('Добавлено в трек'),
+    onSettled: () => utils.learning.getRecommendedPath.invalidate(),
+  });
+
+  const removeFromTrackMutation = trpc.learning.removeFromTrack.useMutation({
+    onMutate: async ({ lessonId }) => {
+      await utils.learning.getRecommendedPath.cancel();
+      const prev = utils.learning.getRecommendedPath.getData();
+      utils.learning.getRecommendedPath.setData(undefined, (old: typeof prev) => {
+        if (!old || !old.sections) return old;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sections = old.sections.map((s: any) => ({
+          ...s,
+          lessons: s.lessons.filter((l: any) => l.id !== lessonId),
+        }));
+        return { ...old, sections } as any;
+      });
+      return { prev };
+    },
+    onError: (_err: unknown, _vars: unknown, ctx: any) => {
+      if (ctx?.prev) utils.learning.getRecommendedPath.setData(undefined, ctx.prev);
+      toast.error('Не удалось убрать урок');
+    },
+    onSuccess: () => toast.success('Убрано из трека'),
+    onSettled: () => utils.learning.getRecommendedPath.invalidate(),
+  });
+
+  const rebuildTrackMutation = trpc.learning.rebuildTrack.useMutation({
+    onSuccess: () => {
+      toast.success('Трек перестроен');
+      utils.learning.getRecommendedPath.invalidate();
+    },
+    onError: () => toast.error('Не удалось перестроить трек'),
+  });
 
   // Extract available topics from courses data
   const availableTopics = useMemo(() => {
@@ -377,8 +448,8 @@ export default function LearnPage() {
         </div>
       ) : viewMode === 'path' ? (
         <>
-          {/* Case A: No diagnostic completed -- show CTA banner */}
-          {hasDiagnostic === false && (
+          {/* Case A: No diagnostic completed and no custom track -- show CTA banner */}
+          {hasDiagnostic === false && !recommendedPath && (
             <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
               <CardContent className="py-12 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-mp-blue-100 flex items-center justify-center mx-auto mb-4">
@@ -418,11 +489,41 @@ export default function LearnPage() {
           )}
 
           {/* Case C: Normal track with lessons */}
-          {hasDiagnostic && recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
+          {recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
             <div className="space-y-4">
               {isSectioned ? (
                 /* Sectioned accordion view */
                 <>
+                  {/* Track management header */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-body-sm text-mp-gray-500">
+                      {recommendedPath.totalLessons} уроков в треке
+                    </span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" disabled={rebuildTrackMutation.isPending}>
+                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Перестроить трек
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Перестроить AI-трек?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Удалённые вручную уроки могут вернуться. Секция «Мои уроки» сохранится.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Отмена</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => rebuildTrackMutation.mutate()}>
+                            Перестроить
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                   {recommendedPath.sections!.map((section) => {
                     const style = SECTION_STYLES[section.id] || SECTION_STYLES.growth;
                     const isOpen = expandedSections.has(section.id);
@@ -468,6 +569,7 @@ export default function LearnPage() {
                                   courseName={((lesson as unknown) as Record<string, unknown>).courseName as string}
                                   isRecommended={section.id === 'errors'}
                                   locked={lesson.locked}
+                                  onRemoveFromTrack={() => removeFromTrackMutation.mutate({ lessonId: lesson.id })}
                                 />
                               ))}
                             </div>
@@ -661,6 +763,8 @@ export default function LearnPage() {
                         showCourse={false}
                         isRecommended={recommendedLessonIds.has(lesson.id)}
                         locked={lesson.locked}
+                        inTrack={trackLessonIds.has(lesson.id)}
+                        onToggleTrack={trackLessonIds.has(lesson.id) ? () => {} : () => addToTrackMutation.mutate({ lessonId: lesson.id })}
                       />
                     ))}
                   </div>
