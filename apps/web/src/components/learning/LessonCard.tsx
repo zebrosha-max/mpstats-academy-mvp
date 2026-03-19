@@ -11,6 +11,9 @@ interface LessonCardProps {
   courseName?: string;
   isRecommended?: boolean;
   locked?: boolean;
+  inTrack?: boolean;
+  onToggleTrack?: () => void;
+  onRemoveFromTrack?: () => void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -67,7 +70,7 @@ const LOCK_ICON = (
   </svg>
 );
 
-export function LessonCard({ lesson, showCourse, courseName, isRecommended, locked }: LessonCardProps) {
+export function LessonCard({ lesson, showCourse, courseName, isRecommended, locked, inTrack, onToggleTrack, onRemoveFromTrack }: LessonCardProps) {
   const isLocked = locked ?? lesson.locked;
   const status = STATUS_CONFIG[lesson.status];
 
@@ -147,6 +150,51 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
                 </div>
               )}
             </div>
+
+            {/* Track toggle button */}
+            {onToggleTrack && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleTrack();
+                }}
+                className={cn(
+                  'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all',
+                  inTrack
+                    ? 'bg-mp-green-100 text-mp-green-600 hover:bg-mp-green-200'
+                    : 'bg-mp-gray-100 text-mp-gray-400 hover:bg-mp-gray-200 hover:text-mp-gray-600'
+                )}
+                title={inTrack ? 'В треке' : 'Добавить в трек'}
+              >
+                {inTrack ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                )}
+              </button>
+            )}
+
+            {/* Remove from track button */}
+            {onRemoveFromTrack && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onRemoveFromTrack();
+                }}
+                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-all"
+                title="Убрать из трека"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
 
             {/* Arrow */}
             <svg className="w-5 h-5 text-mp-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

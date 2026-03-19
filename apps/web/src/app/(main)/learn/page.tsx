@@ -20,6 +20,7 @@ const SECTION_STYLES: Record<string, { icon: string; bgColor: string; borderColo
   deepening: { icon: '\u2193', bgColor: 'bg-mp-blue-50', borderColor: 'border-mp-blue-200', textColor: 'text-mp-blue-700', badgeColor: 'bg-mp-blue-100 text-mp-blue-700' },
   growth: { icon: '\u2191', bgColor: 'bg-mp-green-50', borderColor: 'border-mp-green-200', textColor: 'text-mp-green-700', badgeColor: 'bg-mp-green-100 text-mp-green-700' },
   advanced: { icon: '\u2605', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200', textColor: 'text-yellow-700', badgeColor: 'bg-yellow-100 text-yellow-700' },
+  custom: { icon: '\u2764', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', textColor: 'text-purple-700', badgeColor: 'bg-purple-100 text-purple-700' },
 };
 
 function isDatabaseUnavailable(errorMessage: string): boolean {
