@@ -234,7 +234,7 @@ const CATEGORY_KEY_MAP: Record<string, keyof SkillProfile> = {
  * 3. Growth (Развитие) — lessons for mid categories (70-85)
  * 4. Advanced (Продвинутый) — HARD lessons for strong categories (> 85)
  */
-async function generateSectionedPath(
+export async function generateSectionedPath(
   prisma: PrismaClient,
   skillProfile: SkillProfile,
   sessionId: string,

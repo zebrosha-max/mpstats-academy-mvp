@@ -1,11 +1,19 @@
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
 import { getUserActiveSubscriptions, isLessonAccessible, checkLessonAccess } from '../utils/access';
 import { isFeatureEnabled } from '../utils/feature-flags';
 import { parseLearningPath } from '@mpstats/shared';
-import type { CourseWithProgress, LessonWithProgress } from '@mpstats/shared';
+import type { CourseWithProgress, LessonWithProgress, LearningPathSection, SectionedLearningPath } from '@mpstats/shared';
+import { generateSectionedPath } from './diagnostic';
+
+function pluralLessons(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return `${n} урок`;
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return `${n} урока`;
+  return `${n} уроков`;
+}
 
 export const learningRouter = router({
   // Get all courses with progress
@@ -722,6 +730,225 @@ export const learningRouter = router({
           completedAt: progress.completedAt,
         };
       } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  // ============== CUSTOM TRACK MANAGEMENT (Phase 32) ==============
+
+  // Add a lesson to the user's custom section
+  addToTrack: protectedProcedure
+    .input(z.object({ lessonId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Verify lesson exists
+        const lesson = await ctx.prisma.lesson.findUnique({ where: { id: input.lessonId } });
+        if (!lesson) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Lesson not found' });
+        }
+
+        const existingPath = await ctx.prisma.learningPath.findUnique({ where: { userId: ctx.user.id } });
+
+        const makeCustomSection = (lessonId: string): LearningPathSection => ({
+          id: 'custom',
+          title: 'Мои уроки',
+          description: pluralLessons(1),
+          lessonIds: [lessonId],
+          addedAt: { [lessonId]: new Date().toISOString() },
+        });
+
+        if (!existingPath) {
+          // No path — create new with custom section only
+          const pathData: SectionedLearningPath = {
+            version: 2,
+            sections: [makeCustomSection(input.lessonId)],
+            generatedFromSessionId: '',
+          };
+          await ctx.prisma.learningPath.create({
+            data: { userId: ctx.user.id, lessons: pathData as any },
+          });
+          return { added: true };
+        }
+
+        // Path exists — parse and modify
+        const parsed = parseLearningPath(existingPath.lessons);
+
+        if (Array.isArray(parsed)) {
+          // Old flat format — create sectioned with custom section only
+          const pathData: SectionedLearningPath = {
+            version: 2,
+            sections: [makeCustomSection(input.lessonId)],
+            generatedFromSessionId: '',
+          };
+          await ctx.prisma.learningPath.update({
+            where: { userId: ctx.user.id },
+            data: { lessons: pathData as any },
+          });
+          return { added: true };
+        }
+
+        // Sectioned format — remove from AI sections, add to custom
+        const sections = parsed.sections.map(s => {
+          if (s.id === 'custom') return s;
+          return { ...s, lessonIds: s.lessonIds.filter(id => id !== input.lessonId) };
+        });
+
+        let customSection = sections.find(s => s.id === 'custom');
+        if (!customSection) {
+          customSection = makeCustomSection(input.lessonId);
+          sections.unshift(customSection);
+        } else if (!customSection.lessonIds.includes(input.lessonId)) {
+          customSection.lessonIds.push(input.lessonId);
+          if (!customSection.addedAt) customSection.addedAt = {};
+          customSection.addedAt[input.lessonId] = new Date().toISOString();
+        }
+
+        // Update description
+        customSection.description = pluralLessons(customSection.lessonIds.length);
+
+        // Filter out empty AI sections (keep custom even if empty)
+        const filteredSections = sections.filter(s => s.id === 'custom' || s.lessonIds.length > 0);
+
+        const updatedPath: SectionedLearningPath = {
+          ...parsed,
+          sections: filteredSections,
+        };
+
+        await ctx.prisma.learningPath.update({
+          where: { userId: ctx.user.id },
+          data: { lessons: updatedPath as any },
+        });
+
+        return { added: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
+
+  // Remove a lesson from any section (custom or AI)
+  removeFromTrack: protectedProcedure
+    .input(z.object({ lessonId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const existingPath = await ctx.prisma.learningPath.findUnique({ where: { userId: ctx.user.id } });
+        if (!existingPath) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Learning path not found' });
+        }
+
+        const parsed = parseLearningPath(existingPath.lessons);
+        if (Array.isArray(parsed)) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot remove from flat path format' });
+        }
+
+        // Remove lessonId from ALL sections
+        const sections = parsed.sections.map(s => {
+          const updated = { ...s, lessonIds: s.lessonIds.filter(id => id !== input.lessonId) };
+          if (s.id === 'custom' && updated.addedAt) {
+            const { [input.lessonId]: _, ...rest } = updated.addedAt;
+            updated.addedAt = rest;
+            updated.description = pluralLessons(updated.lessonIds.length);
+          }
+          return updated;
+        });
+
+        // Filter out empty AI sections (keep custom even if empty)
+        const filteredSections = sections.filter(s => s.id === 'custom' || s.lessonIds.length > 0);
+
+        const updatedPath: SectionedLearningPath = {
+          ...parsed,
+          sections: filteredSections,
+        };
+
+        await ctx.prisma.learningPath.update({
+          where: { userId: ctx.user.id },
+          data: { lessons: updatedPath as any },
+        });
+
+        return { removed: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
+
+  // Rebuild AI sections from last diagnostic, preserving custom section
+  rebuildTrack: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      try {
+        const existingPath = await ctx.prisma.learningPath.findUnique({ where: { userId: ctx.user.id } });
+        if (!existingPath) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No track to rebuild' });
+        }
+
+        const parsed = parseLearningPath(existingPath.lessons);
+        if (Array.isArray(parsed)) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No track to rebuild' });
+        }
+
+        // Preserve custom section
+        const customSection = parsed.sections.find(s => s.id === 'custom');
+
+        // Find last completed diagnostic session
+        const lastSession = await ctx.prisma.diagnosticSession.findFirst({
+          where: { userId: ctx.user.id, status: 'COMPLETED' },
+          orderBy: { completedAt: 'desc' },
+        });
+        if (!lastSession) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No completed diagnostic to rebuild from' });
+        }
+
+        const skillProfile = await ctx.prisma.skillProfile.findUnique({
+          where: { userId: ctx.user.id },
+        });
+        if (!skillProfile) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No skill profile found for last diagnostic' });
+        }
+
+        const answers = await ctx.prisma.diagnosticAnswer.findMany({
+          where: { sessionId: lastSession.id },
+          select: { isCorrect: true, sourceData: true, skillCategory: true, questionId: true },
+        });
+
+        const sessionData = await ctx.prisma.diagnosticSession.findUnique({
+          where: { id: lastSession.id },
+          select: { questions: true },
+        });
+        const sessionQuestions = (sessionData?.questions as any[]) || [];
+
+        // Regenerate AI sections
+        const newPath = await generateSectionedPath(
+          ctx.prisma,
+          skillProfile,
+          lastSession.id,
+          answers.map(a => ({
+            isCorrect: a.isCorrect,
+            sourceData: a.sourceData as any,
+            skillCategory: a.skillCategory,
+            questionId: a.questionId,
+          })),
+          sessionQuestions,
+        );
+
+        // If custom section exists, prepend and exclude its lessons from AI sections
+        if (customSection && customSection.lessonIds.length > 0) {
+          const customIds = new Set(customSection.lessonIds);
+          newPath.sections = newPath.sections.map(s => ({
+            ...s,
+            lessonIds: s.lessonIds.filter(id => !customIds.has(id)),
+          }));
+          newPath.sections = newPath.sections.filter(s => s.lessonIds.length > 0);
+          newPath.sections.unshift(customSection);
+        }
+
+        await ctx.prisma.learningPath.update({
+          where: { userId: ctx.user.id },
+          data: { lessons: newPath as any, generatedAt: new Date() },
+        });
+
+        return { rebuilt: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
         handleDatabaseError(error);
       }
     }),

@@ -245,10 +245,11 @@ export interface SearchLessonResult {
 // ============== SECTIONED LEARNING PATH (Phase 23) ==============
 
 export interface LearningPathSection {
-  id: 'errors' | 'deepening' | 'growth' | 'advanced';
+  id: 'errors' | 'deepening' | 'growth' | 'advanced' | 'custom';
   title: string;
   description: string;
   lessonIds: string[];
+  addedAt?: Record<string, string>; // lessonId -> ISO date string (for custom section ordering)
   hints?: Array<{
     lessonId: string;
     questionText: string;
