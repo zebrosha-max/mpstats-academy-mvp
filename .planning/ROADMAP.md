@@ -341,7 +341,7 @@ Plans:
   5. Секция "Мои уроки" отображается первой с фиолетовым стилем
   6. "Перестроить трек" перегенерирует AI-секции, сохраняя "Мои уроки"
   7. Завершение диагностики не перезаписывает custom-секцию
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 32-01-PLAN.md — Type extensions (custom section, addedAt) + 3 tRPC mutations + diagnostic integration
