@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 24 planned (1 plan, verified)
-last_updated: "2026-03-19T08:32:52.948Z"
+stopped_at: Completed 24-01-PLAN.md
+last_updated: "2026-03-19T08:37:37.551Z"
 progress:
   total_phases: 17
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 28
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 26 — yandex-metrika
+**Current focus:** Phase 24 — support-contact
 
 ## Current Position
 
-Phase: 26 (yandex-metrika) — EXECUTING
-Plan: 1 of 1
+Phase: 24 (support-contact) — COMPLETE
+Plan: 1 of 1 (DONE)
 
 ## Performance Metrics
 
@@ -100,6 +100,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [30-02]: Switched vector search from Supabase RPC to Prisma raw SQL (RPC timeout at threshold 0.3)
 - [30-02]: Raised vector similarity threshold 0.3→0.5 to reduce noise and avoid timeouts
 - [30-02]: Timecode deep-link conditional on ?t= param presence (preserves saved watch position)
+- [24-01]: Supabase browser client for auth detection on public /support page (not tRPC protectedProcedure)
+- [24-01]: window.carrotquest accessed via `as any` cast to avoid conflicting global type declarations
 
 ### Blockers/Concerns
 
@@ -154,11 +156,12 @@ None.
 | Phase 31 P02 | 4min | 3 tasks | 6 files |
 | 30    | 01   | 4min     | 2     | 4     |
 | 30    | 02   | 25min    | 3     | 14    |
+| 24    | 01   | 5min     | 2     | 9     |
 
 ## Session Continuity
 
-Last session: 2026-03-19T08:32:52.945Z
-Stopped at: Phase 24 planned (1 plan, verified)
+Last session: 2026-03-19T08:43:37Z
+Stopped at: Completed 24-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

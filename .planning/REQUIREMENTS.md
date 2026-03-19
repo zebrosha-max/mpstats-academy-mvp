@@ -133,10 +133,10 @@ Requirements for Support Contact phase.
 
 ### Support Contact
 
-- [ ] **SUPP-01**: Публичная страница /support с контактной информацией (email clients@mpstats.academy, кнопка открытия CQ чата)
-- [ ] **SUPP-02**: FAQ аккордеон с 5 частыми вопросами (оплата, отмена, email, видео, диагностика)
-- [ ] **SUPP-03**: Форма обратной связи с дропдауном темы и отправкой через CQ event "Support Request"
-- [ ] **SUPP-04**: Ссылка "Поддержка" в sidebar footer, mobile-nav и landing footer
+- [x] **SUPP-01**: Публичная страница /support с контактной информацией (email clients@mpstats.academy, кнопка открытия CQ чата)
+- [x] **SUPP-02**: FAQ аккордеон с 5 частыми вопросами (оплата, отмена, email, видео, диагностика)
+- [x] **SUPP-03**: Форма обратной связи с дропдауном темы и отправкой через CQ event "Support Request"
+- [x] **SUPP-04**: Ссылка "Поддержка" в sidebar footer, mobile-nav и landing footer
 
 ## Future Requirements
 

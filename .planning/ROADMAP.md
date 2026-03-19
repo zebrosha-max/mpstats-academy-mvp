@@ -225,7 +225,7 @@ Plans:
   1. Страница /support публичная (без авторизации) с контактами (email + CQ чат), FAQ (5 вопросов) и формой обратной связи
   2. Форма отправляет CQ event "Support Request" с темой, сообщением и email
   3. Ссылка "Поддержка" видна в sidebar footer, mobile-nav и landing footer
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 24-01-PLAN.md — Support page (contacts, FAQ, form with CQ event) + navigation links (sidebar, mobile-nav, landing footer)
