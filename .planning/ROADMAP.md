@@ -327,10 +327,19 @@ Plans:
 
 ### Phase 32: Custom Track Management — ручное управление персональным треком (добавить/удалить уроки)
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Пользователь может вручную добавлять и удалять уроки из персонального трека обучения: кнопка "+" в "Все курсы", удаление из "Мой трек", секция "Мои уроки" сохраняется при перестройке AI-трека и повторной диагностике
+**Requirements**: TRACK-01, TRACK-02, TRACK-03, TRACK-04, TRACK-05, TRACK-06, TRACK-07, TRACK-08, TRACK-09, TRACK-10
 **Depends on:** Phase 31
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. LearningPathSection расширен id 'custom' и полем addedAt для ручных добавлений
+  2. Три tRPC мутации (addToTrack, removeFromTrack, rebuildTrack) обрабатывают все edge cases
+  3. Кнопка "+" на LessonCard в режиме "Все курсы" переключается на checkmark при добавлении
+  4. Кнопка "Убрать" в режиме "Мой трек" удаляет урок из любой секции
+  5. Секция "Мои уроки" отображается первой с фиолетовым стилем
+  6. "Перестроить трек" перегенерирует AI-секции, сохраняя "Мои уроки"
+  7. Завершение диагностики не перезаписывает custom-секцию
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 32 to break down)
+- [ ] 32-01-PLAN.md — Type extensions (custom section, addedAt) + 3 tRPC mutations + diagnostic integration
+- [ ] 32-02-PLAN.md — Frontend: LessonCard toggle, remove buttons, rebuild dialog, optimistic updates + human verify

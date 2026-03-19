@@ -110,9 +110,26 @@ Requirements for Content Discovery phase.
 - [x] **SEARCH-04**: Уроки из рекомендованного трека показывают badge "В вашем треке" в результатах поиска
 - [x] **SEARCH-05**: Очистка поиска (X или backspace) возвращает к режиму курсов/трека
 
+## v1.8 Requirements
+
+Requirements for Custom Track Management phase.
+
+### Track Management
+
+- [ ] **TRACK-01**: Тип LearningPathSection расширен id `'custom'` и полем `addedAt` для ручных добавлений
+- [ ] **TRACK-02**: tRPC мутация `addToTrack` добавляет урок в секцию "Мои уроки", при отсутствии трека создаёт новый LearningPath
+- [ ] **TRACK-03**: tRPC мутация `removeFromTrack` удаляет урок из любой секции (custom или AI)
+- [ ] **TRACK-04**: tRPC мутация `rebuildTrack` перегенерирует AI-секции из последней диагностики, сохраняя "Мои уроки"
+- [ ] **TRACK-05**: Завершение диагностики сохраняет существующую custom-секцию (не перезаписывает)
+- [ ] **TRACK-06**: Кнопка "+" на LessonCard в режиме "Все курсы" — toggle "+"/"checkmark" для добавления в трек
+- [ ] **TRACK-07**: Кнопка "Убрать" в режиме "Мой трек" для удаления из любой секции
+- [ ] **TRACK-08**: Секция "Мои уроки" отображается первой (выше AI-секций) с фиолетовым стилем
+- [ ] **TRACK-09**: Кнопка "Перестроить трек" с диалогом подтверждения
+- [ ] **TRACK-10**: Toast-уведомления (sonner) при добавлении, удалении и перестройке трека
+
 ## Future Requirements
 
-Deferred to v1.7+. Tracked but not in current roadmap.
+Deferred to v1.8+. Tracked but not in current roadmap.
 
 ### Auth Extensions
 
@@ -208,6 +225,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEARCH-03 | Phase 30 (Plan 02) | Complete |
 | SEARCH-04 | Phase 30 (Plan 01, 02) | Complete |
 | SEARCH-05 | Phase 30 (Plan 02) | Complete |
+| TRACK-01 | Phase 32 (Plan 01) | Planned |
+| TRACK-02 | Phase 32 (Plan 01) | Planned |
+| TRACK-03 | Phase 32 (Plan 01) | Planned |
+| TRACK-04 | Phase 32 (Plan 01) | Planned |
+| TRACK-05 | Phase 32 (Plan 01) | Planned |
+| TRACK-06 | Phase 32 (Plan 02) | Planned |
+| TRACK-07 | Phase 32 (Plan 02) | Planned |
+| TRACK-08 | Phase 32 (Plan 02) | Planned |
+| TRACK-09 | Phase 32 (Plan 02) | Planned |
+| TRACK-10 | Phase 32 (Plan 02) | Planned |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
@@ -216,8 +243,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.5 requirements: 8 total, 0 planned
 - v1.6 requirements: 6 total, 6 complete
 - v1.7 requirements: 5 total, 5 complete
+- v1.8 requirements: 10 total, 0 planned
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-18 after Phase 30 completion*
+*Last updated: 2026-03-19 after Phase 32 planning*
