@@ -2,26 +2,31 @@
 
 **Last updated:** 2026-03-19
 
-## Last Session (2026-03-19)
+## Last Session (2026-03-19, session 2)
 
-**Phase 32 — Custom Track Management (complete):**
-- 3 tRPC мутации: `addToTrack`, `removeFromTrack`, `rebuildTrack` в `learning.ts`
-- `LearningPathSection` расширен id `'custom'` + `addedAt` поле
-- Кнопка «+»/«✓» на LessonCard в «Все курсы», «✕» в «Мой трек»
-- Секция «Мои уроки» (фиолетовая) отображается первой в треке
-- `generateSectionedPath` экспортирован, diagnostic completion сохраняет custom секцию
-- «Перестроить трек» с AlertDialog — AI-секции перегенерируются, «Мои уроки» сохраняются
-- Bugfix: динамические описания секций (счётчик уроков обновляется при удалении)
-- Трек без диагностики — пользователь может добавлять уроки, создаётся пустой LearningPath
-- Toast уведомления через sonner
-- Verification: 11/11 must-haves, 10/10 TRACK requirements
+**Phase 26 — Яндекс Метрика (complete + deployed):**
+- Общий счётчик 94592073 (mpstats.academy) — тот же что в connect
+- `@koiztech/next-yandex-metrika` в root layout (production-only, afterInteractive)
+- Все функции: webvisor, clickmap, trackLinks, accurateTrackBounce
+- 8 типизированных целей с префиксом `platform_` (signup, login, diagnostic_start/complete, lesson_open, pricing_view, payment с revenue, cta_click)
+- Хелпер-модуль `lib/analytics/` (паттерн из connect): constants.ts + metrika.ts + yandex-metrika.d.ts
+- `reachGoal()` вызывается в 7 страницах (register, login, diagnostic session/results, lesson, pricing, landing)
+- Payment goal на клиенте (CP widget callback), не на server webhook
+- Dockerfile ARG + docker-compose build arg для NEXT_PUBLIC_YANDEX_ID
+- 8 целей созданы в дашборде Метрики (тип: JavaScript-событие)
+- Задеплоено на прод, контейнер healthy
 
 **Ключевые файлы:**
-- `packages/shared/src/types/index.ts` — `'custom'` section id, `addedAt`
-- `packages/api/src/routers/learning.ts` — 3 мутации + parseLearningPath helper
-- `packages/api/src/routers/diagnostic.ts` — custom section preservation
-- `apps/web/src/components/learning/LessonCard.tsx` — toggle/remove buttons
-- `apps/web/src/app/(main)/learn/page.tsx` — wiring, optimistic updates, SECTION_DESCRIPTIONS
+- `apps/web/src/lib/analytics/constants.ts` — METRIKA_GOALS typed constants
+- `apps/web/src/lib/analytics/metrika.ts` — safe reachGoal helper
+- `apps/web/src/types/yandex-metrika.d.ts` — Window.ym global type
+- `apps/web/src/app/layout.tsx` — YandexMetrika component
+
+### Previous Session (2026-03-19)
+
+**Phase 32 — Custom Track Management (complete):**
+- 3 tRPC мутации, custom секция в треке, toggle/remove buttons, rebuild с AlertDialog
+- Verification: 11/11 must-haves, 10/10 TRACK requirements
 
 ### Previous Session (2026-03-18, session 3)
 
@@ -505,22 +510,20 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
-| v1.3 Pre-release | 🔄 In Progress | Phases 22-32 (22,24-26,28-29 remaining) |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-32 (22,24-25,28-29 remaining) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
 - Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
 - seekTo через postMessage API к iframe
 
-**Completed v1.3 phases:** 23 (Diagnostic 2.0), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management)
+**Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management)
 
 **Remaining v1.3 phases:**
 1. Phase 22: Email Notifications — CQ code deployed, test events + automation rules remaining
-2. Phase 24: Support Contact
-3. Phase 25: Legal + Cookie Consent
-4. Phase 26: Яндекс Метрика
-5. Phase 28: Боевой CloudPayments
-6. Phase 29: Sentry Monitoring
+2. Phase 25: Legal + Cookie Consent
+3. Phase 28: Боевой CloudPayments
+4. Phase 29: Sentry Monitoring
 
 ## Key Decisions
 
