@@ -6,6 +6,9 @@ import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
 import { getQuestionsFromBank } from '../utils/question-bank';
 import type { PrismaClient } from '@mpstats/db';
+import {
+  parseLearningPath,
+} from '@mpstats/shared';
 import type {
   DiagnosticResult,
   DiagnosticSessionState,
@@ -742,6 +745,29 @@ export const diagnosticRouter = router({
             console.error('[diagnostic] Sectioned path generation failed, falling back to flat:', err);
             const flatPath = await generateFullRecommendedPath(ctx.prisma, skillProfile);
             pathData = flatPath;
+          }
+
+          // Preserve custom section from existing path (Phase 32)
+          const existingPathForCustom = await ctx.prisma.learningPath.findUnique({ where: { userId: ctx.user.id } });
+          if (existingPathForCustom?.lessons) {
+            const existingParsed = parseLearningPath(existingPathForCustom.lessons);
+            if (!Array.isArray(existingParsed) && existingParsed.version === 2) {
+              const customSection = existingParsed.sections.find(s => s.id === 'custom');
+              if (customSection && customSection.lessonIds.length > 0) {
+                if (!Array.isArray(pathData) && 'sections' in pathData) {
+                  // Remove custom lesson IDs from AI sections to prevent duplicates
+                  const customIds = new Set(customSection.lessonIds);
+                  pathData.sections = pathData.sections.map((s: LearningPathSection) => ({
+                    ...s,
+                    lessonIds: s.lessonIds.filter(id => !customIds.has(id)),
+                  }));
+                  // Filter out empty AI sections
+                  pathData.sections = pathData.sections.filter((s: LearningPathSection) => s.lessonIds.length > 0);
+                  // Prepend custom section
+                  pathData.sections.unshift(customSection);
+                }
+              }
+            }
           }
 
           await ctx.prisma.learningPath.upsert({
