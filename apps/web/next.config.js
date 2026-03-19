@@ -5,6 +5,10 @@ const nextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../../'),
   reactStrictMode: true,
+  eslint: {
+    // ESLint runs in CI; skip during Docker build to avoid plugin version mismatches
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: ['@mpstats/api', '@mpstats/db', '@mpstats/shared'],
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
