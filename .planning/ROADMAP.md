@@ -238,13 +238,19 @@ Plans:
 
 ### Phase 26: Яндекс Метрика — интеграция аналитики
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Счётчик Яндекс.Метрики (94592073) загружается на всех страницах платформы с SPA-трекингом, 8 типизированных целей с параметрами отслеживают ключевые конверсии (регистрация, логин, диагностика, уроки, оплата, CTA), данные о целях доступны в отчётах Метрики
+**Requirements**: YM-01, YM-02, YM-03
 **Depends on:** Phase 25
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. YandexMetrika компонент рендерится в production с webvisor, clickmap, trackLinks, accurateTrackBounce
+  2. 8 целей с префиксом `platform_` определены в типизированном модуле и вызываются в 7 страницах
+  3. Dockerfile содержит ARG+ENV для NEXT_PUBLIC_YANDEX_ID (build-time inlining)
+  4. 8 целей созданы в дашборде Метрики как "JavaScript event"
+  5. Счётчик подтверждён в production (mc.yandex.ru запросы в DevTools)
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 26 to break down)
+- [ ] 26-01-PLAN.md — Analytics module (constants + helper + types), YandexMetrika in layout, goal wiring in 7 pages, Dockerfile/env, dashboard goals
 
 ### Phase 27: SEO + Custom Error Pages — sitemap, robots.txt, OG-теги, брендированные 404/500
 
