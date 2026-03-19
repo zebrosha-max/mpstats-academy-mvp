@@ -1,8 +1,29 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 
-## Last Session (2026-03-18, session 3)
+## Last Session (2026-03-19)
+
+**Phase 32 — Custom Track Management (complete):**
+- 3 tRPC мутации: `addToTrack`, `removeFromTrack`, `rebuildTrack` в `learning.ts`
+- `LearningPathSection` расширен id `'custom'` + `addedAt` поле
+- Кнопка «+»/«✓» на LessonCard в «Все курсы», «✕» в «Мой трек»
+- Секция «Мои уроки» (фиолетовая) отображается первой в треке
+- `generateSectionedPath` экспортирован, diagnostic completion сохраняет custom секцию
+- «Перестроить трек» с AlertDialog — AI-секции перегенерируются, «Мои уроки» сохраняются
+- Bugfix: динамические описания секций (счётчик уроков обновляется при удалении)
+- Трек без диагностики — пользователь может добавлять уроки, создаётся пустой LearningPath
+- Toast уведомления через sonner
+- Verification: 11/11 must-haves, 10/10 TRACK requirements
+
+**Ключевые файлы:**
+- `packages/shared/src/types/index.ts` — `'custom'` section id, `addedAt`
+- `packages/api/src/routers/learning.ts` — 3 мутации + parseLearningPath helper
+- `packages/api/src/routers/diagnostic.ts` — custom section preservation
+- `apps/web/src/components/learning/LessonCard.tsx` — toggle/remove buttons
+- `apps/web/src/app/(main)/learn/page.tsx` — wiring, optimistic updates, SECTION_DESCRIPTIONS
+
+### Previous Session (2026-03-18, session 3)
 
 **Phase 22 — Carrot Quest Integration (code complete, deployed, testing tomorrow):**
 - CQ credentials received from email team, full integration deployed
@@ -484,14 +505,22 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-32 (22,24-26,28-29 remaining) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
 - Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
 - seekTo через postMessage API к iframe
 
-**Next Steps:**
-1. Phase 22: Transactional email notifications (paused — waiting for CQ credentials)
+**Completed v1.3 phases:** 23 (Diagnostic 2.0), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management)
+
+**Remaining v1.3 phases:**
+1. Phase 22: Email Notifications — CQ code deployed, test events + automation rules remaining
+2. Phase 24: Support Contact
+3. Phase 25: Legal + Cookie Consent
+4. Phase 26: Яндекс Метрика
+5. Phase 28: Боевой CloudPayments
+6. Phase 29: Sentry Monitoring
 
 ## Key Decisions
 

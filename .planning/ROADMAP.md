@@ -166,6 +166,10 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 22. Email Notifications | v1.3 | 2/3 | In Progress | - |
 | 23. Diagnostic 2.0 | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 26. Yandex Metrika | v1.3 | 1/1 | Complete | 2026-03-19 |
+| 27. SEO + Custom Error Pages | v1.3 | 2/2 | Complete | 2026-03-18 |
+| 30. Content Discovery | v1.3 | 2/2 | Complete | 2026-03-18 |
+| 31. Admin Roles | v1.3 | 2/2 | Complete | 2026-03-18 |
+| 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
