@@ -11,6 +11,8 @@ export type CQEventName =
   | 'Inactive 7d'
   | 'Inactive 14d'
   | 'Inactive 30d'
+  // Support
+  | 'Support Request'
   // Auth hook events (sent via Supabase Send Email Hook)
   | 'Email Confirmation'
   | 'Password Reset'
