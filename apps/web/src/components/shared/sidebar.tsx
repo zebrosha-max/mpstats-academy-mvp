@@ -62,6 +62,16 @@ const adminNavItem: NavItem = {
   ),
 };
 
+const supportNavItem: NavItem = {
+  title: 'Поддержка',
+  href: '/support',
+  icon: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+};
+
 const billingNavItem: NavItem = {
   title: 'Тарифы',
   href: '/pricing',
@@ -129,6 +139,23 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-mp-gray-200 space-y-1">
+        <Link
+          href={supportNavItem.href}
+          className={cn(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-body-sm font-medium transition-all duration-200',
+            pathname === '/support'
+              ? 'bg-mp-blue-50 text-mp-blue-600 shadow-mp-sm'
+              : 'text-mp-gray-600 hover:bg-mp-gray-100 hover:text-mp-gray-900'
+          )}
+        >
+          <span className={cn(
+            'transition-colors',
+            pathname === '/support' ? 'text-mp-blue-500' : 'text-mp-gray-400'
+          )}>
+            {supportNavItem.icon}
+          </span>
+          {supportNavItem.title}
+        </Link>
         {isAdmin && (
           <Link
             href={adminNavItem.href}

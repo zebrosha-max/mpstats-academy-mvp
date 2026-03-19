@@ -390,7 +390,12 @@ export default function HomePage() {
       <footer className="relative z-10 border-t border-[var(--landing-border)] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <Logo size="sm" variant={isDark ? 'white' : 'default'} />
-          <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/support" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+              Поддержка
+            </Link>
+            <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
+          </div>
         </div>
       </footer>
     </div>
