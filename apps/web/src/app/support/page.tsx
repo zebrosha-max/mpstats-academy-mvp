@@ -28,7 +28,7 @@ const FAQ_ITEMS = [
   {
     question: 'Не приходит письмо подтверждения',
     answer:
-      'Проверьте папку Спам. Если письма нет — напишите нам в чат или на clients@mpstats.academy, и мы подтвердим email вручную.',
+      'Проверьте папку Спам. Если письма нет — напишите на clients@mpstats.academy, и мы подтвердим email вручную.',
   },
   {
     question: 'Не воспроизводится видео',
@@ -70,16 +70,6 @@ export default function SupportPage() {
 
   const isAuthenticated = !!userInfo;
 
-  const handleOpenChat = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cq = (window as any).carrotquest;
-    if (cq?.open) {
-      cq.open();
-    } else {
-      toast.error('Чат недоступен. Напишите на clients@mpstats.academy');
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -118,7 +108,7 @@ export default function SupportPage() {
       setMessage('');
       setEmail('');
     } catch {
-      toast.error('Не удалось отправить. Попробуйте написать в чат.');
+      toast.error('Не удалось отправить. Попробуйте написать на clients@mpstats.academy');
     } finally {
       setIsSubmitting(false);
     }
@@ -161,26 +151,15 @@ export default function SupportPage() {
         <Card>
           <CardContent className="pt-6 space-y-4">
             <h2 className="text-heading text-mp-gray-900">Свяжитесь с нами</h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="mailto:clients@mpstats.academy"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg border border-mp-gray-200 hover:border-mp-blue-300 hover:bg-mp-blue-50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-mp-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <span className="text-body-sm text-mp-gray-700">clients@mpstats.academy</span>
-              </a>
-              <button
-                onClick={handleOpenChat}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg border border-mp-gray-200 hover:border-mp-blue-300 hover:bg-mp-blue-50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-mp-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span className="text-body-sm text-mp-gray-700">Написать в чат</span>
-              </button>
-            </div>
+            <a
+              href="mailto:clients@mpstats.academy"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-lg border border-mp-gray-200 hover:border-mp-blue-300 hover:bg-mp-blue-50 transition-colors"
+            >
+              <svg className="w-5 h-5 text-mp-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span className="text-body-sm text-mp-gray-700">clients@mpstats.academy</span>
+            </a>
           </CardContent>
         </Card>
 
