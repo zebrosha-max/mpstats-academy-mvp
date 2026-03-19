@@ -127,6 +127,17 @@ Requirements for Custom Track Management phase.
 - [ ] **TRACK-09**: Кнопка "Перестроить трек" с диалогом подтверждения
 - [ ] **TRACK-10**: Toast-уведомления (sonner) при добавлении, удалении и перестройке трека
 
+## v1.9 Requirements
+
+Requirements for Support Contact phase.
+
+### Support Contact
+
+- [ ] **SUPP-01**: Публичная страница /support с контактной информацией (email clients@mpstats.academy, кнопка открытия CQ чата)
+- [ ] **SUPP-02**: FAQ аккордеон с 5 частыми вопросами (оплата, отмена, email, видео, диагностика)
+- [ ] **SUPP-03**: Форма обратной связи с дропдауном темы и отправкой через CQ event "Support Request"
+- [ ] **SUPP-04**: Ссылка "Поддержка" в sidebar footer, mobile-nav и landing footer
+
 ## Future Requirements
 
 Deferred to v1.8+. Tracked but not in current roadmap.
@@ -235,6 +246,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TRACK-08 | Phase 32 (Plan 02) | Planned |
 | TRACK-09 | Phase 32 (Plan 02) | Planned |
 | TRACK-10 | Phase 32 (Plan 02) | Planned |
+| SUPP-01 | Phase 24 (Plan 01) | Planned |
+| SUPP-02 | Phase 24 (Plan 01) | Planned |
+| SUPP-03 | Phase 24 (Plan 01) | Planned |
+| SUPP-04 | Phase 24 (Plan 01) | Planned |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
@@ -244,8 +259,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.6 requirements: 6 total, 6 complete
 - v1.7 requirements: 5 total, 5 complete
 - v1.8 requirements: 10 total, 0 planned
+- v1.9 requirements: 4 total, 0 planned
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-19 after Phase 32 planning*
+*Last updated: 2026-03-19 after Phase 24 planning*

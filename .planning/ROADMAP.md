@@ -218,14 +218,17 @@ Plans:
 
 ### Phase 24: Support Contact — функционал связи со службой поддержки
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Пользователь имеет публичную страницу /support с контактной информацией, FAQ аккордеоном и формой обратной связи через CQ, ссылки на поддержку доступны из sidebar, mobile-nav и landing footer
+**Requirements**: SUPP-01, SUPP-02, SUPP-03, SUPP-04
 **Depends on:** Phase 23
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Страница /support публичная (без авторизации) с контактами (email + CQ чат), FAQ (5 вопросов) и формой обратной связи
+  2. Форма отправляет CQ event "Support Request" с темой, сообщением и email
+  3. Ссылка "Поддержка" видна в sidebar footer, mobile-nav и landing footer
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 24 to break down)
-
+- [ ] 24-01-PLAN.md — Support page (contacts, FAQ, form with CQ event) + navigation links (sidebar, mobile-nav, landing footer)
 ### Phase 25: Legal + Cookie Consent — оферта, политика конфиденциальности, пользовательское соглашение, баннер кук
 
 **Goal:** [To be planned]
