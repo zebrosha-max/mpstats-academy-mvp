@@ -216,7 +216,7 @@ export default function DiagnosticPage() {
       {/* Previous results hint */}
       <p className="text-center text-body-sm text-mp-gray-500">
         Ваши предыдущие результаты сохраняются в{' '}
-        <a href="/profile/history" className="text-mp-blue-600 hover:text-mp-blue-700 hover:underline">
+        <a href="/profile/history" className="text-mp-blue-600 hover:text-mp-blue-700 underline">
           истории диагностик
         </a>
       </p>

@@ -199,10 +199,11 @@ export default function PricingPage() {
 
                   {/* Course select */}
                   <div>
-                    <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
+                    <label htmlFor="course-select" className="block text-body-sm font-medium text-mp-gray-700 mb-2">
                       Выберите курс
                     </label>
                     <select
+                      id="course-select"
                       value={selectedCourseId}
                       onChange={(e) => setSelectedCourseId(e.target.value)}
                       className="w-full rounded-lg border border-mp-gray-300 bg-white px-3 py-2.5 text-body-sm text-mp-gray-900 focus:border-mp-blue-500 focus:outline-none focus:ring-2 focus:ring-mp-blue-500/20"

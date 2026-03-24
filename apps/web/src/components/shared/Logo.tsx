@@ -130,7 +130,7 @@ export function Logo({
 
   if (href) {
     return (
-      <Link href={href} className="hover:opacity-90 transition-opacity inline-flex">
+      <Link href={href} className="hover:opacity-90 transition-opacity inline-flex" aria-label="MPSTATS Academy — на главную">
         {content}
       </Link>
     );

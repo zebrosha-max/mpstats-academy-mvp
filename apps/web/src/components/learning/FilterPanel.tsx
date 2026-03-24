@@ -91,16 +91,18 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
   );
 }
 
-function SelectFilter({ value, onChange, options, className }: {
+function SelectFilter({ value, onChange, options, className, ariaLabel }: {
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
   className?: string;
+  ariaLabel?: string;
 }) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      aria-label={ariaLabel}
       className={cn(
         'px-3 py-1 rounded-md border border-mp-gray-200 text-body-sm bg-white text-mp-gray-700',
         'focus:outline-none focus:border-mp-gray-400',
@@ -215,6 +217,7 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
         <SelectFilter
           value={filters.difficulty}
           onChange={(v) => update({ difficulty: v })}
+          ariaLabel="Фильтр по сложности"
           options={[
             { value: 'ALL', label: 'Сложность' },
             { value: 'EASY', label: 'Лёгкий' },
@@ -227,6 +230,7 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
         <SelectFilter
           value={filters.duration}
           onChange={(v) => update({ duration: v })}
+          ariaLabel="Фильтр по длительности"
           options={[
             { value: 'ALL', label: 'Длительность' },
             { value: 'short', label: 'До 10 мин' },
@@ -240,6 +244,7 @@ export function FilterPanel({ filters, onFiltersChange, availableTopics, availab
           <SelectFilter
             value={filters.courseId}
             onChange={(v) => update({ courseId: v })}
+            ariaLabel="Фильтр по курсу"
             options={[
               { value: 'ALL', label: 'Все курсы' },
               ...availableCourses.map(c => ({ value: c.id, label: c.title })),
