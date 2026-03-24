@@ -351,3 +351,22 @@ Plans:
 Plans:
 - [x] 32-01-PLAN.md — Type extensions (custom section, addedAt) + 3 tRPC mutations + diagnostic integration (completed 2026-03-19)
 - [x] 32-02-PLAN.md — Frontend: LessonCard toggle, remove buttons, rebuild dialog, optimistic updates + human verify (completed 2026-03-19)
+
+### Phase 33: CQ Email Automation — 10 событий Carrot Quest + HTML-шаблоны + inactive tracking
+
+**Goal:** Полная интеграция email-автоматизации через Carrot Quest: 10 событий (платежи, аутентификация, реактивация), переименование event names под CQ ТЗ (pa_ префикс), HTML-шаблоны из Stripo, трекинг активности пользователей (lastActiveAt) и cron для inactive уведомлений
+**Requirements**: CQ-01 через CQ-10
+**Depends on:** Phase 32
+**Success Criteria** (what must be TRUE):
+  1. 10 CQ событий отправляются с правильными именами (pa_ префикс) и свойствами
+  2. Supabase email hook (DOI, password reset) передаёт уникальные ссылки в CQ
+  3. pa_registration_completed отправляется при подтверждении email
+  4. pa_subscription_expiring отправляется за 3 дня до истечения подписки
+  5. lastActiveAt обновляется при каждом входе пользователя
+  6. Cron-эндпоинт отправляет pa_inactive_7/14/30 для неактивных пользователей
+  7. 10 automation rules настроены в CQ дашборде
+  8. HTML-шаблоны из Stripo загружены в CQ
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 33 to break down)
