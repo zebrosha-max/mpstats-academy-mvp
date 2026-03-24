@@ -113,3 +113,37 @@ export async function sendWelcomeEmail(
   }
 }
 
+export async function sendSubscriptionExpiringEmail(
+  userId: string,
+  data: { courseName?: string; periodEnd: Date },
+): Promise<void> {
+  try {
+    if (!(await isEmailEnabled())) return;
+
+    await cq.trackEvent(userId, 'pa_subscription_expiring', {
+      pa_course_name: data.courseName ?? '',
+      pa_period_end: data.periodEnd.toISOString(),
+    });
+
+    console.log(`[Email] Subscription expiring event sent for user ${userId}`);
+  } catch (error) {
+    console.error('[Email] sendSubscriptionExpiringEmail error:', error);
+  }
+}
+
+export async function sendInactiveEmail(
+  userId: string,
+  days: 7 | 14 | 30,
+): Promise<void> {
+  try {
+    if (!(await isEmailEnabled())) return;
+
+    const eventMap = { 7: 'pa_inactive_7', 14: 'pa_inactive_14', 30: 'pa_inactive_30' } as const;
+    await cq.trackEvent(userId, eventMap[days], {});
+
+    console.log(`[Email] Inactive ${days}d event sent for user ${userId}`);
+  } catch (error) {
+    console.error(`[Email] sendInactiveEmail(${days}d) error:`, error);
+  }
+}
+
