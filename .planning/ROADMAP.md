@@ -366,8 +366,8 @@ Plans:
   6. Cron-эндпоинт отправляет pa_inactive_7/14/30 для неактивных пользователей
   7. 10 automation rules настроены в CQ дашборде
   8. HTML-шаблоны из Stripo загружены в CQ
-**Plans:** 3 plans
+**Plans:** 3 plans (2/3 complete)
 
-- [ ] 33-01-PLAN.md — Event rename (pa_ prefix) + lastActiveAt schema + tRPC tracking
-- [ ] 33-02-PLAN.md — New events (registration_completed, subscription_expiring, inactive) + cron endpoints + GitHub Action
-- [ ] 33-03-PLAN.md — CQ dashboard setup (templates + automation rules) + E2E verification
+- [x] 33-01-PLAN.md — Event rename (pa_ prefix) + lastActiveAt schema + tRPC tracking (completed 2026-03-24)
+- [x] 33-02-PLAN.md — New events (registration_completed, subscription_expiring, inactive) + cron endpoints + GitHub Action (completed 2026-03-24)
+- [ ] 33-03-PLAN.md — CQ dashboard setup (templates + automation rules) + E2E verification (manual — pending)

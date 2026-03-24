@@ -1,8 +1,46 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-19
+**Last updated:** 2026-03-24
 
-## Last Session (2026-03-19, session 2)
+## Last Session (2026-03-24)
+
+**QA Test Suite — 55 тестов, 0 failures:**
+- 24 unit тестов (Vitest) — auth integration
+- 31 E2E тестов (Playwright) — 5 новых файлов:
+  - `landing.spec.ts` — 4 теста (починены 2 устаревших селектора после редизайна)
+  - `protected-routes.spec.ts` — 7 тестов (все 5 protected routes + login/register)
+  - `auth-flow.spec.ts` — 4 теста (login, invalid creds, logout, auth redirect)
+  - `diagnostic-flow.spec.ts` — 4 теста (intro → session → feedback → radar chart, полный flow ~1 мин)
+  - `learning-flow.spec.ts` — 4 теста (courses → lesson → video → AI summary)
+  - `accessibility.spec.ts` — 8 тестов (WCAG 2.0 AA на 8 страницах, axe-core)
+- 4 a11y бага исправлены: Logo aria-label, FilterPanel select labels, pricing htmlFor, diagnostic link underline
+- Test user: `tester@mpstats.academy` / `TestUser2024` (пароль сброшен через Admin API)
+- Sprint 5 закрыт — все задачи выполнены через GSD фазы
+- CLAUDE.md обновлён: QA debt почти полностью закрыт
+
+**Phase 33 — CQ Email Automation (code complete, deployed):**
+- 12 CQ событий переименованы → `pa_` prefix (pa_payment_success, pa_doi, etc.)
+- Свойства обновлены: pa_course_name, pa_amount, pa_period_end, pa_access_until, pa_name, pa_doi, pa_password_link
+- `lastActiveAt DateTime?` добавлен в UserProfile + tRPC tracking (5-min debounce, fire-and-forget)
+- 2 новые email функции: `sendSubscriptionExpiringEmail`, `sendInactiveEmail`
+- Auth callback: `pa_registration_completed` при первом подтверждении email (lastActiveAt === null)
+- 2 cron endpoints: `/api/cron/check-subscriptions` (3-day window), `/api/cron/inactive-users` (7/14/30d windows)
+- GitHub Action `daily-cron.yml` — 06:00 UTC ежедневно
+- CRON_SECRET + SITE_URL в GitHub Secrets
+- Задеплоено на прод, контейнер healthy
+- **Осталось:** Plan 33-03 — ручная настройка CQ дашборда (10 automation rules + HTML шаблоны)
+
+**Ключевые файлы Phase 33:**
+- `apps/web/src/lib/carrotquest/types.ts` — 12 CQ event names с pa_ prefix
+- `apps/web/src/lib/carrotquest/emails.ts` — 6 email functions (4 renamed + 2 new)
+- `apps/web/src/app/api/webhooks/supabase-email/route.ts` — pa_doi, pa_password_reset
+- `apps/web/src/app/auth/callback/route.ts` — pa_registration_completed
+- `apps/web/src/app/api/cron/check-subscriptions/route.ts` — subscription expiry cron
+- `apps/web/src/app/api/cron/inactive-users/route.ts` — inactive users cron
+- `.github/workflows/daily-cron.yml` — daily cron trigger
+- `packages/api/src/trpc.ts` — lastActiveAt tracking in protectedProcedure
+
+### Previous Session (2026-03-19, session 2)
 
 **Phase 26 — Яндекс Метрика (complete + deployed):**
 - Общий счётчик 94592073 (mpstats.academy) — тот же что в connect
@@ -516,20 +554,21 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
-| v1.3 Pre-release | 🔄 In Progress | Phases 22-32 (22,24-25,28-29 remaining) |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (22,25,28-29,33-03 remaining) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
 - Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
 - seekTo через postMessage API к iframe
 
-**Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management)
+**Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management), 33 (CQ Email Automation — code complete)
 
 **Remaining v1.3 phases:**
-1. Phase 22: Email Notifications — CQ code deployed, test events + automation rules remaining
+1. Phase 22: Email Notifications — CQ events replaced by Phase 33
 2. Phase 25: Legal + Cookie Consent
 3. Phase 28: Боевой CloudPayments
 4. Phase 29: Sentry Monitoring
+5. Phase 33-03: CQ Dashboard Setup — ручная настройка automation rules + HTML шаблоны
 
 ## Key Decisions
 
