@@ -76,10 +76,10 @@ export async function POST(request: NextRequest) {
 
     for (const sub of expiringSubs) {
       try {
-        await cq.trackEvent(sub.userId, 'Subscription Expiring', {
-          name: sub.user.name || '',
-          course_name: sub.course?.title || sub.plan.name,
-          access_until: sub.currentPeriodEnd.toISOString(),
+        await cq.trackEvent(sub.userId, 'pa_subscription_expiring', {
+          pa_name: sub.user.name || '',
+          pa_course_name: sub.course?.title || sub.plan.name,
+          pa_access_until: sub.currentPeriodEnd.toISOString(),
           renew_url: `${siteUrl}/pricing`,
         });
         results.expiring++;
@@ -115,28 +115,28 @@ export async function POST(request: NextRequest) {
       if (!user.last_activity) continue;
 
       const lastActivity = new Date(user.last_activity);
-      let event: 'Inactive 7d' | 'Inactive 14d' | 'Inactive 30d' | null = null;
+      let event: 'pa_inactive_7' | 'pa_inactive_14' | 'pa_inactive_30' | null = null;
 
       // Check thresholds (most severe first, but only send the matching tier)
       if (lastActivity < thirtyDaysAgo) {
-        event = 'Inactive 30d';
+        event = 'pa_inactive_30';
       } else if (lastActivity < fourteenDaysAgo) {
-        event = 'Inactive 14d';
+        event = 'pa_inactive_14';
       } else if (lastActivity < sevenDaysAgo) {
-        event = 'Inactive 7d';
+        event = 'pa_inactive_7';
       }
 
       if (event) {
         try {
           await cq.trackEvent(user.id, event, {
-            name: user.name || '',
+            pa_name: user.name || '',
             last_activity: lastActivity.toISOString(),
             return_url: `${siteUrl}/learn`,
           });
 
-          if (event === 'Inactive 7d') results.inactive_7d++;
-          else if (event === 'Inactive 14d') results.inactive_14d++;
-          else if (event === 'Inactive 30d') results.inactive_30d++;
+          if (event === 'pa_inactive_7') results.inactive_7d++;
+          else if (event === 'pa_inactive_14') results.inactive_14d++;
+          else if (event === 'pa_inactive_30') results.inactive_30d++;
         } catch (error) {
           console.error(`[EmailScheduler] Inactivity event failed for user ${user.id}:`, error);
         }

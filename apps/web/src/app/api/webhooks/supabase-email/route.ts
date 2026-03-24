@@ -85,17 +85,17 @@ export async function POST(request: NextRequest) {
 
     switch (email_action_type) {
       case 'signup': {
-        await cq.trackEvent(user.id, 'Email Confirmation', {
-          confirm_url: confirmUrl,
+        await cq.trackEvent(user.id, 'pa_doi', {
+          pa_doi: confirmUrl,
           email: user.email || '',
         });
-        console.log(`[SupabaseEmailHook] Email confirmation event sent for ${user.email}`);
+        console.log(`[SupabaseEmailHook] DOI event sent for ${user.email}`);
         break;
       }
 
       case 'recovery': {
-        await cq.trackEvent(user.id, 'Password Reset', {
-          reset_url: confirmUrl,
+        await cq.trackEvent(user.id, 'pa_password_reset', {
+          pa_password_link: confirmUrl,
           email: user.email || '',
         });
         console.log(`[SupabaseEmailHook] Password reset event sent for ${user.email}`);
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'email_change': {
-        await cq.trackEvent(user.id, 'Email Change', {
+        await cq.trackEvent(user.id, 'pa_email_change', {
           confirm_url: confirmUrl,
           email: user.email || '',
           new_email: email_data.new_email || '',

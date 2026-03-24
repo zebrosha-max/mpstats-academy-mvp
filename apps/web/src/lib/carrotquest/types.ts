@@ -1,22 +1,27 @@
 /**
  * Carrot Quest event types for transactional email triggers.
  * Each event maps to a CQ automation rule that sends the email.
+ *
+ * All events use `pa_` prefix (Platform Academy) per CQ team spec.
  */
 export type CQEventName =
-  | 'Payment Success'
-  | 'Payment Failed'
-  | 'Subscription Cancelled'
-  | 'Subscription Expiring'
-  | 'User Registered'
-  | 'Inactive 7d'
-  | 'Inactive 14d'
-  | 'Inactive 30d'
+  // Payment & Billing
+  | 'pa_payment_success'
+  | 'pa_payment_failed'
+  | 'pa_subscription_cancelled'
+  | 'pa_subscription_expiring'
+  // Registration
+  | 'pa_registration_completed'
+  // Inactivity
+  | 'pa_inactive_7'
+  | 'pa_inactive_14'
+  | 'pa_inactive_30'
   // Support
-  | 'Support Request'
+  | 'pa_support_request'
   // Auth hook events (sent via Supabase Send Email Hook)
-  | 'Email Confirmation'
-  | 'Password Reset'
-  | 'Email Change';
+  | 'pa_doi'
+  | 'pa_password_reset'
+  | 'pa_email_change';
 
 /**
  * Event data payload — flat key-value map sent alongside the event.

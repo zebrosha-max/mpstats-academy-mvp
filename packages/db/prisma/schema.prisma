@@ -30,8 +30,9 @@ model UserProfile {
   role      Role     @default(USER)
   isActive  Boolean  @default(true)
   yandexId  String?  @unique // For Phase 17 Yandex ID OAuth binding
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastActiveAt DateTime?
 
   diagnosticSessions DiagnosticSession[]
   skillProfile       SkillProfile?

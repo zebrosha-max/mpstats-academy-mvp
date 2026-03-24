@@ -30,6 +30,25 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' });
   }
+
+  // Fire-and-forget: update lastActiveAt (debounced to every 5 min)
+  const userId = ctx.user.id;
+  ctx.prisma.userProfile.findUnique({
+    where: { id: userId },
+    select: { lastActiveAt: true },
+  }).then(profile => {
+    const now = new Date();
+    const fiveMinAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    if (!profile?.lastActiveAt || profile.lastActiveAt < fiveMinAgo) {
+      return ctx.prisma.userProfile.update({
+        where: { id: userId },
+        data: { lastActiveAt: now },
+      });
+    }
+  }).catch(err => {
+    console.error('[tRPC] lastActiveAt update failed:', err);
+  });
+
   return next({
     ctx: {
       ...ctx,

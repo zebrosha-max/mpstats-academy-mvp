@@ -42,10 +42,10 @@ export async function sendPaymentSuccessEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, 'Payment Success', {
-      amount: data.amount,
-      course_name: data.courseName ?? '',
-      period_end: data.periodEnd.toISOString(),
+    await cq.trackEvent(userId, 'pa_payment_success', {
+      pa_amount: data.amount,
+      pa_course_name: data.courseName ?? '',
+      pa_period_end: data.periodEnd.toISOString(),
     });
 
     console.log(`[Email] Payment success event sent for user ${userId}`);
@@ -61,8 +61,8 @@ export async function sendPaymentFailedEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, 'Payment Failed', {
-      course_name: data.courseName ?? '',
+    await cq.trackEvent(userId, 'pa_payment_failed', {
+      pa_course_name: data.courseName ?? '',
     });
 
     console.log(`[Email] Payment failed event sent for user ${userId}`);
@@ -78,9 +78,9 @@ export async function sendCancellationEmail(
   try {
     if (!(await isEmailEnabled())) return;
 
-    await cq.trackEvent(userId, 'Subscription Cancelled', {
-      course_name: data.courseName ?? '',
-      access_until: data.accessUntil.toISOString(),
+    await cq.trackEvent(userId, 'pa_subscription_cancelled', {
+      pa_course_name: data.courseName ?? '',
+      pa_access_until: data.accessUntil.toISOString(),
     });
 
     console.log(`[Email] Cancellation event sent for user ${userId}`);
@@ -102,8 +102,8 @@ export async function sendWelcomeEmail(
       '$name': data.name,
     });
 
-    await cq.trackEvent(userId, 'User Registered', {
-      name: data.name,
+    await cq.trackEvent(userId, 'pa_registration_completed', {
+      pa_name: data.name,
       email: data.email,
     });
 

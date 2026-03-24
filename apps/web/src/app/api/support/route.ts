@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // Track support request event in Carrot Quest
     const cqUserId = userId || `anonymous-${email}`;
-    await cq.trackEvent(cqUserId, 'Support Request', {
+    await cq.trackEvent(cqUserId, 'pa_support_request', {
       theme,
       message,
       email,
