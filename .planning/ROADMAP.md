@@ -222,11 +222,18 @@ Plans:
 
 Plans:
 - [ ] 24-01-PLAN.md — Support page (contacts, FAQ, form with CQ event) + navigation links (sidebar, mobile-nav, landing footer)
-### Phase 25: Legal + Cookie Consent — оферта, политика конфиденциальности, пользовательское соглашение, баннер кук
+### Phase 25: Legal + Cookie Consent — оферта, политики, чекбоксы регистрации, баннер кук
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** 5 legal-страниц на платформе (/legal/offer, /legal/pdn, /legal/adv, /legal/cookies, /policy), 3 чекбокса на форме регистрации (оферта + ПДн обязательные, рекламная рассылка опциональная), cookie consent баннер, ссылки в footer
+**Requirements**: LEGAL-01, LEGAL-02, LEGAL-03, LEGAL-04, LEGAL-05
 **Depends on:** Phase 24
+**Success Criteria** (what must be TRUE):
+  1. 5 страниц с legal-контентом доступны по URL: /legal/offer, /legal/pdn, /legal/adv, /legal/cookies, /policy
+  2. Оферта содержит заполненные пропуски (URL, 24 часа)
+  3. Форма регистрации содержит 3 чекбокса: оферта (обязательный), ПДн (обязательный), рекламная рассылка (опциональный)
+  4. Регистрация невозможна без обязательных чекбоксов
+  5. Cookie consent баннер при первом визите, выбор сохраняется в localStorage
+  6. Footer содержит ссылки на все legal-страницы
 **Plans:** 0 plans
 
 Plans:

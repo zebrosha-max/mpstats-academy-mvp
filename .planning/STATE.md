@@ -128,6 +128,10 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - Phase 30 added: Content Discovery — smart search, фильтры, персональный трек
 - Phase 31 added: Admin Roles — admin/superadmin, управление доступом команды
 - Phase 32 added: Custom Track Management — ручное управление персональным треком (добавить/удалить уроки)
+- Phase 33 added: CQ Email Automation — 10 событий Carrot Quest + HTML-шаблоны + inactive tracking
+- Phase 34 added: User Profile Enhancement — аватар upload, display name, завершённость профиля
+- Phase 35 added: Lesson Comments — комментарии к урокам с ответами (1 уровень вложенности)
+- Phase 36 added: Product Tour / Onboarding — 3 tooltip-тура для новых пользователей
 
 ### Pending Todos
 
