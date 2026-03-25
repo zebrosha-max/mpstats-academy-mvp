@@ -171,6 +171,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 31. Admin Roles | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 33. CQ Email Automation | v1.3 | 2/3 | Code Complete (CQ dashboard pending) | 2026-03-25 |
+| 25. Legal + Cookie Consent | v1.3 | 0/2 | Planned | - |
 | 34. User Profile Enhancement | v1.3 | 0/0 | Not Planned | - |
 | 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
 | 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
@@ -234,10 +235,11 @@ Plans:
   4. Регистрация невозможна без обязательных чекбоксов
   5. Cookie consent баннер при первом визите, выбор сохраняется в localStorage
   6. Footer содержит ссылки на все legal-страницы
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 25 to break down)
+- [ ] 25-01-PLAN.md — Legal pages (offer, pdn, adv, cookies, policy) + LegalPageLayout + footer links
+- [ ] 25-02-PLAN.md — Registration checkboxes (offer + PD required, adv optional) + CookieConsent banner
 
 ### Phase 26: Яндекс Метрика — интеграция аналитики
 
@@ -278,7 +280,7 @@ Plans:
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 27
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 28 to break down)
@@ -288,7 +290,7 @@ Plans:
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 28
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 29 to break down)
@@ -378,7 +380,7 @@ Plans:
   3. Display name — обязательное поле, запрашивается при первом входе через модал/баннер на дашборде
   4. UserNav и Sidebar показывают аватар пользователя (или инициалы как fallback)
   5. tRPC мутация `updateProfile` обновляет name и avatarUrl атомарно
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 34 to break down)
@@ -396,7 +398,7 @@ Plans:
   5. На мобилке комментарии — отдельная секция под навигацией урока
   6. Optimistic updates при отправке и удалении комментариев
   7. Пагинация: первые 20 комментариев, кнопка "Показать ещё"
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 35 to break down)
@@ -414,7 +416,7 @@ Plans:
   5. Каждый тур запускается один раз (localStorage: `tour_{page}_completed`)
   6. Кнопка `?` в хедере/на странице позволяет повторить тур
   7. Кнопка "Пропустить" завершает тур и сохраняет флаг
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 36 to break down)
