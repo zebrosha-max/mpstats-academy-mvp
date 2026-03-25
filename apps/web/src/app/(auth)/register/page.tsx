@@ -8,12 +8,18 @@ import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [acceptOffer, setAcceptOffer] = useState(false);
+  const [acceptPdn, setAcceptPdn] = useState(false);
+  const [acceptAdv, setAcceptAdv] = useState(false);
+
+  const canSubmit = acceptOffer && acceptPdn && !loading;
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -28,6 +34,7 @@ export default function RegisterPage() {
       return;
     }
 
+    formData.set('adv_consent', acceptAdv ? 'true' : 'false');
     const result = await signUp(formData);
 
     if (result?.error) {
@@ -126,7 +133,60 @@ export default function RegisterPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <div className="space-y-3 pt-2">
+            <label className="flex items-start gap-2 cursor-pointer">
+              <Checkbox
+                checked={acceptOffer}
+                onCheckedChange={(v) => setAcceptOffer(v === true)}
+                disabled={loading}
+                className="mt-0.5"
+              />
+              <span className="text-sm text-gray-600 leading-tight">
+                Я принимаю условия{' '}
+                <Link href="/legal/offer" target="_blank" className="text-blue-600 hover:underline">
+                  оферты
+                </Link>
+                <span className="text-red-500 ml-0.5">*</span>
+              </span>
+            </label>
+
+            <label className="flex items-start gap-2 cursor-pointer">
+              <Checkbox
+                checked={acceptPdn}
+                onCheckedChange={(v) => setAcceptPdn(v === true)}
+                disabled={loading}
+                className="mt-0.5"
+              />
+              <span className="text-sm text-gray-600 leading-tight">
+                Я согласен на{' '}
+                <Link href="/legal/pdn" target="_blank" className="text-blue-600 hover:underline">
+                  обработку персональных данных
+                </Link>
+                <span className="text-red-500 ml-0.5">*</span>
+              </span>
+            </label>
+
+            <label className="flex items-start gap-2 cursor-pointer">
+              <Checkbox
+                checked={acceptAdv}
+                onCheckedChange={(v) => setAcceptAdv(v === true)}
+                disabled={loading}
+                className="mt-0.5"
+              />
+              <span className="text-sm text-gray-600 leading-tight">
+                Я согласен на получение{' '}
+                <Link href="/legal/adv" target="_blank" className="text-blue-600 hover:underline">
+                  рекламных материалов
+                </Link>
+              </span>
+            </label>
+
+            <p className="text-xs text-gray-400">
+              <span className="text-red-500">*</span> — обязательные поля
+            </p>
+          </div>
+
+          <Button type="submit" className="w-full" disabled={!canSubmit}>
             {loading ? 'Регистрация...' : 'Зарегистрироваться'}
           </Button>
         </form>
