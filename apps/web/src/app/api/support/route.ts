@@ -27,11 +27,12 @@ export async function POST(request: Request) {
 
     // Track support request event in Carrot Quest
     const cqUserId = userId || `anonymous-${email}`;
-    await cq.trackEvent(cqUserId, 'pa_support_request', {
-      theme,
-      message,
-      email,
+    await cq.setUserProps(cqUserId, {
+      pa_support_theme: theme,
+      pa_support_message: message,
+      '$email': email,
     });
+    await cq.trackEvent(cqUserId, 'pa_support_request');
 
     return NextResponse.json({ success: true });
   } catch (error) {

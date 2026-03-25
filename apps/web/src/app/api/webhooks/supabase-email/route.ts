@@ -85,29 +85,30 @@ export async function POST(request: NextRequest) {
 
     switch (email_action_type) {
       case 'signup': {
-        await cq.trackEvent(user.id, 'pa_doi', {
+        await cq.setUserProps(user.id, {
+          pa_name: user.user_metadata?.name || user.email || '',
           pa_doi: confirmUrl,
-          email: user.email || '',
         });
+        await cq.trackEvent(user.id, 'pa_doi');
         console.log(`[SupabaseEmailHook] DOI event sent for ${user.email}`);
         break;
       }
 
       case 'recovery': {
-        await cq.trackEvent(user.id, 'pa_password_reset', {
+        await cq.setUserProps(user.id, {
           pa_password_link: confirmUrl,
-          email: user.email || '',
         });
+        await cq.trackEvent(user.id, 'pa_password_reset');
         console.log(`[SupabaseEmailHook] Password reset event sent for ${user.email}`);
         break;
       }
 
       case 'email_change': {
-        await cq.trackEvent(user.id, 'pa_email_change', {
-          confirm_url: confirmUrl,
-          email: user.email || '',
-          new_email: email_data.new_email || '',
+        await cq.setUserProps(user.id, {
+          pa_new_email: email_data.new_email || '',
+          pa_confirm_url: confirmUrl,
         });
+        await cq.trackEvent(user.id, 'pa_email_change');
         console.log(`[SupabaseEmailHook] Email change event sent for ${user.email}`);
         break;
       }

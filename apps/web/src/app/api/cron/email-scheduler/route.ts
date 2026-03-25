@@ -76,12 +76,12 @@ export async function POST(request: NextRequest) {
 
     for (const sub of expiringSubs) {
       try {
-        await cq.trackEvent(sub.userId, 'pa_subscription_expiring', {
+        await cq.setUserProps(sub.userId, {
           pa_name: sub.user.name || '',
           pa_course_name: sub.course?.title || sub.plan.name,
           pa_access_until: sub.currentPeriodEnd.toISOString(),
-          renew_url: `${siteUrl}/pricing`,
         });
+        await cq.trackEvent(sub.userId, 'pa_subscription_expiring');
         results.expiring++;
       } catch (error) {
         console.error(`[EmailScheduler] Expiry event failed for sub ${sub.id}:`, error);
@@ -128,11 +128,10 @@ export async function POST(request: NextRequest) {
 
       if (event) {
         try {
-          await cq.trackEvent(user.id, event, {
+          await cq.setUserProps(user.id, {
             pa_name: user.name || '',
-            last_activity: lastActivity.toISOString(),
-            return_url: `${siteUrl}/learn`,
           });
+          await cq.trackEvent(user.id, event);
 
           if (event === 'pa_inactive_7') results.inactive_7d++;
           else if (event === 'pa_inactive_14') results.inactive_14d++;
