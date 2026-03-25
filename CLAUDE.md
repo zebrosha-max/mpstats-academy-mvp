@@ -1,8 +1,22 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-24
+**Last updated:** 2026-03-25
 
-## Last Session (2026-03-24)
+## Last Session (2026-03-25)
+
+**Phase 33 — CQ fix + тестирование:**
+- Исправлен формат передачи данных: `setUserProps` (свойства на лида) → `trackEvent` (триггер без params)
+- CQ команда подтвердила корректность формата после тестового прогона (10/10 событий, 200 OK)
+- Обновлены 4 файла: `emails.ts`, `supabase-email/route.ts`, `support/route.ts`, `email-scheduler/route.ts`
+- Phase 22 закрыта как superseded by Phase 33
+- Задеплоено на прод
+
+**CQ gotcha (critical):**
+- Свойства передаются НЕ через `params` в `trackEvent`, а через `setUserProps` на лида
+- CQ automation rules читают данные из карточки лида, шаблоны подставляют `{{pa_course_name}}` из свойств
+- Паттерн: `setUserProps(userId, { pa_course_name: '...' })` → `trackEvent(userId, 'pa_payment_success')`
+
+### Previous Session (2026-03-24)
 
 **QA Test Suite — 55 тестов, 0 failures:**
 - 24 unit тестов (Vitest) — auth integration
@@ -554,7 +568,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
-| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (22,25,28-29,33-03 remaining) |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (25,28-29 remaining; 33-03 on CQ team) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
@@ -564,11 +578,12 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 **Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management), 33 (CQ Email Automation — code complete)
 
 **Remaining v1.3 phases:**
-1. Phase 22: Email Notifications — CQ events replaced by Phase 33
-2. Phase 25: Legal + Cookie Consent
-3. Phase 28: Боевой CloudPayments
-4. Phase 29: Sentry Monitoring
-5. Phase 33-03: CQ Dashboard Setup — ручная настройка automation rules + HTML шаблоны
+1. Phase 25: Legal + Cookie Consent
+2. Phase 28: Боевой CloudPayments
+3. Phase 29: Sentry Monitoring
+4. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды (ручная настройка)
+
+**Closed:** Phase 22 (superseded by Phase 33)
 
 ## Key Decisions
 

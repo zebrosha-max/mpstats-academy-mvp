@@ -163,13 +163,17 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 19. Billing UI + Payment Flow | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 20. Paywall + Content Gating | v1.2 | 2/2 | Complete | 2026-03-12 |
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
-| 22. Email Notifications | v1.3 | 2/3 | In Progress | - |
+| 22. Email Notifications | v1.3 | - | Superseded by Phase 33 | - |
 | 23. Diagnostic 2.0 | v1.3 | 3/3 | Complete | 2026-03-17 |
 | 26. Yandex Metrika | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
 | 27. SEO + Custom Error Pages | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 30. Content Discovery | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 31. Admin Roles | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
+| 33. CQ Email Automation | v1.3 | 2/3 | Code Complete (CQ dashboard pending) | 2026-03-25 |
+| 34. User Profile Enhancement | v1.3 | 0/0 | Not Planned | - |
+| 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
+| 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -182,25 +186,9 @@ Plans:
 - [x] 21-01-PLAN.md — DNS A-record (human), VPS infrastructure (Nginx + SSL + env + Docker rebuild) (completed 2026-03-11)
 - [x] 21-02-PLAN.md — External OAuth services update (Supabase + Yandex), test fixtures, docs, E2E verification (completed 2026-03-11)
 
-### Phase 22: Transactional email notifications (billing, auth, system)
+### Phase 22: ~~Transactional email notifications~~ — SUPERSEDED by Phase 33
 
-**Goal:** Платформа отправляет транзакционные email-уведомления через Carrot Quest при всех ключевых событиях (billing, auth, система), auth-письма Supabase переведены на CQ для единого брендинга, scheduled emails для re-engagement
-**Requirements**: EMAIL-01, EMAIL-02, EMAIL-03, EMAIL-04, EMAIL-05, EMAIL-06, EMAIL-07
-**Depends on:** Phase 21
-**Success Criteria** (what must be TRUE):
-  1. EMAIL-SPEC.md содержит драфты всех 9 писем с переменными, CQ event names и flow-схемами
-  2. CQ API клиент отправляет events при billing-событиях (оплата, отказ, отмена, рекуррент)
-  3. Supabase auth emails (confirm, reset) перенаправляются через Send Email Hook на CQ
-  4. Welcome и diagnostic-completed emails триггерятся при соответствующих событиях
-  5. GitHub Actions cron запускает ежедневную проверку неактивности и истечения подписок
-  6. Toast-уведомления (sonner) появляются в UI при оплате и отмене
-  7. Feature flag `email_notifications_enabled` контролирует отправку писем
-**Plans:** 2/3 plans executed
-
-Plans:
-- [ ] 22-01-PLAN.md — EMAIL-SPEC.md specification document for email team (9 emails, drafts, variables, flows)
-- [ ] 22-02-PLAN.md — CQ API client + sonner toasts + billing email triggers in webhook handlers
-- [ ] 22-03-PLAN.md — Supabase Send Email Hook + welcome/diagnostic triggers + scheduled emails cron + human verify
+**Status:** Superseded. All email functionality reimplemented in Phase 33 (CQ Email Automation) with updated event names (pa_ prefix), correct data flow (setUserProps → trackEvent), and expanded scope (10 events vs original 9).
 
 ### Phase 23: Diagnostic 2.0 — personalized learning track with lesson-level topic tagging, question-to-content tracing, and error-based path prioritization
 
@@ -371,3 +359,55 @@ Plans:
 - [x] 33-01-PLAN.md — Event rename (pa_ prefix) + lastActiveAt schema + tRPC tracking (completed 2026-03-24)
 - [x] 33-02-PLAN.md — New events (registration_completed, subscription_expiring, inactive) + cron endpoints + GitHub Action (completed 2026-03-24)
 - [ ] 33-03-PLAN.md — CQ dashboard setup (templates + automation rules) + E2E verification (manual — pending)
+
+### Phase 34: User Profile Enhancement — аватар, display name, завершённость профиля
+
+**Goal:** Пользователь может загрузить аватар и указать отображаемое имя (display name) в профиле. Аватар хранится в Supabase Storage, отображается в UserNav, Sidebar и будущих комментариях. При отсутствии аватара показывается fallback на инициалы. Display name запрашивается при первом входе (profile completeness).
+**Requirements**: PROF-01, PROF-02, PROF-03, PROF-04
+**Depends on:** Phase 33
+**Success Criteria** (what must be TRUE):
+  1. Supabase Storage bucket `avatars` создан с RLS-политикой (пользователь может загружать/читать только свои файлы)
+  2. Профиль содержит upload-компонент с crop/resize и preview, лимит 2MB, форматы jpg/png/webp
+  3. Display name — обязательное поле, запрашивается при первом входе через модал/баннер на дашборде
+  4. UserNav и Sidebar показывают аватар пользователя (или инициалы как fallback)
+  5. tRPC мутация `updateProfile` обновляет name и avatarUrl атомарно
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 34 to break down)
+
+### Phase 35: Lesson Comments — комментарии к урокам с ответами (1 уровень вложенности)
+
+**Goal:** Под каждым уроком блок комментариев с аватарами и именами пользователей. Поддержка ответов (1 уровень вложенности), кнопка "Ответить", удаление своих комментариев. На десктопе — в правой колонке под AI-чатом, на мобилке — отдельная секция под навигацией.
+**Requirements**: COMM-01, COMM-02, COMM-03, COMM-04, COMM-05, COMM-06
+**Depends on:** Phase 34 (аватар + display name для идентификации)
+**Success Criteria** (what must be TRUE):
+  1. Prisma-модель `LessonComment` с self-relation `parentId` для 1-уровневой вложенности
+  2. tRPC роутер comments: list (с replies), create, delete (только свои + admin)
+  3. Компонент комментария показывает аватар, display name, дату, контент и кнопку "Ответить"
+  4. На десктопе комментарии отображаются под AI-чатом в правой колонке (sidebar)
+  5. На мобилке комментарии — отдельная секция под навигацией урока
+  6. Optimistic updates при отправке и удалении комментариев
+  7. Пагинация: первые 20 комментариев, кнопка "Показать ещё"
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 35 to break down)
+
+### Phase 36: Product Tour / Onboarding — 3 tooltip-тура для новых пользователей
+
+**Goal:** Новые пользователи получают пошаговый tooltip-тур при первом посещении ключевых страниц: Dashboard (навигация по sidebar), Обучение (каталог, фильтры, трек), Урок (видео, summary, AI-чат, комментарии). Тур можно пропустить и повторить через кнопку `?` в хедере.
+**Requirements**: TOUR-01, TOUR-02, TOUR-03, TOUR-04
+**Depends on:** Phase 35 (комментарии нужны для тура урока)
+**Success Criteria** (what must be TRUE):
+  1. Библиотека driver.js (или аналог) интегрирована, 3 тура определены декларативно (массив шагов)
+  2. Dashboard-тур (4-5 шагов): sidebar навигация (Диагностика, Обучение, Дашборд, Профиль)
+  3. Learn-тур (5-6 шагов): поиск, фильтры, "Мой трек", секции (ошибки/рекомендации/custom), добавление в трек
+  4. Lesson-тур (4-5 шагов): видеоплеер, summary, AI-чат, комментарии, навигация
+  5. Каждый тур запускается один раз (localStorage: `tour_{page}_completed`)
+  6. Кнопка `?` в хедере/на странице позволяет повторить тур
+  7. Кнопка "Пропустить" завершает тур и сохраняет флаг
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 36 to break down)
