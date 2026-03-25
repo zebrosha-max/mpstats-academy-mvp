@@ -388,12 +388,32 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-[var(--landing-border)] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <Logo size="sm" variant={isDark ? 'white' : 'default'} />
-          <div className="flex items-center gap-4">
-            <Link href="/support" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-              Поддержка
-            </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Logo size="sm" variant={isDark ? 'white' : 'default'} />
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              <Link href="/support" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Поддержка
+              </Link>
+              <span className="text-xs text-[var(--landing-text-faint)] opacity-30">|</span>
+              <Link href="/legal/offer" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Оферта
+              </Link>
+              <Link href="/legal/pdn" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Обработка ПДн
+              </Link>
+              <Link href="/legal/adv" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Рассылка
+              </Link>
+              <Link href="/legal/cookies" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Cookies
+              </Link>
+              <Link href="/policy" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
+                Конфиденциальность
+              </Link>
+            </div>
+          </div>
+          <div className="mt-4 text-center sm:text-right">
             <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
           </div>
         </div>
