@@ -138,7 +138,17 @@ Requirements for Support Contact phase.
 - [x] **SUPP-03**: Форма обратной связи с дропдауном темы и отправкой через CQ event "Support Request"
 - [x] **SUPP-04**: Ссылка "Поддержка" в sidebar footer, mobile-nav и landing footer
 
-## v2.0 RequirementsRequirements for Lesson Comments phase.### Lesson Comments- [x] **COMM-01**: Prisma-модель LessonComment с self-relation parentId для 1-уровневой вложенности и cascade delete- [x] **COMM-02**: tRPC роутер comments с list (cursor-based пагинация 20 шт), create (валидация 1-1500 символов), delete (свои + admin)- [x] **COMM-03**: Валидация вложенности: ответы только на корневые комментарии (parentId.parentId === null)- [ ] **COMM-04**: Компонент комментария показывает аватар (fallback инициалы), display name, относительную дату, контент и кнопку Ответить- [ ] **COMM-05**: На десктопе комментарии под AI-чатом в правой колонке, на мобилке — под навигацией урока- [ ] **COMM-06**: Optimistic updates при отправке и удалении комментариев с toast при ошибке
+## v2.0 Requirements
+
+Requirements for Lesson Comments phase.
+
+### Lesson Comments
+- [x] **COMM-01**: Prisma-модель LessonComment с self-relation parentId для 1-уровневой вложенности и cascade delete
+- [x] **COMM-02**: tRPC роутер comments с list (cursor-based пагинация 20 шт), create (валидация 1-1500 символов), delete (свои + admin)
+- [x] **COMM-03**: Валидация вложенности: ответы только на корневые комментарии (parentId.parentId === null)
+- [x] **COMM-04**: Компонент комментария показывает аватар (fallback инициалы), display name, относительную дату, контент и кнопку Ответить
+- [x] **COMM-05**: На десктопе комментарии под AI-чатом в правой колонке, на мобилке — табы (AI-чат + Комментарии)
+- [x] **COMM-06**: Optimistic updates при отправке и удалении комментариев с toast при ошибке
 ## Future Requirements
 
 Deferred to v1.8+. Tracked but not in current roadmap.
@@ -254,9 +264,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMM-01 | Phase 35 (Plan 01) | Complete |
 | COMM-02 | Phase 35 (Plan 01) | Complete |
 | COMM-03 | Phase 35 (Plan 01) | Complete |
-| COMM-04 | Phase 35 (Plan 02) | Planned |
-| COMM-05 | Phase 35 (Plan 02) | Planned |
-| COMM-06 | Phase 35 (Plan 02) | Planned |
+| COMM-04 | Phase 35 (Plan 02) | Complete |
+| COMM-05 | Phase 35 (Plan 02) | Complete |
+| COMM-06 | Phase 35 (Plan 02) | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete

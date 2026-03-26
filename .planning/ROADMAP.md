@@ -399,11 +399,11 @@ Plans:
   5. На мобилке комментарии — отдельная секция под навигацией урока
   6. Optimistic updates при отправке и удалении комментариев
   7. Пагинация: первые 20 комментариев, кнопка "Показать ещё"
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [x] 35-01-PLAN.md — Backend: Prisma LessonComment model + tRPC comments router (list/create/delete)
-- [ ] 35-02-PLAN.md — Frontend: Comment components + lesson page integration
+- [x] 35-01-PLAN.md — Backend: Prisma LessonComment model + tRPC comments router (list/create/delete) (completed 2026-03-26)
+- [x] 35-02-PLAN.md — Frontend: Comment components + lesson page integration, mobile tabs (AI-chat + Comments) (completed 2026-03-26)
 
 ### Phase 36: Product Tour / Onboarding — 3 tooltip-тура для новых пользователей
 

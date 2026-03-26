@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 36-01-PLAN.md
+stopped_at: Completed 35-02-PLAN.md
 last_updated: "2026-03-26T08:07:43Z"
 progress:
   total_phases: 17
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 36 — product-tour-onboarding (Plan 01 complete)
+**Current focus:** Phase 35 — lesson-comments COMPLETE
 
 ## Current Position
 
-Phase: 36 (product-tour-onboarding) — Plan 01 COMPLETE
-Plan: 1 of 2 (DONE)
+Phase: 35 (lesson-comments) — Plan 02 COMPLETE
+Plan: 2 of 2 (DONE)
 
 ## Performance Metrics
 
@@ -119,6 +119,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [35-01]: Plain text comments (not markdown) -- no XSS surface, simpler for short user messages
 - [35-01]: Cascade delete on parent comment removes all replies (CommentReplies self-relation)
 - [35-01]: Cursor-based pagination (20/page) for comments list query
+- [35-02]: Mobile tabs (AI-chat + Comments) instead of stacked sections -- AI-chat was buried below comments
+- [35-02]: Optimistic comments use currentUser profile data for instant name/avatar display
+- [35-02]: Desktop sidebar wrapped in hidden lg:block -- mobile gets MobileChatCommentsTabs component
 
 ### Blockers/Concerns
 
@@ -185,11 +188,12 @@ None.
 | 36    | 01   | 4min     | 2     | 8     |
 | 34    | 02   | 3min     | 2     | 2     |
 | 35    | 01   | 3min     | 2     | 4     |
+| 35    | 02   | 3min     | 3     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-03-26T08:30:15Z
-Stopped at: Completed 35-01-PLAN.md
+Last session: 2026-03-26T08:58:29Z
+Stopped at: Completed 35-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
