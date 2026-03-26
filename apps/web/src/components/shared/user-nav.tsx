@@ -8,17 +8,15 @@ import { Button } from '@/components/ui/button';
 interface UserNavProps {
   user: {
     email?: string;
-    user_metadata?: {
-      full_name?: string;
-      avatar_url?: string;
-    };
+    name?: string | null;
+    avatarUrl?: string | null;
   };
 }
 
 export function UserNav({ user }: UserNavProps) {
-  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Пользователь';
+  const name = user.name || user.email?.split('@')[0] || 'Пользователь';
   const initials = name.slice(0, 2).toUpperCase();
-  const avatarUrl = user.user_metadata?.avatar_url;
+  const avatarUrl = user.avatarUrl;
   const [imgError, setImgError] = useState(false);
 
   const showFallback = !avatarUrl || imgError;
@@ -29,7 +27,7 @@ export function UserNav({ user }: UserNavProps) {
         <div className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
           {!showFallback && (
             <img
-              src={avatarUrl}
+              src={avatarUrl!}
               alt={name}
               className="w-8 h-8 rounded-full object-cover ring-2 ring-mp-gray-100"
               onError={() => setImgError(true)}

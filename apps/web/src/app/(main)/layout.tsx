@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createHmac } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@mpstats/db';
 import { Sidebar } from '@/components/shared/sidebar';
 import { MobileNav } from '@/components/shared/mobile-nav';
 import { UserNav } from '@/components/shared/user-nav';
@@ -30,6 +31,12 @@ export default async function MainLayout({
     redirect('/login');
   }
 
+  // Fetch UserProfile for UserNav (single source of truth per D-04, D-05)
+  const profile = await prisma.userProfile.findUnique({
+    where: { id: user.id },
+    select: { name: true, avatarUrl: true },
+  });
+
   // Generate HMAC hash for Carrot Quest user identification
   const cqUserAuthKey = process.env.CARROTQUEST_USER_AUTH_KEY || '';
   const cqHash = cqUserAuthKey
@@ -53,7 +60,11 @@ export default async function MainLayout({
             {/* Spacer for desktop */}
             <div className="hidden md:block" />
             {/* User nav */}
-            <UserNav user={user} />
+            <UserNav user={{
+              email: user.email,
+              name: profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || null,
+              avatarUrl: profile?.avatarUrl || null,
+            }} />
           </div>
         </header>
 
