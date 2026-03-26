@@ -420,5 +420,5 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 36-01-PLAN.md — Tour infrastructure: driver.js, TourProvider, HelpCircle, CSS, definitions
+- [x] 36-01-PLAN.md — Tour infrastructure: driver.js, TourProvider, HelpCircle, CSS, definitions
 - [ ] 36-02-PLAN.md — data-tour attributes on Dashboard, Learn, Lesson pages + verification
