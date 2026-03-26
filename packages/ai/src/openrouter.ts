@@ -35,10 +35,11 @@ export const openrouter = new Proxy({} as OpenAI, {
 
 // Model configuration
 export const MODELS = {
-  // Primary chat model (reliable structured output, cheapest GPT-5 tier)
-  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4.1-nano',
+  // Primary model: Qwen 3.5 Flash — best price/quality ratio ($0.26/M output)
+  // IFBench 76.5, 1M context, hybrid linear-attention + MoE
+  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'qwen/qwen3.5-flash-02-23',
   // Fallback model
-  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'google/gemini-3.1-flash-lite-preview',
+  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'openai/gpt-4.1-nano',
   // Embedding model (must match what's in Supabase!)
   embedding: 'openai/text-embedding-3-small',
 } as const;
