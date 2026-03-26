@@ -150,7 +150,7 @@ export async function updatePassword(formData: FormData): Promise<AuthResult> {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  return { success: true };
 }
 
 // ============== GET USER ==============
