@@ -38,6 +38,7 @@ model UserProfile {
   skillProfile       SkillProfile?
   learningPath       LearningPath?
   chatMessages       ChatMessage[]
+  lessonComments     LessonComment[]
   subscriptions      Subscription[]
 }
 
@@ -301,6 +302,24 @@ model ChatMessage {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, lessonId])
+}
+
+// ============== LESSON COMMENTS ==============
+
+model LessonComment {
+  id        String   @id @default(cuid())
+  lessonId  String
+  userId    String
+  content   String   @db.Text
+  parentId  String?
+  createdAt DateTime @default(now())
+
+  user     UserProfile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent   LessonComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  LessonComment[] @relation("CommentReplies")
+
+  @@index([lessonId, createdAt(sort: Desc)])
+  @@index([parentId])
 }
 
 // ============== AI CACHE ==============
