@@ -1,20 +1,37 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-25
+**Last updated:** 2026-03-26
 
-## Last Session (2026-03-25)
+## Last Session (2026-03-25–26)
 
-**Phase 33 — CQ fix + тестирование:**
-- Исправлен формат передачи данных: `setUserProps` (свойства на лида) → `trackEvent` (триггер без params)
-- CQ команда подтвердила корректность формата после тестового прогона (10/10 событий, 200 OK)
-- Обновлены 4 файла: `emails.ts`, `supabase-email/route.ts`, `support/route.ts`, `email-scheduler/route.ts`
+**Phase 33 — CQ fix + тестирование (2026-03-25):**
+- Исправлен формат: `setUserProps` (свойства на лида) → `trackEvent` (триггер без params)
+- CQ команда подтвердила корректность (10/10 событий, 200 OK)
 - Phase 22 закрыта как superseded by Phase 33
-- Задеплоено на прод
+
+**Phase 25 — Legal + Cookie Consent (2026-03-26, complete + deployed):**
+- 5 legal-страниц: `/legal/offer`, `/legal/pdn`, `/legal/adv`, `/legal/cookies`, `/policy`
+- Оферта из docx (ООО МПСТАТС ПРОДВИЖЕНИЕ, ИНН 7804713205, URL + 24ч заполнены)
+- 3 чекбокса на регистрации: оферта (обязательный), ПДн (обязательный), рекламная рассылка (опциональный)
+- Cookie consent баннер (необходимые/аналитика/маркетинг категории, localStorage)
+- Legal ссылки в footer лендинга + sidebar
+- `LegalPageLayout` — shared layout с prose styling
+- 12 E2E тестов (`legal.spec.ts`) — все passed на проде
 
 **CQ gotcha (critical):**
 - Свойства передаются НЕ через `params` в `trackEvent`, а через `setUserProps` на лида
-- CQ automation rules читают данные из карточки лида, шаблоны подставляют `{{pa_course_name}}` из свойств
 - Паттерн: `setUserProps(userId, { pa_course_name: '...' })` → `trackEvent(userId, 'pa_payment_success')`
+
+**Ключевые файлы Phase 25:**
+- `apps/web/src/components/legal/LegalPageLayout.tsx` — shared layout
+- `apps/web/src/app/legal/offer/page.tsx` — оферта (418 строк)
+- `apps/web/src/app/legal/pdn/page.tsx` — согласие ПДн
+- `apps/web/src/app/legal/adv/page.tsx` — согласие реклама
+- `apps/web/src/app/legal/cookies/page.tsx` — политика cookies
+- `apps/web/src/app/policy/page.tsx` — политика конфиденциальности
+- `apps/web/src/components/shared/CookieConsent.tsx` — cookie banner
+- `apps/web/src/components/ui/checkbox.tsx` — shadcn checkbox
+- `apps/web/tests/e2e/legal.spec.ts` — 12 E2E тестов
 
 ### Previous Session (2026-03-24)
 
@@ -575,14 +592,14 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 - Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
 - seekTo через postMessage API к iframe
 
-**Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management), 33 (CQ Email Automation — code complete)
+**Completed v1.3 phases:** 23, 24, 25, 26, 27, 30, 31, 32, 33 (code complete)
 
 **Remaining v1.3 phases:**
 1. Phase 28: Боевой CloudPayments
 2. Phase 29: Sentry Monitoring
-3. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды (ручная настройка)
+3. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды
 
-**Closed:** Phase 22 (superseded by 33), Phase 25 (completed 2026-03-26)
+**Closed:** Phase 22 (superseded by 33), Phase 25 (completed 2026-03-26), Phase 25 (completed 2026-03-26)
 
 **Closed:** Phase 22 (superseded by Phase 33)
 
