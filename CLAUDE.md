@@ -184,7 +184,7 @@
   - `learning-flow.spec.ts` — 4 теста (courses → lesson → video → AI summary)
   - `accessibility.spec.ts` — 8 тестов (WCAG 2.0 AA на 8 страницах, axe-core)
 - 4 a11y бага исправлены: Logo aria-label, FilterPanel select labels, pricing htmlFor, diagnostic link underline
-- Test user: `tester@mpstats.academy` / `TestUser2024` (пароль сброшен через Admin API)
+- Test user: `tester@mpstats.academy` (пароль в memory, не в публичном репо)
 - Sprint 5 закрыт — все задачи выполнены через GSD фазы
 - CLAUDE.md обновлён: QA debt почти полностью закрыт
 
@@ -710,7 +710,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | `tests/e2e/learning-flow.spec.ts` | 4 | Course list, lesson page, video player, AI summary |
 | `tests/e2e/accessibility.spec.ts` | 8 | WCAG 2.0 AA audit on 8 pages (axe-core) |
 
-**Test user:** `tester@mpstats.academy` / `TestUser2024` (id: `cff53dc4`)
+**Test user:** `tester@mpstats.academy` (id: `cff53dc4`, пароль в memory)
 
 **Remaining debt:**
 - QA-2.1: UI Component unit tests (P3 — low priority, shadcn components are well-tested upstream)
@@ -796,7 +796,7 @@ RLS включён на всех 18 public таблицах (2026-03-16). Стр
 | Field | Value |
 |-------|-------|
 | Email | `test@mpstats.academy` |
-| Password | `TestUser2024` |
+| Password | (см. memory — не хранится в публичном репо) |
 | User ID | `62b06f05-1d65-47b6-8f7c-9f535449a9d9` |
 | Created | 2026-01-08 |
 
