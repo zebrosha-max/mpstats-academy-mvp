@@ -81,6 +81,7 @@ export const learnSteps: DriveStep[] = [
       description: 'Ваш трек разделён по приоритету: «Ошибки» — темы, где диагностика выявила пробелы; «Углубление» — закрепление базовых навыков; «Развитие» — новые компетенции; «Продвинутый» — темы для опытных.',
     },
   },
+  // Step 5 is dynamic — replaced at runtime by getSteps()
   {
     element: '[data-tour="learn-view-toggle"]',
     popover: {
@@ -157,6 +158,22 @@ export function getSteps(page: TourPage, isMobile: boolean): DriveStep[] {
       ...steps[0],
       element: '[data-tour="mobile-nav"]',
     };
+  }
+
+  // Learn step 5: dynamic based on current view
+  if (page === 'learn' && steps.length >= 5) {
+    const isCoursesView = !!document.querySelector('[data-tour="learn-add-to-track"]');
+    if (isCoursesView) {
+      // User is on "Все курсы" — point to the courses grid with + buttons
+      steps[4] = {
+        element: '[data-tour="learn-add-to-track"]',
+        popover: {
+          title: 'Добавьте уроки в трек',
+          description: 'Нажмите + на любом уроке, чтобы добавить его в свой персональный трек обучения.',
+        },
+      };
+    }
+    // else: keep default (toggle with "Переключитесь на Все курсы...")
   }
 
   return steps;
