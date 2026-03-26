@@ -17,6 +17,7 @@ import { trpc } from '@/lib/trpc/client';
 import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
+import { CommentSection } from '@/components/comments/CommentSection';
 import { cn } from '@/lib/utils';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -536,11 +537,16 @@ export default function LessonPage() {
               )}
             </div>
           </div>
+
+          {/* Comments — mobile only */}
+          <div className="lg:hidden mt-6">
+            <CommentSection lessonId={lessonId} />
+          </div>
         </div>
 
         {/* Sidebar — Chat only (no tabs) */}
         <div className="space-y-4">
-          <Card data-tour="lesson-chat" className="h-[400px] lg:h-[500px] flex flex-col shadow-mp-card">
+          <Card data-tour="lesson-chat" className="h-[400px] flex flex-col shadow-mp-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-heading flex items-center gap-2">
                 <svg className="w-5 h-5 text-mp-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -651,8 +657,10 @@ export default function LessonPage() {
             </CardContent>
           </Card>
 
-          {/* Comments section placeholder (Phase 35) — driver.js skips missing targets gracefully */}
-          <div data-tour="lesson-comments" />
+          {/* Comments — desktop only */}
+          <div className="hidden lg:block">
+            <CommentSection lessonId={lessonId} />
+          </div>
         </div>
       </div>
       )}
