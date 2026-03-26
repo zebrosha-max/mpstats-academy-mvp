@@ -20,6 +20,7 @@ export const generatedQuestionSchema = z.object({
   correctIndex: z.number().int().min(0).max(3),
   explanation: z.string().min(10).max(500),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
+  sourceIndices: z.array(z.number().int().min(1).max(5)).min(1).max(5),
 });
 
 /**
@@ -55,7 +56,7 @@ export const questionJsonSchema = {
       items: {
         type: 'object' as const,
         additionalProperties: false,
-        required: ['question', 'options', 'correctIndex', 'explanation', 'difficulty'],
+        required: ['question', 'options', 'correctIndex', 'explanation', 'difficulty', 'sourceIndices'],
         properties: {
           question: {
             type: 'string' as const,
@@ -85,6 +86,16 @@ export const questionJsonSchema = {
           difficulty: {
             type: 'string' as const,
             enum: ['EASY', 'MEDIUM', 'HARD'],
+          },
+          sourceIndices: {
+            type: 'array' as const,
+            items: {
+              type: 'integer' as const,
+              minimum: 1,
+              maximum: 5,
+            },
+            minItems: 1,
+            maxItems: 5,
           },
         },
       },

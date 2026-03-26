@@ -64,7 +64,9 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
               {topic}
             </span>
           ))}
-          <span className="text-body-sm text-mp-gray-500">{result.lesson.duration} мин</span>
+          {result.lesson.duration > 0 && (
+            <span className="text-body-sm text-mp-gray-500">{result.lesson.duration} мин</span>
+          )}
           {result.watchedPercent > 0 && (
             <span className="text-body-sm text-mp-gray-500">{result.watchedPercent}%</span>
           )}

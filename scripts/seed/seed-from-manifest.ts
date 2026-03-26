@@ -178,7 +178,13 @@ async function seedFromManifest() {
 
     // Обрабатываем модули и уроки (flatten submodules)
     // Global order: sequential numbering across all modules in the course
-    const sortedModules = [...course.modules].sort((a, b) => a.order - b.order);
+    // Sort modules: main modules first (order >= 1), bonus modules (order=0 / m00_*) last
+    const sortedModules = [...course.modules].sort((a, b) => {
+      const aIsBonus = a.order === 0 || a.folder?.startsWith('m00_');
+      const bIsBonus = b.order === 0 || b.folder?.startsWith('m00_');
+      if (aIsBonus !== bIsBonus) return aIsBonus ? 1 : -1;
+      return a.order - b.order;
+    });
     let globalOrder = 0;
 
     for (const module of sortedModules) {

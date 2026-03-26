@@ -293,7 +293,7 @@ function buildSystemPrompt(category: SkillCategory, count: number): string {
 - "Как определить оптимальную цену товара при выходе на маркетплейс?" (HARD, стратегия)
 
 Формат ответа: JSON объект с полем "questions" — массив объектов.
-Каждый объект: { question, options (array of 4 strings), correctIndex (0-3), explanation, difficulty ("EASY"|"MEDIUM"|"HARD") }`;
+Каждый объект: { question, options (array of 4 strings), correctIndex (0-3), explanation, difficulty ("EASY"|"MEDIUM"|"HARD"), sourceIndices (массив номеров фрагментов [1]-[5], на основе которых создан вопрос) }`;
 }
 
 /**
@@ -354,15 +354,25 @@ function toDiagnosticQuestion(
     difficulty: q.difficulty,
     skillCategory: category,
     // Source tracing (Phase 23)
-    ...(sourceChunks ? {
-      sourceChunkIds: sourceChunks.map(c => c.id),
-      sourceLessonIds: [...new Set(sourceChunks.map(c => c.lesson_id))],
-      sourceTimecodes: sourceChunks.map(c => ({
-        lessonId: c.lesson_id,
-        start: c.timecode_start,
-        end: c.timecode_end,
-      })),
-    } : {}),
+    // Use LLM-provided sourceIndices to map only relevant chunks per question
+    ...(sourceChunks ? (() => {
+      const indices = (q.sourceIndices || [])
+        .map(i => i - 1) // Convert 1-based to 0-based
+        .filter(i => i >= 0 && i < sourceChunks.length);
+      // Fall back to all chunks if LLM didn't provide valid indices
+      const relevantChunks = indices.length > 0
+        ? indices.map(i => sourceChunks[i])
+        : sourceChunks;
+      return {
+        sourceChunkIds: relevantChunks.map(c => c.id),
+        sourceLessonIds: [...new Set(relevantChunks.map(c => c.lesson_id))],
+        sourceTimecodes: relevantChunks.map(c => ({
+          lessonId: c.lesson_id,
+          start: c.timecode_start,
+          end: c.timecode_end,
+        })),
+      };
+    })() : {}),
   };
 }
 
