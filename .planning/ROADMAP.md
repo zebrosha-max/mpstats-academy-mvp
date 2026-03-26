@@ -383,7 +383,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 34-01-PLAN.md — Backend: Supabase Storage bucket, tRPC avatar endpoints, layout+UserNav refactor to UserProfile
+- [x] 34-01-PLAN.md — Backend: Supabase Storage bucket, tRPC avatar endpoints, layout+UserNav refactor to UserProfile (completed 2026-03-26)
 - [ ] 34-02-PLAN.md — Frontend: avatar upload on profile, completeness banner on dashboard, human verify
 
 ### Phase 35: Lesson Comments — комментарии к урокам с ответами (1 уровень вложенности)

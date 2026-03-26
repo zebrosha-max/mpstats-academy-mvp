@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 26-01-PLAN.md
-last_updated: "2026-03-19T15:39:45.296Z"
+stopped_at: Completed 34-01-PLAN.md
+last_updated: "2026-03-26T07:55:09Z"
 progress:
   total_phases: 17
   completed_phases: 13
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 26 — yandex-metrika (COMPLETE)
+**Current focus:** Phase 34 — user-profile-enhancement (Plan 01 complete)
 
 ## Current Position
 
-Phase: 26 (yandex-metrika) — COMPLETE
-Plan: 1 of 1 (DONE)
+Phase: 34 (user-profile-enhancement) — Plan 01 COMPLETE
+Plan: 1 of 2 (DONE)
 
 ## Performance Metrics
 
@@ -108,6 +108,10 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [32-02]: Checkmark in courses view uses no-op callback (visual-only, no remove from courses view)
 - [32-02]: CTA banner only shown when no diagnostic AND no recommendedPath
 
+- [34-01]: Direct Prisma query in layout for profile fetch (faster than tRPC server caller, follows admin layout pattern)
+- [34-01]: Public avatars bucket — avatars not secret, avoids signed URL complexity
+- [34-01]: OAuth name copy is one-time in profile.get — transparent, no migration needed
+
 ### Blockers/Concerns
 
 - Supabase Admin API session creation for custom OAuth needs sandbox validation (Phase 17)
@@ -169,11 +173,12 @@ None.
 | Phase 32 P01 | 4min | 2 tasks | 3 files |
 | Phase 32 P02 | 5min | 2 tasks | 4 files |
 | Phase 26 P01 | 5min | 3 tasks | 14 files |
+| 34    | 01   | 4min     | 2     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-03-19T14:36:18.290Z
-Stopped at: Completed 26-01-PLAN.md
+Last session: 2026-03-26T07:55:09Z
+Stopped at: Completed 34-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
