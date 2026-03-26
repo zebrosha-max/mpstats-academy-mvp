@@ -8,6 +8,8 @@ import { MobileNav } from '@/components/shared/mobile-nav';
 import { UserNav } from '@/components/shared/user-nav';
 import { LogoMark } from '@/components/shared/Logo';
 import { CarrotQuestIdentify } from '@/components/shared/CarrotQuestIdentify';
+import { TourProvider } from '@/components/shared/TourProvider';
+import { HelpCircleButton } from '@/components/shared/HelpCircleButton';
 
 export const metadata: Metadata = {
   title: 'Личный кабинет',
@@ -59,18 +61,23 @@ export default async function MainLayout({
             </div>
             {/* Spacer for desktop */}
             <div className="hidden md:block" />
-            {/* User nav */}
-            <UserNav user={{
-              email: user.email,
-              name: profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || null,
-              avatarUrl: profile?.avatarUrl || null,
-            }} />
+            {/* Help + User nav */}
+            <div className="flex items-center gap-2">
+              <HelpCircleButton />
+              <UserNav user={{
+                email: user.email,
+                name: profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || null,
+                avatarUrl: profile?.avatarUrl || null,
+              }} />
+            </div>
           </div>
         </header>
 
         {/* Page content */}
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-x-hidden">
-          {children}
+          <TourProvider>
+            {children}
+          </TourProvider>
         </main>
       </div>
 

@@ -43,7 +43,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
       prevBtnText: tourConfig.prevBtnText,
       doneBtnText: tourConfig.doneBtnText,
       allowClose: true,
-      overlayClickBehavior: 'none',
+      overlayClickBehavior: () => { /* no-op: prevent accidental dismissal */ },
       onDestroyStarted: () => {
         localStorage.setItem(key, 'true');
         driverObj.destroy();
@@ -72,7 +72,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
         prevBtnText: tourConfig.prevBtnText,
         doneBtnText: tourConfig.doneBtnText,
         allowClose: true,
-        overlayClickBehavior: 'none',
+        overlayClickBehavior: () => { /* no-op: prevent accidental dismissal */ },
         onDestroyStarted: () => {
           localStorage.setItem(key, 'true');
           driverObj.destroy();

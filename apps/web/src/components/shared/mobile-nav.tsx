@@ -104,7 +104,7 @@ export function MobileNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-mp-gray-200 md:hidden z-50 shadow-mp-lg">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-mp-gray-200 md:hidden z-50 shadow-mp-lg" data-tour="mobile-nav">
       <div className="flex justify-around py-2 safe-area-pb">
         {items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
