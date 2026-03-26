@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
@@ -144,6 +145,18 @@ export const profileRouter = router({
         where: { id: ctx.user.id },
         include: { skillProfile: true },
       });
+
+      // One-time copy of OAuth name (Yandex/other) into UserProfile on first fetch
+      if (profile && !profile.name) {
+        const oauthName = ctx.user.user_metadata?.full_name || ctx.user.user_metadata?.name;
+        if (oauthName && typeof oauthName === 'string') {
+          await ctx.prisma.userProfile.update({
+            where: { id: ctx.user.id },
+            data: { name: oauthName },
+          });
+          profile.name = oauthName;
+        }
+      }
 
       return profile;
     } catch (error) {
@@ -331,6 +344,29 @@ export const profileRouter = router({
       handleDatabaseError(error);
     }
   }),
+
+  // Generate avatar upload path for client-side Supabase Storage upload
+  getAvatarUploadUrl: protectedProcedure.query(async ({ ctx }) => {
+    const timestamp = Date.now();
+    const path = `${ctx.user.id}/${timestamp}.webp`;
+    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/avatars/${path}`;
+    return { path, url, bucket: 'avatars' as const };
+  }),
+
+  // Delete avatar — clears avatarUrl from profile (Storage deletion happens client-side)
+  deleteAvatar: protectedProcedure
+    .input(z.object({ path: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Security: verify the path belongs to this user
+      if (!input.path.startsWith(ctx.user.id + '/')) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Cannot delete other user avatars' });
+      }
+      await ctx.prisma.userProfile.update({
+        where: { id: ctx.user.id },
+        data: { avatarUrl: null },
+      });
+      return { success: true };
+    }),
 
   // Update profile
   update: protectedProcedure
