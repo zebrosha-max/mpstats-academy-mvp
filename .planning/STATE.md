@@ -116,6 +116,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [34-02]: Client-side canvas resize (no external lib) — 256x256 square crop, webp 0.85 quality
 - [34-02]: next/image with unoptimized for Supabase Storage public avatar URLs
 - [34-02]: Avatar path extraction from public URL via regex for Storage delete flow
+- [35-01]: Plain text comments (not markdown) -- no XSS surface, simpler for short user messages
+- [35-01]: Cascade delete on parent comment removes all replies (CommentReplies self-relation)
+- [35-01]: Cursor-based pagination (20/page) for comments list query
 
 ### Blockers/Concerns
 
@@ -181,11 +184,12 @@ None.
 | 34    | 01   | 4min     | 2     | 4     |
 | 36    | 01   | 4min     | 2     | 8     |
 | 34    | 02   | 3min     | 2     | 2     |
+| 35    | 01   | 3min     | 2     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-03-26T08:07:43Z
-Stopped at: Completed 36-01-PLAN.md
+Last session: 2026-03-26T08:30:15Z
+Stopped at: Completed 35-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
