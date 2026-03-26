@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 34-01-PLAN.md
-last_updated: "2026-03-26T07:55:09Z"
+stopped_at: Completed 34-02-PLAN.md
+last_updated: "2026-03-26T08:02:14Z"
 progress:
   total_phases: 17
-  completed_phases: 13
+  completed_phases: 14
   total_plans: 28
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 34 — user-profile-enhancement (Plan 01 complete)
+**Current focus:** Phase 34 — user-profile-enhancement COMPLETE
 
 ## Current Position
 
-Phase: 34 (user-profile-enhancement) — Plan 01 COMPLETE
-Plan: 1 of 2 (DONE)
+Phase: 34 (user-profile-enhancement) — COMPLETE
+Plan: 2 of 2 (ALL DONE)
 
 ## Performance Metrics
 
@@ -111,6 +111,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [34-01]: Direct Prisma query in layout for profile fetch (faster than tRPC server caller, follows admin layout pattern)
 - [34-01]: Public avatars bucket — avatars not secret, avoids signed URL complexity
 - [34-01]: OAuth name copy is one-time in profile.get — transparent, no migration needed
+- [34-02]: Client-side canvas resize (no external lib) — 256x256 square crop, webp 0.85 quality
+- [34-02]: next/image with unoptimized for Supabase Storage public avatar URLs
+- [34-02]: Avatar path extraction from public URL via regex for Storage delete flow
 
 ### Blockers/Concerns
 
@@ -174,11 +177,12 @@ None.
 | Phase 32 P02 | 5min | 2 tasks | 4 files |
 | Phase 26 P01 | 5min | 3 tasks | 14 files |
 | 34    | 01   | 4min     | 2     | 4     |
+| 34    | 02   | 3min     | 2     | 2     |
 
 ## Session Continuity
 
-Last session: 2026-03-26T07:55:09Z
-Stopped at: Completed 34-01-PLAN.md
+Last session: 2026-03-26T08:02:14Z
+Stopped at: Completed 34-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

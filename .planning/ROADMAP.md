@@ -172,7 +172,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 33. CQ Email Automation | v1.3 | 2/3 | Code Complete (CQ dashboard pending) | 2026-03-25 |
 | 25. Legal + Cookie Consent | v1.3 | 2/2 | Complete | 2026-03-26 |
-| 34. User Profile Enhancement | v1.3 | 0/2 | Planned | - |
+| 34. User Profile Enhancement | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
 | 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
 
@@ -384,7 +384,7 @@ Plans:
 
 Plans:
 - [x] 34-01-PLAN.md — Backend: Supabase Storage bucket, tRPC avatar endpoints, layout+UserNav refactor to UserProfile (completed 2026-03-26)
-- [ ] 34-02-PLAN.md — Frontend: avatar upload on profile, completeness banner on dashboard, human verify
+- [x] 34-02-PLAN.md — Frontend: avatar upload on profile, completeness banner on dashboard, human verify (completed 2026-03-26)
 
 ### Phase 35: Lesson Comments — комментарии к урокам с ответами (1 уровень вложенности)
 
