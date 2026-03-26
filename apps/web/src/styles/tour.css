@@ -1,0 +1,78 @@
+/* MPSTATS Brand CSS overrides for driver.js */
+
+.driver-popover {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 15px -3px rgba(9, 16, 50, 0.1), 0 4px 6px -4px rgba(9, 16, 50, 0.1);
+  max-width: 340px;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+.driver-popover-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.driver-popover-description {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #6B7280;
+}
+
+.driver-popover-progress-text {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+}
+
+.driver-popover-next-btn,
+.driver-popover-close-btn-inside {
+  background: #2C4FF8;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.driver-popover-next-btn:hover {
+  background: #233FC6;
+}
+
+.driver-popover-prev-btn {
+  background: transparent;
+  color: #2C4FF8;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.driver-popover-close-btn {
+  color: #9CA3AF;
+  font-size: 0.875rem;
+}
+
+.driver-popover-close-btn:hover {
+  color: #4B5563;
+}
+
+.driver-overlay {
+  background: rgba(9, 16, 50, 0.55);
+}
+
+/* Mobile override */
+@media (max-width: 767px) {
+  .driver-popover {
+    max-width: calc(100vw - 32px);
+  }
+}
