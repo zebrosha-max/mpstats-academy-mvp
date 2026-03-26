@@ -2,7 +2,44 @@
 
 **Last updated:** 2026-03-26
 
-## Last Session (2026-03-25–26)
+## Last Session (2026-03-26, session 2)
+
+**Phase 36 — Product Tour / Onboarding (code complete, tested locally):**
+- driver.js интегрирован, 3 tooltip-тура: Dashboard (4 шага), Learn (5 шагов), Lesson (5 шагов)
+- TourProvider + HelpCircleButton в main layout, auto-start 1.5s delay, localStorage persistence
+- 14 data-tour атрибутов на 5 файлах (sidebar, mobile-nav, dashboard, learn, lesson)
+- 7/8 автотестов PASS, 1 (mobile viewport) требует ручной проверки
+- 2 бага исправлены: TourProvider scope (header outside context), onDestroyStarted infinite loop
+- CSS overrides загружены (40 rules), но визуально стандартный driver.js стиль — cosmetic issue
+- Phase 35 (Comments) не реализована → `lesson-comments` data-tour атрибут отсутствует, driver.js gracefully пропускает
+
+**Ключевые файлы Phase 36:**
+- `apps/web/src/lib/tours/definitions.ts` — 3 tour definitions, 14 steps, mobile adaptation
+- `apps/web/src/components/shared/TourProvider.tsx` — React context + driver.js orchestration
+- `apps/web/src/components/shared/HelpCircleButton.tsx` — conditional help button
+- `apps/web/src/styles/tour.css` — MPSTATS brand CSS overrides
+- `apps/web/src/app/(main)/layout.tsx` — TourProvider wraps header+main
+
+### Previous Session (2026-03-26)
+
+**LLM Model Switch — Qwen 3.5 Flash (deployed):**
+- Модель переключена с `openai/gpt-4.1-nano` на `qwen/qwen3.5-flash-02-23` (все задачи: summary, chat, диагностика)
+- Причина: дешевле ($0.26/M vs $0.40/M output), быстрее (6.2s vs 6.5s), качественнее (верная арифметика, IFBench 76.5)
+- json_schema strict mode — PASS, Zod validation — PASS, reasoning OFF — 6.2s
+- Fallback: `openai/gpt-4.1-nano` (был `google/gemini-3.1-flash-lite-preview`)
+- Файл: `packages/ai/src/openrouter.ts`
+
+**Roadmap — 3 pre-launch фазы добавлены (34-36):**
+- Phase 34: User Profile Enhancement (аватар upload, display name)
+- Phase 35: Lesson Comments (комментарии к урокам, 1-level threading)
+- Phase 36: Product Tour / Onboarding (3 tooltip-тура: dashboard, learn, lesson)
+
+**Architecture HTML — 3 варианта созданы:**
+- `docs/architecture-cyberpunk.html` — Cyberpunk/Terminal стиль
+- `docs/architecture-blueprint.html` — Editorial/Blueprint стиль
+- `docs/architecture-brand.html` — MPSTATS Brand стиль
+
+### Previous Session (2026-03-25–26)
 
 **Phase 33 — CQ fix + тестирование (2026-03-25):**
 - Исправлен формат: `setUserProps` (свойства на лида) → `trackEvent` (триггер без params)
@@ -489,7 +526,7 @@ MAAL/
 
 #### Фаза 2: AI Package ✅ COMPLETE
 - [x] AI-3.2.1: `packages/ai/` structure — package.json, tsconfig.json
-- [x] AI-3.2.2: OpenRouter client — `src/openrouter.ts` (gemini-2.5-flash, gpt-4o-mini fallback)
+- [x] AI-3.2.2: OpenRouter client — `src/openrouter.ts` (qwen3.5-flash primary, gpt-4.1-nano fallback)
 - [x] AI-3.2.3: Embedding service — `src/embeddings.ts` (text-embedding-3-small, 1536 dims)
 - [x] AI-3.2.4: Vector retrieval — `src/retrieval.ts` (Supabase RPC `match_chunks`)
 - [x] AI-3.2.5: LLM generation — `src/generation.ts` (summary + chat with citations)
@@ -512,7 +549,7 @@ MAAL/
 - [x] AI-3.5.2: Chat endpoint — verified working, returns answers with citations and 5 sources
 - [x] AI-3.5.3: Vector search — threshold 0.3 for better recall
 - [x] AI-3.5.4: Timecodes — formatted as "MM:SS - MM:SS"
-- [x] AI-3.5.5: Model — google/gemini-2.5-flash via OpenRouter
+- [x] AI-3.5.5: Model — qwen/qwen3.5-flash-02-23 via OpenRouter (switched from gemini-2.5-flash → gpt-4.1-nano → qwen3.5-flash)
 
 #### Ключевые файлы Sprint 3:
 ```
@@ -598,8 +635,9 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 1. Phase 28: Боевой CloudPayments
 2. Phase 29: Sentry Monitoring
 3. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды
-
-**Closed:** Phase 22 (superseded by 33), Phase 25 (completed 2026-03-26), Phase 25 (completed 2026-03-26)
+4. Phase 34: User Profile Enhancement (аватар, display name)
+5. Phase 35: Lesson Comments (комментарии, 1-level threading)
+6. Phase 36: Product Tour / Onboarding (3 tooltip-тура)
 
 **Closed:** Phase 22 (superseded by Phase 33)
 
@@ -615,6 +653,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | Mock storage | In-memory (globalThis) | Fast dev, no DB dependency for Sprint 0-2 |
 | tRPC batching | splitLink (AI vs fast) | AI queries (3-10s) must not block page render |
 | RLS strategy | RLS ON + zero policies | All data via Prisma/service_role, PostgREST blocked |
+| LLM model | Qwen 3.5 Flash (qwen3.5-flash-02-23) | $0.26/M output, IFBench 76.5, верная арифметика, json_schema strict |
 
 ## Known Limitations (Sprint 2)
 
