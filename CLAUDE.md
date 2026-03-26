@@ -568,7 +568,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
-| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (25,28-29 remaining; 33-03 on CQ team) |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (28-29 remaining; 33-03 on CQ team) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
@@ -578,10 +578,11 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 **Completed v1.3 phases:** 23 (Diagnostic 2.0), 24 (Support Contact), 26 (Яндекс Метрика), 27 (SEO), 30 (Content Discovery), 31 (Admin Roles), 32 (Custom Track Management), 33 (CQ Email Automation — code complete)
 
 **Remaining v1.3 phases:**
-1. Phase 25: Legal + Cookie Consent
-2. Phase 28: Боевой CloudPayments
-3. Phase 29: Sentry Monitoring
-4. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды (ручная настройка)
+1. Phase 28: Боевой CloudPayments
+2. Phase 29: Sentry Monitoring
+3. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды (ручная настройка)
+
+**Closed:** Phase 22 (superseded by 33), Phase 25 (completed 2026-03-26)
 
 **Closed:** Phase 22 (superseded by Phase 33)
 

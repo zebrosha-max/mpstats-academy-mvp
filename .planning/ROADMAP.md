@@ -171,7 +171,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 31. Admin Roles | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 33. CQ Email Automation | v1.3 | 2/3 | Code Complete (CQ dashboard pending) | 2026-03-25 |
-| 25. Legal + Cookie Consent | v1.3 | 0/2 | Planned | - |
+| 25. Legal + Cookie Consent | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 34. User Profile Enhancement | v1.3 | 0/0 | Not Planned | - |
 | 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
 | 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
@@ -238,8 +238,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — Legal pages (offer, pdn, adv, cookies, policy) + LegalPageLayout + footer links
-- [ ] 25-02-PLAN.md — Registration checkboxes (offer + PD required, adv optional) + CookieConsent banner
+- [x] 25-01-PLAN.md — Legal pages (offer, pdn, adv, cookies, policy) + LegalPageLayout + footer links (completed 2026-03-26)
+- [x] 25-02-PLAN.md — Registration checkboxes (offer + PD required, adv optional) + CookieConsent banner (completed 2026-03-26)
 
 ### Phase 26: Яндекс Метрика — интеграция аналитики
 
