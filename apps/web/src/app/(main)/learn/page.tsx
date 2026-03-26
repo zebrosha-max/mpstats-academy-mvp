@@ -92,7 +92,7 @@ export default function LearnPage() {
   // O(1) lookup for lessons in user's track (all sections)
   const trackLessonIds = useMemo(() => {
     if (!recommendedPath?.sections) return new Set<string>();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     return new Set(recommendedPath.sections.flatMap((s: any) => s.lessons.map((l: any) => l.id as string)));
   }, [recommendedPath]);
 
@@ -105,7 +105,7 @@ export default function LearnPage() {
       const prev = utils.learning.getRecommendedPath.getData();
       utils.learning.getRecommendedPath.setData(undefined, (old: typeof prev) => {
         if (!old) return old;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
         const sections: any[] = old.sections ? [...old.sections.map((s: any) => ({ ...s, lessons: [...s.lessons] }))] : [];
         let customIdx = sections.findIndex((s: any) => s.id === 'custom');
         if (customIdx < 0) {
@@ -136,7 +136,7 @@ export default function LearnPage() {
       const prev = utils.learning.getRecommendedPath.getData();
       utils.learning.getRecommendedPath.setData(undefined, (old: typeof prev) => {
         if (!old || !old.sections) return old;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
         const sections = old.sections.map((s: any) => ({
           ...s,
           lessons: s.lessons.filter((l: any) => l.id !== lessonId),
@@ -337,7 +337,7 @@ export default function LearnPage() {
         {!viewModeInitialized ? (
           <div className="h-10 bg-mp-gray-200 rounded-lg w-48 animate-pulse" />
         ) : searchQuery.length === 0 && (
-          <div className="flex gap-2">
+          <div data-tour="learn-view-toggle" className="flex gap-2">
             <Button
               variant={viewMode === 'path' ? 'default' : 'outline'}
               size="sm"
@@ -357,20 +357,24 @@ export default function LearnPage() {
       </div>
 
       {/* Search Bar */}
-      <SearchBar
-        onSearch={(q) => setSearchQuery(q)}
-        onClear={() => setSearchQuery('')}
-        isSearching={searchLoading}
-        hasResults={searchQuery.length > 0}
-      />
+      <div data-tour="learn-search">
+        <SearchBar
+          onSearch={(q) => setSearchQuery(q)}
+          onClear={() => setSearchQuery('')}
+          isSearching={searchLoading}
+          hasResults={searchQuery.length > 0}
+        />
+      </div>
 
       {/* Filters */}
-      <FilterPanel
-        filters={filters}
-        onFiltersChange={setFilters}
-        availableTopics={availableTopics}
-        availableCourses={availableCourses}
-      />
+      <div data-tour="learn-filters">
+        <FilterPanel
+          filters={filters}
+          onFiltersChange={setFilters}
+          availableTopics={availableTopics}
+          availableCourses={availableCourses}
+        />
+      </div>
 
       {/* Track progress bar (only in "Мой трек" view with data, not in search mode) */}
       {searchQuery.length === 0 && viewMode === 'path' && recommendedPath && recommendedPath.totalLessons > 0 && (
@@ -504,7 +508,7 @@ export default function LearnPage() {
 
           {/* Case C: Normal track with lessons */}
           {recommendedPath && !isTrackComplete && recommendedPath.lessons.length > 0 && (
-            <div className="space-y-4">
+            <div data-tour="learn-sections" className="space-y-4">
               {isSectioned ? (
                 /* Sectioned accordion view */
                 <>
@@ -692,7 +696,7 @@ export default function LearnPage() {
         </>
       ) : (
         /* Courses view */
-        <div className="space-y-6">
+        <div data-tour="learn-add-to-track" className="space-y-6">
           {courses?.map((course) => {
             // Apply filters to lessons in course view
             const filteredCourseLessons = course.lessons.filter(lesson => filterLesson(lesson));

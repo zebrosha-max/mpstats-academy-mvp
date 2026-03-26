@@ -178,7 +178,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Quick actions */}
           <div className="grid md:grid-cols-2 gap-4">
-            <Card variant="soft-blue" className="hover:shadow-mp-card-hover transition-all duration-300 hover:-translate-y-1">
+            <Card data-tour="dashboard-diagnostic-cta" variant="soft-blue" className="hover:shadow-mp-card-hover transition-all duration-300 hover:-translate-y-1">
               <CardHeader>
                 <div className="w-12 h-12 rounded-xl bg-mp-blue-200 flex items-center justify-center mb-3">
                   <svg className="w-6 h-6 text-mp-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,7 +197,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card variant="soft-green" className="hover:shadow-mp-card-hover transition-all duration-300 hover:-translate-y-1">
+            <Card data-tour="dashboard-learn-cta" variant="soft-green" className="hover:shadow-mp-card-hover transition-all duration-300 hover:-translate-y-1">
               <CardHeader>
                 <div className="w-12 h-12 rounded-xl bg-mp-green-200 flex items-center justify-center mb-3">
                   <svg className="w-6 h-6 text-mp-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,7 +268,7 @@ export default function DashboardPage() {
 
         {/* Right column - Radar */}
         <div className="space-y-6">
-          <Card className="shadow-mp-card">
+          <Card data-tour="dashboard-skill-radar" className="shadow-mp-card">
             <CardHeader>
               <CardTitle className="text-heading">Профиль навыков</CardTitle>
               <CardDescription className="text-body-sm">
