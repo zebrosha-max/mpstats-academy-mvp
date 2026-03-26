@@ -5,6 +5,7 @@ import { learningRouter } from './routers/learning';
 import { aiRouter } from './routers/ai';
 import { adminRouter } from './routers/admin';
 import { billingRouter } from './routers/billing';
+import { commentsRouter } from './routers/comments';
 
 export const appRouter = router({
   profile: profileRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
   ai: aiRouter,
   admin: adminRouter,
   billing: billingRouter,
+  comments: commentsRouter,
 });
 
 export type AppRouter = typeof appRouter;
