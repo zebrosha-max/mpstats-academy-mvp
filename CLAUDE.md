@@ -2,7 +2,60 @@
 
 **Last updated:** 2026-03-26
 
-## Last Session (2026-03-26, session 3)
+## Last Session (2026-03-26, session 5)
+
+**Phase 36 — Product Tour / Onboarding (complete + deployed):**
+- driver.js, 3 tooltip-тура: Dashboard (4), Learn (3 или 5 по CJM), Lesson (5)
+- GSD workflow: discuss → UI-SPEC → plan → execute → browser test → polish → deploy
+- Баги найдены и исправлены при browser testing:
+  - TourProvider scope (header вне контекста) → moved to wrap header+main
+  - `onDestroyStarted` infinite loop → заменён на `onDestroyed`
+  - CSS overrides не перебивали driver.js → `!important` на все правила
+  - Popover arrow (пиксель-артефакт) → `display: none`
+  - Learn step 5 — динамический step (DOM check)
+  - Learn step 4 — объяснения секций трека
+- CJM-логика онбординга:
+  - Learn без диагностики → "Все курсы" variant (3 шага: поиск, фильтры, каталог)
+  - Learn с диагностикой → "Мой трек" variant (5 шагов)
+  - Lesson → тур только при полном UI (50% threshold check)
+- UX fixes:
+  - Sidebar footer профиль убран (дубль header'а)
+  - UserNav переведён на tRPC (live sync аватара/имени)
+  - Mobile nav overflow — компактнее (7 элементов в viewport)
+  - Admin mobile nav — бургер-меню + "Назад в приложение"
+- Changelog для QA команды: `docs/CHANGELOG-v1.3.md`
+
+**Ключевые файлы Phase 36:**
+- `apps/web/src/lib/tours/definitions.ts` — 3 tour definitions, CJM variants
+- `apps/web/src/components/shared/TourProvider.tsx` — driver.js, 50% DOM threshold
+- `apps/web/src/components/shared/HelpCircleButton.tsx` — conditional help button
+- `apps/web/src/styles/tour.css` — MPSTATS brand overrides
+- `apps/web/src/components/shared/user-nav.tsx` — tRPC live profile data
+- `apps/web/src/components/admin/AdminSidebar.tsx` — mobile header + drawer
+
+### Previous Session (2026-03-26, session 4)
+
+**Phase 34 — User Profile Enhancement (complete + deployed):**
+- GSD workflow: discuss (--auto) → plan → execute (2 plans, 2 waves) → deploy
+- Supabase Storage bucket `avatars` создан с 4 RLS-политиками (upload/update/delete per user, public read)
+- tRPC: `getAvatarUploadUrl` (signed URL для upload), `deleteAvatar` (с security check owner-only)
+- OAuth name copy: при первом `profile.get` копирует `user_metadata.full_name` в `UserProfile.name`
+- Layout refactor: UserNav теперь получает данные из UserProfile (Prisma), не из `user_metadata` (Supabase Auth)
+- Avatar upload на странице профиля: canvas resize до 256x256 webp, preview, валидация 2MB (jpg/png/webp)
+- Profile completeness баннер на дашборде: "Заполните профиль" когда `name === null`, ведёт на `/profile`
+- Sidebar: аватар + display name добавлены в footer (gap fix после верификации)
+- Supabase Storage миграция выполнена через Storage API + node pg (RLS policies)
+
+**Ключевые файлы Phase 34:**
+- `scripts/sql/create_avatars_bucket.sql` — SQL для bucket + 4 RLS-политик (уже выполнен на Supabase)
+- `packages/api/src/routers/profile.ts` — getAvatarUploadUrl, deleteAvatar, OAuth name copy
+- `apps/web/src/app/(main)/layout.tsx` — Prisma profile fetch для UserNav
+- `apps/web/src/components/shared/user-nav.tsx` — profile-based interface (name, avatarUrl)
+- `apps/web/src/components/shared/sidebar.tsx` — SidebarAvatar компонент + user identity row
+- `apps/web/src/app/(main)/profile/page.tsx` — avatar upload section с canvas resize
+- `apps/web/src/app/(main)/dashboard/page.tsx` — profile completeness баннер
+
+### Previous Session (2026-03-26, session 3)
 
 **Phase 35 — Lesson Comments (complete, tested locally):**
 - GSD workflow: discuss → UI-SPEC → plan → execute (2 plans, 2 waves)
@@ -671,22 +724,19 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.0 MVP | ✅ Shipped 2026-02-26 | Phases 1-9 |
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
-| v1.3 Pre-release | 🔄 In Progress | Phases 22-33 (28-29 remaining; 33-03 on CQ team) |
+| v1.3 Pre-release | 🔄 In Progress | Phases 22-36 (28-29 remaining; 33-03 on CQ team) |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
 - Используется прямой iframe embed: `https://kinescope.io/embed/{videoId}`
 - seekTo через postMessage API к iframe
 
-**Completed v1.3 phases:** 23, 24, 25, 26, 27, 30, 31, 32, 33 (code complete)
+**Completed v1.3 phases:** 23, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 36
 
 **Remaining v1.3 phases:**
 1. Phase 28: Боевой CloudPayments
 2. Phase 29: Sentry Monitoring
 3. Phase 33-03: CQ Dashboard Setup — на стороне CQ команды
-4. Phase 34: User Profile Enhancement (аватар, display name)
-5. Phase 35: Lesson Comments (комментарии, 1-level threading)
-6. Phase 36: Product Tour / Onboarding (3 tooltip-тура)
 
 **Closed:** Phase 22 (superseded by Phase 33)
 
