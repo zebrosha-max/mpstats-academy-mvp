@@ -50,36 +50,36 @@ export default async function MainLayout({
       {/* Sidebar - fixed on desktop */}
       <Sidebar />
 
-      {/* Main content area */}
-      <div className="md:ml-64 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="h-16 border-b border-mp-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-40">
-          <div className="h-full px-4 md:px-6 flex items-center justify-between">
-            {/* Mobile logo */}
-            <div className="md:hidden">
-              <LogoMark size="md" />
+      {/* Main content area — TourProvider wraps header+main so HelpCircleButton can access useTour */}
+      <TourProvider>
+        <div className="md:ml-64 flex flex-col min-h-screen">
+          {/* Header */}
+          <header className="h-16 border-b border-mp-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-40">
+            <div className="h-full px-4 md:px-6 flex items-center justify-between">
+              {/* Mobile logo */}
+              <div className="md:hidden">
+                <LogoMark size="md" />
+              </div>
+              {/* Spacer for desktop */}
+              <div className="hidden md:block" />
+              {/* Help + User nav */}
+              <div className="flex items-center gap-2">
+                <HelpCircleButton />
+                <UserNav user={{
+                  email: user.email,
+                  name: profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || null,
+                  avatarUrl: profile?.avatarUrl || null,
+                }} />
+              </div>
             </div>
-            {/* Spacer for desktop */}
-            <div className="hidden md:block" />
-            {/* Help + User nav */}
-            <div className="flex items-center gap-2">
-              <HelpCircleButton />
-              <UserNav user={{
-                email: user.email,
-                name: profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || null,
-                avatarUrl: profile?.avatarUrl || null,
-              }} />
-            </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Page content */}
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-x-hidden">
-          <TourProvider>
+          {/* Page content */}
+          <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-x-hidden">
             {children}
-          </TourProvider>
-        </main>
-      </div>
+          </main>
+        </div>
+      </TourProvider>
 
       {/* Mobile navigation */}
       <MobileNav />
