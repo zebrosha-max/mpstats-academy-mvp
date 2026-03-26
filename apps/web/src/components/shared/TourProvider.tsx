@@ -62,6 +62,14 @@ export function TourProvider({ children }: { children: ReactNode }) {
     const steps = getSteps(page, isMobile);
 
     const timer = setTimeout(() => {
+      // Check if enough tour targets exist in DOM (skip if page hasn't loaded full UI,
+      // e.g. diagnostic not completed → learn page shows CTA instead of track sections)
+      const targetsFound = steps.filter(
+        (s) => s.element && document.querySelector(s.element as string)
+      ).length;
+      const threshold = Math.ceil(steps.length * 0.5);
+      if (targetsFound < threshold) return;
+
       const driverObj = driver({
         showProgress: true,
         steps,

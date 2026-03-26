@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signOut } from '@/lib/auth/actions';
 import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc/client';
 
 interface UserNavProps {
   user: {
@@ -14,9 +15,16 @@ interface UserNavProps {
 }
 
 export function UserNav({ user }: UserNavProps) {
-  const name = user.name || user.email?.split('@')[0] || 'Пользователь';
+  // Use tRPC for live profile data (syncs with sidebar after avatar/name change)
+  const { data: profile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Prefer tRPC data, fall back to server-passed props
+  const name = profile?.name || user.name || user.email?.split('@')[0] || 'Пользователь';
   const initials = name.slice(0, 2).toUpperCase();
-  const avatarUrl = user.avatarUrl;
+  const avatarUrl = profile?.avatarUrl || user.avatarUrl;
   const [imgError, setImgError] = useState(false);
 
   const showFallback = !avatarUrl || imgError;
