@@ -32,9 +32,9 @@ export default async function AdminLayout({
 
       {/* Main content area */}
       <div className="md:ml-64 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="h-16 border-b border-mp-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-40">
-          <div className="h-full px-4 md:px-6 flex items-center justify-between">
+        {/* Desktop header (hidden on mobile — AdminSidebar provides mobile header) */}
+        <header className="h-16 border-b border-mp-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-40 hidden md:block">
+          <div className="h-full px-6 flex items-center justify-between">
             <h1 className="text-heading-sm font-semibold text-mp-gray-900">
               Admin Panel
             </h1>
@@ -54,8 +54,8 @@ export default async function AdminLayout({
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 p-4 md:p-6">
+        {/* Page content — top padding on mobile for fixed header bar (h-14) */}
+        <main className="flex-1 p-4 md:p-6 pt-[72px] md:pt-6">
           {children}
         </main>
       </div>
