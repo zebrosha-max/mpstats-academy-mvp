@@ -138,6 +138,7 @@ Requirements for Support Contact phase.
 - [x] **SUPP-03**: Форма обратной связи с дропдауном темы и отправкой через CQ event "Support Request"
 - [x] **SUPP-04**: Ссылка "Поддержка" в sidebar footer, mobile-nav и landing footer
 
+## v2.0 RequirementsRequirements for Lesson Comments phase.### Lesson Comments- [ ] **COMM-01**: Prisma-модель LessonComment с self-relation parentId для 1-уровневой вложенности и cascade delete- [ ] **COMM-02**: tRPC роутер comments с list (cursor-based пагинация 20 шт), create (валидация 1-1500 символов), delete (свои + admin)- [ ] **COMM-03**: Валидация вложенности: ответы только на корневые комментарии (parentId.parentId === null)- [ ] **COMM-04**: Компонент комментария показывает аватар (fallback инициалы), display name, относительную дату, контент и кнопку Ответить- [ ] **COMM-05**: На десктопе комментарии под AI-чатом в правой колонке, на мобилке — под навигацией урока- [ ] **COMM-06**: Optimistic updates при отправке и удалении комментариев с toast при ошибке
 ## Future Requirements
 
 Deferred to v1.8+. Tracked but not in current roadmap.
@@ -250,6 +251,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SUPP-02 | Phase 24 (Plan 01) | Planned |
 | SUPP-03 | Phase 24 (Plan 01) | Planned |
 | SUPP-04 | Phase 24 (Plan 01) | Planned |
+| COMM-01 | Phase 35 (Plan 01) | Planned |
+| COMM-02 | Phase 35 (Plan 01) | Planned |
+| COMM-03 | Phase 35 (Plan 01) | Planned |
+| COMM-04 | Phase 35 (Plan 02) | Planned |
+| COMM-05 | Phase 35 (Plan 02) | Planned |
+| COMM-06 | Phase 35 (Plan 02) | Planned |
 
 **Coverage:**
 - v1.2 requirements: 15 total, 15 complete
@@ -260,8 +267,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.7 requirements: 5 total, 5 complete
 - v1.8 requirements: 10 total, 10 complete
 - v1.9 requirements: 4 total, 0 planned
+- v2.0 requirements: 6 total, 0 planned
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-19 after Phase 24 planning*
+*Last updated: 2026-03-26 after Phase 35 planning*

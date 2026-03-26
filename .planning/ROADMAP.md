@@ -402,7 +402,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 35 to break down)
+- [ ] 35-01-PLAN.md — Backend: Prisma LessonComment model + tRPC comments router (list/create/delete)
+- [ ] 35-02-PLAN.md — Frontend: Comment components + lesson page integration
 
 ### Phase 36: Product Tour / Onboarding — 3 tooltip-тура для новых пользователей
 
