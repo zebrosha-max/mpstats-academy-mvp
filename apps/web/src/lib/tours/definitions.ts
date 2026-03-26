@@ -50,9 +50,35 @@ export const dashboardSteps: DriveStep[] = [
   },
 ];
 
-// --- Learn Tour (5 steps) ---
+// --- Learn Tour: "Все курсы" variant (no diagnostic) ---
 
-export const learnSteps: DriveStep[] = [
+const learnCoursesSteps: DriveStep[] = [
+  {
+    element: '[data-tour="learn-search"]',
+    popover: {
+      title: 'Поиск по урокам',
+      description: 'Ищите уроки по ключевым словам. AI найдёт релевантные фрагменты.',
+    },
+  },
+  {
+    element: '[data-tour="learn-filters"]',
+    popover: {
+      title: 'Фильтры',
+      description: 'Фильтруйте по курсу, категории навыка и уровню сложности.',
+    },
+  },
+  {
+    element: '[data-tour="learn-add-to-track"]',
+    popover: {
+      title: 'Каталог курсов',
+      description: 'Здесь собраны все курсы платформы. Откройте любой курс, чтобы начать обучение.',
+    },
+  },
+];
+
+// --- Learn Tour: "Мой трек" variant (diagnostic completed) ---
+
+const learnTrackSteps: DriveStep[] = [
   {
     element: '[data-tour="learn-search"]',
     popover: {
@@ -81,7 +107,6 @@ export const learnSteps: DriveStep[] = [
       description: 'Ваш трек разделён по приоритету: «Ошибки» — темы, где диагностика выявила пробелы; «Углубление» — закрепление базовых навыков; «Развитие» — новые компетенции; «Продвинутый» — темы для опытных.',
     },
   },
-  // Step 5 is dynamic — replaced at runtime by getSteps()
   {
     element: '[data-tour="learn-view-toggle"]',
     popover: {
@@ -141,16 +166,27 @@ export const tourConfig = {
   progressText: '{{current}} из {{total}}',
 };
 
-// --- Get steps with mobile adaptation ---
-
-const stepsByPage: Record<TourPage, DriveStep[]> = {
-  dashboard: dashboardSteps,
-  learn: learnSteps,
-  lesson: lessonSteps,
-};
+// --- Get steps with context-aware adaptation ---
 
 export function getSteps(page: TourPage, isMobile: boolean): DriveStep[] {
-  const steps = stepsByPage[page].map((step) => ({ ...step }));
+  let steps: DriveStep[];
+
+  if (page === 'learn') {
+    // Choose learn tour variant based on DOM state:
+    // If "Мой трек" sections exist → user has diagnostic, show full track tour
+    // If only courses view → show catalog tour
+    const hasTrackSections = !!document.querySelector('[data-tour="learn-sections"]');
+    const hasToggle = !!document.querySelector('[data-tour="learn-view-toggle"]');
+
+    if (hasTrackSections && hasToggle) {
+      steps = learnTrackSteps.map((s) => ({ ...s }));
+    } else {
+      steps = learnCoursesSteps.map((s) => ({ ...s }));
+    }
+  } else {
+    const base = page === 'dashboard' ? dashboardSteps : lessonSteps;
+    steps = base.map((s) => ({ ...s }));
+  }
 
   // Dashboard step 1: swap sidebar-nav → mobile-nav on mobile
   if (page === 'dashboard' && isMobile && steps[0]) {
@@ -158,22 +194,6 @@ export function getSteps(page: TourPage, isMobile: boolean): DriveStep[] {
       ...steps[0],
       element: '[data-tour="mobile-nav"]',
     };
-  }
-
-  // Learn step 5: dynamic based on current view
-  if (page === 'learn' && steps.length >= 5) {
-    const isCoursesView = !!document.querySelector('[data-tour="learn-add-to-track"]');
-    if (isCoursesView) {
-      // User is on "Все курсы" — point to the courses grid with + buttons
-      steps[4] = {
-        element: '[data-tour="learn-add-to-track"]',
-        popover: {
-          title: 'Добавьте уроки в трек',
-          description: 'Нажмите + на любом уроке, чтобы добавить его в свой персональный трек обучения.',
-        },
-      };
-    }
-    // else: keep default (toggle with "Переключитесь на Все курсы...")
   }
 
   return steps;

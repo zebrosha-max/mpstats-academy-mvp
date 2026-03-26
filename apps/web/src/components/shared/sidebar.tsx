@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -83,26 +83,6 @@ const billingNavItem: NavItem = {
   ),
 };
 
-function SidebarAvatar({ name, avatarUrl }: { name?: string | null; avatarUrl?: string | null }) {
-  const [imgError, setImgError] = useState(false);
-  const displayName = name || 'Пользователь';
-  const initials = displayName.slice(0, 2).toUpperCase();
-  const showFallback = !avatarUrl || imgError;
-
-  return showFallback ? (
-    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-mp-blue-500 to-mp-blue-600 text-white flex items-center justify-center text-body-sm font-semibold shadow-mp-sm flex-shrink-0">
-      {initials}
-    </div>
-  ) : (
-    <img
-      src={avatarUrl}
-      alt={displayName}
-      className="w-8 h-8 rounded-full object-cover ring-2 ring-mp-gray-100 flex-shrink-0"
-      onError={() => setImgError(true)}
-    />
-  );
-}
-
 export function Sidebar() {
   const pathname = usePathname();
   const { data: billingEnabled } = trpc.billing.isEnabled.useQuery(undefined, {
@@ -157,18 +137,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-
-      {/* User identity */}
-      {myProfile && (
-        <div className="px-4 pb-2">
-          <Link href="/profile" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-mp-gray-100 transition-all duration-200">
-            <SidebarAvatar name={myProfile.name} avatarUrl={myProfile.avatarUrl} />
-            <span className="text-body-sm font-medium text-mp-gray-700 truncate">
-              {myProfile.name || 'Пользователь'}
-            </span>
-          </Link>
-        </div>
-      )}
 
       {/* Footer */}
       <div className="p-4 border-t border-mp-gray-200 space-y-1">
