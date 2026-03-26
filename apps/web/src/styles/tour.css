@@ -106,16 +106,9 @@
   background: rgba(9, 16, 50, 0.55) !important;
 }
 
-/* Popover arrow — match white bg */
+/* Hide popover arrow — looks like a stray pixel on clean UI */
 .driver-popover-arrow {
-  border-color: #FFFFFF !important;
-}
-
-.driver-popover-arrow-side-left,
-.driver-popover-arrow-side-right,
-.driver-popover-arrow-side-top,
-.driver-popover-arrow-side-bottom {
-  background: #FFFFFF !important;
+  display: none !important;
 }
 
 /* Mobile override */
