@@ -362,7 +362,7 @@ export default function LessonPage() {
         {/* Left column: Video + Summary + Navigation */}
         <div className="lg:col-span-2 space-y-4">
           {/* Video player */}
-          <Card id="video-player" className="overflow-hidden shadow-mp-card">
+          <Card data-tour="lesson-video" id="video-player" className="overflow-hidden shadow-mp-card">
             <VideoPlayer
               ref={playerRef}
               videoId={lesson.videoId}
@@ -396,7 +396,7 @@ export default function LessonPage() {
 
           {/* Summary section — under video */}
           {(summaryLoading || summaryError || summaryData?.content) && (
-            <div className="space-y-2">
+            <div data-tour="lesson-summary" className="space-y-2">
               <h2 className="text-heading flex items-center gap-2 text-mp-gray-900">
                 <svg className="w-5 h-5 text-mp-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -465,7 +465,7 @@ export default function LessonPage() {
           </div>
 
           {/* Navigation */}
-          <div className="pt-4 border-t border-mp-gray-200 space-y-3">
+          <div data-tour="lesson-nav" className="pt-4 border-t border-mp-gray-200 space-y-3">
             {/* Complete button — full width on mobile, hidden on desktop */}
             {lesson.status !== 'COMPLETED' && (
               <div className="sm:hidden">
@@ -540,7 +540,7 @@ export default function LessonPage() {
 
         {/* Sidebar — Chat only (no tabs) */}
         <div className="space-y-4">
-          <Card className="h-[400px] lg:h-[500px] flex flex-col shadow-mp-card">
+          <Card data-tour="lesson-chat" className="h-[400px] lg:h-[500px] flex flex-col shadow-mp-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-heading flex items-center gap-2">
                 <svg className="w-5 h-5 text-mp-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -650,6 +650,9 @@ export default function LessonPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Comments section placeholder (Phase 35) — driver.js skips missing targets gracefully */}
+          <div data-tour="lesson-comments" />
         </div>
       </div>
       )}
