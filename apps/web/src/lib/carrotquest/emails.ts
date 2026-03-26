@@ -11,6 +11,18 @@ import { prisma } from '@mpstats/db/client';
  * then fires a CQ event (fire-and-forget). Errors are logged, never thrown.
  */
 
+/** Format Date as "DD.MM.YYYY HH:MM" in Moscow timezone for user-facing emails */
+function formatDateRu(date: Date): string {
+  return date.toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Moscow',
+  });
+}
+
 // --- Feature flag cache (avoid DB query on every email) ---
 
 let cachedEnabled: boolean | null = null;
@@ -48,7 +60,8 @@ export async function sendPaymentSuccessEmail(
     await cq.setUserProps(userId, {
       pa_amount: String(data.amount),
       pa_course_name: data.courseName ?? '',
-      pa_period_end: data.periodEnd.toISOString(),
+      pa_period_end: formatDateRu(data.periodEnd),
+      pa_period_end_tech: data.periodEnd.toISOString(),
     });
     await cq.trackEvent(userId, 'pa_payment_success');
 
@@ -85,7 +98,8 @@ export async function sendCancellationEmail(
 
     await cq.setUserProps(userId, {
       pa_course_name: data.courseName ?? '',
-      pa_access_until: data.accessUntil.toISOString(),
+      pa_access_until: formatDateRu(data.accessUntil),
+      pa_access_until_tech: data.accessUntil.toISOString(),
     });
     await cq.trackEvent(userId, 'pa_subscription_cancelled');
 
@@ -124,7 +138,8 @@ export async function sendSubscriptionExpiringEmail(
 
     await cq.setUserProps(userId, {
       pa_course_name: data.courseName ?? '',
-      pa_access_until: data.periodEnd.toISOString(),
+      pa_access_until: formatDateRu(data.periodEnd),
+      pa_access_until_tech: data.periodEnd.toISOString(),
     });
     await cq.trackEvent(userId, 'pa_subscription_expiring');
 

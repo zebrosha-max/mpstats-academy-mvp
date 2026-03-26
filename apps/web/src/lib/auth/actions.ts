@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { YandexProvider } from '@/lib/auth/oauth-providers';
-import { sendWelcomeEmail } from '@/lib/carrotquest/emails';
+
 
 export type AuthResult = {
   error?: string;
@@ -45,14 +45,7 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
     return { error: error.message };
   }
 
-  // Fire-and-forget welcome email via Carrot Quest
-  if (data.user) {
-    sendWelcomeEmail(data.user.id, {
-      name: name || '',
-      email,
-    }).catch((err) => console.error('[Email] Welcome email failed:', err));
-  }
-
+  // pa_registration_completed fires in auth/callback/route.ts after DOI confirmation
   return { success: true };
 }
 

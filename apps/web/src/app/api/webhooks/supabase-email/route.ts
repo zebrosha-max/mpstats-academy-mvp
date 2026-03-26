@@ -81,7 +81,9 @@ export async function POST(request: NextRequest) {
     const { email_action_type, token_hash, redirect_to, site_url } = email_data;
 
     // Build confirmation URL that Supabase expects the user to visit
-    const confirmUrl = `${site_url || process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to || '')}`;
+    // site_url from Supabase already ends with /auth/v1, so append only /verify
+    const base = site_url || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`;
+    const confirmUrl = `${base}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to || '')}`;
 
     switch (email_action_type) {
       case 'signup': {
