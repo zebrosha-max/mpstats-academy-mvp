@@ -48,6 +48,181 @@ interface ChatMessage {
   }>;
 }
 
+/** Mobile-only tabbed container for AI-chat and Comments */
+function MobileChatCommentsTabs({
+  lessonId,
+  lesson,
+  chatMessages,
+  chatMutation,
+  chatInput,
+  setChatInput,
+  handleSendMessage,
+  handleKeyPress,
+  chatContainerRef,
+  handleTimecodeClick,
+}: {
+  lessonId: string;
+  lesson: { videoId: string | null };
+  chatMessages: ChatMessage[];
+  chatMutation: { isPending: boolean };
+  chatInput: string;
+  setChatInput: (v: string) => void;
+  handleSendMessage: () => void;
+  handleKeyPress: (e: React.KeyboardEvent) => void;
+  chatContainerRef: React.RefObject<HTMLDivElement>;
+  handleTimecodeClick: (seconds: number) => void;
+}) {
+  const [activeTab, setActiveTab] = useState<'chat' | 'comments'>('chat');
+
+  // Fetch comment count for tab label
+  const { data: commentsData } = trpc.comments.list.useInfiniteQuery(
+    { lessonId },
+    { getNextPageParam: (last) => last?.nextCursor }
+  );
+  const commentCount = commentsData?.pages[0]?.totalCount ?? 0;
+
+  return (
+    <div className="lg:hidden mt-6">
+      {/* Tab buttons */}
+      <div className="flex border-b border-mp-gray-200 mb-4">
+        <button
+          className={cn(
+            'flex-1 pb-2 text-sm font-medium text-center transition-colors border-b-2',
+            activeTab === 'chat'
+              ? 'border-mp-blue-600 text-mp-blue-600'
+              : 'border-transparent text-mp-gray-500 hover:text-mp-gray-700'
+          )}
+          onClick={() => setActiveTab('chat')}
+        >
+          AI-чат
+        </button>
+        <button
+          className={cn(
+            'flex-1 pb-2 text-sm font-medium text-center transition-colors border-b-2',
+            activeTab === 'comments'
+              ? 'border-mp-blue-600 text-mp-blue-600'
+              : 'border-transparent text-mp-gray-500 hover:text-mp-gray-700'
+          )}
+          onClick={() => setActiveTab('comments')}
+        >
+          Комментарии ({commentCount})
+        </button>
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'chat' && (
+        <Card data-tour="lesson-chat-mobile" className="h-[400px] flex flex-col shadow-mp-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-heading flex items-center gap-2">
+              <svg className="w-5 h-5 text-mp-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+              Задайте вопрос по уроку
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col min-h-0">
+            {/* Messages */}
+            <div
+              ref={chatContainerRef}
+              className="flex-1 overflow-y-auto space-y-3 mb-3"
+            >
+              {chatMessages.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-mp-gray-400 text-body-sm text-center p-4">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-mp-gray-100 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-7 h-7 text-mp-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <p className="text-body-sm">Спросите что угодно по материалу урока</p>
+                    <p className="text-xs text-mp-gray-400 mt-1">AI найдёт ответ в транскрипте</p>
+                  </div>
+                </div>
+              ) : (
+                chatMessages.map((msg, idx) => (
+                  <div key={idx} className={cn(
+                    'rounded-lg p-3 text-body-sm',
+                    msg.role === 'user'
+                      ? 'bg-mp-blue-50 text-mp-blue-900 ml-4'
+                      : 'bg-mp-gray-100 text-mp-gray-800 mr-4'
+                  )}>
+                    <SafeMarkdown
+                      content={msg.content}
+                      className="prose prose-sm max-w-none"
+                      sources={msg.sources}
+                      onSourceSeek={handleTimecodeClick}
+                      disableSourceLinks={!lesson.videoId}
+                    />
+                    {msg.sources && msg.sources.length > 0 && (
+                      <div className="border-t border-mp-gray-200 mt-2 pt-2">
+                        <p className="text-xs text-mp-gray-500">Источники:</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {msg.sources.map((src, i) => (
+                            <span key={src.id} className="inline-flex items-center gap-1 text-xs">
+                              <span className="text-mp-blue-600 font-medium">[{i+1}]</span>
+                              <TimecodeLink
+                                startSeconds={src.timecode_start}
+                                formattedTime={src.timecodeFormatted}
+                                onSeek={handleTimecodeClick}
+                                disabled={!lesson.videoId}
+                              />
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+
+              {/* Loading indicator */}
+              {chatMutation.isPending && (
+                <div className="bg-mp-gray-100 rounded-lg p-3 mr-4">
+                  <div className="flex items-center gap-2 text-body-sm text-mp-gray-600">
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    AI думает...
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="pt-2 border-t border-mp-gray-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Задайте вопрос по уроку..."
+                  disabled={chatMutation.isPending}
+                  className="flex-1 px-3 py-2 border border-mp-gray-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-mp-blue-500 focus:border-transparent disabled:bg-mp-gray-50 disabled:text-mp-gray-400"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!chatInput.trim() || chatMutation.isPending}
+                  size="sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {activeTab === 'comments' && (
+        <CommentSection lessonId={lessonId} />
+      )}
+    </div>
+  );
+}
+
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
@@ -538,14 +713,12 @@ export default function LessonPage() {
             </div>
           </div>
 
-          {/* Comments — mobile only */}
-          <div className="lg:hidden mt-6">
-            <CommentSection lessonId={lessonId} />
-          </div>
+          {/* Mobile tabs: AI-chat + Comments */}
+          <MobileChatCommentsTabs lessonId={lessonId} lesson={lesson} chatMessages={chatMessages} chatMutation={chatMutation} chatInput={chatInput} setChatInput={setChatInput} handleSendMessage={handleSendMessage} handleKeyPress={handleKeyPress} chatContainerRef={chatContainerRef} handleTimecodeClick={handleTimecodeClick} />
         </div>
 
-        {/* Sidebar — Chat only (no tabs) */}
-        <div className="space-y-4">
+        {/* Sidebar — Chat only (no tabs), desktop only */}
+        <div className="hidden lg:block space-y-4">
           <Card data-tour="lesson-chat" className="h-[400px] flex flex-col shadow-mp-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-heading flex items-center gap-2">
@@ -657,10 +830,8 @@ export default function LessonPage() {
             </CardContent>
           </Card>
 
-          {/* Comments — desktop only */}
-          <div className="hidden lg:block">
-            <CommentSection lessonId={lessonId} />
-          </div>
+          {/* Comments — desktop only (parent div is already hidden on mobile) */}
+          <CommentSection lessonId={lessonId} />
         </div>
       </div>
       )}

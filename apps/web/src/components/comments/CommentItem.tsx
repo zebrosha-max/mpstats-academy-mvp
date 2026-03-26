@@ -59,11 +59,19 @@ interface CommentData {
   replies: ReplyData[];
 }
 
+interface CurrentUser {
+  id: string;
+  name: string | null;
+  avatarUrl: string | null;
+  role: string;
+}
+
 interface CommentItemProps {
   comment: CommentData;
   currentUserId: string;
   currentUserRole: string;
   isReply?: boolean;
+  currentUser?: CurrentUser;
 }
 
 function Avatar({ user, size = 'md' }: { user: CommentUser; size?: 'md' | 'sm' }) {
@@ -87,7 +95,7 @@ function Avatar({ user, size = 'md' }: { user: CommentUser; size?: 'md' | 'sm' }
   );
 }
 
-export function CommentItem({ comment, currentUserId, currentUserRole, isReply = false }: CommentItemProps) {
+export function CommentItem({ comment, currentUserId, currentUserRole, isReply = false, currentUser }: CommentItemProps) {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const utils = trpc.useUtils();
 
@@ -234,6 +242,7 @@ export function CommentItem({ comment, currentUserId, currentUserRole, isReply =
             parentId={comment.id}
             autoFocus
             onCancel={() => setShowReplyInput(false)}
+            currentUser={currentUser}
           />
         </div>
       )}

@@ -8,15 +8,23 @@ import { toast } from 'sonner';
 
 const MAX_LENGTH = 1500;
 
+interface CurrentUser {
+  id: string;
+  name: string | null;
+  avatarUrl: string | null;
+  role: string;
+}
+
 interface CommentInputProps {
   lessonId: string;
   parentId?: string;
   onCancel?: () => void;
   autoFocus?: boolean;
   onSuccess?: () => void;
+  currentUser?: CurrentUser;
 }
 
-export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSuccess }: CommentInputProps) {
+export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSuccess, currentUser }: CommentInputProps) {
   const [content, setContent] = useState('');
   const utils = trpc.useUtils();
 
@@ -35,11 +43,16 @@ export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSucces
         const optimisticComment = {
           id: `optimistic-${Date.now()}`,
           lessonId,
-          userId: 'optimistic-user',
+          userId: currentUser?.id ?? 'optimistic-user',
           content: newComment.content,
           parentId: newComment.parentId ?? null,
           createdAt: new Date(),
-          user: { id: 'optimistic-user', name: null, avatarUrl: null, role: 'USER' as const },
+          user: {
+            id: currentUser?.id ?? 'optimistic-user',
+            name: currentUser?.name ?? null,
+            avatarUrl: currentUser?.avatarUrl ?? null,
+            role: (currentUser?.role ?? 'USER') as 'USER' | 'ADMIN' | 'SUPERADMIN',
+          },
           replies: [],
         };
 

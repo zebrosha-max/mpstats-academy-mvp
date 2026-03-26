@@ -26,6 +26,12 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
 
   const currentUserId = profile?.id ?? '';
   const currentUserRole = profile?.role ?? 'USER';
+  const currentUser = profile ? {
+    id: profile.id,
+    name: profile.name ?? null,
+    avatarUrl: profile.avatarUrl ?? null,
+    role: profile.role ?? 'USER',
+  } : undefined;
   const totalCount = data?.pages[0]?.totalCount ?? 0;
   const allComments = data?.pages.flatMap((p) => p?.comments ?? []) ?? [];
 
@@ -38,7 +44,7 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
 
       {/* Input for new root comment */}
       <div className="mb-4">
-        <CommentInput lessonId={lessonId} />
+        <CommentInput lessonId={lessonId} currentUser={currentUser} />
       </div>
 
       {/* Loading state */}
@@ -76,6 +82,7 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
                 comment={comment}
                 currentUserId={currentUserId}
                 currentUserRole={currentUserRole}
+                currentUser={currentUser}
               />
             </div>
           ))}
