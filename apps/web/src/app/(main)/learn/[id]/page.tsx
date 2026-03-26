@@ -20,6 +20,49 @@ import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
 import { CommentSection } from '@/components/comments/CommentSection';
 import { cn } from '@/lib/utils';
 
+/** Collapsed footnotes for summary sources — only shows cited references */
+function CollapsibleFootnotes({
+  sources,
+  onSeek,
+  hasVideo,
+}: {
+  sources: Array<{ originalIndex: number; id: string; content: string; timecode_start: number; timecodeFormatted: string }>;
+  onSeek: (seconds: number) => void;
+  hasVideo: boolean;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="border-t border-mp-gray-200 pt-3 mt-4">
+      <button
+        type="button"
+        onClick={() => setExpanded(prev => !prev)}
+        className="flex items-center gap-1.5 text-xs font-medium text-mp-gray-500 hover:text-mp-gray-700 transition-colors"
+      >
+        <svg className={cn("w-3 h-3 transition-transform", expanded && "rotate-90")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+        Источники ({sources.length})
+      </button>
+      {expanded && (
+        <div className="space-y-1 mt-2 animate-fade-in">
+          {sources.map((source) => (
+            <div key={source.id} className="flex items-start gap-2 text-xs text-mp-gray-600">
+              <span className="text-mp-blue-600 font-semibold shrink-0">[{source.originalIndex}]</span>
+              <span className="flex-1 line-clamp-1">{source.content.slice(0, 80)}...</span>
+              <TimecodeLink
+                startSeconds={source.timecode_start}
+                formattedTime={source.timecodeFormatted}
+                onSeek={onSeek}
+                disabled={!hasVideo}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const CATEGORY_LABELS: Record<string, string> = {
   ANALYTICS: 'Аналитика',
   MARKETING: 'Маркетинг',
@@ -595,26 +638,18 @@ export default function LessonPage() {
                   disableSourceLinks={!lesson.videoId}
                 />
 
-                {/* Footnotes block */}
-                {summaryData?.sources && summaryData.sources.length > 0 && (
-                  <div className="border-t border-mp-gray-200 pt-3 mt-4">
-                    <p className="text-xs font-medium text-mp-gray-500 mb-2">Источники:</p>
-                    <div className="space-y-1">
-                      {summaryData.sources.map((source, idx) => (
-                        <div key={source.id} className="flex items-start gap-2 text-xs text-mp-gray-600">
-                          <span className="text-mp-blue-600 font-semibold shrink-0">[{idx + 1}]</span>
-                          <span className="flex-1 line-clamp-1">{source.content.slice(0, 80)}...</span>
-                          <TimecodeLink
-                            startSeconds={source.timecode_start}
-                            formattedTime={source.timecodeFormatted}
-                            onSeek={handleTimecodeClick}
-                            disabled={!lesson.videoId}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Footnotes block — only sources actually cited in the text, collapsed by default */}
+                {summaryData?.sources && summaryData.sources.length > 0 && (() => {
+                  // Filter: only show sources that are actually referenced as [N] in the summary text
+                  const citedSources = summaryData.sources
+                    .map((source, idx) => ({ ...source, originalIndex: idx + 1 }))
+                    .filter((_, idx) => {
+                      const ref = `[${idx + 1}]`;
+                      return summaryData.content?.includes(ref);
+                    });
+                  if (citedSources.length === 0) return null;
+                  return <CollapsibleFootnotes sources={citedSources} onSeek={handleTimecodeClick} hasVideo={!!lesson.videoId} />;
+                })()}
               </CollapsibleSummary>
             </div>
           )}
@@ -639,6 +674,9 @@ export default function LessonPage() {
               </Badge>
             </div>
           </div>
+
+          {/* Mobile tabs: AI-chat + Comments — ABOVE navigation */}
+          <MobileChatCommentsTabs lessonId={lessonId} lesson={lesson} chatMessages={chatMessages} chatMutation={chatMutation} chatInput={chatInput} setChatInput={setChatInput} handleSendMessage={handleSendMessage} handleKeyPress={handleKeyPress} chatContainerRef={chatContainerRef} handleTimecodeClick={handleTimecodeClick} />
 
           {/* Navigation */}
           <div data-tour="lesson-nav" className="pt-4 border-t border-mp-gray-200 space-y-3">
@@ -712,9 +750,6 @@ export default function LessonPage() {
               )}
             </div>
           </div>
-
-          {/* Mobile tabs: AI-chat + Comments */}
-          <MobileChatCommentsTabs lessonId={lessonId} lesson={lesson} chatMessages={chatMessages} chatMutation={chatMutation} chatInput={chatInput} setChatInput={setChatInput} handleSendMessage={handleSendMessage} handleKeyPress={handleKeyPress} chatContainerRef={chatContainerRef} handleTimecodeClick={handleTimecodeClick} />
         </div>
 
         {/* Sidebar — Chat only (no tabs), desktop only */}
