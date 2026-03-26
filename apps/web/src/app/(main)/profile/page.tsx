@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,52 @@ import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc/client';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase/client';
+
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const AVATAR_MAX_DIM = 256;
+
+/**
+ * Resize and crop image to square webp via canvas.
+ * Returns a Blob ready for upload.
+ */
+function resizeImageToWebp(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const size = Math.min(img.width, img.height);
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = AVATAR_MAX_DIM;
+      canvas.height = AVATAR_MAX_DIM;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { reject(new Error('Canvas not supported')); return; }
+
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, AVATAR_MAX_DIM, AVATAR_MAX_DIM);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { reject(new Error('toBlob failed')); return; }
+          resolve(blob);
+        },
+        'image/webp',
+        0.85,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+    img.src = url;
+  });
+}
+
+/** Extract storage path from a Supabase public URL */
+function extractAvatarPath(publicUrl: string): string | null {
+  const match = publicUrl.match(/\/avatars\/(.+)$/);
+  return match ? match[1] : null;
+}
 
 const formatDate = (date: string | Date) =>
   new Date(date).toLocaleDateString('ru-RU');
@@ -33,6 +80,10 @@ export default function ProfilePage() {
   const [name, setName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [cancelMessage, setCancelMessage] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: profile, refetch } = trpc.profile.get.useQuery();
   const { data: skillProfile } = trpc.profile.getSkillProfile.useQuery();
@@ -74,11 +125,94 @@ export default function ProfilePage() {
     },
   });
 
+  const deleteAvatarMutation = trpc.profile.deleteAvatar.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
   const handleSave = () => {
     if (!name.trim()) return;
     setIsSaving(true);
     updateProfile.mutate({ name });
   };
+
+  const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset input so same file can be re-selected
+    if (fileInputRef.current) fileInputRef.current.value = '';
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast.error('Неверный формат', { description: 'Загрузите JPG, PNG или WebP' });
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error('Файл слишком большой', { description: 'Максимум 2 МБ' });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const blob = await resizeImageToWebp(file);
+      const localUrl = URL.createObjectURL(blob);
+      setAvatarPreview(localUrl);
+
+      const userId = profile?.id;
+      if (!userId) throw new Error('Profile not loaded');
+
+      const supabase = createClient();
+      const timestamp = Date.now();
+      const path = `${userId}/${timestamp}.webp`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(path, blob, { contentType: 'image/webp', upsert: false });
+
+      if (uploadError) {
+        toast.error('Ошибка загрузки', { description: uploadError.message });
+        setAvatarPreview(null);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+      await updateProfile.mutateAsync({ avatarUrl: urlData.publicUrl });
+      toast.success('Фото обновлено');
+      refetch();
+    } catch (err: any) {
+      toast.error('Ошибка загрузки', { description: err.message || 'Попробуйте ещё раз' });
+      setAvatarPreview(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!profile?.avatarUrl) return;
+    setIsDeleting(true);
+    try {
+      const path = extractAvatarPath(profile.avatarUrl);
+      if (path) {
+        const supabase = createClient();
+        await supabase.storage.from('avatars').remove([path]);
+        await deleteAvatarMutation.mutateAsync({ path });
+      } else {
+        // No path extracted — just clear DB
+        await updateProfile.mutateAsync({ avatarUrl: null });
+      }
+      setAvatarPreview(null);
+      toast.success('Фото удалено');
+      refetch();
+    } catch (err: any) {
+      toast.error('Ошибка удаления', { description: err.message || 'Попробуйте ещё раз' });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const currentAvatarUrl = avatarPreview || profile?.avatarUrl;
+  const avatarInitial = profile?.name?.charAt(0)?.toUpperCase() || 'U';
 
   const handleCancelSubscription = () => {
     if (!confirm('Вы уверены, что хотите отменить подписку? Доступ сохранится до конца оплаченного периода.')) {
@@ -101,6 +235,74 @@ export default function ProfilePage() {
       <div className="grid md:grid-cols-3 gap-6">
         {/* Left column */}
         <div className="md:col-span-2 space-y-6">
+          {/* Avatar upload */}
+          <Card className="shadow-mp-card">
+            <CardHeader>
+              <CardTitle className="text-heading">Фото профиля</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-6">
+                {/* Avatar preview */}
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-mp-blue-500 to-mp-blue-600 flex items-center justify-center shrink-0">
+                  {currentAvatarUrl ? (
+                    <Image
+                      src={currentAvatarUrl}
+                      alt="Аватар"
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <span className="text-white text-2xl font-semibold">{avatarInitial}</span>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading || isDeleting}
+                      size="sm"
+                    >
+                      {isUploading ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Загрузка...
+                        </>
+                      ) : (
+                        'Загрузить фото'
+                      )}
+                    </Button>
+                    {profile?.avatarUrl && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={handleDeleteAvatar}
+                        disabled={isUploading || isDeleting}
+                      >
+                        {isDeleting ? 'Удаление...' : 'Удалить'}
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-body-xs text-mp-gray-500">JPG, PNG или WebP, до 2 МБ</p>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleAvatarSelect}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Profile info */}
           <Card className="shadow-mp-card">
             <CardHeader>
@@ -373,10 +575,19 @@ export default function ProfilePage() {
           <Card variant="soft-blue" className="shadow-mp-card">
             <CardContent className="py-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-mp-blue-500 to-mp-blue-600 flex items-center justify-center">
-                  <span className="text-white font-semibold">
-                    {profile?.name?.charAt(0)?.toUpperCase() || 'U'}
-                  </span>
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-mp-blue-500 to-mp-blue-600 flex items-center justify-center">
+                  {currentAvatarUrl ? (
+                    <Image
+                      src={currentAvatarUrl}
+                      alt="Аватар"
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <span className="text-white font-semibold">{avatarInitial}</span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-mp-gray-900 truncate">
