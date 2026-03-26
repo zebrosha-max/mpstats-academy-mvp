@@ -1,78 +1,126 @@
-/* MPSTATS Brand CSS overrides for driver.js */
+/* MPSTATS Brand CSS overrides for driver.js
+   Using !important to override driver.js default inline/specificity styles */
 
 .driver-popover {
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 15px -3px rgba(9, 16, 50, 0.1), 0 4px 6px -4px rgba(9, 16, 50, 0.1);
-  max-width: 340px;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background: #FFFFFF !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  box-shadow: 0 10px 15px -3px rgba(9, 16, 50, 0.1), 0 4px 6px -4px rgba(9, 16, 50, 0.1) !important;
+  max-width: 340px !important;
+  font-family: Inter, system-ui, -apple-system, sans-serif !important;
 }
 
 .driver-popover-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.5;
-  color: #111827;
-  margin-bottom: 8px;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  color: #111827 !important;
+  margin-bottom: 8px !important;
 }
 
 .driver-popover-description {
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #6B7280;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: #6B7280 !important;
 }
 
 .driver-popover-progress-text {
-  font-size: 0.75rem;
-  color: #9CA3AF;
+  font-size: 0.75rem !important;
+  color: #9CA3AF !important;
 }
 
+/* "Далее" and "Готово" buttons — mp-blue filled */
 .driver-popover-next-btn,
-.driver-popover-close-btn-inside {
-  background: #2C4FF8;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 200ms;
+.driver-popover-done-btn {
+  background: #2C4FF8 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background 200ms !important;
+  text-shadow: none !important;
 }
 
-.driver-popover-next-btn:hover {
-  background: #233FC6;
+.driver-popover-next-btn:hover,
+.driver-popover-done-btn:hover {
+  background: #233FC6 !important;
 }
 
+/* "Назад" button — transparent with mp-blue text */
 .driver-popover-prev-btn {
-  background: transparent;
-  color: #2C4FF8;
-  border: none;
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
+  background: transparent !important;
+  color: #2C4FF8 !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 200ms !important;
+  text-shadow: none !important;
 }
 
+.driver-popover-prev-btn:hover {
+  background: #F3F4F6 !important;
+  border-color: #2C4FF8 !important;
+}
+
+/* Close button (×) — subtle gray, hover mp-blue */
 .driver-popover-close-btn {
-  color: #9CA3AF;
-  font-size: 0.875rem;
+  color: #9CA3AF !important;
+  font-size: 1.25rem !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  transition: all 200ms !important;
 }
 
 .driver-popover-close-btn:hover {
-  color: #4B5563;
+  color: #2C4FF8 !important;
+  background: #EEF2FF !important;
 }
 
+/* Footer area — align buttons nicely */
+.driver-popover-footer {
+  margin-top: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+/* Overlay */
 .driver-overlay {
-  background: rgba(9, 16, 50, 0.55);
+  background: rgba(9, 16, 50, 0.55) !important;
+}
+
+/* Popover arrow — match white bg */
+.driver-popover-arrow {
+  border-color: #FFFFFF !important;
+}
+
+.driver-popover-arrow-side-left,
+.driver-popover-arrow-side-right,
+.driver-popover-arrow-side-top,
+.driver-popover-arrow-side-bottom {
+  background: #FFFFFF !important;
 }
 
 /* Mobile override */
 @media (max-width: 767px) {
   .driver-popover {
-    max-width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px) !important;
   }
 }
