@@ -42,21 +42,32 @@
 
 ### Previous Session (2026-03-26, session 2)
 
-**Phase 36 — Product Tour / Onboarding (code complete, tested locally):**
+**Phase 36 — Product Tour / Onboarding (complete, tested locally):**
 - driver.js интегрирован, 3 tooltip-тура: Dashboard (4 шага), Learn (5 шагов), Lesson (5 шагов)
 - TourProvider + HelpCircleButton в main layout, auto-start 1.5s delay, localStorage persistence
 - 14 data-tour атрибутов на 5 файлах (sidebar, mobile-nav, dashboard, learn, lesson)
-- 7/8 автотестов PASS, 1 (mobile viewport) требует ручной проверки
-- 2 бага исправлены: TourProvider scope (header outside context), onDestroyStarted infinite loop
-- CSS overrides загружены (40 rules), но визуально стандартный driver.js стиль — cosmetic issue
-- Phase 35 (Comments) не реализована → `lesson-comments` data-tour атрибут отсутствует, driver.js gracefully пропускает
+- 7/8 автотестов PASS через browser automation
+- Баги найдены и исправлены при тестировании:
+  - TourProvider scope — был внутри `<main>`, HelpCircleButton в header → moved to wrap header+main
+  - `onDestroyStarted` + `destroy()` = бесконечный цикл → заменён на `onDestroyed`
+  - CSS overrides не перебивали дефолтный driver.js → добавлен `!important` на все правила
+  - Popover arrow — некрасивый пиксель-указатель → `display: none`
+  - Learn step 5 "Добавить в трек" — кнопка + отсутствует на "Мой трек" → динамический step (проверяет DOM)
+  - Learn step 4 "Секции трека" — добавлены объяснения секций (ошибки/углубление/развитие/продвинутый)
+
+**UX fixes (найдены при тестировании Phase 36):**
+- Mobile nav overflow — "Помощь" торчала за viewport → padding px-3→px-1.5, text-[10px], truncate
+- Admin mobile nav — не было навигации на мобилке → добавлен mobile header bar + drawer menu + "Назад"
 
 **Ключевые файлы Phase 36:**
-- `apps/web/src/lib/tours/definitions.ts` — 3 tour definitions, 14 steps, mobile adaptation
+- `apps/web/src/lib/tours/definitions.ts` — 3 tour definitions, 14 steps, dynamic learn step 5
 - `apps/web/src/components/shared/TourProvider.tsx` — React context + driver.js orchestration
 - `apps/web/src/components/shared/HelpCircleButton.tsx` — conditional help button
-- `apps/web/src/styles/tour.css` — MPSTATS brand CSS overrides
+- `apps/web/src/styles/tour.css` — MPSTATS brand CSS overrides (all !important)
 - `apps/web/src/app/(main)/layout.tsx` — TourProvider wraps header+main
+- `apps/web/src/components/shared/mobile-nav.tsx` — compact mobile nav (7 items fit)
+- `apps/web/src/components/admin/AdminSidebar.tsx` — mobile header + drawer nav
+- `apps/web/src/app/(admin)/layout.tsx` — desktop header hidden on mobile
 
 ### Previous Session (2026-03-26)
 
