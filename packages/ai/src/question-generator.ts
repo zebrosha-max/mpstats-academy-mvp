@@ -8,7 +8,7 @@
 
 import type { DiagnosticQuestion, SkillCategory } from '@mpstats/shared';
 import { openrouter, MODELS } from './openrouter';
-import { supabase } from './retrieval';
+import { prisma } from '@mpstats/db/client';
 import {
   generatedQuestionsArraySchema,
   questionJsonSchema,
@@ -303,20 +303,25 @@ async function fetchRandomChunks(
   coursePrefixes: string[],
   limit: number
 ): Promise<Array<{ id: string; content: string; lesson_id: string; timecode_start: number; timecode_end: number }>> {
-  // Build OR filter for multiple prefixes
-  const orFilter = coursePrefixes
-    .map((prefix) => `lesson_id.like.${prefix}%`)
-    .join(',');
+  // Build OR filter for multiple prefixes using Prisma raw SQL (direct TCP)
+  // PostgREST (Supabase client) times out on large content_chunk queries
+  const likeConditions = coursePrefixes
+    .map((prefix) => `lesson_id LIKE '${prefix}%'`)
+    .join(' OR ');
 
-  const { data, error } = await supabase
-    .from('content_chunk')
-    .select('id, content, lesson_id, timecode_start, timecode_end')
-    .or(orFilter)
-    .limit(limit);
-
-  if (error) {
-    throw new Error(`Supabase query failed: ${error.message}`);
-  }
+  const data = await prisma.$queryRawUnsafe<Array<{
+    id: string;
+    content: string;
+    lesson_id: string;
+    timecode_start: number;
+    timecode_end: number;
+  }>>(`
+    SELECT id::text, content::text, lesson_id::text, timecode_start::int, timecode_end::int
+    FROM content_chunk
+    WHERE ${likeConditions}
+    ORDER BY RANDOM()
+    LIMIT ${limit}
+  `);
 
   return data || [];
 }

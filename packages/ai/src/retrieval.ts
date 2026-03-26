@@ -8,31 +8,8 @@ import 'server-only';
  * because PostgREST times out on vector searches with large result sets.
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { prisma } from '@mpstats/db/client';
 import { embedQuery } from './embeddings';
-
-// Lazy-initialized Supabase client (still used for getChunksForLesson)
-let _supabase: SupabaseClient | null = null;
-
-function getSupabaseClient(): SupabaseClient {
-  if (!_supabase) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
-    }
-    _supabase = createClient(supabaseUrl, supabaseKey);
-  }
-  return _supabase;
-}
-
-/** @deprecated Use getSupabaseClient() for lazy initialization */
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_target, prop) {
-    return (getSupabaseClient() as any)[prop];
-  },
-});
 
 // Types
 export interface ChunkSearchResult {
@@ -101,19 +78,27 @@ export async function searchChunks(
 export async function getChunksForLesson(
   lessonId: string
 ): Promise<ChunkSearchResult[]> {
-  const { data, error } = await supabase
-    .from('content_chunk')
-    .select('id, lesson_id, content, timecode_start, timecode_end')
-    .eq('lesson_id', lessonId)
-    .order('timecode_start', { ascending: true });
+  // Use Prisma raw SQL (direct TCP) instead of Supabase PostgREST
+  // PostgREST times out on lessons with many chunks (TypeError: terminated)
+  const results = await prisma.$queryRaw<Array<{
+    id: string;
+    lesson_id: string;
+    content: string;
+    timecode_start: number;
+    timecode_end: number;
+  }>>`
+    SELECT
+      id::text as id,
+      lesson_id::text as lesson_id,
+      content::text as content,
+      timecode_start::int as timecode_start,
+      timecode_end::int as timecode_end
+    FROM content_chunk
+    WHERE lesson_id = ${lessonId}
+    ORDER BY timecode_start ASC
+  `;
 
-  if (error) {
-    console.error('Get chunks error:', error);
-    throw new Error(`Failed to get chunks: ${error.message}`);
-  }
-
-  // Add similarity: 1.0 since these are exact matches
-  return (data || []).map((chunk) => ({
+  return results.map((chunk) => ({
     ...chunk,
     similarity: 1.0,
   }));

@@ -15,7 +15,7 @@ export type { ModelType } from './openrouter';
 export { embedQuery, embedBatch, EMBEDDING_DIMS } from './embeddings';
 
 // Retrieval service
-export { searchChunks, getChunksForLesson, formatTimecode, supabase } from './retrieval';
+export { searchChunks, getChunksForLesson, formatTimecode } from './retrieval';
 export type { ChunkSearchResult, SearchOptions } from './retrieval';
 
 // Generation service
