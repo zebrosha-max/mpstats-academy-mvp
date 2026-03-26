@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     switch (email_action_type) {
       case 'signup': {
         await cq.setUserProps(user.id, {
-          pa_name: user.user_metadata?.name || user.email || '',
+          pa_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || '',
           pa_doi: confirmUrl,
         });
         await cq.trackEvent(user.id, 'pa_doi');
