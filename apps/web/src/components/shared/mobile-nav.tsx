@@ -104,8 +104,8 @@ export function MobileNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-mp-gray-200 md:hidden z-50 shadow-mp-lg" data-tour="mobile-nav">
-      <div className="flex justify-around py-2 safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-mp-gray-200 md:hidden z-50 shadow-mp-lg overflow-x-auto" data-tour="mobile-nav">
+      <div className="flex justify-around py-2 safe-area-pb min-w-0">
         {items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
@@ -114,7 +114,7 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-all duration-200',
+                'flex flex-col items-center gap-0.5 px-1.5 py-1.5 rounded-lg transition-all duration-200 min-w-0 shrink-0',
                 isActive
                   ? 'text-mp-blue-600'
                   : 'text-mp-gray-400 active:text-mp-gray-600'
@@ -127,7 +127,7 @@ export function MobileNav() {
                 {item.icon}
               </span>
               <span className={cn(
-                'text-caption font-medium',
+                'text-[10px] leading-tight font-medium truncate max-w-[56px]',
                 isActive && 'text-mp-blue-600'
               )}>
                 {item.title}
