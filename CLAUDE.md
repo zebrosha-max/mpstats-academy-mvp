@@ -2,7 +2,45 @@
 
 **Last updated:** 2026-03-26
 
-## Last Session (2026-03-26, session 2)
+## Last Session (2026-03-26, session 3)
+
+**Phase 35 — Lesson Comments (complete, tested locally):**
+- GSD workflow: discuss → UI-SPEC → plan → execute (2 plans, 2 waves)
+- Prisma `LessonComment` модель с self-relation `parentId` для 1-уровневого threading
+- tRPC `comments` router: list (пагинация 20, replies вложены, author profile), create, delete (свои + admin)
+- 3 компонента: `CommentSection`, `CommentItem`, `CommentInput`
+- Desktop: комментарии под AI-чатом в правой колонке (scrollable)
+- Mobile: табы "AI-чат" / "Комментарии (N)" НАД кнопками навигации
+- Optimistic updates с реальным профилем пользователя (name + avatar)
+- Ответы всегда раскрыты с отступом, новые сверху, AlertDialog на удаление
+- UI-SPEC: plain text, 1500 символов макс, русские таймстампы ("5 мин назад")
+
+**RAG fix — Supabase PostgREST → Prisma TCP:**
+- `getChunksForLesson` таймаутила на длинных уроках (TypeError: terminated)
+- Причина: Supabase PostgREST HTTP connection timeout при большом кол-ве chunks
+- Фикс: переведена на Prisma `$queryRaw` (прямой TCP к PostgreSQL)
+- Также `fetchRandomChunks` в question-generator.ts переведён на Prisma
+- Supabase client полностью убран из retrieval.ts (мёртвый код)
+
+**ENV alignment — локал = прод:**
+- `.env` перезаписан: `google/gemini-2.5-flash` → `qwen/qwen3.5-flash-02-23`
+- Fallback: `openai/gpt-4o-mini` → `openai/gpt-4.1-nano`
+
+**Summary footnotes UX:**
+- Источники свёрнуты по дефолту (CollapsibleFootnotes)
+- Показываются только реально цитированные в тексте (например [1], [3], [7]), не все chunks
+
+**Ключевые файлы Phase 35:**
+- `packages/db/prisma/schema.prisma` — LessonComment модель
+- `packages/api/src/routers/comments.ts` — tRPC router
+- `packages/api/src/root.ts` — router registration
+- `apps/web/src/components/comments/CommentSection.tsx` — основной компонент
+- `apps/web/src/components/comments/CommentItem.tsx` — отдельный комментарий
+- `apps/web/src/components/comments/CommentInput.tsx` — поле ввода
+- `apps/web/src/app/(main)/learn/[id]/page.tsx` — интеграция + mobile tabs + footnotes
+- `packages/ai/src/retrieval.ts` — RAG fix (Prisma instead of Supabase)
+
+### Previous Session (2026-03-26, session 2)
 
 **Phase 36 — Product Tour / Onboarding (code complete, tested locally):**
 - driver.js интегрирован, 3 tooltip-тура: Dashboard (4 шага), Learn (5 шагов), Lesson (5 шагов)
