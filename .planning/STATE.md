@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to plan
-stopped_at: Phase 41 context gathered
-last_updated: "2026-03-27T12:07:57.532Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 41-01-PLAN.md
+last_updated: "2026-03-27T12:19:53.325Z"
 progress:
   total_phases: 27
-  completed_phases: 20
-  total_plans: 45
-  completed_plans: 42
+  completed_phases: 21
+  total_plans: 46
+  completed_plans: 43
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 40 — navigation-filters
+**Current focus:** Phase 41 — pricing-logo-ux
 
 ## Current Position
 
-Phase: 41
-Plan: Not started
+Phase: 41 (pricing-logo-ux) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -131,6 +131,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 40]: Server-side email sanitization in comments (not frontend) to prevent any leak path
 - [Phase 40]: router.replace for URL filter state (no history pollution)
 - [Phase 40]: Session-scoped useRef<Set> guard for one-time auto-start effects (tour)
+- [Phase 41]: COURSE_AXIS_MAP hardcoded mapping (no DB query) since course-to-axis relationship is stable
 
 ### Blockers/Concerns
 
@@ -204,11 +205,12 @@ None.
 | Phase 39 P01 | 5min | 2 tasks | 5 files |
 | Phase 40 P02 | 3min | 1 tasks | 3 files |
 | Phase 40 P01 | 3min | 2 tasks | 2 files |
+| Phase 41 P01 | 2min | 2 tasks | 3 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T12:07:57.526Z
-Stopped at: Phase 41 context gathered
+Last session: 2026-03-27T12:19:53.319Z
+Stopped at: Completed 41-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
