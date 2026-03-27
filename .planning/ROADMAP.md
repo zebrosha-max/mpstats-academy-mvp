@@ -180,7 +180,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 34. User Profile Enhancement | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 35. Lesson Comments | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 36. Product Tour / Onboarding | v1.3 | 2/2 | Complete | 2026-03-26 |
-| 37. Watch Progress Fix | v1.4 | 0/0 | Not Started | - |
+| 37. Watch Progress Fix | v1.4 | 1/1 | Complete   | 2026-03-27 |
 | 38. Diagnostic UX Fix | v1.4 | 0/0 | Not Started | - |
 | 39. AI & Content Quality | v1.4 | 0/0 | Not Started | - |
 | 40. Navigation & Filters | v1.4 | 0/0 | Not Started | - |
@@ -466,10 +466,10 @@ Plans:
 2. Просмотр 90%+ видео → auto-complete с toast "Урок завершён"
 3. Счётчик "Завершено" совпадает с "X/Y завершено" в прогрессе трека
 4. "Следующий урок" не инкрементирует прогресс текущего
-n**Plans:** 1 plan
+n**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 37-01-PLAN.md — Fix timer fallback, auto-complete toast, unified counters
+- [x] 37-01-PLAN.md — Fix timer fallback, auto-complete toast, unified counters
 
 ### Phase 38: Diagnostic UX Fix — пользователи не понимают результаты диагностики
 

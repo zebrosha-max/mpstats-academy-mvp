@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: unknown
-stopped_at: Phase 37 context gathered
-last_updated: "2026-03-27T08:41:13.426Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 37-01-PLAN.md
+last_updated: "2026-03-27T09:09:51.742Z"
 progress:
   total_phases: 27
-  completed_phases: 16
-  total_plans: 39
-  completed_plans: 36
+  completed_phases: 17
+  total_plans: 40
+  completed_plans: 37
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 35 — lesson-comments COMPLETE
+**Current focus:** Phase 37 — watch-progress-fix
 
 ## Current Position
 
-Phase: 35 (lesson-comments) — Plan 02 COMPLETE
-Plan: 2 of 2 (DONE)
+Phase: 37 (watch-progress-fix) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -122,6 +122,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [35-02]: Mobile tabs (AI-chat + Comments) instead of stacked sections -- AI-chat was buried below comments
 - [35-02]: Optimistic comments use currentUser profile data for instant name/avatar display
 - [35-02]: Desktop sidebar wrapped in hidden lg:block -- mobile gets MobileChatCommentsTabs component
+- [Phase 37]: Remove position*1.1 estimation entirely — no progress when DB duration unknown
 
 ### Blockers/Concerns
 
@@ -189,11 +190,12 @@ None.
 | 34    | 02   | 3min     | 2     | 2     |
 | 35    | 01   | 3min     | 2     | 4     |
 | 35    | 02   | 3min     | 3     | 4     |
+| Phase 37 P01 | 3min | 2 tasks | 3 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T08:41:13.414Z
-Stopped at: Phase 37 context gathered
+Last session: 2026-03-27T09:09:51.738Z
+Stopped at: Completed 37-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
