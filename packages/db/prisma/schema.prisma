@@ -278,10 +278,12 @@ model ContentChunk {
   timecodeEnd   Int                          @map("timecode_end")
   tokenCount    Int?                         @map("token_count")
   metadata      Json?
+  skillCategory SkillCategory?               @map("skill_category")
   createdAt     DateTime                     @default(now()) @map("created_at")
 
   @@map("content_chunk")
   @@index([lessonId])
+  @@index([skillCategory])
 }
 
 // ============== CHAT ==============
