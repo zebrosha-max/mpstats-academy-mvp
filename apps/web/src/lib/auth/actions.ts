@@ -68,6 +68,9 @@ export async function signIn(formData: FormData): Promise<AuthResult> {
 
   if (error) {
     console.error('Sign in error:', error);
+    if (error.message?.includes('Email not confirmed')) {
+      return { error: 'Подтвердите email — мы отправили письмо со ссылкой на указанную почту' };
+    }
     return { error: 'Неверный email или пароль' };
   }
 
