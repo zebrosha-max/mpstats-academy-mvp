@@ -9,6 +9,17 @@
 import { openrouter, MODELS, MODEL_CONFIG } from './openrouter';
 import { searchChunks, getChunksForLesson, formatTimecode } from './retrieval';
 
+/**
+ * Fix transliterated brand names in AI-generated text.
+ * LLMs sometimes output Russian transliterations instead of original brand names.
+ */
+export function fixBrandNames(text: string): string {
+  return text
+    .replace(/Валбер[иеё]с(?:а|у|ом|е)?/gi, 'Wildberries')
+    .replace(/Вайлдберриз/gi, 'Wildberries')
+    .replace(/Вайлдберис/gi, 'Wildberries');
+}
+
 // Types
 export interface GenerationResult {
   content: string;
@@ -82,7 +93,8 @@ export async function generateLessonSummary(
 - Используй ссылки [1], [2] и т.д. для цитирования источников
 - Пиши на русском языке
 - Будь конкретным и практичным
-- Фокусируйся на actionable инсайтах для селлеров`;
+- Фокусируйся на actionable инсайтах для селлеров
+- Названия маркетплейсов пиши ТОЛЬКО по-английски: Wildberries (не "Валберес"), Ozon (не "Озон"), MPSTATS`;
 
   const response = await openrouter.chat.completions.create({
     model: MODELS.chat,
@@ -97,7 +109,7 @@ export async function generateLessonSummary(
     temperature: MODEL_CONFIG.ragTemperature,
   });
 
-  const content = response.choices[0]?.message?.content || 'Ошибка генерации.';
+  const content = fixBrandNames(response.choices[0]?.message?.content || 'Ошибка генерации.');
 
   // 4. Build source citations
   const sources: SourceCitation[] = chunks.map((chunk) => ({
@@ -161,7 +173,8 @@ ${context ? `Контекст из урока:\n${context}` : 'Контекст 
 - Используй ссылки [1], [2] и т.д. для цитирования источников
 - Пиши на русском языке
 - Будь конкретным и полезным
-- Если вопрос не связан с уроком, вежливо перенаправь к теме урока`;
+- Если вопрос не связан с уроком, вежливо перенаправь к теме урока
+- Названия маркетплейсов пиши ТОЛЬКО по-английски: Wildberries (не "Валберес"), Ozon (не "Озон"), MPSTATS`;
 
   // 4. Build messages array
   const messages: ChatMessage[] = [
@@ -178,9 +191,10 @@ ${context ? `Контекст из урока:\n${context}` : 'Контекст 
     temperature: MODEL_CONFIG.ragTemperature,
   });
 
-  const content =
+  const content = fixBrandNames(
     response.choices[0]?.message?.content ||
-    'Извините, не удалось сгенерировать ответ. Попробуйте переформулировать вопрос.';
+    'Извините, не удалось сгенерировать ответ. Попробуйте переформулировать вопрос.'
+  );
 
   // 6. Build source citations
   const sources: SourceCitation[] = relevantChunks.map((chunk) => ({
