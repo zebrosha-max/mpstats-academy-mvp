@@ -496,6 +496,11 @@ Plans:
 4. Пустые секции скрыты или показывают placeholder
 5. "Результаты не найдены" воспроизведён и исправлен
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 38-01-PLAN.md — Tooltip component, zones counter fix, badge labels+tooltips, mobile layout, empty sections, error state
+
 ### Phase 39: AI & Content Quality — AI коверкает бренды, таймкоды не работают
 
 **Goal:** AI корректно пишет названия брендов, таймкоды в подсказках кликабельны и перематывают видео, дубликаты уроков удалены.
