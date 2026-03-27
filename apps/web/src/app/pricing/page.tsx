@@ -17,6 +17,13 @@ import { METRIKA_GOALS } from '@/lib/analytics/constants';
 const formatPrice = (amount: number) =>
   new Intl.NumberFormat('ru-RU').format(amount);
 
+const COURSE_AXIS_MAP: Record<string, string[]> = {
+  '01_analytics': ['Аналитика', 'Финансы'],
+  '02_ads': ['Маркетинг', 'Операции'],
+  '03_ai': ['Контент', 'Операции'],
+  '05_ozon': ['Аналитика', 'Операции', 'Финансы'],
+};
+
 export default function PricingPage() {
   const router = useRouter();
   const [widgetReady, setWidgetReady] = useState(false);
@@ -214,6 +221,7 @@ export default function PricingPage() {
                         .map((course) => (
                           <option key={course.id} value={course.id}>
                             {course.title}
+                            {COURSE_AXIS_MAP[course.id] ? ` — ${COURSE_AXIS_MAP[course.id].join(', ')}` : ''}
                           </option>
                         ))}
                     </select>
@@ -248,13 +256,18 @@ export default function PricingPage() {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      className="w-full"
-                      onClick={() => handlePayment('COURSE')}
-                      disabled={isProcessing || !widgetReady || !selectedCourseId}
-                    >
-                      {isProcessing ? 'Обработка...' : 'Оформить подписку'}
-                    </Button>
+                    <>
+                      <Button
+                        className="w-full"
+                        onClick={() => handlePayment('COURSE')}
+                        disabled={isProcessing || !widgetReady || !selectedCourseId}
+                      >
+                        {isProcessing ? 'Обработка...' : 'Оформить подписку'}
+                      </Button>
+                      <p className="text-xs text-muted-foreground text-center mt-2 w-full">
+                        Дата и CVV — на следующем шаге
+                      </p>
+                    </>
                   )}
                 </CardFooter>
               </Card>
@@ -323,14 +336,19 @@ export default function PricingPage() {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      variant="featured"
-                      className="w-full"
-                      onClick={() => handlePayment('PLATFORM')}
-                      disabled={isProcessing || !widgetReady}
-                    >
-                      {isProcessing ? 'Обработка...' : 'Оформить подписку'}
-                    </Button>
+                    <>
+                      <Button
+                        variant="featured"
+                        className="w-full"
+                        onClick={() => handlePayment('PLATFORM')}
+                        disabled={isProcessing || !widgetReady}
+                      >
+                        {isProcessing ? 'Обработка...' : 'Оформить подписку'}
+                      </Button>
+                      <p className="text-xs text-muted-foreground text-center mt-2 w-full">
+                        Дата и CVV — на следующем шаге
+                      </p>
+                    </>
                   )}
                 </CardFooter>
               </Card>
