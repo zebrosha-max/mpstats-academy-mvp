@@ -466,6 +466,10 @@ Plans:
 2. Просмотр 90%+ видео → auto-complete с toast "Урок завершён"
 3. Счётчик "Завершено" совпадает с "X/Y завершено" в прогрессе трека
 4. "Следующий урок" не инкрементирует прогресс текущего
+n**Plans:** 1 plan
+
+Plans:
+- [ ] 37-01-PLAN.md — Fix timer fallback, auto-complete toast, unified counters
 
 ### Phase 38: Diagnostic UX Fix — пользователи не понимают результаты диагностики
 
