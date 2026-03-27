@@ -238,12 +238,3 @@ export async function clusterTopics(rawTopics: string[]): Promise<Record<string,
   }
   return identity;
 }
-
-/**
- * Helper: strip markdown code fences from LLM response.
- */
-function stripCodeFences(text: string): string {
-  const trimmed = text.trim();
-  const match = trimmed.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?\s*```$/);
-  return match ? match[1].trim() : trimmed;
-}
