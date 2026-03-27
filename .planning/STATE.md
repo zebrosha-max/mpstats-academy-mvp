@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to execute
-stopped_at: Completed 39-02-PLAN.md
-last_updated: "2026-03-27T10:24:48.853Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 39-01-PLAN.md
+last_updated: "2026-03-27T10:29:39.059Z"
 progress:
   total_phases: 27
-  completed_phases: 18
+  completed_phases: 19
   total_plans: 43
-  completed_plans: 39
+  completed_plans: 40
 ---
 
 # Project State
@@ -126,6 +126,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 38]: Tooltip follows existing popover.tsx shadcn/ui pattern for consistency
 - [Phase 38]: Pre-filter sections with _filteredLessons to avoid double-filtering and fix counter mismatch
 - [Phase 39]: Keep lesson with lowest order when duplicates found; transfer progress with @@unique conflict check
+- [Phase 39]: Do NOT replace Ozon — valid Russian spelling, only Wildberries transliterations fixed
+- [Phase 39]: SourceTooltip already correct (uses handleTimecodeClick), no changes needed
 
 ### Blockers/Concerns
 
@@ -196,11 +198,12 @@ None.
 | Phase 37 P01 | 3min | 2 tasks | 3 files |
 | Phase 38 P01 | 12min | 3 tasks | 4 files |
 | Phase 39 P02 | 1min | 1 tasks | 1 files |
+| Phase 39 P01 | 5min | 2 tasks | 5 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T10:24:47.357Z
-Stopped at: Completed 39-02-PLAN.md
+Last session: 2026-03-27T10:29:39.055Z
+Stopped at: Completed 39-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
