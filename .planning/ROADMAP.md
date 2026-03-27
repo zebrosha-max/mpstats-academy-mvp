@@ -580,6 +580,11 @@ Plans:
 4. Подпись "Дата и CVV — на следующем шаге" под CP виджетом
 5. Пустой custom track скрыт
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 41-01-PLAN.md — Logo navigation, axis badges, CP hint, empty custom section
+
 ### Phase 42: Diagnostic Prompt Tuning — качество вопросов диагностики
 
 **Goal:** AI генерирует релевантные, профессиональные вопросы с корректными рубриками.
