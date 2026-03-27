@@ -272,10 +272,12 @@ export default function LearnPage() {
   );
 
   // Stats
+  // Per D-05, D-06: use recommendedPath as primary source, path as fallback (users without diagnostic)
   const stats = {
-    total: path?.totalLessons || 0,
-    completed: path?.completedLessons || 0,
-    inProgress: path?.lessons.filter(l => l.status === 'IN_PROGRESS').length || 0,
+    total: recommendedPath?.totalLessons ?? path?.totalLessons ?? 0,
+    completed: recommendedPath?.completedLessons ?? path?.completedLessons ?? 0,
+    inProgress: (recommendedPath?.lessons ?? path?.lessons ?? [])
+      .filter((l: { status: string }) => l.status === 'IN_PROGRESS').length,
   };
 
   if (isLoading) {
