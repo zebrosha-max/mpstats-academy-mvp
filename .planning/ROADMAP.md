@@ -604,3 +604,7 @@ Plans:
 3. Все варианты ответа правдоподобны
 4. Указан МП если вопрос специфичен
 5. Тестовая генерация 3 сессий × 15 вопросов — ревью от Милы
+n**Plans:** 1 plan
+
+Plans:
+- [ ] 42-01-PLAN.md — Update buildSystemPrompt with 6 rule blocks from Mila review
