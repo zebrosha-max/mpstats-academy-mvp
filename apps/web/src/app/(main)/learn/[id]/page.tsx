@@ -614,13 +614,8 @@ export default function LessonPage() {
               lessonId={lessonId}
               hints={lessonHints}
               onSeek={(seconds) => {
-                const iframe = document.querySelector('iframe[src*="kinescope"]') as HTMLIFrameElement;
-                if (iframe?.contentWindow) {
-                  iframe.contentWindow.postMessage(
-                    JSON.stringify({ method: 'seekTo', params: [seconds] }),
-                    '*'
-                  );
-                }
+                playerRef.current?.seekTo(seconds);
+                document.getElementById('video-player')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
             />
           )}

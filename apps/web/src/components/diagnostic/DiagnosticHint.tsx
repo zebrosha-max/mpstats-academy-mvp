@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatTimecode } from '@mpstats/shared';
@@ -17,6 +17,15 @@ interface DiagnosticHintProps {
 export function DiagnosticHint({ lessonId, hints, onSeek }: DiagnosticHintProps) {
   const [dismissed, setDismissed] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [activeTimecode, setActiveTimecode] = useState<string | null>(null);
+  const highlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSeek = (seconds: number, key: string) => {
+    if (highlightTimer.current) clearTimeout(highlightTimer.current);
+    setActiveTimecode(key);
+    onSeek(seconds);
+    highlightTimer.current = setTimeout(() => setActiveTimecode(null), 800);
+  };
 
   // Check localStorage for permanent dismissal
   useEffect(() => {
@@ -51,16 +60,23 @@ export function DiagnosticHint({ lessonId, hints, onSeek }: DiagnosticHintProps)
             <p className="text-body-sm text-mp-gray-700 mb-2">{displayedHint.questionText}</p>
             {/* Timecodes */}
             <div className="flex flex-wrap gap-2">
-              {displayedHint.timecodes.map((tc, i) => (
-                <button
-                  key={i}
-                  onClick={() => onSeek(tc.start)}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
-                >
-                  <span>&#9654;</span>
-                  <span>{formatTimecode(tc.start)}</span>
-                </button>
-              ))}
+              {displayedHint.timecodes.map((tc, i) => {
+                const key = `0-${i}`;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleSeek(tc.start, key)}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium transition-colors duration-300 ${
+                      activeTimecode === key
+                        ? 'bg-amber-300 text-amber-800'
+                        : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                    }`}
+                  >
+                    <span>&#9654;</span>
+                    <span>{formatTimecode(tc.start)}</span>
+                  </button>
+                );
+              })}
             </div>
             {/* Show more toggle */}
             {hints.length > 1 && !showAll && (
@@ -89,16 +105,23 @@ export function DiagnosticHint({ lessonId, hints, onSeek }: DiagnosticHintProps)
           <div key={i} className="mt-3 pt-3 border-t border-amber-200">
             <p className="text-body-sm text-mp-gray-700 mb-2">{hint.questionText}</p>
             <div className="flex flex-wrap gap-2">
-              {hint.timecodes.map((tc, j) => (
-                <button
-                  key={j}
-                  onClick={() => onSeek(tc.start)}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
-                >
-                  <span>&#9654;</span>
-                  <span>{formatTimecode(tc.start)}</span>
-                </button>
-              ))}
+              {hint.timecodes.map((tc, j) => {
+                const key = `${i + 1}-${j}`;
+                return (
+                  <button
+                    key={j}
+                    onClick={() => handleSeek(tc.start, key)}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-medium transition-colors duration-300 ${
+                      activeTimecode === key
+                        ? 'bg-amber-300 text-amber-800'
+                        : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                    }`}
+                  >
+                    <span>&#9654;</span>
+                    <span>{formatTimecode(tc.start)}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
