@@ -544,10 +544,16 @@ export default function LearnPage() {
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
-                  {recommendedPath.sections!.map((section) => {
+                  {recommendedPath.sections!
+                    .map(section => ({
+                      ...section,
+                      _filteredLessons: section.lessons.filter((l: any) => filterLesson(l as LessonWithProgress)),
+                    }))
+                    .filter(section => section._filteredLessons.length > 0)
+                    .map((section) => {
                     const style = SECTION_STYLES[section.id] || SECTION_STYLES.growth;
                     const isOpen = expandedSections.has(section.id);
-                    const completedInSection = section.lessons.filter((l: { status: string }) => l.status === 'COMPLETED').length;
+                    const completedInSection = section._filteredLessons.filter((l: { status: string }) => l.status === 'COMPLETED').length;
 
                     return (
                       <Card key={section.id} className={`shadow-mp-card ${style.borderColor}`}>
@@ -567,7 +573,7 @@ export default function LearnPage() {
                           </div>
                           <div className="flex items-center gap-3">
                             <span className="text-body-sm text-mp-gray-500">
-                              {completedInSection}/{section.lessons.length}
+                              {completedInSection}/{section._filteredLessons.length}
                             </span>
                             <svg className={`w-5 h-5 text-mp-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -579,9 +585,8 @@ export default function LearnPage() {
                         {isOpen && (
                           <CardContent className="pt-3 pb-4 px-2 sm:px-6 overflow-hidden">
                             <div className="grid gap-2 sm:gap-3">
-                              {section.lessons
-                                .filter((lesson) => filterLesson(lesson as LessonWithProgress))
-                                .map((lesson, idx: number) => (
+                              {section._filteredLessons
+                                .map((lesson: any, idx: number) => (
                                 <LessonCard
                                   key={lesson.id}
                                   lesson={{ ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress}
@@ -598,6 +603,21 @@ export default function LearnPage() {
                       </Card>
                     );
                   })}
+                  {/* All sections empty after filtering — congratulation placeholder */}
+                  {recommendedPath.sections!.every(section =>
+                    section.lessons.filter((l: any) => filterLesson(l as LessonWithProgress)).length === 0
+                  ) && (
+                    <Card className="shadow-mp-card">
+                      <CardContent className="py-8 text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-mp-green-100 flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-8 h-8 text-mp-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <p className="text-body font-medium text-mp-green-700">Отличный результат! Все темы освоены.</p>
+                      </CardContent>
+                    </Card>
+                  )}
                   {/* Re-diagnostic CTA when errors section is fully completed */}
                   {recommendedPath.sections!.find((s: { id: string }) => s.id === 'errors')?.lessons.every((l: { status: string }) => l.status === 'COMPLETED') && (
                     <Card className="shadow-mp-card border-mp-green-200 bg-gradient-to-br from-mp-green-50 to-white">
