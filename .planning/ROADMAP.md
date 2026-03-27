@@ -185,7 +185,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 39. AI & Content Quality | v1.4 | 2/2 | Complete    | 2026-03-27 |
 | 40. Navigation & Filters | v1.4 | 2/2 | Complete    | 2026-03-27 |
 | 41. Pricing & Logo UX | v1.4 | 1/1 | Complete    | 2026-03-27 |
-| 42. Diagnostic Prompt Tuning | v1.4 | 1/1 | Complete   | 2026-03-27 |
+| 42. Diagnostic Prompt Tuning | v1.4 | 1/1 | Complete    | 2026-03-27 |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
