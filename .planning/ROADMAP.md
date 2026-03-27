@@ -183,7 +183,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 37. Watch Progress Fix | v1.4 | 1/1 | Complete    | 2026-03-27 |
 | 38. Diagnostic UX Fix | v1.4 | 1/1 | Complete    | 2026-03-27 |
 | 39. AI & Content Quality | v1.4 | 2/2 | Complete    | 2026-03-27 |
-| 40. Navigation & Filters | v1.4 | 1/2 | In Progress|  |
+| 40. Navigation & Filters | v1.4 | 2/2 | Complete   | 2026-03-27 |
 | 41. Pricing & Logo UX | v1.4 | 0/0 | Not Started | - |
 | 42. Diagnostic Prompt Tuning | v1.4 | 0/0 | Not Started | - |
 
@@ -555,10 +555,10 @@ Plans:
 4. Яндекс OAuth показывает выбор аккаунта при каждом входе
 5. Autoplay поведение консистентно (явно off или on)
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 40-01-PLAN.md — URL-backed filters + tour auto-start guard
+- [x] 40-01-PLAN.md — URL-backed filters + tour auto-start guard
 - [x] 40-02-PLAN.md — Comment email strip + Yandex prompt=login + autoplay fix
 
 ### Phase 41: Pricing & Logo UX — мелкие баги тарифов и навигации

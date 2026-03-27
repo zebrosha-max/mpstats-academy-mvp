@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to execute
-stopped_at: Completed 40-02-PLAN.md
-last_updated: "2026-03-27T11:46:05.010Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 40-01-PLAN.md
+last_updated: "2026-03-27T11:49:15.707Z"
 progress:
   total_phases: 27
-  completed_phases: 19
+  completed_phases: 20
   total_plans: 45
-  completed_plans: 41
+  completed_plans: 42
 ---
 
 # Project State
@@ -129,6 +129,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 39]: Do NOT replace Ozon — valid Russian spelling, only Wildberries transliterations fixed
 - [Phase 39]: SourceTooltip already correct (uses handleTimecodeClick), no changes needed
 - [Phase 40]: Server-side email sanitization in comments (not frontend) to prevent any leak path
+- [Phase 40]: router.replace for URL filter state (no history pollution)
+- [Phase 40]: Session-scoped useRef<Set> guard for one-time auto-start effects (tour)
 
 ### Blockers/Concerns
 
@@ -201,11 +203,12 @@ None.
 | Phase 39 P02 | 1min | 1 tasks | 1 files |
 | Phase 39 P01 | 5min | 2 tasks | 5 files |
 | Phase 40 P02 | 3min | 1 tasks | 3 files |
+| Phase 40 P01 | 3min | 2 tasks | 2 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T11:46:05.002Z
-Stopped at: Completed 40-02-PLAN.md
+Last session: 2026-03-27T11:49:15.702Z
+Stopped at: Completed 40-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
