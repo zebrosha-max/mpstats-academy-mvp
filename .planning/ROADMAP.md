@@ -182,7 +182,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 36. Product Tour / Onboarding | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 37. Watch Progress Fix | v1.4 | 1/1 | Complete    | 2026-03-27 |
 | 38. Diagnostic UX Fix | v1.4 | 1/1 | Complete    | 2026-03-27 |
-| 39. AI & Content Quality | v1.4 | 0/0 | Not Started | - |
+| 39. AI & Content Quality | v1.4 | 1/2 | In Progress|  |
 | 40. Navigation & Filters | v1.4 | 0/0 | Not Started | - |
 | 41. Pricing & Logo UX | v1.4 | 0/0 | Not Started | - |
 | 42. Diagnostic Prompt Tuning | v1.4 | 0/0 | Not Started | - |
@@ -524,11 +524,11 @@ Plans:
 3. Клик на footnote [N] → видео перематывается к нужному моменту
 4. Дубликаты уроков удалены из БД
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 39-01-PLAN.md — Brand name fix (prompt+regex) + timecode seek fix (playerRef+highlight) + footnote scroll
-- [ ] 39-02-PLAN.md — Deduplicate lessons script (dry-run + execute modes)
+- [x] 39-02-PLAN.md — Deduplicate lessons script (dry-run + execute modes)
 
 ### Phase 40: Navigation & Filters — фильтры сбрасываются, тур повторяется
 

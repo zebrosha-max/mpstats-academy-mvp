@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to plan
-stopped_at: Phase 39 context gathered
-last_updated: "2026-03-27T10:09:43.266Z"
+status: Ready to execute
+stopped_at: Completed 39-02-PLAN.md
+last_updated: "2026-03-27T10:24:48.853Z"
 progress:
   total_phases: 27
   completed_phases: 18
-  total_plans: 41
-  completed_plans: 38
+  total_plans: 43
+  completed_plans: 39
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 38 — diagnostic-ux-fix
+**Current focus:** Phase 39 — ai-content-quality
 
 ## Current Position
 
-Phase: 39
-Plan: Not started
+Phase: 39 (ai-content-quality) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -125,6 +125,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 37]: Remove position*1.1 estimation entirely — no progress when DB duration unknown
 - [Phase 38]: Tooltip follows existing popover.tsx shadcn/ui pattern for consistency
 - [Phase 38]: Pre-filter sections with _filteredLessons to avoid double-filtering and fix counter mismatch
+- [Phase 39]: Keep lesson with lowest order when duplicates found; transfer progress with @@unique conflict check
 
 ### Blockers/Concerns
 
@@ -194,11 +195,12 @@ None.
 | 35    | 02   | 3min     | 3     | 4     |
 | Phase 37 P01 | 3min | 2 tasks | 3 files |
 | Phase 38 P01 | 12min | 3 tasks | 4 files |
+| Phase 39 P02 | 1min | 1 tasks | 1 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T10:09:43.262Z
-Stopped at: Phase 39 context gathered
+Last session: 2026-03-27T10:24:47.357Z
+Stopped at: Completed 39-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
