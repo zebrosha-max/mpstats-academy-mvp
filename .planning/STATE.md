@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to plan
-stopped_at: Phase 42 context gathered
-last_updated: "2026-03-27T12:25:26.116Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 42-01-PLAN.md
+last_updated: "2026-03-27T12:35:59.665Z"
 progress:
   total_phases: 27
-  completed_phases: 21
-  total_plans: 46
-  completed_plans: 43
+  completed_phases: 22
+  total_plans: 47
+  completed_plans: 44
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 41 — pricing-logo-ux
+**Current focus:** Phase 42 — diagnostic-prompt-tuning
 
 ## Current Position
 
-Phase: 42
-Plan: Not started
+Phase: 42 (diagnostic-prompt-tuning) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -132,6 +132,7 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 40]: router.replace for URL filter state (no history pollution)
 - [Phase 40]: Session-scoped useRef<Set> guard for one-time auto-start effects (tour)
 - [Phase 41]: COURSE_AXIS_MAP hardcoded mapping (no DB query) since course-to-axis relationship is stable
+- [Phase 42]: Prompt-only change, no code logic modifications — 6 rule blocks added to buildSystemPrompt from Mila QA review
 
 ### Blockers/Concerns
 
@@ -206,11 +207,12 @@ None.
 | Phase 40 P02 | 3min | 1 tasks | 3 files |
 | Phase 40 P01 | 3min | 2 tasks | 2 files |
 | Phase 41 P01 | 2min | 2 tasks | 3 files |
+| Phase 42 P01 | 3min | 2 tasks | 1 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T12:25:26.111Z
-Stopped at: Phase 42 context gathered
+Last session: 2026-03-27T12:35:59.661Z
+Stopped at: Completed 42-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
