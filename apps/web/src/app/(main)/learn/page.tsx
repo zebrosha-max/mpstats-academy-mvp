@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { SearchBar } from '@/components/learning/SearchBar';
-import { FilterPanel, type FilterState, DEFAULT_FILTERS } from '@/components/learning/FilterPanel';
+import { FilterPanel, type FilterState } from '@/components/learning/FilterPanel';
 import { SearchResultCard } from '@/components/learning/SearchResultCard';
 import { CourseLockBanner } from '@/components/learning/PaywallBanner';
 import { trpc } from '@/lib/trpc/client';
@@ -43,7 +44,39 @@ function isDatabaseUnavailable(errorMessage: string): boolean {
   return errorMessage === 'DATABASE_UNAVAILABLE' || errorMessage.includes('DATABASE_UNAVAILABLE');
 }
 
+function filtersFromSearchParams(sp: ReturnType<typeof useSearchParams>): FilterState {
+  return {
+    category: (sp.get('category') as FilterState['category']) ?? 'ALL',
+    status: sp.get('status') ?? 'ALL',
+    topics: sp.getAll('topic'),
+    difficulty: sp.get('difficulty') ?? 'ALL',
+    duration: sp.get('duration') ?? 'ALL',
+    courseId: sp.get('courseId') ?? 'ALL',
+    marketplace: sp.get('marketplace') ?? 'ALL',
+  };
+}
+
+function filtersToSearchParams(filters: FilterState): string {
+  const sp = new URLSearchParams();
+  if (filters.category !== 'ALL') sp.set('category', filters.category);
+  if (filters.status !== 'ALL') sp.set('status', filters.status);
+  filters.topics.forEach(t => sp.append('topic', t));
+  if (filters.difficulty !== 'ALL') sp.set('difficulty', filters.difficulty);
+  if (filters.duration !== 'ALL') sp.set('duration', filters.duration);
+  if (filters.courseId !== 'ALL') sp.set('courseId', filters.courseId);
+  if (filters.marketplace !== 'ALL') sp.set('marketplace', filters.marketplace);
+  return sp.toString();
+}
+
 export default function LearnPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Загрузка...</div>}>
+      <LearnPageInner />
+    </Suspense>
+  );
+}
+
+function LearnPageInner() {
   const [viewMode, setViewMode] = useState<'path' | 'courses'>('courses');
   const [viewModeInitialized, setViewModeInitialized] = useState(false);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
@@ -51,7 +84,14 @@ export default function LearnPage() {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const filters = useMemo(() => filtersFromSearchParams(searchParams), [searchParams]);
+  const setFilters = useCallback((newFilters: FilterState) => {
+    const query = filtersToSearchParams(newFilters);
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  }, [router, pathname]);
 
   const { data: courses, isLoading: coursesLoading, error: coursesError } = trpc.learning.getCourses.useQuery();
   const { data: path, isLoading: pathLoading, error: pathError } = trpc.learning.getPath.useQuery();
