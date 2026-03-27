@@ -555,6 +555,12 @@ Plans:
 4. Яндекс OAuth показывает выбор аккаунта при каждом входе
 5. Autoplay поведение консистентно (явно off или on)
 
+**Plans:** 2 plans
+
+Plans:
+- [ ] 40-01-PLAN.md — URL-backed filters + tour auto-start guard
+- [ ] 40-02-PLAN.md — Comment email strip + Yandex prompt=login + autoplay fix
+
 ### Phase 41: Pricing & Logo UX — мелкие баги тарифов и навигации
 
 **Goal:** Логотип ведёт в ЛК (не на лендинг), курсы маппятся на категории диагностики, названия курсов корректные.
