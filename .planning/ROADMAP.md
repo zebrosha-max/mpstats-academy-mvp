@@ -5,6 +5,8 @@
 - ✅ **v1.0 MVP** — Phases 1-9 (shipped 2026-02-26)
 - ✅ **v1.1 Admin & Polish** — Phases 10-15 (shipped 2026-02-28)
 - ✅ **v1.2 Auth Rework + Billing** — Phases 16-21 (shipped 2026-03-12)
+- 🔄 **v1.3 Pre-release** — Phases 22-36 (in progress)
+- 📋 **v1.4 QA Audit Fixes** — Phases 37-42 (planned)
 
 ## Phases
 
@@ -175,6 +177,12 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 34. User Profile Enhancement | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
 | 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
+| 37. Watch Progress Fix | v1.4 | 0/0 | Not Started | - |
+| 38. Diagnostic UX Fix | v1.4 | 0/0 | Not Started | - |
+| 39. AI & Content Quality | v1.4 | 0/0 | Not Started | - |
+| 40. Navigation & Filters | v1.4 | 0/0 | Not Started | - |
+| 41. Pricing & Logo UX | v1.4 | 0/0 | Not Started | - |
+| 42. Diagnostic Prompt Tuning | v1.4 | 0/0 | Not Started | - |
 
 ### Phase 21: Domain migration from DuckDNS to platform.mpstats.academy
 
@@ -423,3 +431,146 @@ Plans:
 Plans:
 - [x] 36-01-PLAN.md — Tour infrastructure: driver.js, TourProvider, HelpCircle, CSS, definitions
 - [ ] 36-02-PLAN.md — data-tour attributes on Dashboard, Learn, Lesson pages + verification
+
+---
+
+## v1.4 QA Audit Fixes (Phases 37-42)
+
+**Milestone Goal:** Исправить баги, найденные QA-командой при аудите платформы. 5 листов: Обучение (Настя/Алена), Диагностика (Мила), Тарифы (Ирина), Профиль (Ирина).
+
+**Источник:** [Google Sheets](https://docs.google.com/spreadsheets/d/1ol0qu3hZyjf9zEH52zYyep4rzonFdGjiPXLd1Q1swlY)
+**Полный backlog идей:** `docs/AUDIT-IDEAS-BACKLOG.md`
+**Скриншоты:** `screenshots/audit/`
+
+### Phase 37: Watch Progress Fix — прогресс уроков не работает корректно
+
+**Goal:** Просмотр урока до конца корректно отмечает 100% прогресса и статус COMPLETED. Счётчики "Завершено" и "X/Y завершено" согласованы.
+
+**Баги из аудита:**
+- R25: Просмотр до конца не засчитывает урок завершённым
+- R26: Прогресс 21% при полном просмотре (15:36/15:36)
+- R27: Прогресс +1% при каждом нажатии "Следующий"
+- R24: "1 завершено" vs "0/71 завершено" — несогласованность счётчиков
+
+**Root Causes:**
+1. `KinescopePlayer.tsx:149` — timer fallback использует `position * 1.1` как estimated duration → неверный %
+2. `learning.ts:575` — saveWatchProgress считает % из position/duration, но duration может быть неточным
+3. `learn/page.tsx` — нет auto-complete на фронте при 90%+
+4. `learn/page.tsx:275` vs `learning.ts:318` — счётчики берут данные из разных sources
+
+**Success Criteria:**
+1. Duration берётся из БД (Lesson.duration), не из Kinescope events
+2. Просмотр 90%+ видео → auto-complete с toast "Урок завершён"
+3. Счётчик "Завершено" совпадает с "X/Y завершено" в прогрессе трека
+4. "Следующий урок" не инкрементирует прогресс текущего
+
+### Phase 38: Diagnostic UX Fix — пользователи не понимают результаты диагностики
+
+**Goal:** Результаты диагностики понятны: зоны развития корректно отображаются, секции трека логичны, badge'и имеют пояснения.
+
+**Баги из аудита:**
+- R14: "1 зона развития" но 4 рекомендации ниже
+- R11: Badge "Приоритет"/"Низкий" без пояснения
+- R13: Mobile — badge'и обрезаны за viewport
+- R20: "0/6 ошибок" пустая при раскрытии
+- p9_img2 (Мила): "Результаты не найдены" после 15/15 вопросов
+
+**Root Causes:**
+1. `results/page.tsx:127` — считает только HIGH priority, отображает все gaps > 0
+2. `results/page.tsx:203` — badge без tooltip
+3. CSS overflow на mobile
+4. `diagnostic.ts:251` — секция "ошибки" пустая если questions без sourceData
+5. Баг — session не сохранилась или query пустой
+
+**Success Criteria:**
+1. Заголовок показывает все зоны развития (gaps > 0), не только HIGH
+2. Каждый badge имеет tooltip с пояснением
+3. Mobile: badge'и не обрезаются
+4. Пустые секции скрыты или показывают placeholder
+5. "Результаты не найдены" воспроизведён и исправлен
+
+### Phase 39: AI & Content Quality — AI коверкает бренды, таймкоды не работают
+
+**Goal:** AI корректно пишет названия брендов, таймкоды в подсказках кликабельны и перематывают видео, дубликаты уроков удалены.
+
+**Баги из аудита:**
+- R42: AI пишет "Валберес" вместо "Wildberries"
+- R17: Таймкоды с иконкой Play не перематывают видео
+- R18: Клик на [1][5][8] в "Основные идеи" скроллит не туда
+- R35: Дублирование уроков (VPN уроки 4=6, Оплата 7=10)
+
+**Root Causes:**
+1. `generation.ts:62` — system prompt без инструкции сохранять бренды
+2. `DiagnosticHint.tsx` — onSeek prop может не быть подключён к плееру
+3. `SourceTooltip.tsx:58` — scrollIntoView работает, но seek не происходит
+4. Данные в БД — дубликаты из manifest/seed
+
+**Success Criteria:**
+1. AI пишет "Wildberries", "Ozon", "MPSTATS" без транслитерации
+2. Клик на таймкод → видео перематывается + скролл к плееру
+3. Клик на footnote [N] → видео перематывается к нужному моменту
+4. Дубликаты уроков удалены из БД
+
+### Phase 40: Navigation & Filters — фильтры сбрасываются, тур повторяется
+
+**Goal:** Фильтры сохраняются в URL, онбординг-тур не повторяется, email скрыт в комментариях, Яндекс OAuth позволяет сменить аккаунт.
+
+**Баги из аудита:**
+- R21: "Назад" из урока сбрасывает фильтр "Маркетинг"
+- R46: Онбординг каждые ~15 минут
+- R43: Email видно в комментариях вместо имени
+- R10: Яндекс OAuth не позволяет сменить аккаунт
+- R22: Автовоспроизведение — разное поведение
+
+**Root Causes:**
+1. `learn/page.tsx:54` — фильтры в useState, не в URL
+2. `TourProvider.tsx:64` — setTimeout re-fires при pathname change
+3. `CommentItem.tsx:154` — показывает email если name null
+4. OAuth URL без `prompt=login`
+5. Kinescope autoplay зависит от browser policy
+
+**Success Criteria:**
+1. Фильтры в URL searchParams: `/learn?category=MARKETING`
+2. Тур показывается 1 раз (per page), кнопка "?" для повтора
+3. В комментариях имя или "Пользователь", не email
+4. Яндекс OAuth показывает выбор аккаунта при каждом входе
+5. Autoplay поведение консистентно (явно off или on)
+
+### Phase 41: Pricing & Logo UX — мелкие баги тарифов и навигации
+
+**Goal:** Логотип ведёт в ЛК (не на лендинг), курсы маппятся на категории диагностики, названия курсов корректные.
+
+**Баги из аудита:**
+- T-R6: Логотип выкидывает из ЛК
+- R15: Курсы на pricing не маппятся на категории диагностики
+- T-R5: Названия курсов "не настоящие"
+- T-R3: CP виджет — подпись про дату/CVV
+- T-R4: Таймер оплаты неконсистентный
+- R40: "Мои уроки" — 2 непросмотренных
+
+**Success Criteria:**
+1. Logo в (main) layout → `/dashboard`, в auth/landing → `/`
+2. Dropdown курсов показывает маппинг на оси диагностики
+3. Маркетинговые названия курсов (от команды)
+4. Подпись "Дата и CVV — на следующем шаге" под CP виджетом
+5. Пустой custom track скрыт
+
+### Phase 42: Diagnostic Prompt Tuning — качество вопросов диагностики
+
+**Goal:** AI генерирует релевантные, профессиональные вопросы с корректными рубриками.
+
+**Источник:** Google Doc от Милы — разбор 15 вопросов диагностики с комментариями.
+
+**Проблемы:**
+- Некорректные рубрики (5 из 15 вопросов)
+- Нерелевантные вопросы (сертификаты, плагины, биддер)
+- Очевидные ответы ("туповатые")
+- Нет контекста МП (WB/Ozon)
+- Выдуманные термины ("Активные стороны конкурента")
+
+**Success Criteria:**
+1. System prompt содержит правила маппинга тем → осей
+2. Negative examples: не генерировать вопросы о курсе/инструментах
+3. Все варианты ответа правдоподобны
+4. Указан МП если вопрос специфичен
+5. Тестовая генерация 3 сессий × 15 вопросов — ревью от Милы
