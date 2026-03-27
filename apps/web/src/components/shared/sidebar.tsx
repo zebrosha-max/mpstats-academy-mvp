@@ -106,8 +106,10 @@ export function Sidebar() {
     <aside className="w-64 border-r border-mp-gray-200 bg-white hidden md:flex flex-col fixed top-0 left-0 h-screen z-30">
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-mp-gray-200">
-        <Logo size="sm" showText={false} />
-        <span className="ml-2 text-heading-sm text-mp-gray-900 font-semibold">Academy</span>
+        <Link href="/dashboard" className="flex items-center">
+          <Logo size="sm" showText={false} />
+          <span className="ml-2 text-heading-sm text-mp-gray-900 font-semibold">Academy</span>
+        </Link>
       </div>
 
       {/* Navigation */}

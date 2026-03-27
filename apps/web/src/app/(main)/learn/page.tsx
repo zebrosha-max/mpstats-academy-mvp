@@ -589,7 +589,11 @@ function LearnPageInner() {
                       ...section,
                       _filteredLessons: section.lessons.filter((l: any) => filterLesson(l as LessonWithProgress)),
                     }))
-                    .filter(section => section._filteredLessons.length > 0)
+                    .filter(section => {
+                      // D-06: hide empty custom section
+                      if (section.id === 'custom' && (!section.lessons || section.lessons.length === 0)) return false;
+                      return section._filteredLessons.length > 0;
+                    })
                     .map((section) => {
                     const style = SECTION_STYLES[section.id] || SECTION_STYLES.growth;
                     const isOpen = expandedSections.has(section.id);
