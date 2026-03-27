@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 import { LessonCard } from '@/components/learning/LessonCard';
 import { trpc } from '@/lib/trpc/client';
@@ -14,10 +15,16 @@ import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import type { LessonWithProgress } from '@mpstats/shared';
 
 const PRIORITY_STYLES = {
-  HIGH: { badge: 'destructive' as const, label: 'Приоритет' },
-  MEDIUM: { badge: 'warning' as const, label: 'Средний' },
-  LOW: { badge: 'success' as const, label: 'Низкий' },
+  HIGH: { badge: 'destructive' as const, label: 'Высокий', tooltip: 'Большой разрыв с целью — рекомендуем начать с этой темы' },
+  MEDIUM: { badge: 'warning' as const, label: 'Средний', tooltip: 'Есть потенциал для улучшения' },
+  LOW: { badge: 'success' as const, label: 'Низкий', tooltip: 'Близко к цели — поддерживайте уровень' },
 };
+
+function pluralizeZones(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return `${n} зона`;
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return `${n} зоны`;
+  return `${n} зон`;
+}
 
 export default function DiagnosticResultsPage() {
   const router = useRouter();
@@ -26,7 +33,7 @@ export default function DiagnosticResultsPage() {
 
   const { data: results, isLoading } = trpc.diagnostic.getResults.useQuery(
     { sessionId: sessionId! },
-    { enabled: !!sessionId }
+    { enabled: !!sessionId, retry: 2, retryDelay: 1000 }
   );
   const { data: recommendedPath } = trpc.learning.getRecommendedPath.useQuery();
 
@@ -76,9 +83,14 @@ export default function DiagnosticResultsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-body text-mp-gray-500">Результаты не найдены</p>
-            <Button className="mt-4" onClick={() => router.push('/diagnostic')}>
-              Пройти диагностику
+            <p className="text-body text-mp-gray-500">
+              Произошла ошибка при загрузке результатов. Попробуйте перезагрузить страницу.
+            </p>
+            <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+              Перезагрузить
+            </Button>
+            <Button variant="ghost" className="mt-2" onClick={() => router.push('/diagnostic')}>
+              Пройти диагностику заново
             </Button>
           </CardContent>
         </Card>
@@ -124,9 +136,11 @@ export default function DiagnosticResultsPage() {
         <Card className="shadow-mp-card">
           <CardContent className="py-6 text-center">
             <div className="text-display font-bold text-mp-blue-500">
-              {results.gaps.filter(g => g.priority === 'HIGH').length}
+              {results.gaps.filter(g => g.gap > 0).length}
             </div>
-            <div className="text-body-sm text-mp-gray-500 mt-1">Зон для развития</div>
+            <div className="text-body-sm text-mp-gray-500 mt-1">
+              {pluralizeZones(results.gaps.filter(g => g.gap > 0).length)} для развития
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -164,8 +178,10 @@ export default function DiagnosticResultsPage() {
           <CardDescription className="text-body-sm">
             Навыки отсортированы по приоритету улучшения
           </CardDescription>
+          <p className="text-body-sm font-medium text-mp-gray-700 mt-3">Приоритет изучения</p>
         </CardHeader>
         <CardContent>
+          <TooltipProvider>
           <div className="space-y-4">
             {results.gaps
               .filter(gap => gap.gap > 0)
@@ -173,7 +189,7 @@ export default function DiagnosticResultsPage() {
               .map((gap) => (
                 <div
                   key={gap.category}
-                  className="flex items-center justify-between p-4 border border-mp-gray-200 rounded-xl hover:bg-mp-gray-50 transition-colors"
+                  className="flex flex-wrap items-center gap-2 sm:gap-0 sm:justify-between p-4 border border-mp-gray-200 rounded-xl hover:bg-mp-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="text-center">
@@ -200,9 +216,18 @@ export default function DiagnosticResultsPage() {
                       Нужно улучшить на {gap.gap}%
                     </div>
                   </div>
-                  <Badge variant={PRIORITY_STYLES[gap.priority].badge}>
-                    {PRIORITY_STYLES[gap.priority].label}
-                  </Badge>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} className="cursor-help shrink-0">
+                        <Badge variant={PRIORITY_STYLES[gap.priority].badge} className="text-xs">
+                          {PRIORITY_STYLES[gap.priority].label}
+                        </Badge>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{PRIORITY_STYLES[gap.priority].tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               ))}
             {results.gaps.filter(gap => gap.gap > 0).length === 0 && (
@@ -218,6 +243,7 @@ export default function DiagnosticResultsPage() {
               </div>
             )}
           </div>
+          </TooltipProvider>
         </CardContent>
       </Card>
 
