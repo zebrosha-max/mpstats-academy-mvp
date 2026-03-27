@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to plan
-stopped_at: Phase 38 context gathered
-last_updated: "2026-03-27T09:29:46.374Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 38-01-PLAN.md
+last_updated: "2026-03-27T10:01:53.800Z"
 progress:
   total_phases: 27
-  completed_phases: 17
-  total_plans: 40
-  completed_plans: 37
+  completed_phases: 18
+  total_plans: 41
+  completed_plans: 38
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 37 — watch-progress-fix
+**Current focus:** Phase 38 — diagnostic-ux-fix
 
 ## Current Position
 
-Phase: 38
-Plan: Not started
+Phase: 38 (diagnostic-ux-fix) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -123,6 +123,8 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [35-02]: Optimistic comments use currentUser profile data for instant name/avatar display
 - [35-02]: Desktop sidebar wrapped in hidden lg:block -- mobile gets MobileChatCommentsTabs component
 - [Phase 37]: Remove position*1.1 estimation entirely — no progress when DB duration unknown
+- [Phase 38]: Tooltip follows existing popover.tsx shadcn/ui pattern for consistency
+- [Phase 38]: Pre-filter sections with _filteredLessons to avoid double-filtering and fix counter mismatch
 
 ### Blockers/Concerns
 
@@ -191,11 +193,12 @@ None.
 | 35    | 01   | 3min     | 2     | 4     |
 | 35    | 02   | 3min     | 3     | 4     |
 | Phase 37 P01 | 3min | 2 tasks | 3 files |
+| Phase 38 P01 | 12min | 3 tasks | 4 files |
 
 ## Session Continuity
 
-Last session: 2026-03-27T09:29:46.370Z
-Stopped at: Phase 38 context gathered
+Last session: 2026-03-27T10:01:53.795Z
+Stopped at: Completed 38-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

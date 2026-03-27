@@ -181,7 +181,7 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 35. Lesson Comments | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 36. Product Tour / Onboarding | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 37. Watch Progress Fix | v1.4 | 1/1 | Complete    | 2026-03-27 |
-| 38. Diagnostic UX Fix | v1.4 | 0/0 | Not Started | - |
+| 38. Diagnostic UX Fix | v1.4 | 1/1 | Complete   | 2026-03-27 |
 | 39. AI & Content Quality | v1.4 | 0/0 | Not Started | - |
 | 40. Navigation & Filters | v1.4 | 0/0 | Not Started | - |
 | 41. Pricing & Logo UX | v1.4 | 0/0 | Not Started | - |
@@ -496,10 +496,10 @@ Plans:
 4. Пустые секции скрыты или показывают placeholder
 5. "Результаты не найдены" воспроизведён и исправлен
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 38-01-PLAN.md — Tooltip component, zones counter fix, badge labels+tooltips, mobile layout, empty sections, error state
+- [x] 38-01-PLAN.md — Tooltip component, zones counter fix, badge labels+tooltips, mobile layout, empty sections, error state
 
 ### Phase 39: AI & Content Quality — AI коверкает бренды, таймкоды не работают
 
