@@ -167,16 +167,19 @@ Phases 17 and 18 are independent tracks (auth and billing). Both depend on Phase
 | 21. Domain Migration | v1.2 | 2/2 | Complete | 2026-03-11 |
 | 22. Email Notifications | v1.3 | - | Superseded by Phase 33 | - |
 | 23. Diagnostic 2.0 | v1.3 | 3/3 | Complete | 2026-03-17 |
-| 26. Yandex Metrika | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
+| 24. Support Contact | v1.3 | 1/1 | Complete | 2026-03-18 |
+| 25. Legal + Cookie Consent | v1.3 | 2/2 | Complete | 2026-03-26 |
+| 26. Yandex Metrika | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 27. SEO + Custom Error Pages | v1.3 | 2/2 | Complete | 2026-03-18 |
+| 28. Боевой CloudPayments | v1.3 | 0/0 | Not Started | - |
+| 29. Sentry Monitoring | v1.3 | 0/0 | Not Started | - |
 | 30. Content Discovery | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 31. Admin Roles | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 32. Custom Track Management | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 33. CQ Email Automation | v1.3 | 2/3 | Code Complete (CQ dashboard pending) | 2026-03-25 |
-| 25. Legal + Cookie Consent | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 34. User Profile Enhancement | v1.3 | 2/2 | Complete | 2026-03-26 |
-| 35. Lesson Comments | v1.3 | 0/0 | Not Planned | - |
-| 36. Product Tour / Onboarding | v1.3 | 0/0 | Not Planned | - |
+| 35. Lesson Comments | v1.3 | 2/2 | Complete | 2026-03-26 |
+| 36. Product Tour / Onboarding | v1.3 | 2/2 | Complete | 2026-03-26 |
 | 37. Watch Progress Fix | v1.4 | 0/0 | Not Started | - |
 | 38. Diagnostic UX Fix | v1.4 | 0/0 | Not Started | - |
 | 39. AI & Content Quality | v1.4 | 0/0 | Not Started | - |
