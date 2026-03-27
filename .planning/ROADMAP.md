@@ -466,7 +466,8 @@ Plans:
 2. Просмотр 90%+ видео → auto-complete с toast "Урок завершён"
 3. Счётчик "Завершено" совпадает с "X/Y завершено" в прогрессе трека
 4. "Следующий урок" не инкрементирует прогресс текущего
-n**Plans:** 1/1 plans complete
+
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 37-01-PLAN.md — Fix timer fallback, auto-complete toast, unified counters
@@ -522,6 +523,12 @@ Plans:
 2. Клик на таймкод → видео перематывается + скролл к плееру
 3. Клик на footnote [N] → видео перематывается к нужному моменту
 4. Дубликаты уроков удалены из БД
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 39-01-PLAN.md — Brand name fix (prompt+regex) + timecode seek fix (playerRef+highlight) + footnote scroll
+- [ ] 39-02-PLAN.md — Deduplicate lessons script (dry-run + execute modes)
 
 ### Phase 40: Navigation & Filters — фильтры сбрасываются, тур повторяется
 
