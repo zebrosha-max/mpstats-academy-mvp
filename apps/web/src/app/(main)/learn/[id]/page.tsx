@@ -19,6 +19,7 @@ import { METRIKA_GOALS } from '@/lib/analytics/constants';
 import { SafeMarkdown } from '@/components/shared/SafeMarkdown';
 import { CommentSection } from '@/components/comments/CommentSection';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 /** Collapsed footnotes for summary sources — only shows cited references */
 function CollapsibleFootnotes({
@@ -291,6 +292,7 @@ export default function LessonPage() {
   const lastPositionRef = useRef<number>(0);
   const lastDurationRef = useRef<number>(0);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const completedRef = useRef(false);
   const utils = trpc.useUtils();
 
   const { data, isLoading, error: lessonError } = trpc.learning.getLesson.useQuery({ lessonId });
@@ -300,6 +302,13 @@ export default function LessonPage() {
     { enabled: hasDiagnostic === true }
   );
   const { data: watchProgress } = trpc.learning.getWatchProgress.useQuery({ lessonId });
+
+  // Sync completedRef with initial lesson status (prevent toast for already-completed lessons)
+  useEffect(() => {
+    if (data?.lesson?.status === 'COMPLETED') {
+      completedRef.current = true;
+    }
+  }, [data?.lesson?.status]);
 
   // Track lesson open in Metrika
   useEffect(() => {
@@ -327,9 +336,17 @@ export default function LessonPage() {
 
   // Save watch progress mutation
   const saveWatchProgress = trpc.learning.saveWatchProgress.useMutation({
-    onSuccess: () => {
+    onSuccess: (result) => {
       // Silently invalidate to update the badge
       utils.learning.getLesson.invalidate({ lessonId });
+      // Auto-complete toast (D-04): show once when first reaching 90%+
+      if (result?.status === 'COMPLETED' && !completedRef.current) {
+        completedRef.current = true;
+        toast.success('Урок завершён!');
+        // Invalidate learn page queries for counter update
+        utils.learning.getRecommendedPath.invalidate();
+        utils.learning.getPath.invalidate();
+      }
     },
     onError: (err) => {
       console.warn('Failed to save watch progress:', err.message);

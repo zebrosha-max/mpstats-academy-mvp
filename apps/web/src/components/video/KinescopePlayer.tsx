@@ -145,9 +145,10 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
             position = Math.min(position, knownDuration);
           }
           currentTimeRef.current = position;
-          // Use known duration, or estimate as position * 1.1 (assume ~90% watched)
-          const effectiveDuration = knownDuration > 0 ? knownDuration : Math.max(position * 1.1, 60);
-          onTimeUpdateRef.current?.(position, effectiveDuration);
+          // Per D-03: only fire onTimeUpdate when we have a real duration from DB
+          if (knownDuration > 0) {
+            onTimeUpdateRef.current?.(position, knownDuration);
+          }
         }, 1000);
 
         timerCleanup = () => {
