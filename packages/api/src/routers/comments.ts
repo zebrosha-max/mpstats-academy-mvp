@@ -14,6 +14,14 @@ import { handleDatabaseError } from '../utils/db-errors';
 
 const COMMENTS_PER_PAGE = 20;
 
+/** Strip email addresses from user name — R43 fix */
+function sanitizeUserName(name: string | null): string | null {
+  if (!name) return null;
+  // If name looks like an email, return null (frontend shows 'Пользователь')
+  if (name.includes('@') && name.includes('.')) return null;
+  return name;
+}
+
 const userSelect = {
   id: true,
   name: true,
@@ -56,13 +64,23 @@ export const commentsRouter = router({
           },
         });
 
+        // Sanitize user names — never expose email (R43)
+        const sanitized = comments.map(c => ({
+          ...c,
+          user: { ...c.user, name: sanitizeUserName(c.user.name) },
+          replies: c.replies.map(r => ({
+            ...r,
+            user: { ...r.user, name: sanitizeUserName(r.user.name) },
+          })),
+        }));
+
         const nextCursor =
-          comments.length === COMMENTS_PER_PAGE
-            ? comments[comments.length - 1].id
+          sanitized.length === COMMENTS_PER_PAGE
+            ? sanitized[sanitized.length - 1].id
             : null;
 
         return {
-          comments,
+          comments: sanitized,
           nextCursor,
           totalCount,
         };
@@ -118,7 +136,10 @@ export const commentsRouter = router({
           },
         });
 
-        return comment;
+        return {
+          ...comment,
+          user: { ...comment.user, name: sanitizeUserName(comment.user.name) },
+        };
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         handleDatabaseError(error);

@@ -189,7 +189,6 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           // Resume from initialTime if provided
           else if (initialTime && initialTime > 0) {
             pl.seekTo(initialTime).then(() => {
-              pl.play();
               const mins = Math.floor(initialTime / 60);
               const secs = Math.floor(initialTime % 60);
               setResumeNotice(`Продолжаем с ${mins}:${secs.toString().padStart(2, '0')}`);
