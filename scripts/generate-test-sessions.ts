@@ -82,7 +82,7 @@ async function generateQuestions(category: string, chunks: Array<{ content: stri
 Ответ строго в JSON: {"questions": [{"question": "...", "options": ["A","B","C","D"], "correctIndex": 0, "explanation": "...", "difficulty": "easy|medium|hard"}]}`;
 
   const resp = await openrouter.chat.completions.create({
-    model: 'qwen/qwen3.5-flash-02-23',
+    model: process.env.TEST_MODEL || 'qwen/qwen3.5-flash-02-23',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: `Контекст из учебных материалов:\n\n${context}` },
@@ -105,7 +105,7 @@ async function generateSession(sessionNum: number) {
   output.push(`# Тестовая сессия диагностики #${sessionNum}`);
   output.push('');
   output.push(`**Дата генерации:** ${new Date().toISOString().split('T')[0]}`);
-  output.push(`**Модель:** qwen/qwen3.5-flash-02-23`);
+  output.push(`**Модель:** ${process.env.TEST_MODEL || 'qwen/qwen3.5-flash-02-23'}`);
   output.push(`**Цель:** Проверка качества вопросов после промпт-тюнинга (Phase 42)`);
   output.push('');
 
@@ -146,7 +146,8 @@ async function generateSession(sessionNum: number) {
   output.push('| 6 | Вопросы практические | | |');
   output.push('| 7 | Формулировки профессиональные | | |');
 
-  const filename = `docs/test-session-${sessionNum}.md`;
+  const modelSlug = (process.env.TEST_MODEL || 'qwen').split('/').pop()?.replace(/[^a-z0-9-]/gi, '') || 'qwen';
+  const filename = `docs/test-session-${modelSlug}-${sessionNum}.md`;
   fs.writeFileSync(filename, output.join('\n'), 'utf-8');
   console.log(`Session ${sessionNum}: ${questionNum} questions → ${filename}`);
 }

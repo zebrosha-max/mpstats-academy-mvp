@@ -1,8 +1,219 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-03-26
+**Last updated:** 2026-03-29
 
-## Last Session (2026-03-26, session 5)
+## Last Session (2026-03-27–29, session 9)
+
+**v1.4 QA Audit Fixes — 6 фаз через GSD workflow (37-42):**
+
+**Источник:** [Google Sheets "Аудит Платформы"](https://docs.google.com/spreadsheets/d/1ol0qu3hZyjf9zEH52zYyep4rzonFdGjiPXLd1Q1swlY) — 5 листов: Обучение (Настя/Алена), Диагностика (Мила), Тарифы (Ирина), Профиль (Ирина), Платформа (Карина).
+
+**Сбор материалов:**
+- 60 файлов скачаны (скриншоты, видео, PDF), 28MB → `screenshots/audit/`
+- Google Doc Милы (15 скринов вопросов диагностики) извлечён из PDF
+- Все баги и идеи структурированы в `docs/AUDIT-IDEAS-BACKLOG.md`
+
+**Phase 37 — Watch Progress Fix (R24-R27):**
+- `KinescopePlayer.tsx`: убран timer fallback `position * 1.1` → duration из БД
+- Auto-complete toast "Урок завершён!" при 90%+ (sonner)
+- Счётчики "Завершено" унифицированы → единый source `recommendedPath`
+- "Следующий" кнопка не инкрементирует прогресс
+
+**Phase 38 — Diagnostic UX Fix (R11-R14, R20):**
+- Заголовок "зон развития" считает ВСЕ gaps > 0, не только HIGH
+- Badges переименованы: Приоритет/Низкий → Высокий/Средний/Низкий + tooltips (Radix)
+- Mobile: flex-wrap на badge-контейнерах
+- Пустые секции трека скрыты, all-empty → placeholder "Все темы освоены"
+- Error boundary на results page с retry:2
+
+**Phase 39 — AI & Content Quality (R17, R18, R35, R42):**
+- `fixBrandNames()` regex + system prompt → "Валберес" → "Wildberries" (9 unit tests)
+- DiagnosticHint таймкоды → `playerRef.seekTo()` + scrollIntoView + amber highlight 800ms
+- SourceTooltip footnotes — verified working
+- `scripts/dedup-lessons.ts` — скрипт дедупликации (БД чистая, 0 дублей)
+
+**Phase 40 — Navigation & Filters (R10, R21, R22, R43, R46):**
+- Фильтры в URL searchParams: `/learn?category=MARKETING` (browser back работает)
+- Тур: `hasAutoStartedRef` guard — 1 раз per page per lifetime
+- Комментарии: `sanitizeUserName()` на бэкенде, email никогда не показывается
+- Яндекс OAuth: `prompt=login` — выбор аккаунта при каждом входе
+- Autoplay: убран `pl.play()` из initialTime resume
+
+**Phase 41 — Pricing & Logo UX (T-R3, T-R6, R15, R40):**
+- Logo в sidebar → `/dashboard` (не на лендинг)
+- `COURSE_AXIS_MAP` badge'и в dropdown курсов на pricing
+- "Дата и CVV — на следующем шаге" под CP виджетом
+- Пустой custom track "Мои уроки" скрыт
+
+**Phase 42 — Diagnostic Prompt Tuning (ревью Милы, 12 замечаний):**
+- 6 блоков правил в `buildSystemPrompt()`: маппинг тем→осей, запреты (сертификаты/плагины), качество вариантов, контекст площадки, терминология, стиль
+- `skill_category` колонка добавлена в `content_chunk` (backfill 5291 chunks из Lesson)
+- 6 тестовых сессий для Милы: `docs/test-session-qwen-{1,2,3}.md` + `docs/test-session-gpt-41-{1,2,3}.md`
+
+**GSD tools fix:**
+- `findProjectRoot()` в `core.cjs` — не проверял `.planning/` в startDir, поднимался к parent. Добавлена проверка `config.json` в текущей директории (6 строк)
+
+**Инфраструктура:**
+- Typecheck fix: убран unused `stripCodeFences` в `tagging.ts`, исключены `__tests__` из AI tsconfig
+- Roadmap v1.3 синхронизирован: фазы 24-36 все в корректных статусах
+- 23 статуса обновлены в Google Sheets через gspread API
+- Задеплоено на platform.mpstats.academy
+
+**Ключевые файлы:**
+- `packages/ai/src/generation.ts` — fixBrandNames, brand system prompt
+- `packages/ai/src/question-generator.ts` — 6 rule blocks
+- `apps/web/src/components/video/KinescopePlayer.tsx` — timer fix, autoplay fix
+- `apps/web/src/app/(main)/learn/[id]/page.tsx` — auto-complete toast, timecode seek
+- `apps/web/src/app/(main)/learn/page.tsx` — URL filters, counter unification, empty sections
+- `apps/web/src/app/(main)/diagnostic/results/page.tsx` — zones, badges, tooltips, error
+- `apps/web/src/components/shared/TourProvider.tsx` — hasAutoStartedRef
+- `apps/web/src/components/shared/sidebar.tsx` — Logo → /dashboard
+- `apps/web/src/app/pricing/page.tsx` — axis badges, CP hint
+- `packages/api/src/routers/comments.ts` — sanitizeUserName
+- `apps/web/src/lib/auth/oauth-providers.ts` — prompt=login
+- `packages/db/prisma/schema.prisma` — skill_category on content_chunk
+
+### Previous Session (2026-03-27, session 8)
+
+**CQ/Auth Bugfix Session 2 — live QA с email-командой (Андрей Лобурец):**
+
+**CQ даты — человекочитаемый формат + технические поля:**
+- `pa_period_end` / `pa_access_until` → `DD.MM.YYYY HH:MM` (МСК) для писем
+- `pa_period_end_tech` / `pa_access_until_tech` → ISO 8601 для CQ автоматизаций
+- Хелпер `formatDateRu()` в `emails.ts`
+
+**DOI-ссылка — дублирование /auth/v1 (critical fix):**
+- Supabase `site_url` уже содержит `/auth/v1`, мы добавляли ещё раз → 404 "No API key"
+- Фикс: `confirmUrl` строится от `site_url` + `/verify?...` без дублирования
+- Затрагивало все auth-ссылки: signup DOI, recovery, email_change
+
+**pa_registration_completed — тайминг (critical fix):**
+- Событие стреляло при `signUp()` ДО подтверждения email
+- Убрано из `actions.ts`, оставлено только в `auth/callback/route.ts` (после DOI-клика)
+
+**pa_name — email вместо имени:**
+- Webhook читал `user_metadata.name`, но регистрация сохраняет как `full_name`
+- Фикс: `user_metadata?.full_name || user_metadata?.name || user.email`
+
+**Reset-password — зависал на "Сохранение...":**
+- `redirect()` из server action бросал NEXT_REDIRECT, клиент не обрабатывал
+- Фикс: возвращаем `{ success: true }`, клиент показывает подтверждение и редиректит
+- Также исправлен `redirectTo` в recovery: `/auth/reset-password` → `/reset-password` (route group не создаёт URL-сегмент)
+
+**Login — "Неверный email" вместо подсказки подтвердить почту:**
+- Unconfirmed юзеры видели "Неверный email или пароль" при попытке войти до DOI
+- Фикс: проверка `Email not confirmed` → "Подтвердите email — мы отправили письмо со ссылкой"
+
+**Supabase SMTP — Resend:**
+- Подключен custom SMTP (smtp.resend.com) для снятия лимита 2 emails/h
+- Rate limit: 30 emails/h, min interval: 30s
+- Resend API key от проекта MPSTATS Connect (общий аккаунт, отдельный ключ)
+
+**Инфраструктура:**
+- `.env` синхронизирован с продом (добавлены 9 недостающих ключей: CQ, CP, Yandex, cron, hooks)
+- Supabase Management API токен сохранён в memory (для админ-операций без Dashboard)
+- Пароль тест-юзеров сменён (старый `TestUser2024` убран из публичного CLAUDE.md)
+- Service role key подтверждён (prefix `sjPfn`)
+- Вручную подтверждены email: `loburets.andrei@gmail.com`, `01042018m@gmail.com`
+
+**Открытый вопрос — CQ склейка лидов:**
+- `by_user_id=true` создаёт нового лида по UUID, не проверяя email → дубликаты в CQ
+- Нужен рефакторинг: при первом контакте искать существующего лида по email
+- Согласуется с email-командой (Андрей)
+
+**Ключевые файлы:**
+- `apps/web/src/lib/carrotquest/emails.ts` — formatDateRu, _tech поля
+- `apps/web/src/app/api/webhooks/supabase-email/route.ts` — DOI fix, pa_name fix
+- `apps/web/src/lib/auth/actions.ts` — premature welcome removed, reset redirect, login hint
+- `apps/web/src/app/(auth)/reset-password/page.tsx` — success state + client redirect
+
+### Previous Session (2026-03-26, session 7)
+
+**Platform Audit — баг-фиксы из Google Sheets "Аудит Платформы":**
+
+**Источник:** [Google Sheets](https://docs.google.com/spreadsheets/d/1ol0qu3hZyjf9zEH52zYyep4rzonFdGjiPXLd1Q1swlY) — 8 записей от QA, статусы обновлены через gspread API.
+
+**Баг: "0 мин" длительность уроков (P1, исправлен):**
+- Все 405 уроков имели `duration = NULL` в БД — manifest не содержал `duration_seconds`
+- Скрипт: fetch из Kinescope API (`/v1/videos`, paginated по 100) → `Math.ceil(seconds/60)` → PATCH в Supabase
+- Frontend: скрывает badge "X мин" когда `duration === 0` (3 компонента: LessonCard, lesson page, SearchResultCard)
+- Kinescope API credentials: `apps/web/.env` (скопированы в root `.env`)
+
+**Баг: одинаковые таймкоды в подсказках диагностики (P1, исправлен):**
+- Причина: `generateQuestionsForCategory()` сэмплирует 5 chunks один раз, все вопросы в батче получают те же chunks
+- Фикс: добавлен `sourceIndices` в LLM JSON schema + Zod + prompt — LLM указывает номера фрагментов [1]-[5] per question
+- `toDiagnosticQuestion()` теперь фильтрует chunks по `sourceIndices`, fallback на все chunks если LLM не вернул
+
+**Баг: неверное название "Урок 1" (P1, исправлен):**
+- Бонусные модули (m00_*, order=0) сортировались первыми → "ИИ для креативов" вместо реального урока 1
+- Фикс seed-скрипта: `sortedModules` теперь ставит `aIsBonus ? 1 : -1` (бонусы в конец)
+- DB reorder: 3 курса (01_analytics, 02_ads, 05_ozon) пересортированы через Supabase PATCH
+
+**Идея: tooltip на лампочку (реализована):**
+- `title="Вопросы, на которые вы ответили неверно в диагностике..."` + `cursor-help`
+
+**Идея: "Назад" с pricing (реализована):**
+- `<Link href="/dashboard">` → `<button onClick={() => router.back()}>` (browser history)
+
+**Google Sheets интеграция:**
+- Service account `zebroshaserviceacc@chatgpt-sheets-integration-z.iam.gserviceaccount.com`
+- Credentials: `D:/GpT_docs/Google sheets upload/service_account.json`
+- gspread + oauth2client — чтение и запись статусов через API
+
+**Ключевые файлы:**
+- `packages/ai/src/question-schema.ts` — sourceIndices field
+- `packages/ai/src/question-generator.ts` — per-question chunk mapping
+- `apps/web/src/components/learning/LessonCard.tsx` — duration > 0 guard
+- `apps/web/src/app/(main)/learn/[id]/page.tsx` — duration > 0 guard
+- `apps/web/src/components/diagnostic/DiagnosticHint.tsx` — tooltip
+- `apps/web/src/app/pricing/page.tsx` — router.back()
+- `scripts/seed/seed-from-manifest.ts` — bonus modules last sort
+
+### Previous Session (2026-03-26, session 6)
+
+**CQ/Auth Bugfix Session — QA с email-командой:**
+
+**CQ даты — человекочитаемый формат + технические поля:**
+- `pa_period_end` / `pa_access_until` → `DD.MM.YYYY HH:MM` (МСК) для писем
+- `pa_period_end_tech` / `pa_access_until_tech` → ISO 8601 для CQ автоматизаций
+- Хелпер `formatDateRu()` в `emails.ts`
+
+**DOI-ссылка — дублирование /auth/v1 (critical fix):**
+- Supabase `site_url` уже содержит `/auth/v1`, мы добавляли ещё раз → 404 "No API key"
+- Фикс: `confirmUrl` строится от `site_url` + `/verify?...` без дублирования
+- Затрагивало все auth-ссылки: signup DOI, recovery, email_change
+
+**pa_registration_completed — тайминг (critical fix):**
+- Событие стреляло при `signUp()` ДО подтверждения email
+- Убрано из `actions.ts`, оставлено только в `auth/callback/route.ts` (после DOI-клика)
+
+**pa_name — email вместо имени:**
+- Webhook читал `user_metadata.name`, но регистрация сохраняет как `full_name`
+- Фикс: `user_metadata?.full_name || user_metadata?.name || user.email`
+
+**Reset-password — зависал на "Сохранение...":**
+- `redirect()` из server action бросал NEXT_REDIRECT, клиент не обрабатывал
+- Фикс: возвращаем `{ success: true }`, клиент показывает подтверждение и редиректит
+- Также исправлен `redirectTo` в recovery: `/auth/reset-password` → `/reset-password` (route group не создаёт URL-сегмент)
+
+**Supabase SMTP — Resend:**
+- Подключен custom SMTP (smtp.resend.com) для снятия лимита 2 emails/h
+- Rate limit: 30 emails/h, min interval: 30s
+- Resend API key от проекта MPSTATS Connect (общий аккаунт, отдельный ключ)
+
+**Инфраструктура:**
+- `.env` синхронизирован с продом (добавлены 9 недостающих ключей: CQ, CP, Yandex, cron, hooks)
+- Supabase Management API токен сохранён в memory (для админ-операций без Dashboard)
+- Пароль тест-юзеров сменён (старый `TestUser2024` убран из публичного CLAUDE.md)
+- Service role key подтверждён (prefix `sjPfn`)
+
+**Ключевые файлы:**
+- `apps/web/src/lib/carrotquest/emails.ts` — formatDateRu, _tech поля
+- `apps/web/src/app/api/webhooks/supabase-email/route.ts` — DOI fix, pa_name fix
+- `apps/web/src/lib/auth/actions.ts` — убран premature welcome email, reset redirect fix
+- `apps/web/src/app/(auth)/reset-password/page.tsx` — success state + client redirect
+
+### Previous Session (2026-03-26, session 5)
 
 **Phase 36 — Product Tour / Onboarding (complete + deployed):**
 - driver.js, 3 tooltip-тура: Dashboard (4), Learn (3 или 5 по CJM), Lesson (5)
@@ -725,6 +936,7 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 | v1.1 Admin & Polish | ✅ Shipped 2026-02-28 | Phases 10-15 |
 | v1.2 Auth Rework + Billing | ✅ Shipped 2026-03-12 | Phases 16-21 |
 | v1.3 Pre-release | 🔄 In Progress | Phases 22-36 (28-29 remaining; 33-03 on CQ team) |
+| v1.4 QA Audit Fixes | ✅ Shipped 2026-03-29 | Phases 37-42 |
 
 **Kinescope integration notes:**
 - `@kinescope/react-kinescope-player` v0.5.4 **НЕ РАБОТАЕТ** — Kinescope сломали свой API
@@ -732,6 +944,8 @@ scripts/sql/match_chunks.sql      # Supabase RPC function
 - seekTo через postMessage API к iframe
 
 **Completed v1.3 phases:** 23, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 36
+
+**Completed v1.4 phases:** 37, 38, 39, 40, 41, 42
 
 **Remaining v1.3 phases:**
 1. Phase 28: Боевой CloudPayments
