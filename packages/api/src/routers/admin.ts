@@ -4,7 +4,8 @@
  * Most procedures use adminProcedure (requires ADMIN or SUPERADMIN role).
  * Privileged operations (changeUserRole, toggleUserField) use superadminProcedure.
  * Endpoints: getDashboardStats, getUsers, toggleUserField, changeUserRole, getCourses,
- *   updateLessonOrder, moveCourseToPosition, updateCourseTitle, updateLessonTitle
+ *   updateLessonOrder, moveCourseToPosition, updateCourseTitle, updateLessonTitle,
+ *   getComments, toggleCommentVisibility, getNewCommentsCount
  */
 
 import { z } from 'zod';
@@ -779,4 +780,158 @@ export const adminRouter = router({
         handleDatabaseError(error);
       }
     }),
+
+  // ============== COMMENT MODERATION ==============
+
+  /**
+   * List all comments across lessons with filters for admin moderation.
+   * Supports filtering by course, visibility status, time period, and text search.
+   * Returns paginated results with lesson/course context.
+   */
+  getComments: adminProcedure
+    .input(
+      z.object({
+        courseId: z.string().optional(),
+        status: z.enum(['all', 'visible', 'hidden']).default('all'),
+        period: z.enum(['7d', '30d', 'all']).default('all'),
+        search: z.string().optional(),
+        cursor: z.string().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const { courseId, status, period, search, cursor } = input;
+        const PAGE_SIZE = 30;
+
+        // Build date filter
+        let dateFilter: Date | undefined;
+        if (period === '7d') {
+          dateFilter = new Date();
+          dateFilter.setDate(dateFilter.getDate() - 7);
+        } else if (period === '30d') {
+          dateFilter = new Date();
+          dateFilter.setDate(dateFilter.getDate() - 30);
+        }
+
+        // Build where clause
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const where: any = {};
+
+        if (status === 'visible') where.isHidden = false;
+        else if (status === 'hidden') where.isHidden = true;
+
+        if (dateFilter) where.createdAt = { gte: dateFilter };
+
+        if (search) {
+          where.OR = [
+            { content: { contains: search, mode: 'insensitive' } },
+            { user: { name: { contains: search, mode: 'insensitive' } } },
+          ];
+        }
+
+        // Filter by course: find lessons in that course first
+        if (courseId) {
+          const courseLessons = await ctx.prisma.lesson.findMany({
+            where: { courseId },
+            select: { id: true },
+          });
+          where.lessonId = { in: courseLessons.map((l) => l.id) };
+        }
+
+        const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
+        const [items, totalCount, newCount] = await Promise.all([
+          ctx.prisma.lessonComment.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            take: PAGE_SIZE,
+            ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+            include: {
+              user: { select: { id: true, name: true, avatarUrl: true, role: true } },
+            },
+          }),
+          ctx.prisma.lessonComment.count({ where }),
+          ctx.prisma.lessonComment.count({
+            where: { createdAt: { gte: new Date(Date.now() - TWENTY_FOUR_HOURS_MS) } },
+          }),
+        ]);
+
+        // Enrich items with lesson + course info
+        const uniqueLessonIds = [...new Set(items.map((c) => c.lessonId))];
+        const lessons = await ctx.prisma.lesson.findMany({
+          where: { id: { in: uniqueLessonIds } },
+          select: {
+            id: true,
+            title: true,
+            course: { select: { id: true, title: true } },
+          },
+        });
+        const lessonMap = new Map(lessons.map((l) => [l.id, l]));
+
+        const enrichedItems = items.map((item) => ({
+          ...item,
+          lesson: lessonMap.get(item.lessonId) ?? null,
+        }));
+
+        const nextCursor =
+          items.length === PAGE_SIZE ? items[items.length - 1].id : null;
+
+        return { items: enrichedItems, nextCursor, totalCount, newCount };
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Toggle comment visibility (hide/unhide). Tracks who hid the comment and when.
+   */
+  toggleCommentVisibility: adminProcedure
+    .input(
+      z.object({
+        commentId: z.string(),
+        isHidden: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const comment = await ctx.prisma.lessonComment.findUnique({
+          where: { id: input.commentId },
+        });
+
+        if (!comment) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
+        }
+
+        const updated = await ctx.prisma.lessonComment.update({
+          where: { id: input.commentId },
+          data: {
+            isHidden: input.isHidden,
+            hiddenBy: input.isHidden ? ctx.user.id : null,
+            hiddenAt: input.isHidden ? new Date() : null,
+          },
+        });
+
+        return updated;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Count of new comments in the last 24 hours (for sidebar badge).
+   */
+  getNewCommentsCount: adminProcedure.query(async ({ ctx }) => {
+    try {
+      const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+      const count = await ctx.prisma.lessonComment.count({
+        where: {
+          createdAt: { gte: new Date(Date.now() - TWENTY_FOUR_HOURS_MS) },
+        },
+      });
+      return { count };
+    } catch (error) {
+      handleDatabaseError(error);
+    }
+  }),
 });
