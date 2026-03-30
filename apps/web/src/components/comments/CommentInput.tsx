@@ -53,6 +53,9 @@ export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSucces
             avatarUrl: currentUser?.avatarUrl ?? null,
             role: (currentUser?.role ?? 'USER') as 'USER' | 'ADMIN' | 'SUPERADMIN',
           },
+          isHidden: false,
+          hiddenBy: null,
+          hiddenAt: null,
           replies: [],
         };
 
@@ -75,6 +78,9 @@ export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSucces
                           content: optimisticComment.content,
                           parentId: newComment.parentId ?? null,
                           createdAt: optimisticComment.createdAt,
+                          isHidden: false,
+                          hiddenBy: null,
+                          hiddenAt: null,
                           user: optimisticComment.user,
                         },
                       ],

@@ -314,7 +314,10 @@ model LessonComment {
   userId    String
   content   String   @db.Text
   parentId  String?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  isHidden  Boolean   @default(false)
+  hiddenBy  String?
+  hiddenAt  DateTime?
 
   user     UserProfile    @relation(fields: [userId], references: [id], onDelete: Cascade)
   parent   LessonComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)

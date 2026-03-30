@@ -44,18 +44,19 @@ export const commentsRouter = router({
 
         // Count total root comments for this lesson
         const totalCount = await ctx.prisma.lessonComment.count({
-          where: { lessonId, parentId: null },
+          where: { lessonId, parentId: null, isHidden: false },
         });
 
         // Fetch root comments with replies
         const comments = await ctx.prisma.lessonComment.findMany({
-          where: { lessonId, parentId: null },
+          where: { lessonId, parentId: null, isHidden: false },
           orderBy: { createdAt: 'desc' },
           take: COMMENTS_PER_PAGE,
           ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
           include: {
             user: { select: userSelect },
             replies: {
+              where: { isHidden: false },
               orderBy: { createdAt: 'asc' },
               include: {
                 user: { select: userSelect },
