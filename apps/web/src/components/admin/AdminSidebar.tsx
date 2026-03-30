@@ -9,12 +9,14 @@ import {
   LayoutDashboard,
   Users,
   BookOpen,
+  MessageSquare,
   BarChart3,
   Settings,
   ArrowLeft,
   Menu,
   X,
 } from 'lucide-react';
+import { trpc } from '@/lib/trpc/client';
 
 const navItems = [
   {
@@ -36,6 +38,12 @@ const navItems = [
     superadminOnly: false,
   },
   {
+    title: 'Comments',
+    href: '/admin/comments',
+    icon: MessageSquare,
+    superadminOnly: false,
+  },
+  {
     title: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
@@ -50,6 +58,10 @@ const navItems = [
 ];
 
 function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathname: string; onNavigate?: () => void }) {
+  const newComments = trpc.admin.getNewCommentsCount.useQuery(undefined, {
+    refetchInterval: 60_000,
+  });
+
   return (
     <>
       {navItems
@@ -58,6 +70,10 @@ function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathna
           const isActive =
             pathname === item.href ||
             (item.href !== '/admin' && pathname.startsWith(item.href + '/'));
+
+          const badgeCount = item.href === '/admin/comments'
+            ? (newComments.data?.count ?? 0)
+            : 0;
 
           return (
             <Link
@@ -78,6 +94,11 @@ function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathna
                 )}
               />
               {item.title}
+              {badgeCount > 0 && (
+                <span className="ml-auto bg-mp-blue-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                  {badgeCount > 99 ? '99+' : badgeCount}
+                </span>
+              )}
             </Link>
           );
         })}

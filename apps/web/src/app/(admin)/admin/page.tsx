@@ -4,7 +4,8 @@ import { trpc } from '@/lib/trpc/client';
 import { StatCard } from '@/components/admin/StatCard';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, ClipboardCheck, BookOpen, UserPlus, UserRoundPlus, GraduationCap } from 'lucide-react';
+import { Users, ClipboardCheck, BookOpen, UserPlus, UserRoundPlus, GraduationCap, MessageSquare } from 'lucide-react';
+import Link from 'next/link';
 import {
   AreaChart,
   Area,
@@ -66,6 +67,10 @@ export default function AdminDashboardPage() {
   const stats = trpc.admin.getDashboardStats.useQuery();
   const activity = trpc.admin.getRecentActivity.useQuery();
   const analytics = trpc.admin.getAnalytics.useQuery({ days: 7 });
+  const commentStats = trpc.admin.getComments.useQuery(
+    { status: 'all', period: 'all' },
+    { select: (data) => ({ total: data?.totalCount ?? 0, newCount: data?.newCount ?? 0 }) }
+  );
 
   if (stats.isLoading || activity.isLoading) {
     return <DashboardSkeleton />;
@@ -93,7 +98,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard
           title="Total Users"
           value={data?.totalUsers ?? 0}
@@ -121,6 +126,17 @@ export default function AdminDashboardPage() {
             ? `${((data.recentRegistrations / data.totalUsers) * 100).toFixed(0)}% of total`
             : undefined}
         />
+        <Link href="/admin/comments">
+          <StatCard
+            title="Comments"
+            value={commentStats.data?.total ?? 0}
+            icon={MessageSquare}
+            color="pink"
+            trend={commentStats.data?.newCount
+              ? `+${commentStats.data.newCount} today`
+              : undefined}
+          />
+        </Link>
       </div>
 
       {/* Chart + Recent Activity */}
