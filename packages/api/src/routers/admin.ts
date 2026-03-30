@@ -33,6 +33,8 @@ function getSupabaseAdmin() {
   return supabaseAdmin;
 }
 
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
 export const adminRouter = router({
   /**
    * Dashboard stats: total users, completed diagnostics, total lessons, recent registrations (7d).
@@ -838,8 +840,6 @@ export const adminRouter = router({
           where.lessonId = { in: courseLessons.map((l) => l.id) };
         }
 
-        const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-
         const [items, totalCount, newCount] = await Promise.all([
           ctx.prisma.lessonComment.findMany({
             where,
@@ -923,7 +923,6 @@ export const adminRouter = router({
    */
   getNewCommentsCount: adminProcedure.query(async ({ ctx }) => {
     try {
-      const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
       const count = await ctx.prisma.lessonComment.count({
         where: {
           createdAt: { gte: new Date(Date.now() - TWENTY_FOUR_HOURS_MS) },
