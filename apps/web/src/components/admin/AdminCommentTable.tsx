@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -67,8 +67,15 @@ export function AdminCommentTable() {
   const [courseId, setCourseId] = useState<string | undefined>();
   const [status, setStatus] = useState<'all' | 'visible' | 'hidden'>('all');
   const [period, setPeriod] = useState<'7d' | '30d' | 'all'>('all');
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  // Debounce search input — avoid firing tRPC on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(searchInput), 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const utils = trpc.useUtils();
 
@@ -171,8 +178,8 @@ export function AdminCommentTable() {
           <input
             type="text"
             placeholder="Поиск по тексту или автору..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
             className="h-9 w-full rounded-lg border border-mp-gray-200 bg-white pl-9 pr-3 text-body-sm text-mp-gray-700 placeholder:text-mp-gray-400 focus:outline-none focus:ring-2 focus:ring-mp-blue-500"
           />
         </div>
@@ -262,6 +269,7 @@ export function AdminCommentTable() {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"
+                    disabled={toggleVisibility.isPending}
                     onClick={() =>
                       toggleVisibility.mutate({
                         commentId: item.id,
