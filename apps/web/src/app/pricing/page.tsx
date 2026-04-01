@@ -264,9 +264,6 @@ export default function PricingPage() {
                       >
                         {isProcessing ? 'Обработка...' : 'Оформить подписку'}
                       </Button>
-                      <p className="text-xs text-muted-foreground text-center mt-2 w-full">
-                        Дата и CVV — на следующем шаге
-                      </p>
                     </>
                   )}
                 </CardFooter>
@@ -345,9 +342,6 @@ export default function PricingPage() {
                       >
                         {isProcessing ? 'Обработка...' : 'Оформить подписку'}
                       </Button>
-                      <p className="text-xs text-muted-foreground text-center mt-2 w-full">
-                        Дата и CVV — на следующем шаге
-                      </p>
                     </>
                   )}
                 </CardFooter>
