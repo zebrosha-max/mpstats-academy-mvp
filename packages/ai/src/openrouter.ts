@@ -35,11 +35,11 @@ export const openrouter = new Proxy({} as OpenAI, {
 
 // Model configuration
 export const MODELS = {
-  // Primary model: Qwen 3.5 Flash — best price/quality ratio ($0.26/M output)
-  // IFBench 76.5, 1M context, hybrid linear-attention + MoE
-  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'qwen/qwen3.5-flash-02-23',
+  // Primary model: GPT-4.1 Nano — best diagnostic question quality (QA audit: 12/15 good)
+  // Qwen had issues: source references, weak explanations, vague formulations
+  chat: process.env.OPENROUTER_DEFAULT_MODEL || 'openai/gpt-4.1-nano',
   // Fallback model
-  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'openai/gpt-4.1-nano',
+  fallback: process.env.OPENROUTER_FALLBACK_MODEL || 'qwen/qwen3.5-flash-02-23',
   // Embedding model (must match what's in Supabase!)
   embedding: 'openai/text-embedding-3-small',
 } as const;
