@@ -284,6 +284,7 @@ function buildSystemPrompt(category: SkillCategory, count: number): string {
 - Не предполагай знание конкретных кейсов, примеров или историй из уроков
 - Не используй формулировки, которые имеют смысл только в контексте конкретного урока
 - Если информация из контекста слишком узкая или специфичная — сформулируй вопрос шире, на основе общего принципа
+- Если контекст содержит ТОЛЬКО запрещённые темы (VPN, плагины, IT-определения) — ПРОИГНОРИРУЙ контекст и сгенерируй вопрос на общий навык селлера по данной рубрике из своих знаний
 
 ## ТРЕБОВАНИЯ
 
@@ -292,7 +293,7 @@ function buildSystemPrompt(category: SkillCategory, count: number): string {
 - Explanation объясняет почему ответ верен (2-3 предложения), ФАКТОЛОГИЧЕСКИ, без ссылок на материалы
 - Микс сложности: EASY (определения, базовые понятия), MEDIUM (применение, расчёты), HARD (стратегии, оптимизация)
 - Язык: русский
-- Каждый вопрос проверяет РАЗНЫЙ аспект темы
+- Каждый вопрос проверяет РАЗНЫЙ аспект темы — НЕ делай 2+ вопроса на одну и ту же подтему (например, 3 вопроса про инфографику)
 
 ## КАЧЕСТВО ВАРИАНТОВ ОТВЕТА
 
@@ -366,6 +367,8 @@ async function fetchRandomChunks(
     .map((prefix) => `lesson_id LIKE '${prefix}%'`)
     .join(' OR ');
 
+  // Exclude bonus/intro lessons — they contain VPN guides, tool tutorials,
+  // and general IT definitions that pollute diagnostic question quality
   const data = await prisma.$queryRawUnsafe<Array<{
     id: string;
     content: string;
@@ -375,7 +378,9 @@ async function fetchRandomChunks(
   }>>(`
     SELECT id::text, content::text, lesson_id::text, timecode_start::int, timecode_end::int
     FROM content_chunk
-    WHERE ${likeConditions}
+    WHERE (${likeConditions})
+      AND lesson_id NOT LIKE '%_m00_%'
+      AND lesson_id NOT LIKE '%_m01_intro_%'
     ORDER BY RANDOM()
     LIMIT ${limit}
   `);
