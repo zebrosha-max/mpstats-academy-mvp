@@ -33,7 +33,7 @@ export const CATEGORY_TO_COURSES: Record<SkillCategory, string[]> = {
 const QUESTIONS_PER_CATEGORY = 3;
 const CHUNKS_TO_FETCH = 15; // fetch more, sample fewer
 const CHUNKS_TO_USE = 5;
-const LLM_TIMEOUT_MS = 15000;
+const LLM_TIMEOUT_MS = 25000;
 
 // ============== TYPES ==============
 
