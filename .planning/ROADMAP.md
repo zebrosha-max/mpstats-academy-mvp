@@ -7,6 +7,7 @@
 - ✅ **v1.2 Auth Rework + Billing** — Phases 16-21 (shipped 2026-03-12)
 - 🔄 **v1.3 Pre-release** — Phases 22-36 (in progress)
 - 📋 **v1.4 QA Audit Fixes** — Phases 37-42 (planned)
+- 📋 **v1.5 Growth & Monetization** — Phases 43+ (planned)
 
 ## Phases
 
@@ -294,7 +295,10 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 28 to break down)
+- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 28 to break down)
 
 ### Phase 29: Sentry Monitoring — мониторинг ошибок в продакшене
 
@@ -304,7 +308,10 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 29 to break down)
+- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 29 to break down)
 
 ### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
 
@@ -608,3 +615,36 @@ n**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 42-01-PLAN.md — Update buildSystemPrompt with 6 rule blocks from Mila review
+
+## v1.5 Growth & Monetization (Phases 43+)
+
+**Milestone Goal:** Инструменты роста и монетизации — промо-коды, партнёрские интеграции, аналитика.
+
+### Phase 44: Промо-коды
+
+**Goal:** Админ создаёт промо-коды (PLATFORM/COURSE, N дней, лимит активаций). Пользователь вводит код на /pricing и получает бесплатную подписку. Промо-подписка отображается в профиле.
+
+**Design:** `docs/plans/2026-04-06-promo-codes-design.md`
+
+**Scope:**
+- DB: модели PromoCode, PromoActivation, Subscription.promoCodeId
+- Backend: tRPC promo роутер (activatePromoCode) + admin процедуры (CRUD промо-кодов)
+- Frontend: блок промо-кода на /pricing с auth-хедером, промо-бейдж в профиле
+- Admin: вкладка "Промо-коды" (таблица, создание, деактивация, аудит активаций)
+- CQ: событие pa_promo_activated
+- Тесты: unit + E2E
+
+**Success Criteria:**
+1. Админ может создать промо-код с типом PLATFORM/COURSE, длительностью и лимитом
+2. Пользователь вводит код на /pricing → получает ACTIVE подписку на N дней
+3. Валидация: просроченный, исчерпанный, повторный, конфликт с активной подпиской
+4. Промо-подписка корректно отображается в профиле (бейдж "Промо", без кнопки отмены)
+5. /pricing показывает auth-хедер (войти / аватар)
+
+**Plans:** 4 plans
+
+Plans:
+- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [ ] 44-04-PLAN.md — End-to-end verification checkpoint
