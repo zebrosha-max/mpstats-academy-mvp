@@ -40,6 +40,7 @@ model UserProfile {
   chatMessages       ChatMessage[]
   lessonComments     LessonComment[]
   subscriptions      Subscription[]
+  promoActivations   PromoActivation[]
 }
 
 // ============== DIAGNOSTIC ==============
@@ -120,6 +121,7 @@ model Course {
 
   lessons       Lesson[]
   subscriptions Subscription[]
+  promoCodes    PromoCode[]
 }
 
 model Lesson {
@@ -217,12 +219,15 @@ model Subscription {
   currentPeriodStart DateTime
   currentPeriodEnd   DateTime
   cancelledAt        DateTime?
+  promoCodeId        String?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
   user     UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan     SubscriptionPlan @relation(fields: [planId], references: [id])
   course   Course?          @relation(fields: [courseId], references: [id])
+  promoCode PromoCode?      @relation(fields: [promoCodeId], references: [id])
+  promoActivation PromoActivation?
   payments Payment[]
 
   @@index([userId])
@@ -263,6 +268,40 @@ model FeatureFlag {
   enabled     Boolean  @default(false)
   description String?
   updatedAt   DateTime @updatedAt
+}
+
+// ============== PROMO CODES ==============
+
+model PromoCode {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  planType      SubscriptionType              // PLATFORM or COURSE (reuses existing enum)
+  courseId       String?
+  durationDays  Int
+  maxUses       Int       @default(1)
+  currentUses   Int       @default(0)
+  expiresAt     DateTime?
+  isActive      Boolean   @default(true)
+  createdBy     String
+  createdAt     DateTime  @default(now())
+
+  course        Course?          @relation(fields: [courseId], references: [id])
+  activations   PromoActivation[]
+  subscriptions Subscription[]
+}
+
+model PromoActivation {
+  id              String       @id @default(cuid())
+  promoCodeId     String
+  userId          String
+  subscriptionId  String       @unique
+  activatedAt     DateTime     @default(now())
+
+  promoCode       PromoCode    @relation(fields: [promoCodeId], references: [id])
+  user            UserProfile  @relation(fields: [userId], references: [id])
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([promoCodeId, userId])
 }
 
 // ============== RAG ==============

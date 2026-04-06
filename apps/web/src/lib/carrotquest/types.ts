@@ -18,6 +18,8 @@ export type CQEventName =
   | 'pa_inactive_30'
   // Support
   | 'pa_support_request'
+  // Promo
+  | 'pa_promo_activated'
   // Auth hook events (sent via Supabase Send Email Hook)
   | 'pa_doi'
   | 'pa_password_reset'
