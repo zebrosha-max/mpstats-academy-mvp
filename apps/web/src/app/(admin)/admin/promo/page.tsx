@@ -25,9 +25,9 @@ function getPromoStatus(promo: {
 
 const STATUS_CONFIG: Record<PromoStatus, { label: string; variant: string }> = {
   active: { label: 'Активен', variant: 'success' },
-  used: { label: 'Использован', variant: 'secondary' },
+  used: { label: 'Использован', variant: 'default' },
   expired: { label: 'Истёк', variant: 'destructive' },
-  disabled: { label: 'Отключён', variant: 'secondary' },
+  disabled: { label: 'Отключён', variant: 'default' },
 };
 
 const DURATION_PRESETS = [7, 14, 30];
@@ -421,7 +421,7 @@ function PromoRow({
           {formatDate(promo.expiresAt)}
         </td>
         <td className="px-4 py-3">
-          <Badge variant={statusConfig.variant as 'success' | 'secondary' | 'destructive'}>
+          <Badge variant={statusConfig.variant as 'success' | 'default' | 'destructive'}>
             {statusConfig.label}
           </Badge>
         </td>
@@ -497,7 +497,7 @@ function ActivationsDetail({
             </td>
             <td className="py-2">
               <Badge
-                variant={a.subscription?.status === 'ACTIVE' ? 'success' : 'secondary'}
+                variant={a.subscription?.status === 'ACTIVE' ? 'success' : 'default'}
                 size="sm"
               >
                 {a.subscription?.status || 'N/A'}

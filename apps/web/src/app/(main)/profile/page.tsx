@@ -347,7 +347,7 @@ export default function ProfilePage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-heading">Подписка</CardTitle>
-                      <Badge variant={isPromoSubscription ? 'secondary' : (subscriptionStatusMap[subscription.status]?.variant || 'default')}>
+                      <Badge variant={isPromoSubscription ? 'featured' : (subscriptionStatusMap[subscription.status]?.variant || 'default')}>
                         {isPromoSubscription ? 'Промо' : (subscriptionStatusMap[subscription.status]?.label || subscription.status)}
                       </Badge>
                     </div>
