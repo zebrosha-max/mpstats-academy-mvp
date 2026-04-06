@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,7 @@ import { openPaymentWidget } from '@/lib/cloudpayments/widget';
 import { toast } from 'sonner';
 import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
+import { PromoCodeInput } from '@/components/pricing/PromoCodeInput';
 
 const formatPrice = (amount: number) =>
   new Intl.NumberFormat('ru-RU').format(amount);
@@ -24,12 +25,16 @@ const COURSE_AXIS_MAP: Record<string, string[]> = {
   '05_ozon': ['Аналитика', 'Операции', 'Финансы'],
 };
 
-export default function PricingPage() {
+function PricingPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [widgetReady, setWidgetReady] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Read ?promo= URL param for auto-fill after login redirect
+  const promoFromUrl = searchParams.get('promo') || undefined;
 
   // Fetch plans (public)
   const { data: plans, isLoading: plansLoading } = trpc.billing.getPlans.useQuery();
@@ -42,6 +47,13 @@ export default function PricingPage() {
 
   // Fetch courses for dropdown (public — works for everyone)
   const { data: courses } = trpc.billing.getCourses.useQuery();
+
+  // Auth state for header and promo code (may fail for unauthenticated — that's ok)
+  const { data: profile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const isAuthenticated = !!profile;
 
   // Initiate payment mutation
   const initiatePayment = trpc.billing.initiatePayment.useMutation();
@@ -157,7 +169,18 @@ export default function PricingPage() {
             <div className="sm:hidden">
               <LogoMark size="sm" />
             </div>
-            <div className="w-16 shrink-0" /> {/* Spacer for centering logo */}
+            {/* Auth state: login button or profile link */}
+            <div className="w-16 shrink-0 flex justify-end">
+              {isAuthenticated ? (
+                <Link href="/profile" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline">
+                  {profile?.name || 'Профиль'}
+                </Link>
+              ) : (
+                <Link href="/login" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline font-medium">
+                  Войти
+                </Link>
+              )}
+            </div>
           </div>
         </header>
 
@@ -348,8 +371,28 @@ export default function PricingPage() {
               </Card>
             )}
           </div>
+
+          {/* Promo code section */}
+          <div className="mt-10">
+            <PromoCodeInput
+              isAuthenticated={isAuthenticated}
+              initialCode={promoFromUrl}
+            />
+          </div>
         </main>
       </div>
     </>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-mp-blue-500 border-t-transparent rounded-full" />
+      </div>
+    }>
+      <PricingPageContent />
+    </Suspense>
   );
 }
