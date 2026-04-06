@@ -295,9 +295,9 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
-- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
-- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [x] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [x] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [x] 44-03-PLAN.md — Admin promo page + sidebar nav
 - [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 28 to break down)
 
 ### Phase 29: Sentry Monitoring — мониторинг ошибок в продакшене
@@ -308,9 +308,9 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
-- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
-- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [x] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [x] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [x] 44-03-PLAN.md — Admin promo page + sidebar nav
 - [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 29 to break down)
 
 ### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
@@ -641,10 +641,10 @@ Plans:
 4. Промо-подписка корректно отображается в профиле (бейдж "Промо", без кнопки отмены)
 5. /pricing показывает auth-хедер (войти / аватар)
 
-**Plans:** 4 plans
+**Plans:** 3/4 plans executed
 
 Plans:
-- [ ] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
-- [ ] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
-- [ ] 44-03-PLAN.md — Admin promo page + sidebar nav
+- [x] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
+- [x] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
+- [x] 44-03-PLAN.md — Admin promo page + sidebar nav
 - [ ] 44-04-PLAN.md — End-to-end verification checkpoint
