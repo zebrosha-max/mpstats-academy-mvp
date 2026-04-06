@@ -225,6 +225,8 @@ export default function ProfilePage() {
   const hasActiveSubscription =
     subscription && ['ACTIVE', 'PAST_DUE', 'CANCELLED'].includes(subscription.status);
 
+  const isPromoSubscription = subscription?.promoCodeId != null;
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 overflow-hidden">
       <div>
@@ -345,8 +347,8 @@ export default function ProfilePage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-heading">Подписка</CardTitle>
-                      <Badge variant={subscriptionStatusMap[subscription.status]?.variant || 'default'}>
-                        {subscriptionStatusMap[subscription.status]?.label || subscription.status}
+                      <Badge variant={isPromoSubscription ? 'secondary' : (subscriptionStatusMap[subscription.status]?.variant || 'default')}>
+                        {isPromoSubscription ? 'Промо' : (subscriptionStatusMap[subscription.status]?.label || subscription.status)}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -356,12 +358,19 @@ export default function ProfilePage() {
                         <span className="text-mp-gray-500 shrink-0">Тариф</span>
                         <span className="font-medium text-mp-gray-900 truncate">{subscription.plan.name}</span>
                       </div>
-                      <div className="flex justify-between gap-4 text-body-sm">
-                        <span className="text-mp-gray-500 shrink-0">Стоимость</span>
-                        <span className="font-medium text-mp-gray-900">
-                          {formatPrice(subscription.plan.price)} / мес
-                        </span>
-                      </div>
+                      {isPromoSubscription ? (
+                        <div className="flex justify-between gap-4 text-body-sm">
+                          <span className="text-mp-gray-500 shrink-0">Тип</span>
+                          <span className="font-medium text-mp-gray-900">Промо-доступ</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between gap-4 text-body-sm">
+                          <span className="text-mp-gray-500 shrink-0">Стоимость</span>
+                          <span className="font-medium text-mp-gray-900">
+                            {formatPrice(subscription.plan.price)} / мес
+                          </span>
+                        </div>
+                      )}
                       {subscription.plan.type === 'COURSE' && subscription.course && (
                         <div className="flex justify-between gap-4 text-body-sm min-w-0">
                           <span className="text-mp-gray-500 shrink-0">Курс</span>
@@ -370,7 +379,7 @@ export default function ProfilePage() {
                       )}
                       <div className="flex justify-between gap-4 text-body-sm">
                         <span className="text-mp-gray-500 shrink-0">
-                          {subscription.status === 'CANCELLED' ? 'Доступ до' : 'Следующее списание'}
+                          {subscription.status === 'CANCELLED' || isPromoSubscription ? 'Доступ до' : 'Следующее списание'}
                         </span>
                         <span className="font-medium text-mp-gray-900">
                           {formatDate(subscription.currentPeriodEnd)}
@@ -384,7 +393,7 @@ export default function ProfilePage() {
                       </div>
                     )}
 
-                    {subscription.status === 'ACTIVE' && (
+                    {subscription.status === 'ACTIVE' && !isPromoSubscription && (
                       <Button
                         variant="outline"
                         className="text-red-600 border-red-200 hover:bg-red-50"
