@@ -11,6 +11,7 @@ import {
   BookOpen,
   MessageSquare,
   BarChart3,
+  Ticket,
   Settings,
   ArrowLeft,
   Menu,
@@ -47,6 +48,12 @@ const navItems = [
     title: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
+    superadminOnly: false,
+  },
+  {
+    title: 'Promo',
+    href: '/admin/promo',
+    icon: Ticket,
     superadminOnly: false,
   },
   {
