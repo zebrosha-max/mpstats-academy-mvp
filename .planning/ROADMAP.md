@@ -300,18 +300,32 @@ Plans:
 - [x] 44-03-PLAN.md — Admin promo page + sidebar nav
 - [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 28 to break down)
 
-### Phase 29: Sentry Monitoring — мониторинг ошибок в продакшене
+### Phase 29: Sentry Monitoring — мониторинг ошибок и performance
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 28
-**Plans:** 2 plans
+**Goal:** Подключить Sentry для мониторинга ошибок (фронтенд + бэкенд) и performance tracking (Web Vitals, API latency). Email алерты при новых issues.
+
+**Design:** `docs/plans/2026-04-07-sentry-monitoring-design.md`
+
+**Scope:**
+- SDK: @sentry/nextjs (client + server + edge)
+- Error boundary: global-error.tsx для App Router
+- Performance: Web Vitals, 30% sample rate
+- Custom spans: CP webhooks, email webhook, AI/LLM, cron, promo
+- Sentry Crons: check-subscriptions monitoring
+- Source maps upload при build
+- Email алерты из коробки
+
+**Success Criteria:**
+1. Ошибки фронтенда и бэкенда появляются в Sentry dashboard
+2. Web Vitals (LCP, FID, CLS) трекаются
+3. CP webhook failures видны как отдельные spans
+4. LLM вызовы трекаются с latency и model name
+5. Email алерты приходят при новых issues
+
+**Plans:** 0/? plans
 
 Plans:
-- [x] 44-01-PLAN.md — DB schema (PromoCode, PromoActivation) + tRPC promo router
-- [x] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
-- [x] 44-03-PLAN.md — Admin promo page + sidebar nav
-- [ ] 44-04-PLAN.md — End-to-end verification checkpoint (run /gsd:plan-phase 29 to break down)
+- [ ] TBD
 
 ### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
 
