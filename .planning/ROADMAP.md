@@ -322,10 +322,11 @@ Plans:
 4. LLM вызовы трекаются с latency и model name
 5. Email алерты приходят при новых issues
 
-**Plans:** 0/? plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD
+- [ ] 29-01-PLAN.md — SDK setup, config files, next.config wrapper, global-error, instrumentation
+- [ ] 29-02-PLAN.md — Custom spans (CP webhooks, email webhook, OpenRouter LLM, Sentry Crons)
 
 ### Phase 30: Content Discovery — smart search по боли, фильтры по урокам, персональный трек
 
