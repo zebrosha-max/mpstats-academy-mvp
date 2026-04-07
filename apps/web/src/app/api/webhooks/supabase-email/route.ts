@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
+import * as Sentry from '@sentry/nextjs';
 import { cq } from '@/lib/carrotquest/client';
 
 export const dynamic = 'force-dynamic';
@@ -85,47 +86,53 @@ export async function POST(request: NextRequest) {
     const base = site_url || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`;
     const confirmUrl = `${base}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to || '')}`;
 
-    switch (email_action_type) {
-      case 'signup': {
-        const name = user.user_metadata?.full_name || user.user_metadata?.name || '';
-        await cq.setUserProps(user.id, {
-          '$email': user.email || '',
-          '$name': name,
-          pa_name: name || user.email || '',
-          pa_doi: confirmUrl,
-        });
-        await cq.trackEvent(user.id, 'pa_doi');
-        console.log(`[SupabaseEmailHook] DOI event sent for ${user.email}`);
-        break;
-      }
+    await Sentry.startSpan(
+      { name: `supabase.email.${email_action_type}`, op: 'webhook.supabase-email' },
+      async () => {
+        switch (email_action_type) {
+          case 'signup': {
+            const name = user.user_metadata?.full_name || user.user_metadata?.name || '';
+            await cq.setUserProps(user.id, {
+              '$email': user.email || '',
+              '$name': name,
+              pa_name: name || user.email || '',
+              pa_doi: confirmUrl,
+            });
+            await cq.trackEvent(user.id, 'pa_doi');
+            console.log(`[SupabaseEmailHook] DOI event sent for ${user.email}`);
+            break;
+          }
 
-      case 'recovery': {
-        await cq.setUserProps(user.id, {
-          pa_password_link: confirmUrl,
-        });
-        await cq.trackEvent(user.id, 'pa_password_reset');
-        console.log(`[SupabaseEmailHook] Password reset event sent for ${user.email}`);
-        break;
-      }
+          case 'recovery': {
+            await cq.setUserProps(user.id, {
+              pa_password_link: confirmUrl,
+            });
+            await cq.trackEvent(user.id, 'pa_password_reset');
+            console.log(`[SupabaseEmailHook] Password reset event sent for ${user.email}`);
+            break;
+          }
 
-      case 'email_change': {
-        await cq.setUserProps(user.id, {
-          pa_new_email: email_data.new_email || '',
-          pa_confirm_url: confirmUrl,
-        });
-        await cq.trackEvent(user.id, 'pa_email_change');
-        console.log(`[SupabaseEmailHook] Email change event sent for ${user.email}`);
-        break;
-      }
+          case 'email_change': {
+            await cq.setUserProps(user.id, {
+              pa_new_email: email_data.new_email || '',
+              pa_confirm_url: confirmUrl,
+            });
+            await cq.trackEvent(user.id, 'pa_email_change');
+            console.log(`[SupabaseEmailHook] Email change event sent for ${user.email}`);
+            break;
+          }
 
-      default: {
-        console.warn(`[SupabaseEmailHook] Unknown email_action_type: ${email_action_type}`);
-      }
-    }
+          default: {
+            console.warn(`[SupabaseEmailHook] Unknown email_action_type: ${email_action_type}`);
+          }
+        }
+      },
+    );
 
     return NextResponse.json({});
   } catch (error) {
     // Always return 200 to avoid breaking the auth flow
+    Sentry.captureException(error);
     console.error('[SupabaseEmailHook] Error:', error);
     return NextResponse.json({});
   }

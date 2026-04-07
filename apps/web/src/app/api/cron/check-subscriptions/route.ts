@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@mpstats/db/client';
 import { sendSubscriptionExpiringEmail } from '@/lib/carrotquest/emails';
 
@@ -14,6 +15,19 @@ export async function POST(request: NextRequest) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const checkInId = Sentry.captureCheckIn(
+    {
+      monitorSlug: 'check-subscriptions',
+      status: 'in_progress',
+    },
+    {
+      schedule: { type: 'crontab', value: '0 9 * * *' },
+      checkinMargin: 5,
+      maxRuntime: 60,
+      timezone: 'Europe/Moscow',
+    },
+  );
 
   try {
     const now = new Date();
@@ -44,8 +58,21 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Cron] check-subscriptions: ${sent}/${expiring.length} expiring notifications sent`);
+
+    Sentry.captureCheckIn({
+      checkInId,
+      monitorSlug: 'check-subscriptions',
+      status: 'ok',
+    });
+
     return NextResponse.json({ ok: true, checked: expiring.length, sent });
   } catch (error) {
+    Sentry.captureException(error);
+    Sentry.captureCheckIn({
+      checkInId,
+      monitorSlug: 'check-subscriptions',
+      status: 'error',
+    });
     console.error('[Cron] check-subscriptions error:', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }

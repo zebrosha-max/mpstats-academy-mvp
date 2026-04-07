@@ -7,6 +7,7 @@ import 'server-only';
  */
 
 import OpenAI from 'openai';
+import * as Sentry from '@sentry/node';
 
 // Lazy-initialized OpenRouter client to avoid build-time errors
 // (OPENROUTER_API_KEY is a runtime env var, not available during Next.js build)
@@ -53,3 +54,22 @@ export const MODEL_CONFIG = {
 } as const;
 
 export type ModelType = keyof typeof MODELS;
+
+/**
+ * Wrap an OpenRouter LLM call in a Sentry span for performance tracking.
+ * Usage: const result = await callWithSpan('generate-question', model, () => client.chat.completions.create(...));
+ */
+export async function callWithSpan<T>(
+  name: string,
+  model: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  return Sentry.startSpan(
+    {
+      name: `llm.${name}`,
+      op: 'ai.chat',
+      attributes: { 'ai.model': model },
+    },
+    () => fn(),
+  );
+}

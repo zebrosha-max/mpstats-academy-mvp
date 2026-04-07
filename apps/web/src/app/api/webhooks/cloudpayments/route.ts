@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 import { prisma } from '@mpstats/db/client';
 import { verifyCloudPaymentsHmac } from '@/lib/cloudpayments/hmac';
@@ -129,10 +130,16 @@ export async function POST(request: NextRequest) {
   const eventType = resolveEventType(request.url, payload);
   const txId = String(payload.TransactionId);
 
+  Sentry.setTag('cp.event_type', eventType);
+  Sentry.setTag('cp.tx_id', txId);
+
   console.log(
     `[CloudPayments] ${eventType} for subscription ${payload.InvoiceId}, tx ${payload.TransactionId}`,
   );
 
+  return await Sentry.startSpan(
+    { name: `cp.webhook.${eventType}`, op: 'webhook.cloudpayments' },
+    async () => {
   try {
     // --- Check event: pre-payment validation (no Payment record created) ---
     if (eventType === 'check') {
@@ -220,7 +227,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(OK);
   } catch (error) {
     // Accept webhook to prevent CloudPayments retries, but log for investigation
+    Sentry.captureException(error);
     console.error('[CloudPayments] Webhook processing error:', error);
     return NextResponse.json(OK);
   }
+    },
+  );
 }

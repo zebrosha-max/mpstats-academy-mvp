@@ -10,6 +10,7 @@
   "dependencies": {
     "@mpstats/db": "workspace:*",
     "@mpstats/shared": "workspace:*",
+    "@sentry/node": "^10.47.0",
     "@supabase/supabase-js": "^2.46.0",
     "openai": "^4.73.0",
     "server-only": "^0.0.1",

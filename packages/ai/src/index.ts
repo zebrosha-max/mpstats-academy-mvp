@@ -8,7 +8,7 @@
  */
 
 // OpenRouter client
-export { openrouter, MODELS, MODEL_CONFIG } from './openrouter';
+export { openrouter, MODELS, MODEL_CONFIG, callWithSpan } from './openrouter';
 export type { ModelType } from './openrouter';
 
 // Embedding service
