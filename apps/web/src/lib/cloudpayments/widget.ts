@@ -69,6 +69,10 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
         accountId: options.accountId,
         ...(options.email ? { email: options.email } : {}),
       },
+      // Defensive: also pass our subscription id via the freeform `data` field
+      // so the webhook always has it, even if CP's externalId→InvoiceId mapping
+      // breaks for subscription/recurrent flows. parse-webhook.ts reads this.
+      data: { ourSubscriptionId: options.invoiceId },
     };
 
     if (options.recurrent) {

@@ -220,6 +220,7 @@ model Subscription {
   currentPeriodEnd   DateTime
   cancelledAt        DateTime?
   promoCodeId        String?
+  cpSubscriptionId   String?            @unique // CP-side subscription id (sc_xxx), captured from recurrent webhook
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 

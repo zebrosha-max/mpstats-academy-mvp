@@ -4,6 +4,8 @@ import {
   sendPaymentFailedEmail,
   sendCancellationEmail,
 } from '@/lib/carrotquest/emails';
+import { decideRecurrentUpdate } from './decide-recurrent-update';
+import type { NormalizedRecurrentEvent } from './parse-webhook';
 
 /**
  * Subscription lifecycle state machine for CloudPayments webhook events.
@@ -174,60 +176,82 @@ export async function handleCancellation(
 }
 
 /**
- * Handle recurrent (recurring) payment — extend billing period.
- * Called on "recurrent" event.
+ * Handle a CP "recurrent" subscription notification.
  *
- * Extends currentPeriodEnd from the CURRENT currentPeriodEnd (not from now)
- * to avoid gaps or overlaps in billing periods.
- * Also reactivates subscription if it was PAST_DUE from a failed attempt.
+ * The recurrent webhook is a SUBSCRIPTION lifecycle notification, not a payment
+ * event. CP delivers a different schema (see NormalizedRecurrentEvent in
+ * parse-webhook.ts) and may fire it for: creation, successful charges, failed
+ * charges, status changes, expiry.
+ *
+ * Lookup strategy:
+ *   1. By cpSubscriptionId (preferred — set on previous webhooks)
+ *   2. By userId (most recent active/pending) — for the FIRST notification
+ *      where we haven't yet captured the CP id
  */
-export async function handleRecurrentPayment(
-  subscriptionId: string,
-  payment: { id: string; amount: number },
+export async function handleRecurrentEvent(
+  event: NormalizedRecurrentEvent,
 ): Promise<void> {
   try {
-    const subscription = await prisma.subscription.findUnique({
-      where: { id: subscriptionId },
+    let subscription = await prisma.subscription.findUnique({
+      where: { cpSubscriptionId: event.cpSubscriptionId },
       include: { plan: true },
     });
 
     if (!subscription) {
+      subscription = await prisma.subscription.findFirst({
+        where: {
+          userId: event.accountId,
+          status: { in: ['PENDING', 'ACTIVE', 'PAST_DUE'] },
+          cpSubscriptionId: null,
+        },
+        orderBy: { createdAt: 'desc' },
+        include: { plan: true },
+      });
+    }
+
+    if (!subscription) {
       console.error(
-        `[Subscription] handleRecurrentPayment: subscription ${subscriptionId} not found (payment ${payment.id})`,
+        `[Subscription] handleRecurrentEvent: no subscription found for cp=${event.cpSubscriptionId} user=${event.accountId}`,
       );
       return;
     }
 
-    const newPeriodStart = subscription.currentPeriodEnd;
-    const newPeriodEnd = new Date(newPeriodStart);
-    newPeriodEnd.setDate(
-      newPeriodEnd.getDate() + subscription.plan.intervalDays,
-    );
+    const update = decideRecurrentUpdate(event, {
+      id: subscription.id,
+      status: subscription.status,
+      currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+      cpSubscriptionId: subscription.cpSubscriptionId,
+      plan: { intervalDays: subscription.plan.intervalDays },
+    });
 
     await prisma.subscription.update({
-      where: { id: subscriptionId },
-      data: {
-        status: 'ACTIVE',
-        currentPeriodStart: newPeriodStart,
-        currentPeriodEnd: newPeriodEnd,
-      },
+      where: { id: subscription.id },
+      data: update,
     });
 
     console.log(
-      `[Subscription] Extended ${subscriptionId}, new period: ${newPeriodStart.toISOString()} - ${newPeriodEnd.toISOString()}`,
+      `[Subscription] Recurrent event applied to ${subscription.id} (cp=${event.cpSubscriptionId}, status=${event.cpStatus} → ${update.status})`,
     );
 
-    // Fire-and-forget: send recurrent payment email via CQ
-    sendPaymentSuccessEmail(subscription.userId, {
-      amount: payment.amount,
-      courseName: subscription.plan.name,
-      periodEnd: newPeriodEnd,
-    }).catch((err) =>
-      console.error('[Email] Recurrent payment email failed:', err),
-    );
+    // Notify the user only on actual successful recurring charges
+    // (Active state with a real charge that extended the period).
+    if (
+      update.status === 'ACTIVE' &&
+      update.currentPeriodEnd &&
+      event.successCount > 0
+    ) {
+      sendPaymentSuccessEmail(subscription.userId, {
+        amount: event.amount,
+        courseName: subscription.plan.name,
+        periodEnd: update.currentPeriodEnd,
+      }).catch((err) =>
+        console.error('[Email] Recurrent payment email failed:', err),
+      );
+    }
   } catch (error) {
     console.error(
-      `[Subscription] handleRecurrentPayment error for ${subscriptionId}:`,
+      `[Subscription] handleRecurrentEvent error for cp=${event.cpSubscriptionId}:`,
       error,
     );
   }

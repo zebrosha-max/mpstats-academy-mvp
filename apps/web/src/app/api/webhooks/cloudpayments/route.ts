@@ -8,65 +8,62 @@ import {
   handlePaymentSuccess,
   handlePaymentFailure,
   handleCancellation,
-  handleRecurrentPayment,
+  handleRecurrentEvent,
   handleCheck,
 } from '@/lib/cloudpayments/subscription-service';
-import type {
-  CloudPaymentsWebhookPayload,
-  CloudPaymentsEventType,
-  CloudPaymentsResponse,
-} from '@/lib/cloudpayments/types';
+import {
+  parseWebhookBody,
+  normalizePaymentEvent,
+  normalizeRecurrentEvent,
+  type RawWebhookPayload,
+} from '@/lib/cloudpayments/parse-webhook';
+import type { CloudPaymentsResponse } from '@/lib/cloudpayments/types';
 
 export const dynamic = 'force-dynamic';
 
-/** CloudPayments success response */
 const OK: CloudPaymentsResponse = { code: 0 };
-/** CloudPayments rejection response */
 const REJECT: CloudPaymentsResponse = { code: 13 };
 
-/**
- * Determine event type from URL query param (?type=pay) or from payload fields.
- * CloudPayments sends webhooks to separate URLs per event type.
- * We use a single catch-all route with a query parameter.
- */
+type CloudPaymentsEventType =
+  | 'check'
+  | 'pay'
+  | 'fail'
+  | 'refund'
+  | 'cancel'
+  | 'recurrent';
+
 function resolveEventType(
   url: string,
-  payload: CloudPaymentsWebhookPayload,
+  payload: RawWebhookPayload,
 ): CloudPaymentsEventType {
-  // Prefer explicit query param: /api/webhooks/cloudpayments?type=pay
   try {
-    const searchParams = new URL(url).searchParams;
-    const typeParam = searchParams.get('type');
+    const typeParam = new URL(url).searchParams.get('type');
     if (
       typeParam &&
-      ['check', 'pay', 'fail', 'refund', 'cancel', 'recurrent'].includes(
-        typeParam,
+      (['check', 'pay', 'fail', 'refund', 'cancel', 'recurrent'] as const).includes(
+        typeParam as CloudPaymentsEventType,
       )
     ) {
       return typeParam as CloudPaymentsEventType;
     }
   } catch {
-    // URL parsing failed, fallback to payload inspection
+    // fall through
   }
 
-  // Fallback: infer from payload fields
-  if (payload.Token && payload.Interval) return 'recurrent';
+  if (payload.Id && payload.SuccessfulTransactionsNumber !== undefined) {
+    return 'recurrent';
+  }
   if (payload.OperationType === 'Refund') return 'refund';
   if (payload.Status === 'Completed') return 'pay';
   if (payload.Status === 'Declined') return 'fail';
-
   return 'check';
 }
 
-/**
- * Map CloudPayments event type to our PaymentStatus enum.
- */
 function mapEventToPaymentStatus(
   eventType: CloudPaymentsEventType,
 ): 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' {
   switch (eventType) {
     case 'pay':
-    case 'recurrent':
       return 'COMPLETED';
     case 'fail':
     case 'cancel':
@@ -74,6 +71,7 @@ function mapEventToPaymentStatus(
     case 'refund':
       return 'REFUNDED';
     case 'check':
+    case 'recurrent':
     default:
       return 'PENDING';
   }
@@ -96,141 +94,143 @@ export async function POST(request: NextRequest) {
       request.headers.get('x-forwarded-for') ??
       request.headers.get('x-real-ip') ??
       'unknown';
-    console.warn(
-      `[CloudPayments] Invalid HMAC signature from IP: ${ip}`,
-    );
+    console.warn(`[CloudPayments] Invalid HMAC signature from IP: ${ip}`);
     return NextResponse.json(REJECT, { status: 403 });
   }
 
-  // --- Parse payload (CP sends application/x-www-form-urlencoded by default) ---
-  let payload: CloudPaymentsWebhookPayload;
-  try {
-    payload = JSON.parse(rawBody) as CloudPaymentsWebhookPayload;
-  } catch {
-    // CloudPayments sends form-urlencoded, not JSON
-    try {
-      const params = new URLSearchParams(rawBody);
-      const obj: Record<string, unknown> = {};
-      for (const [key, value] of params.entries()) {
-        obj[key] = value;
-      }
-      // Coerce numeric fields from strings
-      if (obj.TransactionId) obj.TransactionId = Number(obj.TransactionId);
-      if (obj.Amount) obj.Amount = Number(obj.Amount);
-      if (obj.ReasonCode) obj.ReasonCode = Number(obj.ReasonCode);
-      if (obj.StatusCode) obj.StatusCode = Number(obj.StatusCode);
-      if (obj.Period) obj.Period = Number(obj.Period);
-      payload = obj as unknown as CloudPaymentsWebhookPayload;
-    } catch {
-      console.error('[CloudPayments] Failed to parse payload');
-      return NextResponse.json(REJECT, { status: 400 });
-    }
+  // --- Parse payload ---
+  const payload = parseWebhookBody(rawBody);
+  if (!payload) {
+    console.error('[CloudPayments] Empty or unparseable payload');
+    return NextResponse.json(REJECT, { status: 400 });
   }
 
   const eventType = resolveEventType(request.url, payload);
-  const txId = String(payload.TransactionId);
 
+  // Attach raw payload to Sentry context so we can debug future field-name drift
+  // without having to add temporary logging.
   Sentry.setTag('cp.event_type', eventType);
-  Sentry.setTag('cp.tx_id', txId);
+  Sentry.setContext('cp.payload', payload);
 
   console.log(
-    `[CloudPayments] ${eventType} for subscription ${payload.InvoiceId}, tx ${payload.TransactionId}`,
+    `[CloudPayments] ${eventType} payload received (keys: ${Object.keys(payload).join(',')})`,
   );
 
   return await Sentry.startSpan(
     { name: `cp.webhook.${eventType}`, op: 'webhook.cloudpayments' },
     async () => {
-  try {
-    // --- Check event: pre-payment validation (no Payment record created) ---
-    if (eventType === 'check') {
-      const accepted = await handleCheck(
-        payload.AccountId,
-        payload.InvoiceId,
-      );
-      if (!accepted) {
-        return NextResponse.json(REJECT);
+      try {
+        // --- Recurrent (subscription notification) — entirely separate schema ---
+        if (eventType === 'recurrent') {
+          const event = normalizeRecurrentEvent(payload);
+          if (!event) {
+            console.error(
+              '[CloudPayments] recurrent payload missing required fields',
+            );
+            // Always return OK to prevent CP retry storms — log and move on.
+            return NextResponse.json(OK);
+          }
+          await handleRecurrentEvent(event);
+          return NextResponse.json(OK);
+        }
+
+        // --- Check event: pre-payment validation ---
+        if (eventType === 'check') {
+          const event = normalizePaymentEvent(payload);
+          if (!event) {
+            console.warn(
+              '[CloudPayments] check payload missing required fields, declining',
+            );
+            return NextResponse.json(REJECT);
+          }
+          const accepted = await handleCheck(
+            event.accountId,
+            event.ourSubscriptionId,
+          );
+          return NextResponse.json(accepted ? OK : REJECT);
+        }
+
+        // --- Payment events (pay/fail/refund/cancel) ---
+        const event = normalizePaymentEvent(payload);
+        if (!event) {
+          console.error(
+            `[CloudPayments] ${eventType} payload missing required fields`,
+          );
+          return NextResponse.json(OK); // accept to avoid retries
+        }
+
+        Sentry.setTag('cp.tx_id', event.cpTransactionId);
+
+        // --- Idempotency check ---
+        const existing = await prisma.payment.findUnique({
+          where: { cloudPaymentsTxId: event.cpTransactionId },
+        });
+
+        let paymentId: string;
+
+        if (existing && existing.status === 'COMPLETED' && eventType === 'pay') {
+          console.info(
+            `[CloudPayments] Duplicate pay event for txId=${event.cpTransactionId}, skipping update`,
+          );
+          paymentId = existing.id;
+        } else {
+          const status = mapEventToPaymentStatus(eventType);
+
+          const payment = await prisma.payment.upsert({
+            where: { cloudPaymentsTxId: event.cpTransactionId },
+            create: {
+              subscriptionId: event.ourSubscriptionId,
+              amount: Math.round(event.amount),
+              status,
+              cloudPaymentsTxId: event.cpTransactionId,
+              paidAt: status === 'COMPLETED' ? event.paidAt : null,
+            },
+            update: {
+              status,
+              ...(status === 'COMPLETED' && event.paidAt
+                ? { paidAt: event.paidAt }
+                : {}),
+            },
+          });
+
+          paymentId = payment.id;
+        }
+
+        // --- Audit log ---
+        await prisma.paymentEvent.create({
+          data: {
+            paymentId,
+            type: eventType,
+            payload: JSON.parse(JSON.stringify(payload)),
+          },
+        });
+
+        // --- Subscription lifecycle dispatch ---
+        switch (eventType) {
+          case 'pay':
+            await handlePaymentSuccess(event.ourSubscriptionId, {
+              id: paymentId,
+              amount: event.amount,
+            });
+            break;
+          case 'fail':
+            await handlePaymentFailure(event.ourSubscriptionId);
+            break;
+          case 'cancel':
+            await handleCancellation(event.ourSubscriptionId);
+            break;
+          case 'refund':
+            // Payment already marked REFUNDED above. No subscription change.
+            break;
+        }
+
+        return NextResponse.json(OK);
+      } catch (error) {
+        Sentry.captureException(error);
+        console.error('[CloudPayments] Webhook processing error:', error);
+        // Always 200 OK to prevent CP retry storms.
+        return NextResponse.json(OK);
       }
-      return NextResponse.json(OK);
-    }
-
-    // --- Idempotency check ---
-    const existing = await prisma.payment.findUnique({
-      where: { cloudPaymentsTxId: txId },
-    });
-
-    let paymentId: string;
-
-    if (existing && existing.status === 'COMPLETED' && eventType === 'pay') {
-      // Duplicate successful payment -- log event for audit but skip update
-      console.info(
-        `[CloudPayments] Duplicate pay event for txId=${txId}, skipping update`,
-      );
-      paymentId = existing.id;
-    } else {
-      // --- Payment upsert ---
-      const status = mapEventToPaymentStatus(eventType);
-      const paidAt =
-        status === 'COMPLETED' ? new Date(payload.DateTime) : undefined;
-
-      const payment = await prisma.payment.upsert({
-        where: { cloudPaymentsTxId: txId },
-        create: {
-          subscriptionId: payload.InvoiceId,
-          amount: Math.round(payload.Amount),
-          status,
-          cloudPaymentsTxId: txId,
-          paidAt: paidAt ?? null,
-        },
-        update: {
-          status,
-          ...(paidAt ? { paidAt } : {}),
-        },
-      });
-
-      paymentId = payment.id;
-    }
-
-    // --- Audit log: always create PaymentEvent ---
-    await prisma.paymentEvent.create({
-      data: {
-        paymentId,
-        type: eventType,
-        payload: JSON.parse(JSON.stringify(payload)),
-      },
-    });
-
-    // --- Subscription lifecycle dispatch ---
-    switch (eventType) {
-      case 'pay':
-        await handlePaymentSuccess(payload.InvoiceId, {
-          id: paymentId,
-          amount: payload.Amount,
-        });
-        break;
-      case 'fail':
-        await handlePaymentFailure(payload.InvoiceId);
-        break;
-      case 'recurrent':
-        await handleRecurrentPayment(payload.InvoiceId, {
-          id: paymentId,
-          amount: payload.Amount,
-        });
-        break;
-      case 'cancel':
-        await handleCancellation(payload.InvoiceId);
-        break;
-      case 'refund':
-        // Payment status already set to REFUNDED in upsert. No subscription change needed.
-        break;
-    }
-
-    return NextResponse.json(OK);
-  } catch (error) {
-    // Accept webhook to prevent CloudPayments retries, but log for investigation
-    Sentry.captureException(error);
-    console.error('[CloudPayments] Webhook processing error:', error);
-    return NextResponse.json(OK);
-  }
     },
   );
 }
