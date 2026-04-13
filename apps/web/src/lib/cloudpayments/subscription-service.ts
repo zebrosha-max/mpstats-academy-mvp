@@ -17,10 +17,14 @@ import type { NormalizedRecurrentEvent } from './parse-webhook';
 /**
  * Handle successful payment — activate subscription with correct period dates.
  * Called on "pay" event.
+ *
+ * Also captures `cpSubscriptionId` (CP-side `sc_xxx`) on the first pay event
+ * so subsequent recurrent webhooks can look up the subscription deterministically
+ * by unique key, avoiding any guesswork via userId fallback.
  */
 export async function handlePaymentSuccess(
   subscriptionId: string,
-  payment: { id: string; amount: number },
+  payment: { id: string; amount: number; cpSubscriptionId?: string | null },
 ): Promise<void> {
   try {
     const subscription = await prisma.subscription.findUnique({
@@ -39,17 +43,28 @@ export async function handlePaymentSuccess(
     const periodEnd = new Date(now);
     periodEnd.setDate(periodEnd.getDate() + subscription.plan.intervalDays);
 
+    // Only set cpSubscriptionId when CP provided one AND we haven't stored it
+    // yet. Once stored, never overwrite (recurrent flow depends on stability).
+    const shouldSetCpId =
+      !!payment.cpSubscriptionId &&
+      subscription.cpSubscriptionId !== payment.cpSubscriptionId;
+
     await prisma.subscription.update({
       where: { id: subscriptionId },
       data: {
         status: 'ACTIVE',
         currentPeriodStart: now,
         currentPeriodEnd: periodEnd,
+        ...(shouldSetCpId
+          ? { cpSubscriptionId: payment.cpSubscriptionId }
+          : {}),
       },
     });
 
     console.log(
-      `[Subscription] Activated ${subscriptionId}, period: ${now.toISOString()} - ${periodEnd.toISOString()}`,
+      `[Subscription] Activated ${subscriptionId}, period: ${now.toISOString()} - ${periodEnd.toISOString()}${
+        shouldSetCpId ? ` (cp=${payment.cpSubscriptionId})` : ''
+      }`,
     );
 
     // Fire-and-forget: send payment success email via CQ

@@ -53,6 +53,14 @@ export function parseWebhookBody(rawBody: string): RawWebhookPayload | null {
 export interface NormalizedPaymentEvent {
   cpTransactionId: string;
   ourSubscriptionId: string;
+  /**
+   * CP-side subscription id (`sc_xxx`). Present in pay/fail webhooks for
+   * subscription-based charges. Captured here so we can save it to our
+   * Subscription row immediately on the first pay event, instead of waiting
+   * for the first recurrent notification — this gives recurrent webhooks a
+   * deterministic lookup key from the very first cycle.
+   */
+  cpSubscriptionId: string | null;
   accountId: string;
   amount: number;
   paidAt: Date | null;
@@ -96,6 +104,7 @@ export function normalizePaymentEvent(
   return {
     cpTransactionId: payload.TransactionId,
     ourSubscriptionId,
+    cpSubscriptionId: payload.SubscriptionId || null,
     accountId: payload.AccountId ?? '',
     amount,
     paidAt: parseDateTime(payload.DateTime),

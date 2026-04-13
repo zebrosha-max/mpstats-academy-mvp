@@ -48,7 +48,7 @@ describe('parseWebhookBody', () => {
 describe('normalizePaymentEvent', () => {
   it('extracts fields from a real CP "pay" payload (form-encoded)', () => {
     const raw = parseWebhookBody(
-      'TransactionId=3445404937&Amount=2990.00&Currency=RUB&InvoiceId=cmnh6subd001diezar5mnjuu8&AccountId=debdf21d-162d-4777-9055-c5b1d5df77d6&Status=Completed&DateTime=2026-04-12+11%3A38%3A22',
+      'TransactionId=3445404937&Amount=2990.00&Currency=RUB&InvoiceId=cmnh6subd001diezar5mnjuu8&AccountId=debdf21d-162d-4777-9055-c5b1d5df77d6&SubscriptionId=sc_fb5496f23442446ea18ca16b2c16b&Status=Completed&DateTime=2026-04-12+11%3A38%3A22',
     )!;
 
     const result = normalizePaymentEvent(raw);
@@ -56,10 +56,21 @@ describe('normalizePaymentEvent', () => {
     expect(result).toEqual({
       cpTransactionId: '3445404937',
       ourSubscriptionId: 'cmnh6subd001diezar5mnjuu8',
+      cpSubscriptionId: 'sc_fb5496f23442446ea18ca16b2c16b',
       accountId: 'debdf21d-162d-4777-9055-c5b1d5df77d6',
       amount: 2990,
       paidAt: new Date('2026-04-12T11:38:22'),
     });
+  });
+
+  it('cpSubscriptionId is null when SubscriptionId field absent (e.g. one-time payment)', () => {
+    const raw = parseWebhookBody(
+      'TransactionId=99&Amount=2990&InvoiceId=sub1&AccountId=user1&Status=Completed&DateTime=2026-04-12+11%3A38%3A22',
+    )!;
+
+    const result = normalizePaymentEvent(raw);
+
+    expect(result?.cpSubscriptionId).toBeNull();
   });
 
   it('falls back to ExternalId when InvoiceId is missing', () => {

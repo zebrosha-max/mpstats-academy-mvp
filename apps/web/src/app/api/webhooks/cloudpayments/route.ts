@@ -211,6 +211,7 @@ export async function POST(request: NextRequest) {
             await handlePaymentSuccess(event.ourSubscriptionId, {
               id: paymentId,
               amount: event.amount,
+              cpSubscriptionId: event.cpSubscriptionId,
             });
             break;
           case 'fail':
