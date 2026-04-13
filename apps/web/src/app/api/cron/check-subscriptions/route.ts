@@ -16,6 +16,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // NOTE: GitHub Actions scheduled workflows drift 60-100+ minutes from their
+  // nominal time under load. The 180-minute margin absorbs that drift so
+  // Sentry only alerts on real failures (captureCheckIn with status='error')
+  // rather than on every scheduling delay.
   const checkInId = Sentry.captureCheckIn(
     {
       monitorSlug: 'check-subscriptions',
@@ -23,7 +27,7 @@ export async function POST(request: NextRequest) {
     },
     {
       schedule: { type: 'crontab', value: '0 9 * * *' },
-      checkinMargin: 5,
+      checkinMargin: 180,
       maxRuntime: 60,
       timezone: 'Europe/Moscow',
     },
