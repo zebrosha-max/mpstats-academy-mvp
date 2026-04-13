@@ -3,8 +3,8 @@
  *
  * Creates:
  * - Feature flags (billing_enabled=false, maintenance_mode=false)
- * - Subscription plans (COURSE 2990, PLATFORM 4990)
- * - Updates all courses to price=4990 isFree=false
+ * - Subscription plans (COURSE 1990, PLATFORM 2990)
+ * - Updates all courses to price=2990 isFree=false
  *
  * Run:
  *   npx tsx scripts/seed/seed-billing.ts
@@ -44,11 +44,11 @@ async function main() {
   // 2. Subscription plans
   const coursePlan = await prisma.subscriptionPlan.upsert({
     where: { type: 'COURSE' },
-    update: { price: 2990 },
+    update: { price: 1990 },
     create: {
       type: 'COURSE',
       name: 'Подписка на курс',
-      price: 2990,
+      price: 1990,
       intervalDays: 30,
     },
   });
@@ -56,24 +56,24 @@ async function main() {
 
   const platformPlan = await prisma.subscriptionPlan.upsert({
     where: { type: 'PLATFORM' },
-    update: { price: 4990 },
+    update: { price: 2990 },
     create: {
       type: 'PLATFORM',
       name: 'Полный доступ',
-      price: 4990,
+      price: 2990,
       intervalDays: 30,
     },
   });
   console.log(`Plan: ${platformPlan.name} — ${platformPlan.price} руб.`);
 
-  // 3. Update all courses: set price=4990, isFree=false
+  // 3. Update all courses: set price=2990, isFree=false
   const updateResult = await prisma.course.updateMany({
     data: {
-      price: 4990,
+      price: 2990,
       isFree: false,
     },
   });
-  console.log(`\nCourses updated: ${updateResult.count} (price=4990, isFree=false)`);
+  console.log(`\nCourses updated: ${updateResult.count} (price=2990, isFree=false)`);
 
   console.log('\nBilling seed complete.');
 }
