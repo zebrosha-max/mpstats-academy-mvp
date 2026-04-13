@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure, superadminProcedure } from '../trpc';
 import { isFeatureEnabled } from '../utils/feature-flags';
 
 /**
@@ -36,7 +36,7 @@ export const billingRouter = router({
     if (!enabled) return [];
 
     return ctx.prisma.subscriptionPlan.findMany({
-      where: { isActive: true },
+      where: { isActive: true, hidden: false },
       orderBy: { price: 'asc' },
     });
   }),
@@ -91,11 +91,13 @@ export const billingRouter = router({
         });
       }
 
-      // Find plan
-      const plan = await ctx.prisma.subscriptionPlan.findUnique({
-        where: { type: input.planType },
+      // Find public plan of requested type. With @unique dropped from
+      // SubscriptionPlan.type to allow hidden test plans, the public plan
+      // must be resolved by filtering hidden:false explicitly.
+      const plan = await ctx.prisma.subscriptionPlan.findFirst({
+        where: { type: input.planType, hidden: false, isActive: true },
       });
-      if (!plan || !plan.isActive) {
+      if (!plan) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Plan not found or inactive' });
       }
 
@@ -165,6 +167,92 @@ export const billingRouter = router({
         planName: plan.name,
         description: plan.name,
         userId: ctx.user.id,
+      };
+    }),
+
+  /**
+   * SUPERADMIN: list hidden test plans (not exposed on /pricing).
+   * Used by /admin/billing-test to drive prod CP smoke tests.
+   */
+  listTestPlans: superadminProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.subscriptionPlan.findMany({
+      where: { hidden: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }),
+
+  /**
+   * SUPERADMIN: initiate payment for a specific hidden plan by id.
+   *
+   * Mirrors initiatePayment but:
+   *  - takes planId directly (not planType)
+   *  - only resolves HIDDEN plans (refuses to charge against public plans
+   *    via this route, so it can never be abused to bypass the normal flow)
+   *  - PLATFORM-only (no courseId wiring), keeps the surface tiny
+   */
+  initiateTestPayment: superadminProcedure
+    .input(z.object({ planId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const enabled = await isFeatureEnabled('billing_enabled');
+      if (!enabled) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Billing is not enabled' });
+      }
+
+      const plan = await ctx.prisma.subscriptionPlan.findUnique({
+        where: { id: input.planId },
+      });
+      if (!plan || !plan.isActive || !plan.hidden) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Hidden test plan not found or inactive',
+        });
+      }
+      if (plan.type !== 'PLATFORM') {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Test plans must be PLATFORM type',
+        });
+      }
+
+      // Drop any stale PENDING of the same shape before creating a fresh one.
+      const existing = await ctx.prisma.subscription.findFirst({
+        where: {
+          userId: ctx.user.id,
+          status: 'PENDING',
+          planId: plan.id,
+        },
+      });
+      if (existing) {
+        await ctx.prisma.payment.deleteMany({ where: { subscriptionId: existing.id } });
+        await ctx.prisma.subscription.delete({ where: { id: existing.id } });
+      }
+
+      const now = new Date();
+      const subscription = await ctx.prisma.subscription.create({
+        data: {
+          userId: ctx.user.id,
+          planId: plan.id,
+          courseId: null,
+          status: 'PENDING',
+          currentPeriodStart: now,
+          currentPeriodEnd: now,
+        },
+      });
+      await ctx.prisma.payment.create({
+        data: {
+          subscriptionId: subscription.id,
+          amount: plan.price,
+          status: 'PENDING',
+        },
+      });
+
+      return {
+        subscriptionId: subscription.id,
+        amount: plan.price,
+        planName: plan.name,
+        description: plan.name,
+        userId: ctx.user.id,
+        intervalDays: plan.intervalDays,
       };
     }),
 

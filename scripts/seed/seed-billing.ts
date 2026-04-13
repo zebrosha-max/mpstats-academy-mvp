@@ -41,29 +41,32 @@ async function main() {
   });
   console.log(`Feature flag: ${maintenanceFlag.key} = ${maintenanceFlag.enabled}`);
 
-  // 2. Subscription plans
-  const coursePlan = await prisma.subscriptionPlan.upsert({
-    where: { type: 'COURSE' },
-    update: { price: 1990 },
-    create: {
-      type: 'COURSE',
-      name: 'Подписка на курс',
-      price: 1990,
-      intervalDays: 30,
-    },
-  });
+  // 2. Subscription plans — @unique on type was dropped to support hidden
+  // test plans. Seed the public (non-hidden) plan of each type, creating
+  // it if missing, updating price if it already exists.
+  const seedPlan = async (
+    type: 'COURSE' | 'PLATFORM',
+    name: string,
+    price: number,
+  ) => {
+    const existing = await prisma.subscriptionPlan.findFirst({
+      where: { type, hidden: false },
+    });
+    if (existing) {
+      return prisma.subscriptionPlan.update({
+        where: { id: existing.id },
+        data: { price, name },
+      });
+    }
+    return prisma.subscriptionPlan.create({
+      data: { type, name, price, intervalDays: 30, hidden: false },
+    });
+  };
+
+  const coursePlan = await seedPlan('COURSE', 'Подписка на курс', 1990);
   console.log(`Plan: ${coursePlan.name} — ${coursePlan.price} руб.`);
 
-  const platformPlan = await prisma.subscriptionPlan.upsert({
-    where: { type: 'PLATFORM' },
-    update: { price: 2990 },
-    create: {
-      type: 'PLATFORM',
-      name: 'Полный доступ',
-      price: 2990,
-      intervalDays: 30,
-    },
-  });
+  const platformPlan = await seedPlan('PLATFORM', 'Полный доступ', 2990);
   console.log(`Plan: ${platformPlan.name} — ${platformPlan.price} руб.`);
 
   // 3. Update all courses: set price=2990, isFree=false

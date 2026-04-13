@@ -199,15 +199,18 @@ enum PaymentStatus {
 
 model SubscriptionPlan {
   id           String           @id @default(cuid())
-  type         SubscriptionType @unique // one plan per type (COURSE or PLATFORM)
-  name         String // display name ("Подписка на курс" / "Полный доступ")
-  price        Int // rubles, e.g. 2990
-  intervalDays Int              @default(30) // billing cycle
-  isActive     Boolean          @default(true) // can be disabled
+  type         SubscriptionType
+  name         String
+  price        Int
+  intervalDays Int              @default(30)
+  hidden       Boolean          @default(false)
+  isActive     Boolean          @default(true)
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
   subscriptions Subscription[]
+
+  @@index([type, hidden, isActive])
 }
 
 model Subscription {

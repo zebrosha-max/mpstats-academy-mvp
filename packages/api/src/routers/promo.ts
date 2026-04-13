@@ -113,9 +113,11 @@ export const promoRouter = router({
         throw new TRPCError({ code: 'CONFLICT', message: msg });
       }
 
-      // Find matching subscription plan by type
-      const plan = await ctx.prisma.subscriptionPlan.findUnique({
-        where: { type: promo.planType },
+      // Find matching public subscription plan by type. @unique on type
+      // was dropped to support hidden test plans — promo codes must only
+      // bind against the public (non-hidden) plan of the requested type.
+      const plan = await ctx.prisma.subscriptionPlan.findFirst({
+        where: { type: promo.planType, hidden: false, isActive: true },
       });
       if (!plan) {
         throw new TRPCError({
