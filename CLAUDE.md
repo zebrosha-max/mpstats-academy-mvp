@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-04-07
+**Last updated:** 2026-04-13
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ — в `.claude/memory/`.
 > Используй `Read .claude/memory/MEMORY.md` для индекса.
@@ -14,25 +14,62 @@
 | v1.0 MVP | Shipped 2026-02-26 (Phases 1-9) |
 | v1.1 Admin & Polish | Shipped 2026-02-28 (Phases 10-15) |
 | v1.2 Auth Rework + Billing | Shipped 2026-03-12 (Phases 16-21) |
-| v1.3 Pre-release | In Progress (Phases 22-36; **remaining: 28, 29**) |
+| v1.3 Pre-release | In Progress (Phases 22-36; **remaining: 28**) |
 | v1.4 QA Audit Fixes | Shipped 2026-03-29 (Phases 37-42) |
 | Phase 43 Diagnostic v2 | Shipped 2026-04-02 |
 | v1.5 Growth & Monetization | In Progress (Phase 44 shipped) |
 
 **Remaining work:**
 1. Phase 28: Боевой CloudPayments (тестовые → боевые ключи)
-2. Phase 29: Sentry Monitoring
-3. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
+2. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
 
-## Last Session (2026-04-07)
+## Pricing (as of 2026-04-13)
 
-Phase 44 — Промо-коды: design → plan (4 plans, 3 waves) → execute → deploy.
+Источник правды — таблица `SubscriptionPlan` в Supabase. UI `/pricing`, виджет CP, profile, emails — всё подтягивается оттуда динамически через `trpc.billing.getPlans`.
+
+| Plan type | Name | Price | Period |
+|-----------|------|-------|--------|
+| COURSE | Подписка на курс | **1 990 ₽** | 30 дней |
+| PLATFORM | Полный доступ | **2 990 ₽** | 30 дней |
+
+**Менять цены:** `UPDATE "SubscriptionPlan" SET price=XXX WHERE type='COURSE'` прямо в Supabase — эффект мгновенный, рестарт не нужен. Плюс обновить `scripts/seed/seed-billing.ts` чтобы fresh seed'ы соответствовали.
+
+**Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
+
+## Last Session (2026-04-13)
+
+**Sentry triage + два критических фикса + смена цен.**
+
+1. **CP recurrent webhook crash** (MAAL-PLATFORM-2) — был бы блокером для Phase 28:
+   - Recurrent webhook использует **отдельную схему** (`Id`/`AccountId`/`Status`/`SuccessfulTransactionsNumber`), а не payment-схему. Старый handler пытался читать `TransactionId`/`InvoiceId`/`DateTime` → `PrismaClientValidationError`
+   - Новые pure-модули: `parse-webhook.ts` (parser/normalizer), `decide-recurrent-update.ts` (decision logic). 27 unit-тестов с реальным payload из Sentry
+   - `Subscription.cpSubscriptionId String? @unique` добавлено — захватывается из `pay` event (`SubscriptionId` поле), потом recurrent lookup идёт детерминированно по unique-индексу
+   - Defensive fallback в `resolveOurSubscriptionId`: `InvoiceId || ExternalId || Data.ourSubscriptionId`
+   - Виджет теперь дублирует subscription id в `data` field (defense in depth)
+   - 2 smoke-теста на проде прошли идеально
+
+2. **Cron false-positive alert** (MAAL-PLATFORM-1):
+   - GitHub Actions schedules дрейфят 60-100+ минут под нагрузкой, а Sentry monitor был с `checkinMargin: 5` → alert каждое утро хотя cron реально отрабатывал
+   - Margin расширен до 180 минут в `api/cron/check-subscriptions/route.ts`. Реальные падения всё равно ловятся через `captureCheckIn({ status: 'error' })` в catch
+
+3. **Смена цен**: COURSE 2990→1990, PLATFORM 4990→2990. `UPDATE` прямо в Supabase + обновлён `seed-billing.ts`. Никаких хардкодов в UI/коде — всё динамика.
+
+Оба старых Sentry issue закрыты как resolved. На момент конца сессии — 0 unresolved issues.
+
+### Previous Session (2026-04-07)
+
+**Phase 44 — Промо-коды** (v1.5): design → plan → execute → deploy.
 - DB: PromoCode, PromoActivation + Subscription.promoCodeId
 - Backend: tRPC promo router (validate, activate, 4 admin CRUD), 5-step validation, $transaction
 - /pricing: auth header, collapsible promo input, redirect /login?promo=КОД
-- Profile: badge "Промо" (featured), "Промо-доступ", hidden cancel
 - Admin: /admin/promo — create, table, deactivate, activations view
-- Deployed + db push applied to Supabase
+
+**Phase 29 — Sentry Monitoring**: @sentry/nextjs full stack.
+- Org: mpstats-academy, project: maal-platform
+- Client/server/edge config, global-error boundary, instrumentation hook
+- Custom spans: CP webhooks, email webhook, OpenRouter LLM, Sentry Crons
+- Alert rules: new issue + regression → email
+- Performance transactions confirmed on prod ✓
 
 ## Key Decisions
 
