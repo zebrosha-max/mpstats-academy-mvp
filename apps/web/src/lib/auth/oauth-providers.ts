@@ -54,7 +54,7 @@ export class YandexProvider implements OAuthProvider {
       redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/yandex/callback`,
       scope: 'login:email login:info',
       state,
-      prompt: 'login', // R10: force account selection screen
+      force_confirm: 'yes',
     });
     return `https://oauth.yandex.ru/authorize?${params}`;
   }
