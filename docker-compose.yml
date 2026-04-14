@@ -17,6 +17,8 @@ services:
       - "127.0.0.1:3000:3000"
     env_file:
       - .env.production
+    environment:
+      NODE_OPTIONS: --dns-result-order=ipv4first
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@mpstats/db/client';
 import { YandexProvider } from '@/lib/auth/oauth-providers';
 import { getSupabaseAdmin } from '@/lib/auth/supabase-admin';
@@ -63,6 +64,9 @@ export async function GET(request: Request): Promise<Response> {
 
       if (createError || !createData.user) {
         console.error('Failed to create user:', createError);
+        Sentry.captureException(createError ?? new Error('createUser returned no user'), {
+          tags: { route: 'yandex-callback', stage: 'create-user' },
+        });
         return NextResponse.redirect(
           new URL('/login?error=auth_callback_error', siteUrl)
         );
@@ -80,6 +84,9 @@ export async function GET(request: Request): Promise<Response> {
 
     if (linkError || !linkData) {
       console.error('Failed to generate link:', linkError);
+      Sentry.captureException(linkError ?? new Error('generateLink returned no data'), {
+        tags: { route: 'yandex-callback', stage: 'generate-link' },
+      });
       return NextResponse.redirect(
         new URL('/login?error=auth_callback_error', siteUrl)
       );
@@ -93,6 +100,9 @@ export async function GET(request: Request): Promise<Response> {
 
     if (otpError || !otpData.session) {
       console.error('Failed to verify OTP:', otpError);
+      Sentry.captureException(otpError ?? new Error('verifyOtp returned no session'), {
+        tags: { route: 'yandex-callback', stage: 'verify-otp' },
+      });
       return NextResponse.redirect(
         new URL('/login?error=auth_callback_error', siteUrl)
       );
@@ -148,6 +158,9 @@ export async function GET(request: Request): Promise<Response> {
     return response;
   } catch (error) {
     console.error('Yandex OAuth callback error:', error);
+    Sentry.captureException(error, {
+      tags: { route: 'yandex-callback', stage: 'unhandled' },
+    });
     return NextResponse.redirect(
       new URL('/login?error=auth_callback_error', siteUrl)
     );
