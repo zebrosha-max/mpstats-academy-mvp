@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-04-13
+**Last updated:** 2026-04-14
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ — в `.claude/memory/`.
 > Используй `Read .claude/memory/MEMORY.md` для индекса.
@@ -36,7 +36,22 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-13)
+## Last Session (2026-04-14)
+
+**Yandex OAuth: три бага починены за одну сессию.**
+
+1. **Callback падал с `auth_callback_error` на проде** — пользователи не могли регистрироваться через Yandex ID. Sentry молчал, потому что в `apps/web/src/app/api/auth/yandex/callback/route.ts` все ветки ошибок использовали `console.error` без `Sentry.captureException`.
+   - **Root cause:** Node 20 undici fetch делает Happy Eyeballs, гонит IPv4 и IPv6 одновременно. На VPS нет маршрута до IPv6 (`ENETUNREACH`), а IPv4 cold-connect до `87.250.251.227` периодически таймаутит (~10%). Первый запрос падал с `AggregateError [ETIMEDOUT; ENETUNREACH]`, все следующие работали через keep-alive.
+   - **Fix:** `NODE_OPTIONS=--dns-result-order=ipv4first` в `docker-compose.yml` + `fetchWithRetry` в `YandexProvider` (3 попытки, backoff 250/500мс, `AbortController` 8s). Добавлены `Sentry.captureException` в 4 catch-ветках callback с tags `{route:'yandex-callback', stage:'...'}`.
+
+2. **Yandex login не показывал account picker** — юзер автоматически логинился в последний использованный аккаунт, без возможности выбрать другой. Старый фикс R10 (83ae6c9) добавил `prompt=login`, но Yandex этот параметр не поддерживает и молча игнорирует.
+   - **Fix:** `prompt=login` → `force_confirm=yes` (Yandex-specific параметр из официальной документации). Теперь passport всегда показывает экран подтверждения с возможностью сменить аккаунт.
+
+3. **Sentry cron alert false-positive fix** — хвост от предыдущей сессии, `checkinMargin: 180` в `api/cron/check-subscriptions/route.ts` подтверждён на проде.
+
+Commits: `0e87fda` (IPv4+Sentry), `e5b7648` (retry), `15e3e86` (force_confirm). Все задеплоены на VPS, тесты прошли: регистрация через Yandex работает, account picker появляется.
+
+### Previous Session (2026-04-13)
 
 **Sentry triage + два критических фикса + смена цен.**
 
@@ -56,7 +71,7 @@
 
 Оба старых Sentry issue закрыты как resolved. На момент конца сессии — 0 unresolved issues.
 
-### Previous Session (2026-04-07)
+### Phase 44 + Sentry (2026-04-07)
 
 **Phase 44 — Промо-коды** (v1.5): design → plan → execute → deploy.
 - DB: PromoCode, PromoActivation + Subscription.promoCodeId
@@ -143,6 +158,8 @@ MAAL/
 - `NEXT_PUBLIC_*` вшиваются при build, не runtime
 - Nginx `proxy_buffer_size 128k` обязателен для Supabase auth cookies
 - CQ API: form-encoded, NOT JSON. Props через `setUserProps`, NOT `trackEvent` params
+- **Node fetch к внешним API с VPS**: undici Happy Eyeballs пробует IPv6 (нет маршрута → ENETUNREACH), v4 cold-connect иногда таймаутит. Держим `NODE_OPTIONS=--dns-result-order=ipv4first` в `docker-compose.yml` + retry-обёртку для критичных вызовов (см. `YandexProvider.fetchWithRetry`)
+- **Yandex OAuth — account picker**: только через `force_confirm=yes`. Стандартный `prompt=login` Yandex молча игнорирует
 - Details: `.claude/memory/cq-integration.md`
 
 ## QA
