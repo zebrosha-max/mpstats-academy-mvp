@@ -19,6 +19,31 @@ export interface OAuthProvider {
   getUserInfo(accessToken: string): Promise<OAuthUserInfo>;
 }
 
+async function fetchWithRetry(
+  input: string,
+  init: RequestInit,
+  attempts = 3,
+): Promise<Response> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      try {
+        return await fetch(input, { ...init, signal: ctrl.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, 250 * (i + 1)));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 export class YandexProvider implements OAuthProvider {
   name = 'yandex';
 
@@ -35,7 +60,7 @@ export class YandexProvider implements OAuthProvider {
   }
 
   async exchangeCode(code: string): Promise<{ accessToken: string }> {
-    const res = await fetch('https://oauth.yandex.ru/token', {
+    const res = await fetchWithRetry('https://oauth.yandex.ru/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -56,7 +81,7 @@ export class YandexProvider implements OAuthProvider {
   }
 
   async getUserInfo(accessToken: string): Promise<OAuthUserInfo> {
-    const res = await fetch('https://login.yandex.ru/info?format=json', {
+    const res = await fetchWithRetry('https://login.yandex.ru/info?format=json', {
       headers: { Authorization: `OAuth ${accessToken}` },
     });
 
