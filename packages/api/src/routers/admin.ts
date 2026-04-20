@@ -13,6 +13,7 @@ import { TRPCError } from '@trpc/server';
 import { router, adminProcedure, superadminProcedure } from '../trpc';
 import { handleDatabaseError } from '../utils/db-errors';
 import { refreshBankForCategory } from '../utils/question-bank';
+import { resolveIncludeHidden, canToggleHidden, type AdminRole } from '../utils/visibility';
 import { createClient } from '@supabase/supabase-js';
 import type { SkillCategory } from '@mpstats/shared';
 
@@ -351,44 +352,103 @@ export const adminRouter = router({
 
   /**
    * List all courses with lesson count and content chunk count.
+   *
+   * Visibility rules:
+   *   - ADMIN:      hidden courses and hidden lessons are excluded entirely.
+   *   - SUPERADMIN: everything visible; ?includeHidden=false hides them optionally.
+   *
+   * lessonCount / chunkCount reflect the same visibility scope so the totals the
+   * admin sees match what users see.
    */
-  getCourses: adminProcedure.query(async ({ ctx }) => {
-    try {
-      const courses = await ctx.prisma.course.findMany({
-        orderBy: { order: 'asc' },
-        include: {
-          _count: { select: { lessons: true } },
-        },
-      });
+  getCourses: adminProcedure
+    .input(
+      z
+        .object({
+          includeHidden: z.boolean().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const includeHidden = resolveIncludeHidden(
+          ctx.userRole as AdminRole,
+          input?.includeHidden,
+        );
 
-      // Get content chunk counts per course (via lesson_id prefix matching)
-      const coursesWithChunks = await Promise.all(
-        courses.map(async (course) => {
-          const chunkCount = await ctx.prisma.contentChunk.count({
-            where: { lessonId: { startsWith: course.id } },
-          });
-          return {
-            ...course,
-            chunkCount,
-          };
-        }),
-      );
+        const courses = await ctx.prisma.course.findMany({
+          where: includeHidden ? {} : { isHidden: false },
+          orderBy: { order: 'asc' },
+          include: {
+            _count: {
+              select: {
+                lessons: includeHidden
+                  ? true
+                  : { where: { isHidden: false } },
+              },
+            },
+          },
+        });
 
-      return coursesWithChunks;
-    } catch (error) {
-      handleDatabaseError(error);
-    }
-  }),
+        // Get content chunk counts per course (via lesson_id prefix matching)
+        // Exclude chunks of hidden lessons when includeHidden is false
+        const coursesWithChunks = await Promise.all(
+          courses.map(async (course) => {
+            let chunkCount: number;
+            if (includeHidden) {
+              chunkCount = await ctx.prisma.contentChunk.count({
+                where: { lessonId: { startsWith: course.id } },
+              });
+            } else {
+              // Filter chunks via join on Lesson.isHidden through raw SQL — Prisma
+              // ContentChunk has no FK to Lesson, so we use a subquery.
+              const result = await ctx.prisma.$queryRaw<Array<{ count: bigint }>>`
+                SELECT COUNT(*)::bigint AS count
+                FROM content_chunk c
+                WHERE c.lesson_id LIKE ${course.id + '%'}
+                  AND EXISTS (
+                    SELECT 1 FROM "Lesson" l
+                    WHERE l.id = c.lesson_id AND l."isHidden" = false
+                  )
+              `;
+              chunkCount = Number(result[0]?.count ?? 0);
+            }
+            return {
+              ...course,
+              chunkCount,
+            };
+          }),
+        );
+
+        return coursesWithChunks;
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
 
   /**
    * Get lessons for a specific course (used by CourseManager accordion).
+   *
+   * ADMIN sees only visible lessons. SUPERADMIN sees all by default; can opt-out
+   * via includeHidden=false.
    */
   getCourseLessons: adminProcedure
-    .input(z.object({ courseId: z.string() }))
+    .input(
+      z.object({
+        courseId: z.string(),
+        includeHidden: z.boolean().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
+        const includeHidden = resolveIncludeHidden(
+          ctx.userRole as AdminRole,
+          input.includeHidden,
+        );
+
         const lessons = await ctx.prisma.lesson.findMany({
-          where: { courseId: input.courseId },
+          where: includeHidden
+            ? { courseId: input.courseId }
+            : { courseId: input.courseId, isHidden: false },
           orderBy: { order: 'asc' },
           select: {
             id: true,
@@ -397,10 +457,113 @@ export const adminRouter = router({
             skillCategory: true,
             videoId: true,
             duration: true,
+            isHidden: true,
+            hiddenAt: true,
           },
         });
         return lessons;
       } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Toggle lesson visibility (soft-hide). ADMIN and SUPERADMIN allowed.
+   *
+   * Behavior:
+   *   - ADMIN can only hide (setting hidden=true). Unhide is restricted to
+   *     SUPERADMIN to prevent self-undoing: once an ADMIN hides a lesson they
+   *     lose sight of it and cannot reach it via the UI anyway.
+   *   - SUPERADMIN can both hide and unhide.
+   *
+   * The embedding data, video, and progress records are preserved — only the
+   * isHidden flag flips.
+   */
+  toggleLessonHidden: adminProcedure
+    .input(
+      z.object({
+        lessonId: z.string(),
+        hidden: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        if (!canToggleHidden(ctx.userRole as AdminRole, input.hidden)) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Только суперадмин может вернуть скрытый урок',
+          });
+        }
+
+        const lesson = await ctx.prisma.lesson.findUnique({
+          where: { id: input.lessonId },
+          select: { id: true, isHidden: true },
+        });
+        if (!lesson) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Lesson not found' });
+        }
+
+        const updated = await ctx.prisma.lesson.update({
+          where: { id: input.lessonId },
+          data: {
+            isHidden: input.hidden,
+            hiddenBy: input.hidden ? ctx.user.id : null,
+            hiddenAt: input.hidden ? new Date() : null,
+          },
+        });
+
+        return updated;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
+
+  /**
+   * Toggle course visibility (soft-hide the entire course).
+   *
+   * When a course is hidden, all its lessons become inaccessible to users
+   * regardless of their individual isHidden flag, because learning queries
+   * filter courses before lessons. Used for the «Экспресс-курсы» removal case.
+   *
+   * Same role logic as toggleLessonHidden.
+   */
+  toggleCourseHidden: adminProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        hidden: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        if (!canToggleHidden(ctx.userRole as AdminRole, input.hidden)) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Только суперадмин может вернуть скрытый курс',
+          });
+        }
+
+        const course = await ctx.prisma.course.findUnique({
+          where: { id: input.courseId },
+          select: { id: true, isHidden: true },
+        });
+        if (!course) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Course not found' });
+        }
+
+        const updated = await ctx.prisma.course.update({
+          where: { id: input.courseId },
+          data: {
+            isHidden: input.hidden,
+            hiddenBy: input.hidden ? ctx.user.id : null,
+            hiddenAt: input.hidden ? new Date() : null,
+          },
+        });
+
+        return updated;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
         handleDatabaseError(error);
       }
     }),

@@ -20,8 +20,10 @@ export const learningRouter = router({
   getCourses: protectedProcedure.query(async ({ ctx }): Promise<CourseWithProgress[]> => {
     try {
       const courses = await ctx.prisma.course.findMany({
+        where: { isHidden: false },
         include: {
           lessons: {
+            where: { isHidden: false },
             orderBy: { order: 'asc' },
             include: {
               progress: {
@@ -95,6 +97,7 @@ export const learningRouter = router({
           where: { id: input.courseId },
           include: {
             lessons: {
+              where: { isHidden: false },
               orderBy: { order: 'asc' },
               include: {
                 progress: {
@@ -105,7 +108,8 @@ export const learningRouter = router({
           },
         });
 
-        if (!course) return null;
+        // Treat a hidden course the same as «not found» for users
+        if (!course || course.isHidden) return null;
 
         const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
         const billingEnabled = await isFeatureEnabled('billing_enabled');
@@ -176,6 +180,7 @@ export const learningRouter = router({
       // If no path exists, return all lessons with no progress
       if (!path) {
         const allLessons = await ctx.prisma.lesson.findMany({
+          where: { isHidden: false, course: { isHidden: false } },
           orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
         });
 
@@ -215,6 +220,7 @@ export const learningRouter = router({
 
       // Get ALL lessons (path may not have progress for all)
       const allLessons = await ctx.prisma.lesson.findMany({
+        where: { isHidden: false, course: { isHidden: false } },
         orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
       });
 
@@ -299,21 +305,29 @@ export const learningRouter = router({
         if (allLessonIds.length === 0) return null;
 
         const lessons = await ctx.prisma.lesson.findMany({
-          where: { id: { in: allLessonIds } },
+          where: {
+            id: { in: allLessonIds },
+            isHidden: false,
+            course: { isHidden: false },
+          },
           include: {
             progress: { where: { path: { userId: ctx.user.id } } },
-            course: { select: { title: true } },
+            course: { select: { title: true, isHidden: true } },
           },
         });
         const lessonMap = new Map(lessons.map(l => [l.id, l]));
 
-        const sectionsWithData = parsed.sections.map(section => ({
-          ...section,
-          lessons: section.lessonIds
-            .map(id => lessonMap.get(id))
-            .filter(Boolean)
-            .map(l => buildLessonData(l)),
-        }));
+        // Filter out lessonIds that no longer resolve (hidden / deleted) and
+        // drop sections that become empty as a result.
+        const sectionsWithData = parsed.sections
+          .map(section => ({
+            ...section,
+            lessons: section.lessonIds
+              .map(id => lessonMap.get(id))
+              .filter(Boolean)
+              .map(l => buildLessonData(l)),
+          }))
+          .filter(s => s.id === 'custom' || s.lessons.length > 0);
 
         const allLessonsFlat = sectionsWithData.flatMap(s => s.lessons);
         const completedCount = allLessonsFlat.filter(l => l.status === 'COMPLETED').length;
@@ -334,10 +348,14 @@ export const learningRouter = router({
       if (recommendedIds.length === 0) return null;
 
       const lessons = await ctx.prisma.lesson.findMany({
-        where: { id: { in: recommendedIds } },
+        where: {
+          id: { in: recommendedIds },
+          isHidden: false,
+          course: { isHidden: false },
+        },
         include: {
           progress: { where: { path: { userId: ctx.user.id } } },
-          course: { select: { title: true } },
+          course: { select: { title: true, isHidden: true } },
         },
         orderBy: { order: 'asc' },
       });
@@ -374,6 +392,7 @@ export const learningRouter = router({
             course: {
               include: {
                 lessons: {
+                  where: { isHidden: false },
                   orderBy: { order: 'asc' },
                   select: { id: true, title: true, order: true },
                 },
@@ -385,7 +404,8 @@ export const learningRouter = router({
           },
         });
 
-        if (!lesson) return null;
+        // Treat hidden lesson or lesson-of-hidden-course the same as «not found»
+        if (!lesson || lesson.isHidden || lesson.course.isHidden) return null;
 
         const access = await checkLessonAccess(ctx.user.id, { order: lesson.order, courseId: lesson.courseId }, ctx.prisma);
         const locked = !access.hasAccess;
@@ -445,8 +465,10 @@ export const learningRouter = router({
       });
 
       if (path) {
-        // Find first IN_PROGRESS lesson
-        const inProgress = path.progress.find((p) => p.status === 'IN_PROGRESS');
+        // Find first IN_PROGRESS lesson that is still visible
+        const inProgress = path.progress.find(
+          (p) => p.status === 'IN_PROGRESS' && !p.lesson.isHidden,
+        );
         if (inProgress) {
           const l = inProgress.lesson;
           const access = await checkLessonAccess(ctx.user.id, { order: l.order, courseId: l.courseId }, ctx.prisma);
@@ -471,7 +493,11 @@ export const learningRouter = router({
         // Find first NOT_STARTED lesson (not in progress records)
         const completedOrInProgress = new Set(path.progress.map((p) => p.lessonId));
         const nextLesson = await ctx.prisma.lesson.findFirst({
-          where: { id: { notIn: Array.from(completedOrInProgress) } },
+          where: {
+            id: { notIn: Array.from(completedOrInProgress) },
+            isHidden: false,
+            course: { isHidden: false },
+          },
           orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
         });
 
@@ -498,6 +524,7 @@ export const learningRouter = router({
 
       // No path — suggest first lesson of first course
       const firstLesson = await ctx.prisma.lesson.findFirst({
+        where: { isHidden: false, course: { isHidden: false } },
         orderBy: [{ courseId: 'asc' }, { order: 'asc' }],
       });
 
@@ -741,9 +768,12 @@ export const learningRouter = router({
     .input(z.object({ lessonId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        // Verify lesson exists
-        const lesson = await ctx.prisma.lesson.findUnique({ where: { id: input.lessonId } });
-        if (!lesson) {
+        // Verify lesson exists and is visible to users
+        const lesson = await ctx.prisma.lesson.findUnique({
+          where: { id: input.lessonId },
+          include: { course: { select: { isHidden: true } } },
+        });
+        if (!lesson || lesson.isHidden || lesson.course.isHidden) {
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Lesson not found' });
         }
 

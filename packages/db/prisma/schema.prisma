@@ -118,10 +118,15 @@ model Course {
   createdAt   DateTime @default(now())
   price       Int      @default(0) // rubles, 0 = free
   isFree      Boolean  @default(true) // explicit flag for queries
+  isHidden    Boolean   @default(false) // soft-hide: hides course and all its lessons from users
+  hiddenBy    String?
+  hiddenAt    DateTime?
 
   lessons       Lesson[]
   subscriptions Subscription[]
   promoCodes    PromoCode[]
+
+  @@index([isHidden])
 }
 
 model Lesson {
@@ -137,10 +142,16 @@ model Lesson {
   skillCategories Json?          // ["ANALYTICS", "FINANCE"] — multi-category (1-3)
   topics          Json?          // ["Юнит-экономика", "Маржинальность"] — free-form tags (2-5)
   skillLevel      Difficulty    @default(MEDIUM)
+  isHidden        Boolean        @default(false) // soft-hide: excludes lesson from user-facing queries and RAG retrieval
+  hiddenBy        String?
+  hiddenAt        DateTime?
 
   course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   progress LessonProgress[]
   // ContentChunk связь через lessonId (lesson_id) без FK
+
+  @@index([isHidden])
+  @@index([courseId, isHidden])
 }
 
 enum LessonStatus {

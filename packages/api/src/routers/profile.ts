@@ -109,7 +109,11 @@ async function getNextUncompletedLesson(
   );
 
   const nextLesson = await prisma.lesson.findFirst({
-    where: { id: { notIn: [...completedIds] } },
+    where: {
+      id: { notIn: [...completedIds] },
+      isHidden: false,
+      course: { isHidden: false },
+    },
     orderBy: [{ course: { order: 'asc' } }, { order: 'asc' }],
     include: { course: true },
   });
@@ -227,8 +231,11 @@ export const profileRouter = router({
         progressForNext,
       );
 
-      // Completion percent
-      const totalLessons = await ctx.prisma.lesson.count();
+      // Completion percent — denominator excludes hidden content so the user
+      // sees progress against what they can actually watch.
+      const totalLessons = await ctx.prisma.lesson.count({
+        where: { isHidden: false, course: { isHidden: false } },
+      });
       const completionPercent =
         totalLessons > 0
           ? Math.round((completedLessons.length / totalLessons) * 100)

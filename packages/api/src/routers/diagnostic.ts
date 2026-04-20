@@ -53,7 +53,11 @@ async function getLessonsByCategory(
   category: SkillCategory,
 ): Promise<string[]> {
   const lessons = await prisma.lesson.findMany({
-    where: { skillCategory: category },
+    where: {
+      skillCategory: category,
+      isHidden: false,
+      course: { isHidden: false },
+    },
     orderBy: { order: 'asc' },
     select: { id: true },
   });
@@ -205,7 +209,11 @@ async function generateFullRecommendedPath(
   const lessonIds: string[] = [];
   for (const cat of weakCategories) {
     const lessons = await prisma.lesson.findMany({
-      where: { skillCategory: cat.category },
+      where: {
+        skillCategory: cat.category,
+        isHidden: false,
+        course: { isHidden: false },
+      },
       orderBy: { order: 'asc' },
       select: { id: true },
     });
@@ -254,9 +262,14 @@ export async function generateSectionedPath(
   const errorLessonIds = [...new Set(wrongAnswers.flatMap(a => a.sourceData.lessonIds as string[]))];
 
   // Fetch error lessons and sort by category weakness
+  // Skip hidden lessons (they shouldn't guide the learner even if historically referenced)
   const errorLessons = errorLessonIds.length > 0
     ? await prisma.lesson.findMany({
-        where: { id: { in: errorLessonIds } },
+        where: {
+          id: { in: errorLessonIds },
+          isHidden: false,
+          course: { isHidden: false },
+        },
         select: { id: true, skillCategory: true, order: true },
       })
     : [];
@@ -294,6 +307,7 @@ export async function generateSectionedPath(
 
   // ── Fetch all lessons for sections 2-4 ──
   const allLessons = await prisma.lesson.findMany({
+    where: { isHidden: false, course: { isHidden: false } },
     select: { id: true, skillCategory: true, skillCategories: true, skillLevel: true, order: true },
     orderBy: { order: 'asc' },
   });

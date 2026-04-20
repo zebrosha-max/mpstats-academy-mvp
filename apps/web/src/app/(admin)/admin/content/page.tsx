@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
+type Role = 'USER' | 'ADMIN' | 'SUPERADMIN';
+
 const CATEGORY_LABELS: Record<string, string> = {
   ANALYTICS: 'Аналитика',
   MARKETING: 'Маркетинг',
@@ -17,7 +19,21 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export default function ContentPage() {
-  const courses = trpc.admin.getCourses.useQuery();
+  // Current user role — drives hide/unhide visibility and permissions
+  const { data: myProfile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const currentUserRole: Role = (myProfile?.role as Role) ?? 'USER';
+  const isSuperadmin = currentUserRole === 'SUPERADMIN';
+
+  // SUPERADMIN-only: toggle to show/hide hidden content.
+  // Default: true (see everything), admins can check «Показывать скрытый» off.
+  const [includeHidden, setIncludeHidden] = useState(true);
+
+  const courses = trpc.admin.getCourses.useQuery({
+    includeHidden: isSuperadmin ? includeHidden : false,
+  });
 
   const totalLessons = courses.data?.reduce((s, c) => s + c._count.lessons, 0) ?? 0;
   const totalChunks = courses.data?.reduce((s, c) => s + c.chunkCount, 0) ?? 0;
@@ -155,7 +171,12 @@ export default function ContentPage() {
           <p className="text-body-sm text-mp-gray-500 mt-1">{courses.error.message}</p>
         </Card>
       ) : (
-        <CourseManager courses={courses.data ?? []} />
+        <CourseManager
+          courses={courses.data ?? []}
+          currentUserRole={currentUserRole}
+          includeHidden={isSuperadmin ? includeHidden : false}
+          onToggleIncludeHidden={isSuperadmin ? setIncludeHidden : undefined}
+        />
       )}
     </div>
   );

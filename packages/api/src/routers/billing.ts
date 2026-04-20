@@ -22,6 +22,7 @@ export const billingRouter = router({
    */
   getCourses: publicProcedure.query(async ({ ctx }) => {
     return ctx.prisma.course.findMany({
+      where: { isHidden: false },
       select: { id: true, title: true },
       orderBy: { order: 'asc' },
     });

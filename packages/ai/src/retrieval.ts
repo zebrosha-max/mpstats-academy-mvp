@@ -26,6 +26,11 @@ export interface SearchOptions {
   limit?: number;
   threshold?: number;
   lessonId?: string; // Filter to specific lesson
+  /**
+   * When true (default), chunks belonging to hidden lessons or lessons in
+   * hidden courses are excluded. Set to false only for admin tooling / audits.
+   */
+  includeHidden?: boolean;
 }
 
 /**
@@ -40,7 +45,7 @@ export interface SearchOptions {
 export async function searchChunks(
   options: SearchOptions
 ): Promise<ChunkSearchResult[]> {
-  const { query, limit = 5, threshold = 0.5, lessonId } = options;
+  const { query, limit = 5, threshold = 0.5, lessonId, includeHidden = false } = options;
 
   // 1. Embed the query
   const queryEmbedding = await embedQuery(query);
@@ -49,6 +54,16 @@ export async function searchChunks(
   const embeddingStr = `[${queryEmbedding.join(',')}]`;
 
   const lessonFilter = lessonId ? `AND c.lesson_id LIKE '${lessonId}%'` : '';
+
+  // Default behavior: join Lesson + Course and exclude hidden rows. This keeps
+  // RAG retrieval consistent with user-facing lesson queries.
+  const hiddenJoin = includeHidden
+    ? ''
+    : `INNER JOIN "Lesson" l ON l.id = c.lesson_id
+       INNER JOIN "Course" co ON co.id = l."courseId"`;
+  const hiddenFilter = includeHidden
+    ? ''
+    : `AND l."isHidden" = false AND co."isHidden" = false`;
 
   const results = await prisma.$queryRawUnsafe<ChunkSearchResult[]>(`
     SELECT
@@ -59,9 +74,11 @@ export async function searchChunks(
       c.timecode_end::int as timecode_end,
       (1 - (c.embedding <=> '${embeddingStr}'::vector))::float as similarity
     FROM content_chunk c
+    ${hiddenJoin}
     WHERE c.embedding IS NOT NULL
       AND (1 - (c.embedding <=> '${embeddingStr}'::vector)) > ${threshold}
       ${lessonFilter}
+      ${hiddenFilter}
     ORDER BY c.embedding <=> '${embeddingStr}'::vector
     LIMIT ${limit}
   `);
@@ -76,10 +93,26 @@ export async function searchChunks(
  * @returns All chunks for the lesson, ordered by timecode
  */
 export async function getChunksForLesson(
-  lessonId: string
+  lessonId: string,
+  options: { includeHidden?: boolean } = {},
 ): Promise<ChunkSearchResult[]> {
+  const { includeHidden = false } = options;
+
   // Use Prisma raw SQL (direct TCP) instead of Supabase PostgREST
   // PostgREST times out on lessons with many chunks (TypeError: terminated)
+  // Hidden lesson/course → return no chunks so consumers degrade gracefully.
+  if (!includeHidden) {
+    const visible = await prisma.$queryRaw<Array<{ id: string }>>`
+      SELECT l.id
+      FROM "Lesson" l
+      INNER JOIN "Course" co ON co.id = l."courseId"
+      WHERE l.id = ${lessonId}
+        AND l."isHidden" = false
+        AND co."isHidden" = false
+    `;
+    if (visible.length === 0) return [];
+  }
+
   const results = await prisma.$queryRaw<Array<{
     id: string;
     lesson_id: string;

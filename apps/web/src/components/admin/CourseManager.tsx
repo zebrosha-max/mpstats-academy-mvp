@@ -3,7 +3,18 @@
 import { useState, useCallback } from 'react';
 import { trpc } from '@/lib/trpc/client';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp, Video, VideoOff, Database } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Video,
+  VideoOff,
+  Database,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
+import { HideConfirmDialog } from './HideConfirmDialog';
+
+type Role = 'USER' | 'ADMIN' | 'SUPERADMIN';
 
 interface Lesson {
   id: string;
@@ -12,12 +23,16 @@ interface Lesson {
   skillCategory: string;
   videoId: string | null;
   duration: number | null;
+  isHidden: boolean;
+  hiddenAt: Date | string | null;
 }
 
 interface CourseWithDetails {
   id: string;
   title: string;
   order: number;
+  isHidden: boolean;
+  hiddenAt: Date | string | null;
   _count: { lessons: number };
   chunkCount: number;
   lessons?: Lesson[];
@@ -25,6 +40,10 @@ interface CourseWithDetails {
 
 interface CourseManagerProps {
   courses: CourseWithDetails[];
+  currentUserRole: Role;
+  /** SUPERADMIN-only toggle: include hidden lessons/courses in the list */
+  includeHidden: boolean;
+  onToggleIncludeHidden?: (next: boolean) => void;
 }
 
 const skillCategoryVariant: Record<string, 'analytics' | 'marketing' | 'content' | 'operations' | 'finance'> = {
@@ -35,11 +54,17 @@ const skillCategoryVariant: Record<string, 'analytics' | 'marketing' | 'content'
   FINANCE: 'finance',
 };
 
-export function CourseManager({ courses }: CourseManagerProps) {
+export function CourseManager({
+  courses,
+  currentUserRole,
+  includeHidden,
+  onToggleIncludeHidden,
+}: CourseManagerProps) {
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   const utils = trpc.useUtils();
 
-  // Course-level mutations (invalidate getCourses)
+  const isSuperadmin = currentUserRole === 'SUPERADMIN';
+
   const moveCourse = trpc.admin.moveCourseToPosition.useMutation({
     onSuccess: () => {
       utils.admin.getCourses.invalidate();
@@ -47,6 +72,12 @@ export function CourseManager({ courses }: CourseManagerProps) {
   });
 
   const updateCourseTitle = trpc.admin.updateCourseTitle.useMutation({
+    onSuccess: () => {
+      utils.admin.getCourses.invalidate();
+    },
+  });
+
+  const toggleCourseHidden = trpc.admin.toggleCourseHidden.useMutation({
     onSuccess: () => {
       utils.admin.getCourses.invalidate();
     },
@@ -66,19 +97,85 @@ export function CourseManager({ courses }: CourseManagerProps) {
     [updateCourseTitle],
   );
 
+  // Course-level hide confirmation state
+  const [courseHideTarget, setCourseHideTarget] = useState<{
+    courseId: string;
+    title: string;
+    action: 'hide' | 'unhide';
+  } | null>(null);
+
+  const handleRequestCourseHide = useCallback(
+    (courseId: string, title: string, nextHidden: boolean) => {
+      setCourseHideTarget({
+        courseId,
+        title,
+        action: nextHidden ? 'hide' : 'unhide',
+      });
+    },
+    [],
+  );
+
+  const handleConfirmCourseHide = useCallback(() => {
+    if (!courseHideTarget) return;
+    toggleCourseHidden.mutate(
+      {
+        courseId: courseHideTarget.courseId,
+        hidden: courseHideTarget.action === 'hide',
+      },
+      {
+        onSuccess: () => setCourseHideTarget(null),
+      },
+    );
+  }, [courseHideTarget, toggleCourseHidden]);
+
   return (
-    <div className="space-y-3">
-      {courses.map((course) => (
-        <CourseAccordion
-          key={course.id}
-          course={course}
-          isExpanded={expandedCourse === course.id}
-          onToggle={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
-          onMoveCourse={handleMoveCourse}
-          onUpdateCourseTitle={handleUpdateCourseTitle}
+    <>
+      {/* SUPERADMIN-only: show/hide hidden content toggle */}
+      {isSuperadmin && onToggleIncludeHidden && (
+        <div className="flex items-center justify-end gap-2 pb-2">
+          <label className="flex items-center gap-2 text-body-sm text-mp-gray-600 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={includeHidden}
+              onChange={(e) => onToggleIncludeHidden(e.target.checked)}
+              className="w-4 h-4"
+            />
+            Показывать скрытый контент
+          </label>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {courses.map((course) => (
+          <CourseAccordion
+            key={course.id}
+            course={course}
+            isExpanded={expandedCourse === course.id}
+            onToggle={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
+            onMoveCourse={handleMoveCourse}
+            onUpdateCourseTitle={handleUpdateCourseTitle}
+            onRequestCourseHide={handleRequestCourseHide}
+            currentUserRole={currentUserRole}
+            includeHidden={includeHidden}
+          />
+        ))}
+      </div>
+
+      {courseHideTarget && (
+        <HideConfirmDialog
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) setCourseHideTarget(null);
+          }}
+          kind="course"
+          title={courseHideTarget.title}
+          action={courseHideTarget.action}
+          currentUserRole={currentUserRole}
+          onConfirm={handleConfirmCourseHide}
+          isPending={toggleCourseHidden.isPending}
         />
-      ))}
-    </div>
+      )}
+    </>
   );
 }
 
@@ -88,16 +185,24 @@ function CourseAccordion({
   onToggle,
   onMoveCourse,
   onUpdateCourseTitle,
+  onRequestCourseHide,
+  currentUserRole,
+  includeHidden,
 }: {
   course: CourseWithDetails;
   isExpanded: boolean;
   onToggle: () => void;
   onMoveCourse: (courseId: string, targetPosition: number) => void;
   onUpdateCourseTitle: (courseId: string, title: string) => void;
+  onRequestCourseHide: (courseId: string, title: string, nextHidden: boolean) => void;
+  currentUserRole: Role;
+  includeHidden: boolean;
 }) {
   const utils = trpc.useUtils();
+  const isSuperadmin = currentUserRole === 'SUPERADMIN';
+
   const courseLessons = trpc.admin.getCourseLessons.useQuery(
-    { courseId: course.id },
+    { courseId: course.id, includeHidden },
     { enabled: isExpanded },
   );
   const moveLesson = trpc.admin.moveLessonToPosition.useMutation({
@@ -108,6 +213,12 @@ function CourseAccordion({
   const updateLessonTitle = trpc.admin.updateLessonTitle.useMutation({
     onSuccess: () => {
       utils.admin.getCourseLessons.invalidate({ courseId: course.id });
+    },
+  });
+  const toggleLessonHidden = trpc.admin.toggleLessonHidden.useMutation({
+    onSuccess: () => {
+      utils.admin.getCourseLessons.invalidate({ courseId: course.id });
+      utils.admin.getCourses.invalidate();
     },
   });
 
@@ -126,6 +237,13 @@ function CourseAccordion({
   // Lesson title editing state
   const [editingLessonTitleId, setEditingLessonTitleId] = useState<string | null>(null);
   const [lessonTitleValue, setLessonTitleValue] = useState('');
+
+  // Lesson hide confirmation state
+  const [lessonHideTarget, setLessonHideTarget] = useState<{
+    lessonId: string;
+    title: string;
+    action: 'hide' | 'unhide';
+  } | null>(null);
 
   // --- Lesson order handlers ---
   const handleLessonOrderClick = useCallback((lessonId: string, currentOrder: number) => {
@@ -203,82 +321,146 @@ function CourseAccordion({
     setEditingLessonTitleId(null);
   }, []);
 
-  return (
-    <div className="border border-mp-gray-200 rounded-lg bg-white overflow-hidden">
-      {/* Course header */}
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-mp-gray-50 transition-colors text-left"
-      >
-        <div className="flex items-center gap-3">
-          {/* Course order — click to edit */}
-          {editingCourseOrder ? (
-            <input
-              type="number"
-              min={1}
-              value={courseOrderValue}
-              onChange={(e) => setCourseOrderValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCourseOrderSubmit();
-                if (e.key === 'Escape') handleCourseOrderCancel();
-              }}
-              onBlur={handleCourseOrderSubmit}
-              onClick={(e) => e.stopPropagation()}
-              autoFocus
-              onFocus={(e) => e.target.select()}
-              className="w-10 h-6 text-xs font-mono text-center border border-mp-blue-400 rounded bg-white focus:outline-none focus:ring-1 focus:ring-mp-blue-500"
-            />
-          ) : (
-            <span
-              onClick={handleCourseOrderClick}
-              className="text-body-sm font-medium text-mp-gray-400 w-6 hover:text-mp-blue-600 hover:bg-mp-blue-50 rounded px-1 py-0.5 transition-colors cursor-pointer text-center"
-              title="Click to change position"
-            >
-              #{course.order}
-            </span>
-          )}
+  // --- Lesson hide handlers ---
+  const handleRequestLessonHide = useCallback(
+    (lessonId: string, title: string, nextHidden: boolean) => {
+      setLessonHideTarget({
+        lessonId,
+        title,
+        action: nextHidden ? 'hide' : 'unhide',
+      });
+    },
+    [],
+  );
 
-          {/* Course title — click to edit */}
-          {editingCourseTitle ? (
-            <input
-              type="text"
-              value={courseTitleValue}
-              onChange={(e) => setCourseTitleValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCourseTitleSubmit();
-                if (e.key === 'Escape') handleCourseTitleCancel();
-              }}
-              onBlur={handleCourseTitleSubmit}
-              onClick={(e) => e.stopPropagation()}
-              autoFocus
-              onFocus={(e) => e.target.select()}
-              className="text-body-md font-semibold text-mp-gray-900 border-b-2 border-mp-blue-400 bg-transparent focus:outline-none focus:border-mp-blue-500 min-w-[200px]"
-            />
-          ) : (
-            <span
-              onClick={handleCourseTitleClick}
-              className="text-body-md font-semibold text-mp-gray-900 hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors"
-              title="Click to edit title"
-            >
-              {course.title}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="primary" size="sm">
-            {course._count.lessons} lessons
-          </Badge>
-          <div className="flex items-center gap-1 text-xs text-mp-gray-500">
-            <Database className="w-3 h-3" />
-            {course.chunkCount} chunks
+  const handleConfirmLessonHide = useCallback(() => {
+    if (!lessonHideTarget) return;
+    toggleLessonHidden.mutate(
+      {
+        lessonId: lessonHideTarget.lessonId,
+        hidden: lessonHideTarget.action === 'hide',
+      },
+      {
+        onSuccess: () => setLessonHideTarget(null),
+      },
+    );
+  }, [lessonHideTarget, toggleLessonHidden]);
+
+  const courseHiddenBadge = course.isHidden && isSuperadmin ? (
+    <Badge variant="default" size="sm" className="bg-mp-gray-200 text-mp-gray-600">
+      Скрыт
+    </Badge>
+  ) : null;
+
+  return (
+    <div
+      className={`border rounded-lg overflow-hidden ${
+        course.isHidden
+          ? 'border-mp-gray-300 bg-mp-gray-50/50 opacity-80'
+          : 'border-mp-gray-200 bg-white'
+      }`}
+    >
+      {/* Course header */}
+      <div className="flex items-stretch">
+        <button
+          onClick={onToggle}
+          className="flex-1 flex items-center justify-between px-4 py-3 hover:bg-mp-gray-50 transition-colors text-left"
+        >
+          <div className="flex items-center gap-3">
+            {/* Course order — click to edit */}
+            {editingCourseOrder ? (
+              <input
+                type="number"
+                min={1}
+                value={courseOrderValue}
+                onChange={(e) => setCourseOrderValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleCourseOrderSubmit();
+                  if (e.key === 'Escape') handleCourseOrderCancel();
+                }}
+                onBlur={handleCourseOrderSubmit}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+                onFocus={(e) => e.target.select()}
+                className="w-10 h-6 text-xs font-mono text-center border border-mp-blue-400 rounded bg-white focus:outline-none focus:ring-1 focus:ring-mp-blue-500"
+              />
+            ) : (
+              <span
+                onClick={handleCourseOrderClick}
+                className="text-body-sm font-medium text-mp-gray-400 w-6 hover:text-mp-blue-600 hover:bg-mp-blue-50 rounded px-1 py-0.5 transition-colors cursor-pointer text-center"
+                title="Click to change position"
+              >
+                #{course.order}
+              </span>
+            )}
+
+            {/* Course title — click to edit */}
+            {editingCourseTitle ? (
+              <input
+                type="text"
+                value={courseTitleValue}
+                onChange={(e) => setCourseTitleValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleCourseTitleSubmit();
+                  if (e.key === 'Escape') handleCourseTitleCancel();
+                }}
+                onBlur={handleCourseTitleSubmit}
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+                onFocus={(e) => e.target.select()}
+                className="text-body-md font-semibold text-mp-gray-900 border-b-2 border-mp-blue-400 bg-transparent focus:outline-none focus:border-mp-blue-500 min-w-[200px]"
+              />
+            ) : (
+              <span
+                onClick={handleCourseTitleClick}
+                className={`text-body-md font-semibold hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors ${
+                  course.isHidden ? 'text-mp-gray-500 line-through' : 'text-mp-gray-900'
+                }`}
+                title="Click to edit title"
+              >
+                {course.title}
+              </span>
+            )}
+            {courseHiddenBadge}
           </div>
-          {isExpanded ? (
-            <ChevronUp className="w-4 h-4 text-mp-gray-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-mp-gray-400" />
-          )}
-        </div>
-      </button>
+          <div className="flex items-center gap-3">
+            <Badge variant="primary" size="sm">
+              {course._count.lessons} lessons
+            </Badge>
+            <div className="flex items-center gap-1 text-xs text-mp-gray-500">
+              <Database className="w-3 h-3" />
+              {course.chunkCount} chunks
+            </div>
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4 text-mp-gray-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-mp-gray-400" />
+            )}
+          </div>
+        </button>
+
+        {/* Hide/Unhide course button */}
+        {(!course.isHidden || isSuperadmin) && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRequestCourseHide(course.id, course.title, !course.isHidden);
+            }}
+            className={`px-3 border-l border-mp-gray-200 flex items-center justify-center transition-colors ${
+              course.isHidden
+                ? 'text-mp-gray-400 hover:bg-mp-green-50 hover:text-mp-green-600'
+                : 'text-mp-gray-400 hover:bg-red-50 hover:text-red-600'
+            }`}
+            title={course.isHidden ? 'Вернуть курс' : 'Скрыть курс'}
+          >
+            {course.isHidden ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        )}
+      </div>
 
       {/* Lessons list */}
       {isExpanded && (
@@ -292,7 +474,9 @@ function CourseAccordion({
               {courseLessons.data.map((lesson) => (
                 <div
                   key={lesson.id}
-                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-mp-gray-50 transition-colors"
+                  className={`flex items-center gap-3 px-4 py-2.5 transition-colors ${
+                    lesson.isHidden ? 'bg-mp-gray-50/70 opacity-70' : 'hover:bg-mp-gray-50'
+                  }`}
                 >
                   {/* Order number — click to edit */}
                   {editingLessonOrderId === lesson.id ? (
@@ -340,13 +524,22 @@ function CourseAccordion({
                     ) : (
                       <p
                         onClick={() => handleLessonTitleClick(lesson.id, lesson.title)}
-                        className="text-body-sm text-mp-gray-900 truncate hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors"
+                        className={`text-body-sm truncate hover:text-mp-blue-600 cursor-pointer border-b border-transparent hover:border-mp-blue-300 transition-colors ${
+                          lesson.isHidden ? 'text-mp-gray-500 line-through' : 'text-mp-gray-900'
+                        }`}
                         title="Click to edit title"
                       >
                         {lesson.title}
                       </p>
                     )}
                   </div>
+
+                  {/* Hidden badge (SUPERADMIN only) */}
+                  {lesson.isHidden && isSuperadmin && (
+                    <Badge variant="default" size="sm" className="bg-mp-gray-200 text-mp-gray-600 shrink-0">
+                      Скрыт
+                    </Badge>
+                  )}
 
                   {/* Skill category badge */}
                   <Badge
@@ -362,6 +555,28 @@ function CourseAccordion({
                   ) : (
                     <VideoOff className="w-4 h-4 text-mp-gray-300 shrink-0" />
                   )}
+
+                  {/* Hide/Unhide button */}
+                  {(!lesson.isHidden || isSuperadmin) && (
+                    <button
+                      onClick={() =>
+                        handleRequestLessonHide(lesson.id, lesson.title, !lesson.isHidden)
+                      }
+                      disabled={toggleLessonHidden.isPending}
+                      className={`p-1 rounded transition-colors shrink-0 ${
+                        lesson.isHidden
+                          ? 'text-mp-gray-400 hover:bg-mp-green-50 hover:text-mp-green-600'
+                          : 'text-mp-gray-400 hover:bg-red-50 hover:text-red-600'
+                      }`}
+                      title={lesson.isHidden ? 'Вернуть урок' : 'Скрыть урок'}
+                    >
+                      {lesson.isHidden ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -371,6 +586,21 @@ function CourseAccordion({
             </div>
           )}
         </div>
+      )}
+
+      {lessonHideTarget && (
+        <HideConfirmDialog
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) setLessonHideTarget(null);
+          }}
+          kind="lesson"
+          title={lessonHideTarget.title}
+          action={lessonHideTarget.action}
+          currentUserRole={currentUserRole}
+          onConfirm={handleConfirmLessonHide}
+          isPending={toggleLessonHidden.isPending}
+        />
       )}
     </div>
   );

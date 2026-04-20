@@ -183,11 +183,17 @@ export const aiRouter = router({
       }
 
       // 3. Enrich with lesson data from Prisma
+      // Defense in depth: searchChunks already filters hidden, but we filter
+      // again here in case the chunk set was built via an admin path.
       const lessonIds = Array.from(lessonChunksMap.keys());
       const lessons = await ctx.prisma.lesson.findMany({
-        where: { id: { in: lessonIds } },
+        where: {
+          id: { in: lessonIds },
+          isHidden: false,
+          course: { isHidden: false },
+        },
         include: {
-          course: { select: { id: true, title: true } },
+          course: { select: { id: true, title: true, isHidden: true } },
           progress: {
             where: { path: { userId: ctx.user.id } },
             take: 1,
