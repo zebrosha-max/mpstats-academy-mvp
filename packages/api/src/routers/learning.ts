@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
 import { handleDatabaseError } from '../utils/db-errors';
-import { getUserActiveSubscriptions, isLessonAccessible, checkLessonAccess } from '../utils/access';
+import { getUserActiveSubscriptions, getUserAdminBypass, isLessonAccessible, checkLessonAccess } from '../utils/access';
 import { isFeatureEnabled } from '../utils/feature-flags';
 import { parseLearningPath } from '@mpstats/shared';
 import type { CourseWithProgress, LessonWithProgress, LearningPathSection, SectionedLearningPath } from '@mpstats/shared';
@@ -35,8 +35,11 @@ export const learningRouter = router({
         orderBy: { order: 'asc' },
       });
 
-      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
-      const billingEnabled = await isFeatureEnabled('billing_enabled');
+      const [subs, billingEnabled, isAdminBypass] = await Promise.all([
+        getUserActiveSubscriptions(ctx.user.id, ctx.prisma),
+        isFeatureEnabled('billing_enabled'),
+        getUserAdminBypass(ctx.user.id, ctx.prisma),
+      ]);
 
       return courses.map((course) => {
         const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
@@ -62,7 +65,7 @@ export const learningRouter = router({
         ).length,
         progressPercent,
         lessons: course.lessons.map((l) => {
-          const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled);
+          const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled, isAdminBypass);
           return {
             id: l.id,
             courseId: l.courseId,
@@ -111,8 +114,11 @@ export const learningRouter = router({
         // Treat a hidden course the same as «not found» for users
         if (!course || course.isHidden) return null;
 
-        const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
-        const billingEnabled = await isFeatureEnabled('billing_enabled');
+        const [subs, billingEnabled, isAdminBypass] = await Promise.all([
+          getUserActiveSubscriptions(ctx.user.id, ctx.prisma),
+          isFeatureEnabled('billing_enabled'),
+          getUserAdminBypass(ctx.user.id, ctx.prisma),
+        ]);
 
         const lessonsWithVideo = course.lessons.filter((l) => l.videoId != null);
         const watchedPercentSum = lessonsWithVideo.reduce((sum, l) => {
@@ -137,7 +143,7 @@ export const learningRouter = router({
           ).length,
           progressPercent,
           lessons: course.lessons.map((l) => {
-            const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled);
+            const locked = !isLessonAccessible({ order: l.order, courseId: course.id }, subs, billingEnabled, isAdminBypass);
             return {
               id: l.id,
               courseId: l.courseId,
@@ -174,8 +180,11 @@ export const learningRouter = router({
         },
       });
 
-      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
-      const billingEnabled = await isFeatureEnabled('billing_enabled');
+      const [subs, billingEnabled, isAdminBypass] = await Promise.all([
+        getUserActiveSubscriptions(ctx.user.id, ctx.prisma),
+        isFeatureEnabled('billing_enabled'),
+        getUserAdminBypass(ctx.user.id, ctx.prisma),
+      ]);
 
       // If no path exists, return all lessons with no progress
       if (!path) {
@@ -185,7 +194,7 @@ export const learningRouter = router({
         });
 
         const lessons: LessonWithProgress[] = allLessons.map((l) => {
-          const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
+          const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled, isAdminBypass);
           return {
             id: l.id,
             courseId: l.courseId,
@@ -226,7 +235,7 @@ export const learningRouter = router({
 
       const lessons: LessonWithProgress[] = allLessons.map((l) => {
         const progress = progressMap.get(l.id);
-        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
+        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled, isAdminBypass);
         return {
           id: l.id,
           courseId: l.courseId,
@@ -270,8 +279,11 @@ export const learningRouter = router({
         return null;
       }
 
-      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
-      const billingEnabled = await isFeatureEnabled('billing_enabled');
+      const [subs, billingEnabled, isAdminBypass] = await Promise.all([
+        getUserActiveSubscriptions(ctx.user.id, ctx.prisma),
+        isFeatureEnabled('billing_enabled'),
+        getUserAdminBypass(ctx.user.id, ctx.prisma),
+      ]);
       const hasPlatformSubscription = subs.some((s) => s.plan.type === 'PLATFORM');
 
       // Detect format: old string[] or new SectionedLearningPath
@@ -279,7 +291,7 @@ export const learningRouter = router({
 
       // Helper to build lesson data object from DB lesson
       const buildLessonData = (l: any) => {
-        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled);
+        const locked = !isLessonAccessible({ order: l.order, courseId: l.courseId }, subs, billingEnabled, isAdminBypass);
         return {
           id: l.id,
           courseId: l.courseId,

@@ -40,17 +40,39 @@ export async function getUserActiveSubscriptions(
 
 /**
  * Pure synchronous check: can user access this lesson?
+ *
+ * `isAdminBypass` — pass `true` for users with role ADMIN/SUPERADMIN so they
+ * get the same full access as `checkLessonAccess` grants asynchronously.
+ * Without this flag, staff-only users would see paywall locks on all non-free
+ * lessons from courses they don't personally have subs for.
  */
 export function isLessonAccessible(
   lesson: { order: number; courseId: string },
   subscriptions: SubscriptionWithPlan[],
   billingEnabled: boolean,
+  isAdminBypass = false,
 ): boolean {
   if (!billingEnabled) return true;
+  if (isAdminBypass) return true;
   if (lesson.order <= FREE_LESSON_THRESHOLD) return true;
   if (subscriptions.some((s) => s.plan.type === 'PLATFORM')) return true;
   if (subscriptions.some((s) => s.plan.type === 'COURSE' && s.courseId === lesson.courseId)) return true;
   return false;
+}
+
+/**
+ * Fetch role-based admin bypass flag for a user.
+ * ADMIN and SUPERADMIN get full access regardless of subscription.
+ */
+export async function getUserAdminBypass(
+  userId: string,
+  prisma: PrismaClient,
+): Promise<boolean> {
+  const profile = await prisma.userProfile.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  return profile?.role === 'ADMIN' || profile?.role === 'SUPERADMIN';
 }
 
 /**

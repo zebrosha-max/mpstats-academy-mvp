@@ -79,8 +79,11 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
       <Card className="shadow-mp-card hover:shadow-mp-card-hover transition-all duration-300 cursor-pointer h-full hover:-translate-y-0.5">
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-start gap-3 sm:gap-4">
-            {/* Status icon or lock icon */}
-            <div className={cn('flex-shrink-0 mt-1', isLocked ? 'text-mp-gray-400' : status.color)}>
+            {/* Status icon or lock icon — title attribute disambiguates "not started" vs "paywalled" on hover */}
+            <div
+              className={cn('flex-shrink-0 mt-1', isLocked ? 'text-mp-gray-400' : status.color)}
+              title={isLocked ? 'Доступен по подписке' : status.label}
+            >
               {isLocked ? LOCK_ICON : status.icon}
             </div>
 

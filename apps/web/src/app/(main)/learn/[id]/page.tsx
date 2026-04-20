@@ -346,6 +346,9 @@ export default function LessonPage() {
         // Invalidate learn page queries for counter update
         utils.learning.getRecommendedPath.invalidate();
         utils.learning.getPath.invalidate();
+        utils.learning.getCourses.invalidate();
+        // Dashboard "Уроков пройдено" counter lives in profile.getDashboard
+        utils.profile.getDashboard.invalidate();
       }
     },
     onError: (err) => {
@@ -436,6 +439,13 @@ export default function LessonPage() {
 
   const completeLesson = trpc.learning.completeLesson.useMutation({
     onSuccess: () => {
+      // Invalidate caches so "Уроков пройдено" counter and lesson status refresh
+      completedRef.current = true;
+      utils.learning.getLesson.invalidate({ lessonId });
+      utils.learning.getRecommendedPath.invalidate();
+      utils.learning.getPath.invalidate();
+      utils.learning.getCourses.invalidate();
+      utils.profile.getDashboard.invalidate();
       if (data?.nextLesson) {
         router.push(`/learn/${data.nextLesson.id}`);
       } else {

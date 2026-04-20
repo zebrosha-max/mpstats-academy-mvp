@@ -15,7 +15,7 @@ import {
   searchChunks,
   type ChatMessage,
 } from '@mpstats/ai';
-import { getUserActiveSubscriptions, isLessonAccessible } from '../utils/access';
+import { getUserActiveSubscriptions, getUserAdminBypass, isLessonAccessible } from '../utils/access';
 import { isFeatureEnabled } from '../utils/feature-flags';
 import type { SearchLessonResult, SearchSnippet } from '@mpstats/shared';
 
@@ -160,18 +160,34 @@ export const aiRouter = router({
       query: z.string().min(1).max(500),
     }))
     .query(async ({ ctx, input }): Promise<{ query: string; results: SearchLessonResult[]; totalChunks: number }> => {
-      // 1. Vector search — get up to 30 chunks (threshold 0.5 — lower values timeout on Supabase free tier)
-      const chunks = await searchChunks({
-        query: input.query,
-        limit: 30,
-        threshold: 0.5,
-      });
+      const q = input.query.trim();
 
-      if (chunks.length === 0) {
+      // Hybrid search: vector (semantic) + keyword (title/description) in parallel.
+      // Keyword fallback ensures that simple queries matching lesson titles always
+      // return results, even when vector similarity falls below threshold.
+      const [chunks, keywordLessons] = await Promise.all([
+        searchChunks({ query: q, limit: 30, threshold: 0.5 }),
+        ctx.prisma.lesson.findMany({
+          where: {
+            isHidden: false,
+            course: { isHidden: false },
+            OR: [
+              { title: { contains: q, mode: 'insensitive' } },
+              { description: { contains: q, mode: 'insensitive' } },
+            ],
+          },
+          select: { id: true },
+          take: 20,
+        }),
+      ]);
+
+      const keywordMatchIds = new Set(keywordLessons.map((l) => l.id));
+
+      if (chunks.length === 0 && keywordMatchIds.size === 0) {
         return { query: input.query, results: [], totalChunks: 0 };
       }
 
-      // 2. Group by lesson_id, keep top 2 chunks per lesson (highest similarity)
+      // 2. Group chunks by lesson_id, keep top 2 chunks per lesson
       const lessonChunksMap = new Map<string, typeof chunks>();
       for (const chunk of chunks) {
         if (!chunk.lesson_id) continue;
@@ -182,10 +198,11 @@ export const aiRouter = router({
         }
       }
 
-      // 3. Enrich with lesson data from Prisma
-      // Defense in depth: searchChunks already filters hidden, but we filter
-      // again here in case the chunk set was built via an admin path.
-      const lessonIds = Array.from(lessonChunksMap.keys());
+      // 3. Enrich: union of vector hits + keyword hits
+      const lessonIds = Array.from(new Set([
+        ...lessonChunksMap.keys(),
+        ...keywordMatchIds,
+      ]));
       const lessons = await ctx.prisma.lesson.findMany({
         where: {
           id: { in: lessonIds },
@@ -202,8 +219,11 @@ export const aiRouter = router({
       });
 
       // 4. Check access
-      const subs = await getUserActiveSubscriptions(ctx.user.id, ctx.prisma);
-      const billingEnabled = await isFeatureEnabled('billing_enabled');
+      const [subs, billingEnabled, isAdminBypass] = await Promise.all([
+        getUserActiveSubscriptions(ctx.user.id, ctx.prisma),
+        isFeatureEnabled('billing_enabled'),
+        getUserAdminBypass(ctx.user.id, ctx.prisma),
+      ]);
 
       // 5. Check recommended path membership
       const activePath = await ctx.prisma.learningPath.findUnique({
@@ -227,13 +247,16 @@ export const aiRouter = router({
         }
       }
 
-      // 6. Merge and sort by best chunk similarity
+      // 6. Merge and sort: keyword matches rank above vector matches,
+      // then by chunk similarity for ties/vector-only results.
       const results: SearchLessonResult[] = lessons.map((lesson) => {
         const chunkList = lessonChunksMap.get(lesson.id) || [];
+        const isKeywordMatch = keywordMatchIds.has(lesson.id);
         const locked = !isLessonAccessible(
           { order: lesson.order, courseId: lesson.courseId },
           subs,
           billingEnabled,
+          isAdminBypass,
         );
 
         const snippets: SearchSnippet[] = chunkList.map((c) => ({
@@ -242,6 +265,11 @@ export const aiRouter = router({
           timecodeEnd: c.timecode_end,
           similarity: c.similarity,
         }));
+
+        const vectorBest = snippets.length > 0 ? Math.max(...snippets.map((s) => s.similarity)) : 0;
+        // Keyword matches are surfaced first (similarity=1.0) so users always
+        // find lessons whose titles/descriptions contain their query terms.
+        const bestSimilarity = isKeywordMatch ? 1 : vectorBest;
 
         return {
           lesson: {
@@ -257,7 +285,7 @@ export const aiRouter = router({
           },
           course: lesson.course,
           snippets,
-          bestSimilarity: snippets.length > 0 ? Math.max(...snippets.map((s) => s.similarity)) : 0,
+          bestSimilarity,
           watchedPercent: lesson.progress[0]?.watchedPercent || 0,
           status: (lesson.progress[0]?.status || 'NOT_STARTED') as any,
           locked,
