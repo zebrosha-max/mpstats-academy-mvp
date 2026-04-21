@@ -30,6 +30,7 @@ model UserProfile {
   role      Role     @default(USER)
   isActive  Boolean  @default(true)
   yandexId  String?  @unique // For Phase 17 Yandex ID OAuth binding
+  phone     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   lastActiveAt DateTime?
