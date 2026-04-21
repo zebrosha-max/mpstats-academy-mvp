@@ -122,8 +122,8 @@ function PricingPageContent() {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
       const isAuthError = errorMessage.includes('UNAUTHORIZED') || errorMessage.toLowerCase().includes('not authenticated');
       if (isAuthError) {
-        setMessage({ type: 'error', text: 'Для оформления подписки необходимо войти в аккаунт. Перенаправляем...' });
-        setTimeout(() => router.push('/login'), 2000);
+        setMessage({ type: 'error', text: 'Для оформления подписки необходимо зарегистрироваться. Перенаправляем...' });
+        setTimeout(() => router.push('/register'), 2000);
         return;
       }
       setMessage({ type: 'error', text: errorMessage });
@@ -176,8 +176,8 @@ function PricingPageContent() {
                   {profile?.name || 'Профиль'}
                 </Link>
               ) : (
-                <Link href="/login" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline font-medium">
-                  Войти
+                <Link href="/register" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline font-medium">
+                  Регистрация
                 </Link>
               )}
             </div>

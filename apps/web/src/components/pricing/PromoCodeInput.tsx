@@ -64,7 +64,7 @@ export function PromoCodeInput({ isAuthenticated, initialCode }: PromoCodeInputP
         // sessionStorage unavailable
       }
       const encoded = encodeURIComponent(trimmed);
-      router.push(`/login?redirect=/pricing&promo=${encoded}`);
+      router.push(`/register?redirect=/pricing&promo=${encoded}`);
       return;
     }
 
