@@ -29,6 +29,7 @@ export async function GET(request: Request) {
             sendWelcomeEmail(user.id, {
               name: profile.name || user.user_metadata?.name || '',
               email: user.email || '',
+              phone: user.user_metadata?.phone || '',
             }).catch(err => console.error('[Auth] Welcome email failed:', err));
           }
         }

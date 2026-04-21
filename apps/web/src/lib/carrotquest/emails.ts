@@ -111,7 +111,7 @@ export async function sendCancellationEmail(
 
 export async function sendWelcomeEmail(
   userId: string,
-  data: { name: string; email: string },
+  data: { name: string; email: string; phone?: string },
 ): Promise<void> {
   try {
     if (!(await isEmailEnabled())) return;
@@ -120,6 +120,7 @@ export async function sendWelcomeEmail(
       '$email': data.email,
       '$name': data.name,
       pa_name: data.name,
+      ...(data.phone ? { '$phone': data.phone, pa_phone: data.phone } : {}),
     });
     await cq.trackEvent(userId, 'pa_registration_completed');
 
