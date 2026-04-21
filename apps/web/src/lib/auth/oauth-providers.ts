@@ -53,7 +53,7 @@ export class YandexProvider implements OAuthProvider {
       response_type: 'code',
       client_id: process.env.YANDEX_CLIENT_ID!,
       redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/yandex/callback`,
-      scope: 'login:email login:info login:phone',
+      scope: 'login:email login:info login:default_phone',
       state,
       force_confirm: 'yes',
     });
