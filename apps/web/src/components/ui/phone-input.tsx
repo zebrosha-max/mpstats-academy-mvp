@@ -21,7 +21,7 @@ export function PhoneInput({ value, onChange, disabled }: PhoneInputProps) {
         buttonClassName:
           '!h-10 !rounded-md !border-input !bg-background hover:!bg-accent disabled:!cursor-not-allowed disabled:!opacity-50',
       }}
-      className="!w-full"
+      className="!w-full !gap-1.5"
     />
   );
 }
