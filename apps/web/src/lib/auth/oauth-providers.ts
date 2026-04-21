@@ -10,6 +10,7 @@ export interface OAuthUserInfo {
   id: string;
   email: string;
   name: string | null;
+  phone: string | null;
 }
 
 export interface OAuthProvider {
@@ -52,7 +53,7 @@ export class YandexProvider implements OAuthProvider {
       response_type: 'code',
       client_id: process.env.YANDEX_CLIENT_ID!,
       redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/yandex/callback`,
-      scope: 'login:email login:info',
+      scope: 'login:email login:info login:phone',
       state,
       force_confirm: 'yes',
     });
@@ -91,6 +92,7 @@ export class YandexProvider implements OAuthProvider {
       id: data.id,
       email: data.default_email,
       name: data.display_name || [data.first_name, data.last_name].filter(Boolean).join(' ') || null,
+      phone: data.default_phone?.number || null,
     };
   }
 }

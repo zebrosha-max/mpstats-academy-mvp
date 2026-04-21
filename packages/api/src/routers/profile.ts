@@ -381,6 +381,7 @@ export const profileRouter = router({
       z.object({
         name: z.string().min(1).max(100).optional(),
         avatarUrl: z.string().url().optional().nullable(),
+        phone: z.string().regex(/^\+[1-9]\d{9,14}$/, 'Некорректный номер телефона').optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

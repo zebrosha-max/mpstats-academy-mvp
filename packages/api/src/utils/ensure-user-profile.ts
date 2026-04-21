@@ -16,6 +16,7 @@ export async function ensureUserProfile(prisma: PrismaClient, user: User) {
       id: user.id,
       name: user.user_metadata?.full_name || user.email?.split('@')[0] || null,
       avatarUrl: user.user_metadata?.avatar_url || null,
+      phone: user.user_metadata?.phone || null,
     },
   });
 }

@@ -46,6 +46,7 @@ export async function GET(request: Request): Promise<Response> {
     const existingUser = listData?.users?.find(
       (u) => u.email === userInfo.email
     );
+    const isNewUser = !existingUser;
 
     let supabaseUser;
 
@@ -108,24 +109,32 @@ export async function GET(request: Request): Promise<Response> {
       );
     }
 
-    // 9. Update UserProfile.yandexId via Prisma upsert (handles race with trigger)
+    // 9. Update UserProfile.yandexId + phone via Prisma upsert
+    let profilePhone: string | null = null;
     try {
-      await prisma.userProfile.upsert({
+      const upserted = await prisma.userProfile.upsert({
         where: { id: supabaseUser.id },
-        update: { yandexId: userInfo.id },
+        update: {
+          yandexId: userInfo.id,
+          ...(userInfo.phone ? { phone: userInfo.phone } : {}),
+        },
         create: {
           id: supabaseUser.id,
           name: userInfo.name,
           yandexId: userInfo.id,
+          phone: userInfo.phone,
         },
       });
+      profilePhone = upserted.phone;
     } catch (prismaError) {
       // Non-fatal: yandexId binding failed but session is valid
       console.error('Failed to update yandexId:', prismaError);
     }
 
     // 10. Create redirect response and set session cookies
-    const response = NextResponse.redirect(new URL('/dashboard', siteUrl));
+    const needsPhone = isNewUser && !profilePhone;
+    const redirectTo = needsPhone ? '/complete-profile' : '/dashboard';
+    const response = NextResponse.redirect(new URL(redirectTo, siteUrl));
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
