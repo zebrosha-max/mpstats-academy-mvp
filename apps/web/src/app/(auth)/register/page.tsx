@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signUp, signInWithYandex } from '@/lib/auth/actions';
 import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
@@ -10,16 +10,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PhoneInput } from '@/components/ui/phone-input';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState('');
   const [acceptOffer, setAcceptOffer] = useState(false);
   const [acceptPdn, setAcceptPdn] = useState(false);
   const [acceptAdv, setAcceptAdv] = useState(false);
 
   const canSubmit = acceptOffer && acceptPdn && !loading;
+
+  const loginHref = `/login${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -78,20 +83,21 @@ export default function RegisterPage() {
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium">
-              Имя
+              Имя <span className="text-red-500">*</span>
             </label>
             <Input
               id="name"
               name="name"
               type="text"
               placeholder="Иван Иванов"
+              required
               disabled={loading}
             />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <Input
               id="email"
@@ -104,8 +110,20 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Телефон <span className="text-red-500">*</span>
+            </label>
+            <PhoneInput
+              value={phone}
+              onChange={setPhone}
+              disabled={loading}
+            />
+            <input type="hidden" name="phone" value={phone} />
+          </div>
+
+          <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium">
-              Пароль
+              Пароль <span className="text-red-500">*</span>
             </label>
             <Input
               id="password"
@@ -120,7 +138,7 @@ export default function RegisterPage() {
 
           <div className="space-y-2">
             <label htmlFor="confirmPassword" className="text-sm font-medium">
-              Подтвердите пароль
+              Подтвердите пароль <span className="text-red-500">*</span>
             </label>
             <Input
               id="confirmPassword"
@@ -217,11 +235,19 @@ export default function RegisterPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-gray-600">
           Уже есть аккаунт?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline font-medium">
+          <Link href={loginHref} className="text-blue-600 hover:underline font-medium">
             Войти
           </Link>
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="animate-pulse text-gray-400">Загрузка...</div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }

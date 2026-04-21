@@ -20,9 +20,23 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const name = formData.get('name') as string;
+  const phone = formData.get('phone') as string;
 
   if (!email || !password) {
     return { error: 'Email и пароль обязательны' };
+  }
+
+  if (!name?.trim()) {
+    return { error: 'Имя обязательно' };
+  }
+
+  if (!phone?.trim()) {
+    return { error: 'Телефон обязателен' };
+  }
+
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+    return { error: 'Некорректный номер телефона' };
   }
 
   if (password.length < 6) {
@@ -35,6 +49,7 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
     options: {
       data: {
         full_name: name,
+        phone,
       },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
     },
