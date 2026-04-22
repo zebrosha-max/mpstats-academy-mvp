@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-04-14
+**Last updated:** 2026-04-22
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ — в `.claude/memory/`.
 > Используй `Read .claude/memory/MEMORY.md` для индекса.
@@ -17,11 +17,26 @@
 | v1.3 Pre-release | In Progress (Phases 22-36; **remaining: 28**) |
 | v1.4 QA Audit Fixes | Shipped 2026-03-29 (Phases 37-42) |
 | Phase 43 Diagnostic v2 | Shipped 2026-04-02 |
-| v1.5 Growth & Monetization | In Progress (Phase 44 shipped) |
+| v1.5 Growth & Monetization | In Progress (Phase 44+45+46 shipped) |
 
 **Remaining work:**
 1. Phase 28: Боевой CloudPayments (тестовые → боевые ключи)
 2. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
+3. Phase 47: /learn Hub-Layout — навигационный хаб (курсы свёрнуты, библиотека, мой трек наверху)
+
+## Auth — Phone Collection (Phase 45, shipped 2026-04-21)
+
+Телефон обязателен для новых регистраций. Существующих юзеров не трогаем.
+
+| Путь | Как собираем телефон |
+|------|---------------------|
+| Email регистрация | Обязательное поле в форме `/register` (react-international-phone, дефолт RU) |
+| Yandex OAuth | Scope `login:phone`, автоматически из Яндекса |
+| Yandex без телефона | Редирект на `/complete-profile` (мини-форма, 1 поле) |
+
+- DB: `UserProfile.phone String?` (E.164 формат: `+79001234567`)
+- CQ: `$phone` + `pa_phone` при регистрации
+- Pricing: неавторизованные юзеры → `/register` (было `/login`)
 
 ## Pricing (as of 2026-04-13)
 
@@ -36,7 +51,83 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-14)
+## Last Session (2026-04-22, session 2)
+
+**Phase 46 — Skill Lessons Integration + Library foundation. НЕ задеплоено (ждёт деплой).**
+
+1. **17 новых skill-уроков** полностью интегрированы:
+   - Транскрибация (Whisper large-v3) → 182 чанка → embeddings → Supabase (5,473 total)
+   - Видео залиты на Kinescope (5.7 GB, 17 файлов), videoUrl/videoId в DB
+   - Lesson записи созданы, перемещены в существующие курсы (10→Аналитика, 7→Реклама)
+2. **AI skill-классификация всех 422 уроков** (3-фазный пайплайн по контенту, не по названиям):
+   - Discovery: 2047 навыков из chunk-контента → 163 консолидированных
+   - Taxonomy: 32 skill-блока × 5 осей (ручная курация после LLM)
+   - Classification: 1146 присвоений, avg 2.7 блоков/урок, 90% high confidence
+   - Schema: `Lesson.skillBlocks Json?` — заполнено на всех 422 уроках
+3. **Retrieval**: убран `Course.isHidden` фильтр — skill-контент доступен в RAG/диагностике
+4. **CATEGORY_TO_COURSES**: добавлены `skill_analytics`, `skill_marketing`
+5. **Library UI**: компонент `LibrarySection` (оси→блоки→уроки), endpoint `learning.getLibrary`. Пока пустой — уроки в курсах. Готов для будущего контента
+6. **Fix**: lesson detail page больше не 404 для уроков из hidden courses
+7. **Архитектурное решение**: /learn → hub-layout (курсы свёрнуты, библиотека, мой трек наверху) — Phase 47
+8. **Инфра**: 27 зомби node-процессов вычищены, Prisma DLL разлочен, pnpm --force reinstall
+
+### Previous Session (2026-04-22, session 1)
+
+**V8 Marketing Pages Launch — переезд 10 страниц на боевые публичные URL + SEO. Задеплоено на прод.**
+
+1. **Переезд путей** `design-new-v8-*` → боевые публичные URL:
+   - `/` (главная), `/pricing`, `/about`, `/skill-test` (новый слаг для AI-диагностики), `/roadmap`, `/courses`, `/courses/analytics|ads|ai|ozon`
+   - Внутренняя `/diagnostic` (после логина) не тронута — лендинг живёт под `/skill-test`, чтобы не коллизировать
+2. **CP-виджет встроен в новую `/pricing`**: перенесена логика из старой `/pricing` (trpc.billing.initiatePayment, openPaymentWidget, CP SDK через next/script, промо через trpc.promo.activate), сохранён V8-дизайн (pill-chips из backend, `COURSE_SHORT_LABEL` для id → short name). Suspense wrapper + useSearchParams для `?promo=`
+3. **V8 компоненты обновлены**: V8Header/V8Footer/StickyCTA — NAV_LINKS на новые пути, диагностика-CTA → `/skill-test`
+4. **Связал href="#" заглушки**: карточки курсов в каталоге → `/courses/*`, CTA «Пройти диагностику» → `/diagnostic` (middleware редиректит неавторизованных на /login)
+5. **SEO**: 9 layout.tsx с per-page metadata (title через `absolute` чтобы не дублировать template), root layout.tsx обновлён под канон v2.1, `sitemap.ts` со всеми 10 URL + приоритеты
+6. **Changelog запись от 22.04** в /roadmap — от первого лица, без технички («Обновили сайт целиком… Стало понятнее, что внутри платформы»)
+7. **Починил 3 pre-existing typecheck ошибки**: `OAuthUserInfo.phone` в тестах (появилось в Phase 45), `getByRole({ href })` → `page.locator('a[href]')` в landing.spec.ts
+8. **5 коммитов**, все на проде: `6206104` (V8 pages core) + `4c8e1a5` (SEO metadata) + `35b4061` (gitignore) + `d8bfdcb` (roadmap entry) + `d0b398c` (test fixes)
+9. **QA**: все 10 URL отдают 200, title/description/canonical корректны на каждой, Playwright прогон desktop+mobile подтвердил рендер без console errors (кроме CORS-шума от Carrot Quest — внешний tracker)
+
+**Известные баги от Егора → следующая сессия.**
+
+### Previous Session (2026-04-21)
+
+**Phase 45 — Сбор телефонов + Pricing redirect swap. Задеплоено на прод.**
+
+1. **Обязательный телефон при регистрации**: `react-international-phone` с дропдауном стран (дефолт Россия), поддержка СНГ/международных номеров. Имя тоже стало обязательным.
+2. **Yandex OAuth**: добавлен scope `login:phone`, телефон автоматически сохраняется из Яндекса. Новые юзеры без телефона → `/complete-profile` (мини-форма с одним полем).
+3. **DB**: `UserProfile.phone String?` (E.164), миграция применена на Supabase.
+4. **Backend**: `profile.update` принимает phone с E.164 валидацией, `ensureUserProfile` подтягивает phone из user_metadata.
+5. **CQ**: `pa_phone` + `$phone` отправляются при регистрации для менеджеров/CRM.
+6. **Pricing redirect**: неавторизованные юзеры при покупке/промо → `/register` (было `/login`). Header pricing: "Регистрация" вместо "Войти".
+7. **7 коммитов**, задеплоено на VPS через Docker.
+
+### Previous Session (2026-04-16 → 2026-04-20)
+
+**Marketing Pages Sprint — дизайн-система, 10 маркетинговых страниц, выбор V8 Brand Bento.**
+
+**Статус:** ожидание доработки позиционирования от Егора → обновление текстов → деплой на прод.
+
+### Previous Session (2026-04-16)
+
+**Diagnostic prompt v3 — анализ 9 ревью Милы + обновление промпта генерации вопросов.**
+
+1. **Анализ Google Doc** «CHECK платформы» (12 вкладок: GPT 1-3, Qwen 1-3, GPT nano 1-3, вывод, таблица итогов):
+   - Сводная статистика по 9 сессиям × 15 вопросов. Лидер: GPT-4.1 сессия 3 (12+/15). GPT nano: разброс 5-9+. Qwen стабильно плохой (0-5+).
+   - Выявлено **10 системных проблем**: повторяющиеся вопросы с конфликтом ответов, ссылки на учебные материалы, обтекаемость, фактологические ошибки (CTR/ROI/выкуп), неправильная терминология (ампостат), отсутствие ситуативности, слишком простые вопросы, неполные объяснения, нерелевантные темы (налоги, этикетки, SMART).
+
+2. **Обновлён промпт** — вынесен в `packages/ai/src/question-prompt.ts` (без server-only зависимостей):
+   - 7 новых блоков: РАЗНООБРАЗИЕ, ФАКТОЛОГИЧЕСКАЯ ТОЧНОСТЬ, СИТУАТИВНОСТЬ, КАЧЕСТВО ОБЪЯСНЕНИЙ, ТЕРМИНОЛОГИЯ (обязательные написания), ПЛОХИЕ ПРИМЕРЫ
+   - Расширен ЗАПРЕЩЕНО: +4 правила (очевидные вопросы, тайм-менеджмент, конкретные числа в стратегиях, налоги усилены)
+   - `question-generator.ts` реэкспортирует из `question-prompt.ts`
+
+3. **Сгенерированы 2 тестовые сессии** для Милы (промпт v3):
+   - `docs/test-session-gpt-41-nano-v3-1.md` (15 вопросов)
+   - `docs/test-session-gpt-41-nano-v3-2.md` (13 вопросов — Finance недогенерировал)
+   - Переданы Миле, ждём ревью
+
+**Статус:** ожидание ревью Милы по v3-сессиям. По результатам — ещё итерация промпта или фиксация.
+
+### Previous Session (2026-04-14)
 
 **Yandex OAuth: три бага починены за одну сессию.**
 
