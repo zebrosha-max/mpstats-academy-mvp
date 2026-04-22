@@ -49,11 +49,20 @@ export function UserNav({ user }: UserNavProps) {
           <span className="text-body-sm font-medium text-mp-gray-700 hidden md:block">{name}</span>
         </div>
       </Link>
-      <form action={signOut}>
-        <Button variant="ghost" size="sm" type="submit" className="text-mp-gray-500 hover:text-mp-gray-700">
-          Выйти
-        </Button>
-      </form>
+      <Button
+        variant="ghost"
+        size="sm"
+        type="button"
+        className="text-mp-gray-500 hover:text-mp-gray-700"
+        onClick={async () => {
+          await signOut();
+          // Hard reload чтобы пересоздать QueryClient и не показывать
+          // следующему юзеру данные из React Query cache текущего.
+          window.location.href = '/';
+        }}
+      >
+        Выйти
+      </Button>
     </div>
   );
 }

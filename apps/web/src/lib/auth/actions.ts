@@ -99,7 +99,9 @@ export async function signIn(formData: FormData): Promise<AuthResult> {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  // Клиент делает hard navigation вместо redirect() чтобы пересоздать
+  // React Query cache и не показывать данные предыдущего юзера.
+  return { success: true };
 }
 
 // ============== SIGN IN WITH YANDEX ==============
@@ -123,11 +125,13 @@ export async function signInWithYandex(): Promise<AuthResult> {
 
 // ============== SIGN OUT ==============
 
-export async function signOut(): Promise<void> {
+export async function signOut(): Promise<AuthResult> {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
-  redirect('/');
+  // Клиент делает hard reload чтобы пересоздать React Query cache —
+  // иначе следующий юзер видит данные предыдущего из памяти TanStack.
+  return { success: true };
 }
 
 // ============== PASSWORD RESET ==============

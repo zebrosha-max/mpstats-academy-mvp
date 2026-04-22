@@ -29,6 +29,13 @@ function LoginForm() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
+      return;
+    }
+
+    if (result?.success) {
+      // Hard reload чтобы пересоздать React Query cache — иначе новому
+      // юзеру показывались бы данные предыдущего из памяти TanStack.
+      window.location.href = '/dashboard';
     }
   }
 
