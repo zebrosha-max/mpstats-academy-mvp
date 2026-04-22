@@ -12,6 +12,7 @@ import { SearchBar } from '@/components/learning/SearchBar';
 import { FilterPanel, type FilterState } from '@/components/learning/FilterPanel';
 import { SearchResultCard } from '@/components/learning/SearchResultCard';
 import { CourseLockBanner } from '@/components/learning/PaywallBanner';
+import { LibrarySection } from '@/components/learning/LibrarySection';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 import type { LessonWithProgress } from '@mpstats/shared';
@@ -870,6 +871,9 @@ function LearnPageInner() {
               </Card>
             );
           })}
+
+          {/* Library: skill-based lessons */}
+          <LibrarySection />
         </div>
       )}
     </div>
