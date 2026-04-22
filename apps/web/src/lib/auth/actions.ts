@@ -66,6 +66,16 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
 
   if (error) {
     console.error('Sign up error:', error);
+    const msg = (error.message || '').toLowerCase();
+    if (msg.includes('weak') && msg.includes('password')) {
+      return { error: 'Этот пароль слишком распространённый и легко угадывается. Придумай другой — например, комбинацию букв, цифр и символов, которую нигде больше не используешь.' };
+    }
+    if (msg.includes('already registered') || msg.includes('user already exists')) {
+      return { error: 'Пользователь с таким email уже зарегистрирован. Попробуй войти.' };
+    }
+    if (msg.includes('invalid email')) {
+      return { error: 'Некорректный email' };
+    }
     return { error: error.message };
   }
 
@@ -177,6 +187,13 @@ export async function updatePassword(formData: FormData): Promise<AuthResult> {
 
   if (error) {
     console.error('Update password error:', error);
+    const msg = (error.message || '').toLowerCase();
+    if (msg.includes('weak') && msg.includes('password')) {
+      return { error: 'Этот пароль слишком распространённый и легко угадывается. Придумай другой — например, комбинацию букв, цифр и символов, которую нигде больше не используешь.' };
+    }
+    if (msg.includes('auth session missing') || msg.includes('session missing')) {
+      return { error: 'Ссылка для смены пароля истекла. Запроси новое письмо на странице «Забыл пароль».' };
+    }
     return { error: error.message };
   }
 

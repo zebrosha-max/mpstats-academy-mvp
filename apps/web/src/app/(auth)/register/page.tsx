@@ -139,6 +139,9 @@ function RegisterForm() {
               minLength={6}
               disabled={loading}
             />
+            <p className="text-xs text-gray-500 leading-tight">
+              Минимум 6 символов. Не используй простые пароли вроде «123456», «qwerty», «password» — мы их не пропустим.
+            </p>
           </div>
 
           <div className="space-y-2">
