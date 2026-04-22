@@ -112,17 +112,26 @@ export const billingRouter = router({
         }
       }
 
-      // Check for existing subscription of same type for same course
+      const now = new Date();
+
+      // Check for existing subscription of same type for same course.
+      // ACTIVE/PAST_DUE only block if still within billing period
+      // (currentPeriodEnd > now). Otherwise the user has effectively
+      // expired access (EXPIRED is computed lazily, not stored) and
+      // should be allowed to subscribe again.
       const existing = await ctx.prisma.subscription.findFirst({
         where: {
           userId: ctx.user.id,
-          status: { in: ['ACTIVE', 'PENDING'] },
           plan: { type: input.planType },
           ...(input.courseId ? { courseId: input.courseId } : { courseId: null }),
+          OR: [
+            { status: 'PENDING' },
+            { status: { in: ['ACTIVE', 'PAST_DUE'] }, currentPeriodEnd: { gt: now } },
+          ],
         },
       });
 
-      if (existing?.status === 'ACTIVE') {
+      if (existing && existing.status !== 'PENDING') {
         throw new TRPCError({
           code: 'CONFLICT',
           message: 'You already have an active subscription for this plan',
@@ -138,8 +147,6 @@ export const billingRouter = router({
           where: { id: existing.id },
         });
       }
-
-      const now = new Date();
 
       // Create PENDING subscription
       const subscription = await ctx.prisma.subscription.create({
