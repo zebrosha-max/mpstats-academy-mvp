@@ -1,423 +1,757 @@
 'use client';
 
-import Link from 'next/link';
-import { Logo, LogoMark } from '@/components/shared/Logo';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
-import { useTheme } from '@/components/shared/ThemeProvider';
-import { reachGoal } from '@/lib/analytics/metrika';
-import { METRIKA_GOALS } from '@/lib/analytics/constants';
+import { useState } from 'react';
+import { Onest } from 'next/font/google';
+import { V8Header } from '@/components/v8/V8Header';
+import { V8Footer } from '@/components/v8/V8Footer';
+import { Reveal, useReveal } from '@/components/v8/Reveal';
+import { Counter } from '@/components/v8/Counter';
+import { StickyCTA } from '@/components/v8/StickyCTA';
 
-/* -- Data ------------------------------------------------ */
+const onest = Onest({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+});
 
-const skills = [
-  { name: 'Аналитика', value: 87, color: '#6366F1' },
-  { name: 'Маркетинг', value: 72, color: '#2C4FF8' },
-  { name: 'Контент', value: 65, color: '#10B981' },
-  { name: 'Операции', value: 91, color: '#F59E0B' },
-  { name: 'Финансы', value: 58, color: '#EC4899' },
-];
+/* ── Brand tokens ──────────────────────────────────────── */
+const BLUE = '#2C4FF8';
+const BLUE_HOVER = '#1D39C1';
+const ORANGE = '#ff6b16';
+const GREEN = '#87F50F';
+const DARK = '#0F172A';
+const GRAY_BG = '#f4f4f4';
+const TEXT = '#121212';
 
-/* -- Radar chart geometry -------------------------------- */
-const RD = 200;
-const RC = RD / 2;
-const RR = 70;
-const RA = skills.map((_, i) => (Math.PI * 2 * i) / skills.length - Math.PI / 2);
-const rPt = (a: number, r: number): [number, number] => [RC + r * Math.cos(a), RC + r * Math.sin(a)];
-const rPoly = (pct: number) => RA.map(a => rPt(a, RR * pct).map(v => v.toFixed(1)).join(',')).join(' ');
-const skillsPoly = skills.map((s, i) => rPt(RA[i], RR * s.value / 100).map(v => v.toFixed(1)).join(',')).join(' ');
+/* ── Data ──────────────────────────────────────────────── */
 
-const bentoFeatures = [
+const steps = [
   {
-    title: 'AI-диагностика навыков',
-    desc: 'Адаптивный тест из 15-20 вопросов. Сложность подстраивается в реальном времени на основе IRT-модели. Результат — объективная карта компетенций по 5 направлениям.',
-    accentLight: 'from-indigo-50 to-blue-50/50',
-    accentDark: 'from-[#2C4FF8]/20 to-[#818CF8]/10',
-    iconColor: 'text-indigo-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
-      </svg>
-    ),
+    num: '01',
+    title: 'Проходишь AI-диагностику',
+    desc: 'За 10 минут отвечаешь на короткие вопросы по 5 осям навыков. На выходе — карта твоих точек роста.',
+    badge: '10 минут',
   },
   {
-    title: 'Персональный трек обучения',
-    desc: 'Система анализирует ваши сильные и слабые стороны, формирует индивидуальный маршрут и скрывает контент, который вам не нужен. Экономия до 60% времени.',
-    accentLight: 'from-emerald-50 to-teal-50/50',
-    accentDark: 'from-[#87F50F]/20 to-[#34D399]/10',
-    iconColor: 'text-emerald-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-    ),
+    num: '02',
+    title: 'Получаешь персональную программу',
+    desc: 'AI скрывает то, что ты уже знаешь, и показывает только пробелы. Программа собирается под твой уровень.',
+    badge: 'Под тебя',
   },
   {
-    title: 'AI-ассистент по урокам',
-    desc: 'Отвечает строго по материалу курса — без фантазий и галлюцинаций. Задайте вопрос по любому уроку и получите ответ с точными цитатами и таймкодами из видео.',
-    accentLight: 'from-pink-50 to-rose-50/50',
-    accentDark: 'from-[#FF168A]/20 to-[#F472B6]/10',
-    iconColor: 'text-pink-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-      </svg>
-    ),
+    num: '03',
+    title: 'Учишься с AI-ассистентом',
+    desc: 'Задаёшь вопрос прямо в уроке — ассистент отвечает с таймкодами по всему каталогу. Не нужно искать в общем чате.',
+    badge: 'В каждом уроке',
   },
   {
-    title: 'Радар навыков',
-    desc: 'Визуальная диаграмма прогресса по пяти осям: аналитика, маркетинг, контент, операции и финансы. Отслеживайте рост после каждого пройденного урока.',
-    accentLight: 'from-amber-50 to-yellow-50/50',
-    accentDark: 'from-[#FBBF24]/20 to-[#F59E0B]/10',
-    iconColor: 'text-amber-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5" />
-        <polygon points="12,6 18,9.5 18,14.5 12,18 6,14.5 6,9.5" />
-      </svg>
-    ),
-  },
-  {
-    title: '405+ видеоуроков',
-    desc: '6 полноценных курсов — от аналитики данных и рекламы до экспресс-старта на Ozon. Более 200 часов образовательного контента в одном месте.',
-    accentLight: 'from-blue-50 to-indigo-50/50',
-    accentDark: 'from-[#2C4FF8]/15 to-[#87F50F]/10',
-    iconColor: 'text-blue-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <polygon points="5,3 19,12 5,21" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Wildberries + Ozon',
-    desc: 'Контент заточен под два крупнейших маркетплейса России. Реальные кейсы, актуальные стратегии, практические инструменты.',
-    accentLight: 'from-violet-50 to-purple-50/50',
-    accentDark: 'from-[#A78BFA]/15 to-[#818CF8]/10',
-    iconColor: 'text-violet-500',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
-        <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
-      </svg>
-    ),
+    num: '04',
+    title: 'Растёшь вместе с платформой',
+    desc: 'Новые материалы, плейбуки и инструменты добавляются регулярно. Платформа реагирует на изменения WB и Ozon.',
+    badge: 'Живая платформа',
   },
 ];
 
-const stats = [
-  { value: '405+', label: 'Видеоуроков' },
-  { value: '6', label: 'Курсов' },
-  { value: '5', label: 'Осей навыков' },
-  { value: '200+', label: 'Часов контента' },
+type ComparisonRow = {
+  param: string;
+  value1: string;
+  value2: string;
+  highlight?: boolean;
+};
+
+const comparison: ComparisonRow[] = [
+  { param: 'Цена',          value1: '45 000 – 90 000 ₽ сразу',     value2: '2 990 ₽/мес' },
+  { param: 'Программа',     value1: 'Один поток для всех',          value2: 'Персональная траектория по AI-диагностике', highlight: true },
+  { param: 'Что смотришь',  value1: 'Всё подряд, включая знакомое', value2: 'Только там, где у тебя пробелы', highlight: true },
+  { param: 'Помощь',        value1: 'Ищи в общем чате',             value2: 'AI-ассистент с таймкодами по всему каталогу' },
+  { param: 'Обновления',    value1: 'Запись 2023 — правила менялись', value2: 'Живая платформа — растёт и обновляется' },
+  { param: 'Риск',          value1: '65 000 ₽ одной суммой',        value2: '2 990 ₽/мес', highlight: true },
 ];
 
-const timeline = [
-  { step: '01', title: 'Пройдите диагностику', desc: '15-20 адаптивных вопросов для точной оценки текущего уровня по 5 направлениям. Сложность подстраивается под вас.' },
-  { step: '02', title: 'Получите персональный трек', desc: 'AI построит персональный маршрут обучения, скрыв материал, который вам не нужен.' },
-  { step: '03', title: 'Учитесь с AI-поддержкой', desc: '405+ видеоуроков с AI-ассистентом, который отвечает с точными таймкодами и цитатами из видео.' },
+const segments = [
+  { title: 'Новичкам на маркетплейсах', desc: 'Диагностика покажет пробелы и соберёт программу с нуля — не надо гадать, с чего начать.' },
+  { title: 'Действующим селлерам', desc: 'Углубишь аналитику, рекламу, юнит-экономику — программа адаптируется под твой уровень.' },
+  { title: 'Менеджерам маркетплейсов', desc: 'Системные знания вместо хаотичных курсов. Покажешь работодателю реальные навыки.' },
+  { title: 'Владельцам бизнеса', desc: 'Контролируй менеджеров осознанно. Понимай цифры, а не верь отчётам на слово.' },
 ];
 
-const ticker = ['Аналитика', 'Маркетинг', 'Контент', 'Операции', 'Финансы', 'Wildberries', 'Ozon', 'SEO', 'Unit-экономика', 'PPC'];
+const faqs = [
+  {
+    q: 'Как работает AI-диагностика?',
+    a: 'Отвечаешь на короткие вопросы по 5 осям навыков: Аналитика, Маркетинг, Контент, Операции, Финансы. Нейросеть определяет твой уровень и собирает персональный план — только по твоим пробелам. Занимает 10 минут.',
+  },
+  {
+    q: 'Сколько стоит подписка?',
+    a: 'Подписка на один курс — 1 990 ₽/мес. Полный доступ ко всему каталогу — 2 990 ₽/мес. В подписку PLATFORM входит AI-диагностика, персональный план и AI-ассистент.',
+  },
+  {
+    q: 'Какие маркетплейсы покрываются?',
+    a: 'Wildberries и Ozon. Материалы покрывают 5 осей навыков: Аналитика, Маркетинг, Контент, Операции, Финансы — для обоих маркетплейсов.',
+  },
+  {
+    q: 'Можно ли отключить подписку?',
+    a: 'Да. Отключаешь в кабинете в один клик — больше не списывается. Не нужны звонки, письма, менеджеры.',
+  },
+  {
+    q: 'За что я плачу каждый месяц?',
+    a: 'За три вещи: доступ ко всему каталогу (400+ уроков, 150+ часов контента), персонализацию под твой уровень (AI-диагностика + персональный план + AI-ассистент), и живую платформу — новые материалы, плейбуки и инструменты добавляются регулярно.',
+  },
+  {
+    q: 'Что такое AI-ассистент?',
+    a: 'Спрашиваешь прямо в уроке — ассистент отвечает с таймкодами по всему каталогу. Если спросишь «где об этом рассказывают», покажет точную минуту в нужном уроке.',
+  },
+];
 
-/* -- Component ------------------------------------------- */
+const plans = [
+  {
+    name: 'Подписка на курс',
+    price: '1 990',
+    period: '/мес',
+    features: [
+      'Один курс на выбор',
+      'Все уроки по выбранной теме',
+      'AI-ассистент в каждом уроке',
+      'Персональный план обучения',
+    ],
+    highlighted: false,
+  },
+  {
+    name: 'Полный доступ',
+    price: '2 990',
+    period: '/мес',
+    features: [
+      'Весь каталог по 5 осям навыков',
+      '400+ уроков, 150+ часов контента',
+      'AI-диагностика за 10 минут',
+      'AI-ассистент с таймкодами',
+      'Персональный план обучения',
+      'Живая платформа — растёт и обновляется',
+    ],
+    highlighted: true,
+  },
+];
 
-export default function HomePage() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+/* ── Mini Radar SVG (Bento card) ──────────────────────── */
+
+const RADAR_SIZE = 120;
+const RADAR_CENTER = RADAR_SIZE / 2;
+const RADAR_R = 44;
+const AXES = 5;
+const AXIS_ANGLES = Array.from({ length: AXES }, (_, i) => (Math.PI * 2 * i) / AXES - Math.PI / 2);
+const radarPt = (angle: number, r: number): [number, number] => [
+  RADAR_CENTER + r * Math.cos(angle),
+  RADAR_CENTER + r * Math.sin(angle),
+];
+const radarPoly = (pct: number) =>
+  AXIS_ANGLES.map((a) => radarPt(a, RADAR_R * pct).map((v) => v.toFixed(1)).join(',')).join(' ');
+
+const radarValues = [0.85, 0.6, 0.9, 0.45, 0.7];
+const radarDataPoly = AXIS_ANGLES.map((a, i) =>
+  radarPt(a, RADAR_R * radarValues[i]).map((v) => v.toFixed(1)).join(',')
+).join(' ');
+
+function MiniRadar() {
+  return (
+    <svg width={RADAR_SIZE} height={RADAR_SIZE} viewBox={`0 0 ${RADAR_SIZE} ${RADAR_SIZE}`} className="opacity-80">
+      {[0.25, 0.5, 0.75, 1].map((p) => (
+        <polygon key={p} points={radarPoly(p)} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+      ))}
+      {AXIS_ANGLES.map((a, i) => {
+        const [x, y] = radarPt(a, RADAR_R);
+        return <line key={i} x1={RADAR_CENTER} y1={RADAR_CENTER} x2={x} y2={y} stroke="rgba(255,255,255,0.15)" strokeWidth="1" />;
+      })}
+      <polygon points={radarDataPoly} fill="rgba(135,245,15,0.25)" stroke={GREEN} strokeWidth="2" />
+      {AXIS_ANGLES.map((a, i) => {
+        const [cx, cy] = radarPt(a, RADAR_R * radarValues[i]);
+        return <circle key={i} cx={cx} cy={cy} r="3" fill="white" />;
+      })}
+    </svg>
+  );
+}
+
+/* ── Hero SkillRadar (circles, not pentagons) ────────── */
+
+const SKILL_AXES = [
+  { label: 'Аналитика', color: '#2C4FF8' },
+  { label: 'Маркетинг', color: '#ff6b16' },
+  { label: 'Контент', color: '#10B981' },
+  { label: 'Операции', color: '#8B5CF6' },
+  { label: 'Финансы', color: '#EC4899' },
+];
+
+const SKILL_RADIUS_PCT = 47;
+
+function SkillRadar() {
+  return (
+    <div className="relative w-[260px] h-[260px] md:w-[340px] md:h-[340px] mx-auto">
+      {/* Concentric circle rings — pulsing ripple from inner to outer */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[230px] h-[230px] md:w-[290px] md:h-[290px] rounded-full border border-white/25"
+          style={{ animation: 'v8-ring-pulse 3.6s ease-in-out 1.2s infinite' }}
+        />
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[155px] h-[155px] md:w-[195px] md:h-[195px] rounded-full border border-white/25"
+          style={{ animation: 'v8-ring-pulse 3.6s ease-in-out 0.6s infinite' }}
+        />
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full border border-white/25"
+          style={{ animation: 'v8-ring-pulse 3.6s ease-in-out 0s infinite' }}
+        />
+      </div>
+      {/* Axis dots orbiting around centre — labels counter-rotate to stay upright */}
+      <div className="absolute inset-0" style={{ animation: 'v8-radar-rotate 36s linear infinite' }}>
+        {SKILL_AXES.map((a, i) => {
+          const angle = (i / SKILL_AXES.length) * 360 - 90;
+          const rad = (angle * Math.PI) / 180;
+          const x = 50 + SKILL_RADIUS_PCT * Math.cos(rad);
+          const y = 50 + SKILL_RADIUS_PCT * Math.sin(rad);
+          return (
+            <div
+              key={a.label}
+              className="absolute"
+              style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%,-50%)' }}
+            >
+              <div style={{ animation: 'v8-radar-rotate 36s linear infinite reverse' }}>
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className="w-5 h-5 md:w-6 md:h-6 rounded-full"
+                    style={{ backgroundColor: a.color }}
+                  />
+                  <span className="text-[10px] md:text-[11px] font-medium whitespace-nowrap text-white/70">
+                    {a.label}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Center dot */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-4 h-4 rounded-full"
+          style={{ backgroundColor: BLUE, animation: 'v8-pulse 2.6s ease-in-out infinite' }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ── Icons (inline SVG) ────────────────────────────────── */
+
+function ChevronDown({ open }: { open: boolean }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+/* ── FAQ Item ──────────────────────────────────────────── */
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-[#121212]/10 last:border-b-0">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-6 text-left cursor-pointer"
+      >
+        <span className="text-[17px] sm:text-[19px] font-medium pr-4" style={{ color: TEXT }}>{q}</span>
+        <span className="flex-shrink-0" style={{ color: TEXT }}><ChevronDown open={open} /></span>
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${open ? 'max-h-[400px] pb-6' : 'max-h-0'}`}>
+        <p className="text-[15px] sm:text-[16px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>{a}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ── Comparison table (desktop, with expanding BLUE column) ── */
+
+function ComparisonTableDesktop() {
+  const { ref, visible } = useReveal<HTMLDivElement>();
+
+  const blueStyle = (delay: number) => ({
+    backgroundColor: BLUE,
+    transform: visible ? 'scaleX(1)' : 'scaleX(0)',
+    transformOrigin: 'right' as const,
+    transition: `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
+    willChange: 'transform',
+  });
+
+  const textStyle = (delay: number) => ({
+    opacity: visible ? 1 : 0,
+    transition: `opacity 300ms ease-out ${delay + 350}ms`,
+  });
 
   return (
-    <div className="min-h-screen bg-[var(--landing-bg)] text-[var(--landing-text)] selection:bg-[var(--landing-selection-bg)] overflow-hidden transition-colors duration-300">
-      <style>{`
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes glow-pulse { 0%, 100% { box-shadow: var(--landing-glow-box-shadow); } 50% { box-shadow: var(--landing-glow-box-shadow-active); } }
-        @keyframes gradient-x { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-float { animation: float 4s ease-in-out infinite; }
-        .animate-glow { animation: glow-pulse 3s ease-in-out infinite; }
-        .animate-gradient-x { background-size: 200% 200%; animation: gradient-x 6s ease infinite; }
-        .animate-ticker { animation: ticker-scroll 30s linear infinite; }
-        .animate-fade-up { animation: fade-up 0.6s ease-out both; }
-      `}</style>
-
-      {/* Ambient background glows */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-300px] left-[-200px] w-[700px] h-[700px] bg-[var(--landing-glow-primary)] rounded-full blur-[180px]" />
-        <div className="absolute bottom-[-300px] right-[-200px] w-[600px] h-[600px] bg-[var(--landing-glow-secondary)] rounded-full blur-[180px]" />
-      </div>
-
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-[var(--landing-nav-bg)] border-b border-[var(--landing-border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
-          {/* Full logo on sm+, icon-only on mobile */}
-          <div className="hidden sm:block">
-            <Logo size="md" variant={isDark ? 'white' : 'default'} />
-          </div>
-          <div className="sm:hidden">
-            <LogoMark size="md" variant={isDark ? 'white' : 'default'} />
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <ThemeToggle />
-            <Link href="/login" className="text-sm text-[var(--landing-text-muted)] hover:text-[var(--landing-text)] transition-colors">
-              Войти
-            </Link>
-            <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'nav' })}>
-              <Button size="sm" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white rounded-lg px-3 sm:px-5 shadow-lg shadow-[#2C4FF8]/20">
-                <span className="hidden sm:inline">Начать бесплатно</span>
-                <span className="sm:hidden">Начать</span>
-              </Button>
-            </Link>
-          </div>
+    <div ref={ref} className="hidden md:block rounded-[32px] overflow-hidden border border-[#121212]/10">
+      {/* Header */}
+      <div className="grid grid-cols-[1fr,1.2fr,1.3fr]">
+        <div className="p-5 text-[12px] font-medium uppercase tracking-wider bg-white" style={{ color: TEXT, opacity: 0.4 }}>Параметр</div>
+        <div className="p-5 text-[14px] font-bold bg-white" style={{ color: TEXT, opacity: 0.7 }}>Обычный курс</div>
+        <div className="p-5 text-[14px] font-bold text-white" style={blueStyle(0)}>
+          <span style={textStyle(0)}>Платформа MPSTATS Academy</span>
         </div>
-      </nav>
+      </div>
+      {/* Rows */}
+      {comparison.map((row, i) => {
+        const delay = 80 + i * 70;
+        return (
+          <div key={row.param} className="grid grid-cols-[1fr,1.2fr,1.3fr] border-t border-[#121212]/10">
+            <div className="p-5 text-[15px] font-semibold bg-white flex items-center" style={{ color: TEXT }}>{row.param}</div>
+            <div className="p-5 text-[14px] bg-white flex items-center" style={{ color: TEXT, opacity: 0.7 }}>{row.value1}</div>
+            <div className={`p-5 text-[14px] text-white flex items-center ${row.highlight ? 'font-bold' : ''}`} style={blueStyle(delay)}>
+              <span style={textStyle(delay)}>{row.value2}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
-      {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-24 pb-10 sm:pb-20">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          {/* Left -- Text */}
-          <div className="animate-fade-up">
-            <Badge className="bg-[var(--landing-badge-bg)] text-[var(--landing-badge-text)] border border-[var(--landing-badge-border)] hover:opacity-80 mb-4 sm:mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--landing-green)] inline-block mr-2 animate-pulse" />
-              AI-powered обучение
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-4 sm:mb-6">
-              Учитесь продавать на маркетплейсах{' '}
-              <span className={`bg-gradient-to-r from-[#2C4FF8] via-[var(--landing-gradient-text-via)] to-[var(--landing-gradient-text-to)] bg-clip-text text-transparent animate-gradient-x`}>
-                осмысленно
-              </span>
+/* ── Page Component ────────────────────────────────────── */
+
+export default function DesignNewV8() {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  return (
+    <div className={onest.className} style={{ color: TEXT }}>
+
+      <V8Header onDarkHero={true} />
+
+      {/* ── 2. Hero ────────────────────────────────────── */}
+      <section
+        style={{ backgroundColor: DARK }}
+        className="pt-[120px] sm:pt-[140px] pb-[80px] sm:pb-[120px] px-4 sm:px-6 md:px-10 lg:px-0"
+        onMouseMove={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          setMouse({
+            x: (e.clientX - cx) / rect.width,
+            y: (e.clientY - cy) / rect.height,
+          });
+        }}
+        onMouseLeave={() => setMouse({ x: 0, y: 0 })}
+      >
+        <div className="max-w-[1160px] mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-[28px] sm:text-[36px] md:text-[48px] lg:text-[64px] font-bold leading-[1.1] tracking-tight text-white">
+              Первая адаптивная{' '}
+              <span className="block">образовательная платформа</span>
+              <span className="block">для селлеров</span>
             </h1>
-            <p className="text-base sm:text-lg text-[var(--landing-text-muted)] leading-relaxed mb-6 sm:mb-10 max-w-lg">
-              AI определит ваш текущий уровень и построит персональный трек. Не&nbsp;тратьте время на&nbsp;материал, который вам не&nbsp;нужен.
+            <p className="mt-5 sm:mt-6 text-[16px] sm:text-[18px] leading-relaxed max-w-[520px] mx-auto lg:mx-0" style={{ color: 'rgba(255,255,255,0.7)' }}>
+              Пройди AI-диагностику за 10 минут и получи программу, собранную под твой уровень. Без воды.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'hero' })}>
-                <Button size="lg" className="w-full sm:w-auto bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-6 sm:px-8 h-12 rounded-xl shadow-xl shadow-[#2C4FF8]/25 hover:shadow-[#2C4FF8]/40 transition-all">
-                  Пройти диагностику
-                </Button>
-              </Link>
-              <Link href="#features">
-                <Button size="lg" variant="ghost" className="w-full sm:w-auto text-[var(--landing-ghost-text)] hover:text-[var(--landing-ghost-text-hover)] hover:bg-[var(--landing-ghost-hover-bg)] px-6 sm:px-8 h-12 rounded-xl">
-                  Как это работает
-                </Button>
-              </Link>
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+              <a
+                href="#cta"
+                className="inline-flex items-center justify-center rounded-full h-[52px] sm:h-[62px] px-8 sm:px-10 text-[15px] sm:text-[16px] font-medium text-white transition-colors"
+                style={{ backgroundColor: BLUE }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLUE_HOVER)}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BLUE)}
+              >
+                Пройти диагностику
+              </a>
+              <a
+                href="#тарифы"
+                className="inline-flex items-center justify-center rounded-full h-[52px] sm:h-[62px] px-8 sm:px-10 text-[15px] sm:text-[16px] font-medium text-white border border-white/30 transition-colors hover:bg-white/10"
+              >
+                Посмотреть тарифы
+              </a>
             </div>
+            <p className="mt-6 sm:mt-8 text-[13px] sm:text-[14px] text-white/50">
+              2 990 ₽/мес · Живая платформа · 400+ уроков по 5 осям навыков
+            </p>
           </div>
-
-          {/* Right -- Bento Preview */}
-          <div className="animate-fade-up hidden sm:grid grid-cols-3 gap-3" style={{ animationDelay: '0.15s' }}>
-            {/* Skill Radar card */}
-            <div className="col-span-2 row-span-2 bg-[var(--landing-card-bg)] border border-[var(--landing-card-border)] rounded-2xl p-5 shadow-xl shadow-[var(--landing-card-shadow)] animate-glow">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[var(--landing-text-muted)] font-mono uppercase tracking-wider">Skill Radar</span>
-                <span className="w-2 h-2 rounded-full bg-[var(--landing-green)] animate-pulse" />
-              </div>
-              {/* SVG Radar Chart */}
-              <div className="flex justify-center">
-                <svg viewBox="0 0 200 200" className="w-full max-w-[220px]">
-                  {/* Grid pentagons */}
-                  {[1, 0.66, 0.33].map(p => (
-                    <polygon key={p} points={rPoly(p)} fill="none" stroke="var(--landing-radar-grid)" strokeWidth="0.7" />
-                  ))}
-                  {/* Axis lines */}
-                  {RA.map((a, i) => {
-                    const [x2, y2] = rPt(a, RR);
-                    return <line key={i} x1={RC} y1={RC} x2={x2} y2={y2} stroke="var(--landing-radar-axis)" strokeWidth="0.5" />;
-                  })}
-                  {/* Data fill */}
-                  <polygon points={skillsPoly} fill="var(--landing-radar-fill)" stroke="var(--landing-radar-stroke)" strokeWidth="2" strokeLinejoin="round" />
-                  {/* Data dots */}
-                  {skills.map((s, i) => {
-                    const [x, y] = rPt(RA[i], RR * s.value / 100);
-                    return <circle key={i} cx={x} cy={y} r="4" fill={s.color} stroke="var(--landing-radar-dot-stroke)" strokeWidth={isDark ? '1' : '2'} />;
-                  })}
-                  {/* Labels */}
-                  {skills.map((s, i) => {
-                    const [x, y] = rPt(RA[i], RR + 22);
-                    return (
-                      <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fill="var(--landing-radar-label)" fontSize="10" fontFamily="ui-monospace, monospace" fontWeight="500">
-                        {s.name}
-                      </text>
-                    );
-                  })}
-                </svg>
-              </div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-2xl font-bold font-mono">74.6</span>
-                <span className="text-xs text-[var(--landing-green)] font-medium">+12.3 за неделю</span>
-              </div>
-            </div>
-
-            {/* Metric cards */}
-            <div className="bg-[var(--landing-card-bg)] border border-[var(--landing-card-border)] rounded-2xl p-4 flex flex-col justify-between shadow-lg shadow-[var(--landing-card-shadow)] animate-float" style={{ animationDelay: '0.5s' }}>
-              <span className="text-[10px] text-[var(--landing-text-muted)] font-mono uppercase">Уроков</span>
-              <span className="text-3xl font-bold font-mono text-[var(--landing-metric-blue)]">405</span>
-            </div>
-            <div className="bg-[var(--landing-card-bg)] border border-[var(--landing-card-border)] rounded-2xl p-4 flex flex-col justify-between shadow-lg shadow-[var(--landing-card-shadow)] animate-float" style={{ animationDelay: '1s' }}>
-              <span className="text-[10px] text-[var(--landing-text-muted)] font-mono uppercase">Курсов</span>
-              <span className="text-3xl font-bold font-mono text-[var(--landing-green)]">6</span>
-            </div>
-
-            {/* Progress bar */}
-            <div className="col-span-3 bg-[var(--landing-card-bg)] border border-[var(--landing-card-border)] rounded-2xl p-4 shadow-lg shadow-[var(--landing-card-shadow)]">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[10px] text-[var(--landing-text-muted)] font-mono uppercase">Прогресс обучения</span>
-                <span className="text-xs font-mono text-[var(--landing-text-muted)]">67%</span>
-              </div>
-              <div className="w-full h-2 bg-[var(--landing-progress-bg)] rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-[#2C4FF8] to-[var(--landing-green)] w-[67%]" />
-              </div>
-            </div>
+          <div
+            className="flex-shrink-0 w-full max-w-[320px] lg:w-[320px]"
+            style={{
+              transform: `translate(${mouse.x * -14}px, ${mouse.y * -14}px)`,
+              transition: 'transform 400ms cubic-bezier(0.22, 1, 0.36, 1)',
+              willChange: 'transform',
+            }}
+          >
+            <SkillRadar />
           </div>
         </div>
       </section>
 
-      {/* Ticker */}
-      <div className="relative z-10 border-y border-[var(--landing-border)] py-4 overflow-hidden">
-        <div className="flex animate-ticker whitespace-nowrap">
-          {[...ticker, ...ticker].map((item, i) => (
-            <span key={i} className="text-sm text-[var(--landing-text-faint)] font-mono uppercase tracking-widest mx-8 flex items-center gap-3">
-              <span className="w-1 h-1 rounded-full bg-[var(--landing-ticker-dot)]" />
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Stats */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((n, i) => (
-            <div key={n.label} className="text-center animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="text-4xl md:text-5xl font-bold font-mono mb-2 bg-gradient-to-b from-[var(--landing-stats-gradient-from)] to-[var(--landing-stats-gradient-to)] bg-clip-text text-transparent">
-                {n.value}
-              </div>
-              <div className="text-sm text-[var(--landing-text-faint)] uppercase tracking-wider">{n.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Bento Features */}
-      <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="animate-fade-up mb-12">
-          <Badge className="bg-[var(--landing-section-badge-bg)] text-[var(--landing-section-badge-text)] border border-[var(--landing-section-badge-border)] hover:opacity-80 mb-4">
-            Возможности
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Платформа, которая учит{' '}
-            <span className="text-[#2C4FF8]">именно вас</span>
+      {/* ── 3. Bento Grid ──────────────────────────────── */}
+      <section id="возможности" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0 bg-white">
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-10 sm:mb-14">
+            Всё для роста на маркетплейсах
           </h2>
-        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {bentoFeatures.map((f, i) => (
-            <div
-              key={f.title}
-              className={`bg-gradient-to-br ${isDark ? f.accentDark : f.accentLight} border border-[var(--landing-card-border)] rounded-2xl p-6 flex flex-col justify-between ${isDark ? 'hover:border-white/15' : 'hover:shadow-lg hover:-translate-y-0.5'} transition-all duration-300 group animate-fade-up min-h-[180px]`}
-              style={{ animationDelay: `${i * 0.08}s` }}
-            >
-              <div className={`${isDark ? 'text-white/40 group-hover:text-white/70' : `${f.iconColor} opacity-50 group-hover:opacity-100`} transition-all mb-4`}>
-                {f.icon}
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-[var(--landing-text-muted)] leading-relaxed">{f.desc}</p>
-              </div>
+          {/* Bento grid: CSS Grid with asymmetric layout */}
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: 'repeat(1, 1fr)',
+            }}
+          >
+            {/* Desktop: use named areas for asymmetric layout */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              @media (min-width: 1024px) {
+                .bento-grid {
+                  grid-template-columns: repeat(3, 1fr) !important;
+                  grid-template-rows: auto auto auto auto;
+                  grid-template-areas:
+                    "diag diag plan"
+                    "diag diag assist"
+                    "lessons live live"
+                  ;
+                }
+                .bento-diag { grid-area: diag; }
+                .bento-plan { grid-area: plan; }
+                .bento-assist { grid-area: assist; }
+                .bento-lessons { grid-area: lessons; }
+                .bento-live { grid-area: live; }
+              }
+              @media (min-width: 640px) and (max-width: 1023px) {
+                .bento-grid {
+                  grid-template-columns: repeat(2, 1fr) !important;
+                }
+                .bento-diag { grid-column: span 2; }
+                .bento-live { grid-column: span 2; }
+              }
+            `}} />
+
+            <div className="bento-grid grid gap-4" style={{ gridTemplateColumns: 'repeat(1, 1fr)' }}>
+
+              {/* AI-Diagnostic — big card */}
+              <Reveal className="bento-diag rounded-[40px] p-8 sm:p-10 flex flex-col justify-between min-h-[280px] lg:min-h-[400px] transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: BLUE }} delay={0}>
+                <div>
+                  <span className="inline-block text-[13px] font-medium text-white/60 uppercase tracking-wider mb-4">Ключевая фича</span>
+                  <h3 className="text-[24px] sm:text-[28px] lg:text-[32px] font-bold text-white leading-tight">
+                    AI-диагностика
+                  </h3>
+                  <p className="mt-3 text-[15px] sm:text-[16px] leading-relaxed text-white/70 max-w-[420px]">
+                    За 10 минут определяет твой уровень по 5 осям навыков и собирает персональный план — только по твоим пробелам.
+                  </p>
+                </div>
+                <div className="mt-6 flex items-end justify-between">
+                  <div className="flex gap-2 flex-wrap">
+                    {['Аналитика', 'Маркетинг', 'Контент', 'Операции', 'Финансы'].map((axis) => (
+                      <span key={axis} className="text-[12px] text-white/50 bg-white/10 rounded-full px-3 py-1">{axis}</span>
+                    ))}
+                  </div>
+                  <div className="hidden sm:block flex-shrink-0 ml-4">
+                    <MiniRadar />
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Personal plan */}
+              <Reveal className="bento-plan rounded-[40px] p-8 transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: GRAY_BG }} delay={80}>
+                <h3 className="text-[20px] sm:text-[22px] font-bold mb-4">Персональный план</h3>
+                <ul className="space-y-3">
+                  {['Скрывает изученное', 'Показывает пробелы', 'Адаптируется к прогрессу', 'Приоритизирует слабые темы'].map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-[14px] sm:text-[15px]" style={{ color: TEXT, opacity: 0.8 }}>
+                      <span className="flex-shrink-0 mt-0.5" style={{ color: BLUE }}><CheckIcon /></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+
+              {/* AI assistant */}
+              <Reveal className="bento-assist rounded-[40px] p-8 transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: GRAY_BG }} delay={160}>
+                <h3 className="text-[20px] sm:text-[22px] font-bold mb-3">AI-ассистент</h3>
+                <p className="text-[14px] sm:text-[15px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>
+                  Задаёшь вопрос прямо в уроке — ассистент отвечает с таймкодами по всему каталогу.
+                </p>
+                <div className="mt-4 flex gap-2">
+                  <span className="text-[12px] bg-[#121212]/5 rounded-full px-3 py-1">Таймкоды</span>
+                  <span className="text-[12px] bg-[#121212]/5 rounded-full px-3 py-1">В каждом уроке</span>
+                  <span className="text-[12px] bg-[#121212]/5 rounded-full px-3 py-1">24/7</span>
+                </div>
+              </Reveal>
+
+              {/* 400+ lessons */}
+              <Reveal className="bento-lessons rounded-[40px] p-8 flex flex-col justify-between min-h-[200px] transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: DARK }} delay={240}>
+                <Counter end={400} suffix="+" duration={1600} className="text-[56px] sm:text-[64px] font-bold leading-none text-white" />
+                <div>
+                  <h3 className="text-[20px] sm:text-[22px] font-bold text-white">уроков</h3>
+                  <p className="mt-1 text-[14px] text-white/50">Каталог по 5 осям навыков селлера</p>
+                </div>
+              </Reveal>
+
+              {/* Live platform — wide */}
+              <Reveal className="bento-live rounded-[40px] p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 min-h-[160px] transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: ORANGE }} delay={320}>
+                <div>
+                  <h3 className="text-[20px] sm:text-[24px] font-bold text-white">Живая платформа</h3>
+                  <p className="mt-2 text-[14px] sm:text-[15px] text-white/80">
+                    Материалы, плейбуки и инструменты добавляются регулярно. Платформа реагирует на изменения WB и Ozon.
+                  </p>
+                </div>
+                <span className="flex-shrink-0 text-[40px] sm:text-[48px] font-bold text-white/30">+</span>
+              </Reveal>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
-        <div className="animate-fade-up mb-16">
-          <Badge className="bg-[var(--landing-section-badge-bg)] text-[var(--landing-section-badge-text)] border border-[var(--landing-section-badge-border)] hover:opacity-80 mb-4">
-            Процесс
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Как это работает</h2>
-        </div>
-
-        <div className="relative grid md:grid-cols-3 gap-12">
-          {/* Connector line */}
-          <div className="hidden md:block absolute top-8 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-[var(--landing-timeline-from)] via-[var(--landing-timeline-via)] to-[var(--landing-timeline-to)]" />
-
-          {timeline.map((item, i) => (
-            <div key={item.step} className="relative animate-fade-up" style={{ animationDelay: `${i * 0.15}s` }}>
-              <div className="w-16 h-16 rounded-2xl bg-[#2C4FF8]/10 border border-[#2C4FF8]/20 flex items-center justify-center mb-6 relative">
-                <span className="text-xl font-mono font-bold text-[#2C4FF8]">{item.step}</span>
-                <div className="absolute inset-0 rounded-2xl animate-glow" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-              <p className="text-sm text-[var(--landing-text-muted)] leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Pull Quote */}
-      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
-        <div className="animate-fade-up">
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug tracking-tight text-[var(--landing-quote-text)] mb-4">
-            &laquo;Не тратьте время на то, что вы уже знаете.
-            <br />
-            Пусть AI определит, что важно именно для вас.&raquo;
+      {/* ── 4. Comparison — курс vs Платформа ──────────── */}
+      <section id="чем-отличаемся" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0 bg-white">
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-4 leading-tight">
+            Обычный курс и Платформа MPSTATS Academy —<br className="hidden sm:block" /> разные форматы
+          </h2>
+          <p className="text-center text-[15px] sm:text-[17px] leading-relaxed max-w-[680px] mx-auto mb-10 sm:mb-14" style={{ color: TEXT, opacity: 0.6 }}>
+            Адаптивное обучение против линейных курсов. Вот что это значит на практике.
           </p>
-          <span className="text-sm text-[var(--landing-text-faint)]">Философия MPSTATS Academy</span>
+
+          {/* Desktop: 3-column table with expanding BLUE column */}
+          <ComparisonTableDesktop />
+
+
+          {/* Mobile: stacked cards */}
+          <div className="md:hidden space-y-4">
+            {comparison.map((row) => (
+              <div key={row.param} className="rounded-[24px] overflow-hidden border border-[#121212]/10">
+                <div className="p-4 bg-white">
+                  <span className="text-[13px] font-medium uppercase tracking-wider" style={{ color: TEXT, opacity: 0.4 }}>
+                    {row.param}
+                  </span>
+                </div>
+                <div className="p-4 bg-white border-t border-[#121212]/10">
+                  <span className="text-[11px] font-medium uppercase tracking-wider" style={{ color: TEXT, opacity: 0.5 }}>Обычный курс</span>
+                  <p className="mt-1 text-[14px]" style={{ color: TEXT, opacity: 0.85 }}>{row.value1}</p>
+                </div>
+                <div className="p-4 text-white" style={{ backgroundColor: BLUE }}>
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-white/60">Платформа MPSTATS Academy</span>
+                  <p className={`mt-1 text-[14px] ${row.highlight ? 'font-bold' : ''}`}>{row.value2}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA -- always dark */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-900 p-6 sm:p-12 lg:p-16 text-center bg-[#0A0F25]">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2C4FF8]/15 via-transparent to-[#10B981]/10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#2C4FF8]/5 to-[#10B981]/5 animate-gradient-x" />
-          <div className="relative z-10">
-            <LogoMark size="xl" variant="white" href={undefined} className="mx-auto mb-6 opacity-30" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">Готовы узнать свой уровень?</h2>
-            <p className="text-white/40 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto">
-              Бесплатная диагностика за 10 минут. Персональный трек — сразу после.
+      {/* ── 5. Как работает платформа ──────────────────── */}
+      <section id="как-работает" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0" style={{ backgroundColor: GRAY_BG }}>
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-4">
+            Как работает платформа
+          </h2>
+          <p className="text-center text-[15px] sm:text-[17px] leading-relaxed max-w-[620px] mx-auto mb-10 sm:mb-14" style={{ color: TEXT, opacity: 0.6 }}>
+            От AI-диагностики до персонального плана — за 10 минут
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step, i) => (
+              <Reveal key={step.num} className="bg-white rounded-[32px] p-6 sm:p-7 flex flex-col min-h-[240px] transition-transform duration-300 hover:-translate-y-1" delay={i * 80}>
+                <span className="text-[40px] sm:text-[48px] font-bold leading-none" style={{ color: BLUE, opacity: 0.22 }}>
+                  {step.num}
+                </span>
+                <h3 className="mt-4 text-[17px] sm:text-[19px] font-bold leading-tight" style={{ color: TEXT }}>
+                  {step.title}
+                </h3>
+                <p className="mt-3 text-[14px] sm:text-[15px] leading-relaxed flex-1" style={{ color: TEXT, opacity: 0.7 }}>
+                  {step.desc}
+                </p>
+                <span className="mt-4 inline-block self-start text-[11px] sm:text-[12px] font-medium rounded-full px-3 py-1" style={{ backgroundColor: 'rgba(44,79,248,0.08)', color: BLUE }}>
+                  {step.badge}
+                </span>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Catalog teaser */}
+          <div className="mt-8 sm:mt-10 bg-white rounded-[32px] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            <p className="text-[14px] sm:text-[15px] text-center sm:text-left leading-relaxed" style={{ color: TEXT, opacity: 0.75 }}>
+              Внутри:{' '}
+              <span className="font-semibold" style={{ color: TEXT, opacity: 1 }}>400+ уроков по 5 осям навыков</span>
+              {' '}· 4 больших курса · 24 разбора кабинетов · экспресс-уроки
             </p>
-            <Link href="/register" onClick={() => reachGoal(METRIKA_GOALS.CTA_CLICK, { position: 'footer' })}>
-              <Button size="lg" className="bg-[#2C4FF8] hover:bg-[#2338C5] text-white px-10 h-14 rounded-xl text-lg shadow-[0_0_40px_rgba(44,79,248,0.4)] hover:shadow-[0_0_60px_rgba(44,79,248,0.6)] transition-all">
-                Начать бесплатно
-              </Button>
-            </Link>
+            <a
+              href="/courses"
+              className="group flex-shrink-0 inline-flex items-center gap-2 text-[14px] sm:text-[15px] font-medium whitespace-nowrap transition-opacity hover:opacity-80"
+              style={{ color: BLUE }}
+            >
+              Смотреть каталог
+              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                <ArrowRight />
+              </span>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-[var(--landing-border)] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Logo size="sm" variant={isDark ? 'white' : 'default'} />
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-              <Link href="/support" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Поддержка
-              </Link>
-              <span className="text-xs text-[var(--landing-text-faint)] opacity-30">|</span>
-              <Link href="/legal/offer" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Оферта
-              </Link>
-              <Link href="/legal/pdn" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Обработка ПДн
-              </Link>
-              <Link href="/legal/adv" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Рассылка
-              </Link>
-              <Link href="/legal/cookies" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Cookies
-              </Link>
-              <Link href="/policy" className="text-xs text-[var(--landing-text-faint)] hover:text-[var(--landing-text)] transition-colors">
-                Конфиденциальность
-              </Link>
-            </div>
-          </div>
-          <div className="mt-4 text-center sm:text-right">
-            <p className="text-xs text-[var(--landing-text-faint)]">&copy; 2026 MPSTATS Academy. Все права защищены.</p>
+      {/* ── 6. For Who ─────────────────────────────────── */}
+      <section className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0 bg-white">
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-10 sm:mb-14">
+            Кому подойдёт платформа
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {segments.map((seg, i) => (
+              <Reveal
+                key={seg.title}
+                className="group rounded-[40px] p-8 border transition-transform duration-300 hover:-translate-y-1 hover:border-[#2C4FF8]/40 cursor-default"
+                style={{ borderColor: 'rgba(18,18,18,0.1)' }}
+                delay={i * 70}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-[17px] sm:text-[19px] font-bold" style={{ color: TEXT }}>{seg.title}</h3>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1" style={{ color: TEXT, opacity: 0.4 }}><ArrowRight /></span>
+                </div>
+                <p className="text-[14px] sm:text-[15px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>
+                  {seg.desc}
+                </p>
+              </Reveal>
+            ))}
           </div>
         </div>
-      </footer>
+      </section>
+
+      {/* ── 6b. Mid CTA ────────────────────────────────── */}
+      <section className="py-[80px] px-4 sm:px-6 md:px-10 lg:px-0" style={{ backgroundColor: BLUE }}>
+        <div className="max-w-[760px] mx-auto text-center">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold text-white leading-tight">
+            Начни с бесплатной диагностики
+          </h2>
+          <p className="mt-4 text-[16px] sm:text-[18px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            10 минут — и ты узнаешь свои точки роста по 5 осям навыков
+          </p>
+          <a
+            href="#cta"
+            className="mt-8 inline-flex items-center justify-center rounded-full h-[52px] sm:h-[58px] px-10 sm:px-12 text-[15px] sm:text-[16px] font-medium transition-colors"
+            style={{ backgroundColor: 'white', color: BLUE }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+          >
+            Пройти диагностику
+          </a>
+        </div>
+      </section>
+
+      {/* ── 7. Pricing ─────────────────────────────────── */}
+      <section id="тарифы" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0" style={{ backgroundColor: GRAY_BG }}>
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-10 sm:mb-14">
+            Тарифы
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[760px] mx-auto">
+            {plans.map((plan, i) => (
+              <Reveal
+                key={plan.name}
+                className="rounded-[40px] p-8 sm:p-10 flex flex-col transition-transform duration-300 hover:-translate-y-1"
+                style={{
+                  backgroundColor: plan.highlighted ? BLUE : 'white',
+                  color: plan.highlighted ? 'white' : TEXT,
+                }}
+                delay={i * 80}
+              >
+                <span className="text-[14px] font-medium uppercase tracking-wider" style={{ opacity: 0.6 }}>
+                  {plan.name}
+                </span>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-[36px] sm:text-[44px] font-bold leading-none">{plan.price}</span>
+                  <span className="text-[16px]" style={{ opacity: 0.6 }}>{plan.period}</span>
+                </div>
+                <ul className="mt-6 space-y-3 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-[14px] sm:text-[15px]">
+                      <span className="flex-shrink-0 mt-0.5" style={{ opacity: plan.highlighted ? 0.8 : 0.5 }}>
+                        <CheckIcon />
+                      </span>
+                      <span style={{ opacity: plan.highlighted ? 0.9 : 0.7 }}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="#cta"
+                  className="mt-8 inline-flex items-center justify-center rounded-full h-[52px] sm:h-[56px] text-[15px] font-medium transition-colors"
+                  style={{
+                    backgroundColor: plan.highlighted ? 'white' : BLUE,
+                    color: plan.highlighted ? BLUE : 'white',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = plan.highlighted ? '#e8e8e8' : BLUE_HOVER;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = plan.highlighted ? 'white' : BLUE;
+                  }}
+                >
+                  Выбрать план
+                </a>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 8. FAQ ──────────────────────────────────────── */}
+      <section id="faq" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0 bg-white">
+        <div className="max-w-[760px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[40px] font-bold tracking-tight text-center mb-10 sm:mb-14">
+            Частые вопросы
+          </h2>
+          <div>
+            {faqs.map((faq) => (
+              <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 9. Footer CTA ──────────────────────────────── */}
+      <section id="cta" className="py-[80px] sm:py-[120px] px-4 sm:px-6 md:px-10 lg:px-0" style={{ backgroundColor: DARK }}>
+        <div className="max-w-[760px] mx-auto text-center">
+          <h2 className="text-[28px] sm:text-[36px] md:text-[48px] font-bold text-white leading-tight">
+            Начни с диагностики — это бесплатно
+          </h2>
+          <p className="mt-4 sm:mt-6 text-[16px] sm:text-[18px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            10 минут. Персональный план на выходе. Учишь только то, где у тебя пробелы.
+          </p>
+          <a
+            href="/diagnostic"
+            className="mt-8 sm:mt-10 inline-flex items-center justify-center rounded-full h-[52px] sm:h-[62px] px-10 sm:px-12 text-[15px] sm:text-[16px] font-medium text-white transition-colors"
+            style={{ backgroundColor: BLUE }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLUE_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BLUE)}
+          >
+            Пройти диагностику
+          </a>
+        </div>
+      </section>
+
+      <V8Footer wrapperBg="dark" />
+
+      <StickyCTA
+        href="#cta"
+        title="Начни с AI-диагностики — это бесплатно"
+        subtitle="10 минут. Персональный план на выходе."
+      />
     </div>
   );
 }

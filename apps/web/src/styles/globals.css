@@ -411,3 +411,38 @@ html, body {
     background: hsl(var(--muted-foreground) / 0.5);
   }
 }
+
+/* ===== V8 landing animations ===== */
+@keyframes v8-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes v8-radar-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes v8-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(44, 79, 248, 0.55);
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.85;
+    box-shadow: 0 0 0 12px rgba(44, 79, 248, 0);
+  }
+}
+
+@keyframes v8-ring-pulse {
+  0%, 100% { opacity: 0.2; }
+  50%      { opacity: 0.7; }
+}

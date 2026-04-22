@@ -1,18 +1,16 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Тарифы и цены',
-  description: 'Выберите тарифный план MPSTATS Academy: подписка на отдельный курс или полный доступ к 400+ видеоурокам.',
+  title: { absolute: 'Тарифы MPSTATS Academy — от 1 990 ₽ в месяц' },
+  description: 'Полный доступ ко всей Платформе — 2 990 ₽/мес. Подписка на один курс — 1 990 ₽/мес. AI-диагностика, персональный план и AI-ассистент в каждом уроке.',
+  alternates: { canonical: '/pricing' },
   openGraph: {
-    title: 'Тарифы и цены | MPSTATS Academy',
-    description: 'Подписка на курсы по маркетплейсам: аналитика, маркетинг, контент, финансы.',
+    title: 'Тарифы MPSTATS Academy — от 1 990 ₽ в месяц',
+    description: 'Полный доступ ко всей Платформе — 2 990 ₽/мес. Подписка на один курс — 1 990 ₽/мес. AI-диагностика, персональный план и AI-ассистент в каждом уроке.',
+    url: '/pricing',
   },
 };
 
-export default function PricingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PricingLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

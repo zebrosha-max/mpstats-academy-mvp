@@ -1,77 +1,210 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
-import Link from 'next/link';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Logo, LogoMark } from '@/components/shared/Logo';
+import { Onest } from 'next/font/google';
+import { toast } from 'sonner';
+import { V8Header } from '@/components/v8/V8Header';
+import { V8Footer } from '@/components/v8/V8Footer';
+import { Reveal } from '@/components/v8/Reveal';
+import { StickyCTA } from '@/components/v8/StickyCTA';
 import { trpc } from '@/lib/trpc/client';
 import { openPaymentWidget } from '@/lib/cloudpayments/widget';
-import { toast } from 'sonner';
 import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
-import { PromoCodeInput } from '@/components/pricing/PromoCodeInput';
 
-const formatPrice = (amount: number) =>
-  new Intl.NumberFormat('ru-RU').format(amount);
+const onest = Onest({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+});
 
-const COURSE_AXIS_MAP: Record<string, string[]> = {
-  '01_analytics': ['Аналитика', 'Финансы'],
-  '02_ads': ['Маркетинг', 'Операции'],
-  '03_ai': ['Контент', 'Операции'],
-  '05_ozon': ['Аналитика', 'Операции', 'Финансы'],
+/* ── Brand tokens ──────────────────────────────────────── */
+const BLUE = '#2C4FF8';
+const BLUE_HOVER = '#1D39C1';
+const ORANGE = '#ff6b16';
+const DARK = '#0F172A';
+const GRAY_BG = '#f4f4f4';
+const TEXT = '#121212';
+
+/* ── Data ──────────────────────────────────────────────── */
+
+const COURSE_FEATURES = [
+  'Все уроки по выбранной теме',
+  'AI-ассистент в каждом уроке',
+  'Персональный план обучения',
+];
+
+// Короткие подписи для pill-chips. Backend id → короткое имя
+const COURSE_SHORT_LABEL: Record<string, string> = {
+  '01_analytics': 'Аналитика',
+  '02_ads':       'Реклама WB',
+  '03_ai':        'Нейросети',
+  '05_ozon':      'Ozon',
 };
 
-function PricingPageContent() {
+const PLATFORM_FEATURES = [
+  'Весь каталог по 5 осям навыков',
+  '400+ уроков, 150+ часов контента',
+  'AI-диагностика за 10 минут',
+  'AI-ассистент с таймкодами',
+  'Персональный план обучения',
+  'Живая платформа — растёт и обновляется',
+];
+
+const COMPARISON_ROWS = [
+  { feature: 'AI-диагностика',     course: false,         platform: true },
+  { feature: 'Персональный план',  course: true,          platform: true },
+  { feature: 'AI-ассистент',       course: true,          platform: true },
+  { feature: 'Охват каталога',     course: 'Один курс',   platform: 'Все 5 осей' },
+  { feature: 'Уроки',              course: '~70',         platform: '400+' },
+  { feature: 'Обновления',         course: true,          platform: true },
+];
+
+const FAQS = [
+  { q: 'Когда списывается оплата?', a: 'Оплата списывается сразу при оформлении подписки. Следующее списание — ровно через 30 дней. За 3 дня до продления придёт уведомление.' },
+  { q: 'Можно ли сменить тариф?', a: 'Да, можно перейти с «Подписки на курс» на «Полный доступ» в любой момент. Разница в стоимости пересчитывается автоматически.' },
+  { q: 'Можно ли отключить подписку?', a: 'Да. Отключаешь в кабинете в один клик — больше не списывается. Доступ сохраняется до конца оплаченного периода.' },
+  { q: 'Есть ли пробный период?', a: 'Пробного периода нет, но AI-диагностика доступна бесплатно — увидишь свой уровень и точки роста ещё до оплаты.' },
+  { q: 'Что входит в тариф «Полный доступ»?', a: 'Весь каталог по 5 осям навыков: Аналитика, Маркетинг, Контент, Операции, Финансы — 400+ уроков, 150+ часов контента. Плюс AI-диагностика за 10 минут, персональный план обучения и AI-ассистент с таймкодами по всему каталогу.' },
+  { q: 'За что я плачу каждый месяц?', a: 'За три вещи: доступ ко всему каталогу (400+ уроков, 150+ часов), персонализацию под твой уровень (AI-диагностика + персональный план + AI-ассистент), и живую платформу — новые материалы, плейбуки и инструменты добавляются регулярно.' },
+  { q: 'Возможна ли оплата от юрлица?', a: 'Да, работаем с юридическими лицами. Напиши на support@mpstats.academy — подготовим счёт и закрывающие документы.' },
+];
+
+const PROMO_STORAGE_KEY = 'pending_promo_code';
+
+/* ── Icons ─────────────────────────────────────────────── */
+
+function ChevronDown({ open }: { open: boolean }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function CheckIcon({ color = BLUE }: { color?: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function DashIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#121212" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 opacity-20">
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+/* ── FAQ Item ──────────────────────────────────────────── */
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-[#121212]/10 last:border-b-0">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-6 text-left cursor-pointer"
+      >
+        <span className="text-[17px] sm:text-[19px] font-medium pr-4" style={{ color: TEXT }}>{q}</span>
+        <span className="flex-shrink-0" style={{ color: TEXT }}><ChevronDown open={open} /></span>
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${open ? 'max-h-[400px] pb-6' : 'max-h-0'}`}>
+        <p className="text-[15px] sm:text-[16px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>{a}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ── Comparison Cell ──────────────────────────────────── */
+
+function ComparisonCell({ value, highlighted }: { value: boolean | string; highlighted?: boolean }) {
+  if (typeof value === 'string') {
+    return (
+      <span className={`text-[16px] sm:text-[18px] font-medium ${highlighted ? 'text-white' : ''}`} style={!highlighted ? { color: TEXT } : undefined}>
+        {value}
+      </span>
+    );
+  }
+  if (value) {
+    return <CheckIcon color={highlighted ? '#ffffff' : BLUE} />;
+  }
+  return <DashIcon />;
+}
+
+/* ── Page Content ──────────────────────────────────────── */
+
+function PricingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [widgetReady, setWidgetReady] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
 
-  // Read ?promo= URL param for auto-fill after login redirect
-  const promoFromUrl = searchParams.get('promo') || undefined;
+  const [promoCode, setPromoCode] = useState(searchParams.get('promo') || '');
+  const [promoError, setPromoError] = useState('');
 
-  // Fetch plans (public)
-  const { data: plans, isLoading: plansLoading } = trpc.billing.getPlans.useQuery();
-
-  // Fetch subscription (may fail for unauthenticated — that's ok)
+  // tRPC queries — все tolerant к неавторизованным
+  const { data: plans } = trpc.billing.getPlans.useQuery();
+  const { data: courses } = trpc.billing.getCourses.useQuery();
   const { data: subscription } = trpc.billing.getSubscription.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
   });
-
-  // Fetch courses for dropdown (public — works for everyone)
-  const { data: courses } = trpc.billing.getCourses.useQuery();
-
-  // Auth state for header and promo code (may fail for unauthenticated — that's ok)
   const { data: profile } = trpc.profile.get.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
   });
   const isAuthenticated = !!profile;
 
-  // Initiate payment mutation
   const initiatePayment = trpc.billing.initiatePayment.useMutation();
+  const activatePromo = trpc.promo.activate.useMutation({
+    onSuccess: (data) => {
+      toast.success('Промо-код активирован!', {
+        description: `Доступ до ${new Date(data.accessUntil).toLocaleDateString('ru-RU')}`,
+      });
+      setTimeout(() => router.push('/dashboard'), 1500);
+    },
+    onError: (err) => setPromoError(err.message),
+  });
 
-  // Track pricing page view in Metrika
+  // Filter courses для pill-chips
+  const courseOptions = (courses || [])
+    .filter((c) => COURSE_SHORT_LABEL[c.id])
+    .map((c) => ({ id: c.id, name: COURSE_SHORT_LABEL[c.id] }));
+
+  // Default first course id
+  useEffect(() => {
+    if (!selectedCourseId && courseOptions.length > 0) {
+      setSelectedCourseId(courseOptions[0].id);
+    }
+  }, [courseOptions, selectedCourseId]);
+
+  // Metrika pricing view
   useEffect(() => {
     reachGoal(METRIKA_GOALS.PRICING_VIEW);
   }, []);
 
-  // Redirect if billing disabled (empty plans array)
+  // Restore pending promo from sessionStorage after register/login redirect
   useEffect(() => {
-    if (!plansLoading && plans && plans.length === 0) {
-      router.replace('/');
+    if (isAuthenticated && !promoCode) {
+      try {
+        const stored = sessionStorage.getItem(PROMO_STORAGE_KEY);
+        if (stored) {
+          setPromoCode(stored);
+          sessionStorage.removeItem(PROMO_STORAGE_KEY);
+        }
+      } catch {
+        /* sessionStorage unavailable */
+      }
     }
-  }, [plans, plansLoading, router]);
-
-  const coursePlan = plans?.find((p) => p.type === 'COURSE');
-  const platformPlan = plans?.find((p) => p.type === 'PLATFORM');
+  }, [isAuthenticated, promoCode]);
 
   const hasActiveCourseSubscription =
     subscription &&
@@ -86,13 +219,11 @@ function PricingPageContent() {
 
   const handlePayment = async (planType: 'COURSE' | 'PLATFORM') => {
     if (planType === 'COURSE' && !selectedCourseId) {
-      setMessage({ type: 'error', text: 'Выберите курс' });
+      toast.error('Выберите курс');
       return;
     }
 
     setIsProcessing(true);
-    setMessage(null);
-
     try {
       const result = await initiatePayment.mutateAsync({
         planType,
@@ -111,288 +242,389 @@ function PricingPageContent() {
 
       if (success) {
         reachGoal(METRIKA_GOALS.PAYMENT, { planType, amount: result.amount, currency: 'RUB' });
-        setMessage({ type: 'success', text: 'Оплата принята! Подписка активируется в течение минуты.' });
-        toast.success('Оплата прошла успешно', { description: 'Подписка активирована.' });
-        setTimeout(() => router.push('/profile'), 3000);
+        toast.success('Оплата прошла успешно', { description: 'Подписка активируется в течение минуты.' });
+        setTimeout(() => router.push('/profile'), 2000);
       } else {
-        setMessage({ type: 'error', text: 'Оплата не прошла. Попробуйте снова.' });
         toast.error('Оплата не прошла', { description: 'Попробуйте снова или выберите другой способ оплаты.' });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
       const isAuthError = errorMessage.includes('UNAUTHORIZED') || errorMessage.toLowerCase().includes('not authenticated');
       if (isAuthError) {
-        setMessage({ type: 'error', text: 'Для оформления подписки необходимо зарегистрироваться. Перенаправляем...' });
-        setTimeout(() => router.push('/register'), 2000);
+        toast.info('Перенаправляем на регистрацию');
+        setTimeout(() => router.push('/register?redirect=/pricing'), 1500);
         return;
       }
-      setMessage({ type: 'error', text: errorMessage });
+      toast.error(errorMessage);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  if (plansLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-mp-blue-500 border-t-transparent rounded-full" />
-      </div>
-    );
-  }
+  const handlePromoApply = () => {
+    const trimmed = promoCode.trim().toUpperCase();
+    if (!trimmed) {
+      setPromoError('Введите промо-код');
+      return;
+    }
+    setPromoError('');
 
-  if (!plans || plans.length === 0) {
-    return null; // Redirect is happening
-  }
+    if (!isAuthenticated) {
+      try {
+        sessionStorage.setItem(PROMO_STORAGE_KEY, trimmed);
+      } catch {
+        /* sessionStorage unavailable */
+      }
+      router.push(`/register?redirect=/pricing&promo=${encodeURIComponent(trimmed)}`);
+      return;
+    }
+    activatePromo.mutate({ code: trimmed });
+  };
+
+  const courseBtnDisabled = Boolean(isProcessing || !widgetReady || !selectedCourseId || hasActiveCourseSubscription);
+  const platformBtnDisabled = Boolean(isProcessing || !widgetReady || hasActivePlatformSubscription);
 
   return (
-    <>
+    <div className={onest.className} style={{ color: TEXT }}>
       <Script
         src="https://widget.cloudpayments.ru/bundles/cloudpayments"
         strategy="lazyOnload"
         onReady={() => setWidgetReady(true)}
       />
 
-      <div className="min-h-screen bg-mp-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b border-mp-gray-200">
-          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <button onClick={() => router.back()} className="flex items-center gap-2 text-mp-gray-600 hover:text-mp-gray-900 transition-colors shrink-0">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="text-body-sm">Назад</span>
-            </button>
-            {/* Full logo on sm+, icon-only on mobile */}
-            <div className="hidden sm:block">
-              <Logo size="sm" />
-            </div>
-            <div className="sm:hidden">
-              <LogoMark size="sm" />
-            </div>
-            {/* Auth state: login button or profile link */}
-            <div className="w-16 shrink-0 flex justify-end">
-              {isAuthenticated ? (
-                <Link href="/profile" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline">
-                  {profile?.name || 'Профиль'}
-                </Link>
-              ) : (
-                <Link href="/register" className="text-body-sm text-mp-blue-600 hover:text-mp-blue-700 hover:underline font-medium">
-                  Регистрация
-                </Link>
-              )}
-            </div>
-          </div>
-        </header>
+      <V8Header onDarkHero={true} />
 
-        {/* Content */}
-        <main className="max-w-4xl mx-auto px-4 py-12">
-          <div className="text-center mb-10">
-            <h1 className="text-display-sm text-mp-gray-900 mb-2">Тарифные планы</h1>
-            <p className="text-body text-mp-gray-500">
-              Выберите подходящий план для обучения
-            </p>
-          </div>
+      {/* ── 1. Hero ────────────────────────────────────── */}
+      <section
+        className="relative pt-[140px] pb-[80px] sm:pt-[160px] sm:pb-[100px] px-6"
+        style={{ backgroundColor: DARK }}
+      >
+        <div className="max-w-[800px] mx-auto text-center">
+          <h1 className="text-[36px] sm:text-[48px] md:text-[56px] font-bold leading-[1.1] tracking-tight text-white">
+            Вся Академия
+            <br />
+            за 2 990 ₽/мес
+          </h1>
+          <p className="mt-6 text-[18px] sm:text-[20px] leading-relaxed text-white/70 max-w-[520px] mx-auto">
+            Помесячная подписка. Без предоплаты за год — вместо одной суммы 45–90 тысяч ₽ за курс.
+          </p>
+        </div>
+      </section>
 
-          {/* Message */}
-          {message && (
-            <div
-              className={`mb-6 p-4 rounded-xl text-center ${
-                message.type === 'success'
-                  ? 'bg-mp-green-50 text-mp-green-800 border border-mp-green-200'
-                  : 'bg-red-50 text-red-700 border border-red-200'
-              }`}
-            >
-              {message.text}
-            </div>
-          )}
+      {/* ── 2. Pricing Cards + promo ────────────────────── */}
+      <section id="тарифы" className="py-[80px] sm:py-[100px] px-6 bg-white">
+        <div className="max-w-[1040px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto items-stretch">
-            {/* COURSE plan */}
-            {coursePlan && (
-              <Card className="relative h-full flex flex-col">
-                {hasActiveCourseSubscription && (
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="success">Ваш план</Badge>
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-heading">{coursePlan.name}</CardTitle>
-                  <p className="text-body-sm text-mp-gray-500">
-                    Доступ к одному курсу на выбор
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-display-sm text-mp-gray-900">
-                    {formatPrice(coursePlan.price)}{' '}
-                    <span className="text-body text-mp-gray-500">/ мес</span>
-                  </div>
+            {/* COURSE card */}
+            <Reveal className="rounded-[40px] border border-[#121212]/10 p-7 sm:p-9 flex flex-col transition-transform duration-300 hover:-translate-y-1" delay={0}>
+              <div>
+                <h3 className="text-[22px] sm:text-[24px] font-bold" style={{ color: TEXT }}>
+                  Подписка на курс
+                </h3>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-[36px] sm:text-[44px] font-bold leading-none" style={{ color: TEXT }}>
+                    1 990 &#8381;
+                  </span>
+                  <span className="text-[17px]" style={{ color: TEXT, opacity: 0.5 }}>
+                    /мес
+                  </span>
+                </div>
+              </div>
 
-                  {/* Course select */}
-                  <div>
-                    <label htmlFor="course-select" className="block text-body-sm font-medium text-mp-gray-700 mb-2">
-                      Выберите курс
-                    </label>
-                    <select
-                      id="course-select"
-                      value={selectedCourseId}
-                      onChange={(e) => setSelectedCourseId(e.target.value)}
-                      className="w-full rounded-lg border border-mp-gray-300 bg-white px-3 py-2.5 text-body-sm text-mp-gray-900 focus:border-mp-blue-500 focus:outline-none focus:ring-2 focus:ring-mp-blue-500/20"
-                    >
-                      <option value="">-- Выберите курс --</option>
-                      {courses
-                        ?.filter((c) => !['04_workshops', '06_express'].includes(c.id))
-                        .map((course) => (
-                          <option key={course.id} value={course.id}>
-                            {course.title}
-                            {COURSE_AXIS_MAP[course.id] ? ` — ${COURSE_AXIS_MAP[course.id].join(', ')}` : ''}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <ul className="space-y-2 text-body-sm text-mp-gray-600">
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Все видеоуроки курса
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      AI-помощник по материалам
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Конспекты уроков
-                    </li>
-                  </ul>
-                </CardContent>
-                <CardFooter className="mt-auto">
-                  {hasActiveCourseSubscription ? (
-                    <Link href="/profile" className="block w-full">
-                      <Button variant="outline" className="w-full">
-                        Управление подпиской
-                      </Button>
-                    </Link>
+              {/* Course picker */}
+              <div className="mt-6">
+                <p className="text-[12px] font-medium uppercase tracking-wider mb-3" style={{ color: TEXT, opacity: 0.45 }}>
+                  Выбери курс
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {courseOptions.length === 0 ? (
+                    <span className="text-[13px]" style={{ color: TEXT, opacity: 0.5 }}>Загрузка...</span>
                   ) : (
-                    <>
-                      <Button
-                        className="w-full"
-                        onClick={() => handlePayment('COURSE')}
-                        disabled={isProcessing || !widgetReady || !selectedCourseId}
-                      >
-                        {isProcessing ? 'Обработка...' : 'Оформить подписку'}
-                      </Button>
-                    </>
-                  )}
-                </CardFooter>
-              </Card>
-            )}
-
-            {/* PLATFORM plan */}
-            {platformPlan && (
-              <Card className="relative h-full flex flex-col border-2 border-mp-blue-500">
-                <div className="absolute top-4 right-4">
-                  {hasActivePlatformSubscription ? (
-                    <Badge variant="success">Ваш план</Badge>
-                  ) : (
-                    <Badge variant="primary">Выгодно</Badge>
+                    courseOptions.map((c) => {
+                      const active = selectedCourseId === c.id;
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => setSelectedCourseId(c.id)}
+                          className="px-4 py-2 rounded-full text-[13px] sm:text-[14px] font-medium transition-colors cursor-pointer"
+                          style={{
+                            backgroundColor: active ? BLUE : 'rgba(18,18,18,0.05)',
+                            color: active ? 'white' : TEXT,
+                          }}
+                        >
+                          {c.name}
+                        </button>
+                      );
+                    })
                   )}
                 </div>
-                <CardHeader>
-                  <CardTitle className="text-heading">{platformPlan.name}</CardTitle>
-                  <p className="text-body-sm text-mp-gray-500">
-                    Полный доступ ко всем курсам
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-display-sm text-mp-gray-900">
-                    {formatPrice(platformPlan.price)}{' '}
-                    <span className="text-body text-mp-gray-500">/ мес</span>
-                  </div>
+              </div>
 
-                  <ul className="space-y-2 text-body-sm text-mp-gray-600">
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Все курсы (400+ видеоуроков)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Экспресс-курсы и практические воркшопы
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      AI-помощник по всем материалам
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      AI-диагностика навыков
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-mp-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Персональный план обучения
-                    </li>
-                  </ul>
-                </CardContent>
-                <CardFooter className="mt-auto">
-                  {hasActivePlatformSubscription ? (
-                    <Link href="/profile" className="block w-full">
-                      <Button variant="outline" className="w-full">
-                        Управление подпиской
-                      </Button>
-                    </Link>
-                  ) : (
-                    <>
-                      <Button
-                        variant="featured"
-                        className="w-full"
-                        onClick={() => handlePayment('PLATFORM')}
-                        disabled={isProcessing || !widgetReady}
-                      >
-                        {isProcessing ? 'Обработка...' : 'Оформить подписку'}
-                      </Button>
-                    </>
-                  )}
-                </CardFooter>
-              </Card>
+              <ul className="mt-6 flex flex-col gap-3 flex-1">
+                {COURSE_FEATURES.map((f) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <CheckIcon />
+                    <span className="text-[14px] sm:text-[15px]" style={{ color: TEXT, opacity: 0.8 }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => handlePayment('COURSE')}
+                disabled={courseBtnDisabled}
+                className="mt-8 inline-flex items-center justify-center h-[52px] sm:h-[56px] rounded-full text-[15px] font-medium border-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ borderColor: BLUE, color: BLUE, backgroundColor: 'transparent' }}
+                onMouseEnter={(e) => {
+                  if (courseBtnDisabled) return;
+                  e.currentTarget.style.backgroundColor = BLUE;
+                  e.currentTarget.style.color = '#fff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = BLUE;
+                }}
+              >
+                {hasActiveCourseSubscription
+                  ? 'Текущий план'
+                  : isProcessing
+                    ? 'Обработка...'
+                    : 'Оформить подписку'}
+              </button>
+            </Reveal>
+
+            {/* PLATFORM card */}
+            <Reveal className="rounded-[40px] p-7 sm:p-9 flex flex-col relative overflow-hidden transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: BLUE }} delay={100}>
+              <span
+                className="absolute top-5 right-5 sm:top-6 sm:right-6 px-3.5 py-1 rounded-full text-[12px] font-medium text-white"
+                style={{ backgroundColor: ORANGE }}
+              >
+                Рекомендуем
+              </span>
+
+              <div>
+                <h3 className="text-[22px] sm:text-[24px] font-bold text-white">
+                  Полный доступ
+                </h3>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-[36px] sm:text-[44px] font-bold leading-none text-white">
+                    2 990 &#8381;
+                  </span>
+                  <span className="text-[17px] text-white/50">
+                    /мес
+                  </span>
+                </div>
+              </div>
+
+              <ul className="mt-6 flex flex-col gap-3 flex-1">
+                {PLATFORM_FEATURES.map((f) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <CheckIcon color="#ffffff" />
+                    <span className="text-[14px] sm:text-[15px] text-white/85">{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => handlePayment('PLATFORM')}
+                disabled={platformBtnDisabled}
+                className="mt-8 inline-flex items-center justify-center h-[52px] sm:h-[56px] rounded-full text-[15px] font-medium transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ backgroundColor: '#ffffff', color: BLUE }}
+              >
+                {hasActivePlatformSubscription
+                  ? 'Текущий план'
+                  : isProcessing
+                    ? 'Обработка...'
+                    : 'Оформить подписку'}
+              </button>
+            </Reveal>
+          </div>
+
+          {/* Promo code — under both cards */}
+          <div className="mt-8 sm:mt-10 mx-auto w-full max-w-[420px]">
+            <p className="text-center text-[13px] font-medium uppercase tracking-wider mb-3" style={{ color: TEXT, opacity: 0.45 }}>
+              Есть промо-код?
+            </p>
+            <div className="flex items-stretch justify-center gap-2 sm:gap-3">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => {
+                  setPromoCode(e.target.value.toUpperCase());
+                  if (promoError) setPromoError('');
+                }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handlePromoApply(); }}
+                placeholder="Введите код"
+                disabled={activatePromo.isPending}
+                className="flex-1 min-w-0 h-[48px] sm:h-[52px] px-5 rounded-full border border-[#121212]/10 text-[14px] sm:text-[15px] font-medium outline-none transition-colors focus:border-[#2C4FF8] disabled:opacity-60"
+                style={{ color: TEXT, backgroundColor: '#fff' }}
+              />
+              <button
+                onClick={handlePromoApply}
+                disabled={activatePromo.isPending || !promoCode.trim()}
+                className="flex-shrink-0 h-[48px] sm:h-[52px] px-6 sm:px-7 rounded-full text-[14px] sm:text-[15px] font-medium text-white transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ backgroundColor: BLUE }}
+                onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = BLUE_HOVER; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = BLUE; }}
+              >
+                {activatePromo.isPending ? 'Проверка...' : 'Применить'}
+              </button>
+            </div>
+            {promoError && (
+              <p className="mt-3 text-center text-[13px]" style={{ color: '#dc2626' }}>{promoError}</p>
             )}
           </div>
+        </div>
+      </section>
 
-          {/* Promo code section */}
-          <div className="mt-10">
-            <PromoCodeInput
-              isAuthenticated={isAuthenticated}
-              initialCode={promoFromUrl}
-            />
+      {/* ── 3. Comparison Table ─────────────────────────── */}
+      <section id="сравнение" className="py-[80px] sm:py-[100px] px-6" style={{ backgroundColor: GRAY_BG }}>
+        <div className="max-w-[800px] mx-auto">
+          <h2 className="text-[28px] sm:text-[36px] font-bold text-center mb-12" style={{ color: TEXT }}>
+            Сравнение тарифов
+          </h2>
+
+          <div className="rounded-[40px] overflow-hidden bg-white">
+            {/* Header row */}
+            <div className="grid grid-cols-3 gap-0">
+              <div className="p-5 sm:p-6" />
+              <div className="p-5 sm:p-6 text-center">
+                <span className="text-[14px] sm:text-[16px] font-medium" style={{ color: TEXT, opacity: 0.6 }}>Курс</span>
+              </div>
+              <div className="p-5 sm:p-6 text-center rounded-tr-[40px]" style={{ backgroundColor: BLUE }}>
+                <span className="text-[14px] sm:text-[16px] font-medium text-white">Полный доступ</span>
+              </div>
+            </div>
+
+            {/* Data rows */}
+            {COMPARISON_ROWS.map((row, i) => (
+              <div key={row.feature} className="grid grid-cols-3 gap-0" style={{ borderTop: '1px solid rgba(18,18,18,0.06)' }}>
+                <div className="p-5 sm:p-6 flex items-center">
+                  <span className="text-[14px] sm:text-[16px]" style={{ color: TEXT }}>{row.feature}</span>
+                </div>
+                <div className="p-5 sm:p-6 flex items-center justify-center">
+                  <ComparisonCell value={row.course} />
+                </div>
+                <div
+                  className="p-5 sm:p-6 flex items-center justify-center"
+                  style={{
+                    backgroundColor: BLUE,
+                    ...(i === COMPARISON_ROWS.length - 1 ? { borderBottomRightRadius: '40px' } : {}),
+                  }}
+                >
+                  <ComparisonCell value={row.platform} highlighted />
+                </div>
+              </div>
+            ))}
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* ── 4. Retention — 3 ценности ───────────────────── */}
+      <section className="py-[80px] sm:py-[100px] px-6 bg-white">
+        <div className="max-w-[1160px] mx-auto">
+          <h2 className="text-[24px] sm:text-[32px] md:text-[36px] font-bold text-center mb-4 leading-tight" style={{ color: TEXT }}>
+            Что ты получаешь за 2 990 ₽ каждый месяц
+          </h2>
+          <p className="text-center text-[15px] sm:text-[17px] leading-relaxed max-w-[620px] mx-auto mb-10 sm:mb-14" style={{ color: TEXT, opacity: 0.6 }}>
+            Три ценности, которые работают вместе
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[1040px] mx-auto">
+            {/* 01 — Доступ */}
+            <Reveal className="rounded-[32px] p-8 bg-white border border-[#121212]/10 transition-transform duration-300 hover:-translate-y-1" delay={0}>
+              <span className="text-[32px] sm:text-[36px] font-bold leading-none" style={{ color: BLUE, opacity: 0.25 }}>01</span>
+              <h3 className="mt-4 text-[18px] sm:text-[20px] font-bold leading-tight" style={{ color: TEXT }}>
+                Доступ ко всему сразу
+              </h3>
+              <p className="mt-3 text-[14px] sm:text-[15px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>
+                400+ уроков, 150+ часов контента, практические инструменты — по 5 осям навыков селлера.
+              </p>
+            </Reveal>
+
+            {/* 02 — Персонализация (accent) */}
+            <Reveal className="rounded-[32px] p-8 transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: BLUE }} delay={100}>
+              <span className="text-[32px] sm:text-[36px] font-bold text-white/40 leading-none">02</span>
+              <h3 className="mt-4 text-[18px] sm:text-[20px] font-bold leading-tight text-white">
+                Персонализация
+              </h3>
+              <p className="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-white/85">
+                AI-диагностика → персональный план → AI-ассистент в уроке. Всё под твой уровень и пробелы.
+              </p>
+            </Reveal>
+
+            {/* 03 — Живая платформа */}
+            <Reveal className="rounded-[32px] p-8 bg-white border border-[#121212]/10 transition-transform duration-300 hover:-translate-y-1" delay={200}>
+              <span className="text-[32px] sm:text-[36px] font-bold leading-none" style={{ color: BLUE, opacity: 0.25 }}>03</span>
+              <h3 className="mt-4 text-[18px] sm:text-[20px] font-bold leading-tight" style={{ color: TEXT }}>
+                Живая платформа
+              </h3>
+              <p className="mt-3 text-[14px] sm:text-[15px] leading-relaxed" style={{ color: TEXT, opacity: 0.7 }}>
+                Новые материалы, плейбуки и инструменты добавляются регулярно. Платформа адаптируется под изменения WB и Ozon.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── 6. FAQ ─────────────────────────────────────── */}
+      <section id="faq" className="py-[80px] sm:py-[100px] px-6" style={{ backgroundColor: GRAY_BG }}>
+        <div className="max-w-[720px] mx-auto">
+          <h2 className="text-[28px] sm:text-[36px] font-bold text-center mb-12" style={{ color: TEXT }}>
+            Частые вопросы
+          </h2>
+          <div className="rounded-[40px] bg-white p-6 sm:p-10">
+            {FAQS.map((faq) => (
+              <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 7. CTA ─────────────────────────────────────── */}
+      <section className="py-[80px] sm:py-[100px] px-6" style={{ backgroundColor: DARK }}>
+        <div className="max-w-[600px] mx-auto text-center">
+          <h2 className="text-[28px] sm:text-[36px] md:text-[44px] font-bold leading-tight text-white">
+            Начните с диагностики
+          </h2>
+          <p className="mt-4 text-[16px] sm:text-[18px] text-white/60 max-w-[440px] mx-auto">
+            Бесплатная AI-диагностика покажет ваш уровень знаний за 10 минут
+          </p>
+          <a
+            href="/diagnostic"
+            className="mt-8 inline-flex items-center justify-center h-[56px] px-10 rounded-full text-[16px] font-medium text-white transition-colors"
+            style={{ backgroundColor: BLUE }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = BLUE_HOVER; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = BLUE; }}
+          >
+            Пройти диагностику
+          </a>
+        </div>
+      </section>
+
+      <V8Footer wrapperBg="dark" />
+
+      <StickyCTA
+        href="/skill-test"
+        title="Не уверен, какой тариф выбрать?"
+        subtitle="AI-диагностика за 10 минут подберёт программу под тебя."
+      />
+    </div>
   );
 }
 
+/* ── Default export with Suspense wrapper ──────────────── */
+
 export default function PricingPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-mp-blue-500 border-t-transparent rounded-full" />
-      </div>
-    }>
-      <PricingPageContent />
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin h-8 w-8 border-4 border-[#2C4FF8] border-t-transparent rounded-full" />
+        </div>
+      }
+    >
+      <PricingContent />
     </Suspense>
   );
 }
