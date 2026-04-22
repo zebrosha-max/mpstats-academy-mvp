@@ -9,7 +9,7 @@ test.describe('Landing Page', () => {
   test('should have login link and register CTA', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('link', { name: /Войти/i })).toBeVisible();
-    await expect(page.getByRole('link', { href: '/register' }).first()).toBeVisible();
+    await expect(page.locator('a[href="/register"]').first()).toBeVisible();
   });
 
   test('should navigate to login page', async ({ page }) => {

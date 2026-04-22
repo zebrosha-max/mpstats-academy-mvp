@@ -4,24 +4,28 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { YandexProvider, type OAuthProvider, type OAuthUserInfo } from '@/lib/auth/oauth-providers';
 
 describe('OAuthProvider interface', () => {
-  it('OAuthUserInfo has id, email, name fields', () => {
+  it('OAuthUserInfo has id, email, name, phone fields', () => {
     const info: OAuthUserInfo = {
       id: '123',
       email: 'test@yandex.ru',
       name: 'Test User',
+      phone: '+79001234567',
     };
     expect(info.id).toBe('123');
     expect(info.email).toBe('test@yandex.ru');
     expect(info.name).toBe('Test User');
+    expect(info.phone).toBe('+79001234567');
   });
 
-  it('OAuthUserInfo name can be null', () => {
+  it('OAuthUserInfo name and phone can be null', () => {
     const info: OAuthUserInfo = {
       id: '123',
       email: 'test@yandex.ru',
       name: null,
+      phone: null,
     };
     expect(info.name).toBeNull();
+    expect(info.phone).toBeNull();
   });
 });
 
