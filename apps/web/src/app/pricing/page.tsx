@@ -206,6 +206,19 @@ function PricingContent() {
     }
   }, [isAuthenticated, promoCode]);
 
+  // Авто-активация промо, если юзер пришёл после DOI с ?promo=CODE в URL
+  // (через auth/callback?next=/pricing?promo=...).
+  // Activate mutation сам проверит что код валиден и не использован — если нет,
+  // покажет ошибку в UI, юзер увидит форму с уже введённым кодом.
+  const promoFromUrl = searchParams.get('promo');
+  const [autoActivated, setAutoActivated] = useState(false);
+  useEffect(() => {
+    if (!autoActivated && isAuthenticated && promoFromUrl && !activatePromo.isPending) {
+      setAutoActivated(true);
+      activatePromo.mutate({ code: promoFromUrl.trim().toUpperCase() });
+    }
+  }, [autoActivated, isAuthenticated, promoFromUrl, activatePromo]);
+
   const hasActiveCourseSubscription =
     subscription &&
     subscription.plan.type === 'COURSE' &&

@@ -21,6 +21,7 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
   const password = formData.get('password') as string;
   const name = formData.get('name') as string;
   const phone = formData.get('phone') as string;
+  const promo = (formData.get('promo') as string | null)?.trim().toUpperCase() || null;
 
   if (!email || !password) {
     return { error: 'Email и пароль обязательны' };
@@ -43,6 +44,13 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
     return { error: 'Пароль должен быть минимум 6 символов' };
   }
 
+  // Если пользователь пришёл с промо-кодом — протаскиваем его через DOI-цикл.
+  // После клика на письмо /auth/callback редиректит на ?next=, а /pricing
+  // уже авторизованного юзера автоматически активирует промо из URL.
+  const callbackUrl = promo
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(`/pricing?promo=${promo}`)}`
+    : `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -50,8 +58,9 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
       data: {
         full_name: name,
         phone,
+        ...(promo ? { pending_promo: promo } : {}),
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: callbackUrl,
     },
   });
 

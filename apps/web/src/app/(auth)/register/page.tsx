@@ -26,6 +26,8 @@ function RegisterForm() {
 
   const loginHref = `/login${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
+  const promoFromUrl = searchParams.get('promo') || '';
+
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
@@ -81,6 +83,9 @@ function RegisterForm() {
         )}
 
         <form action={handleSubmit} className="space-y-4">
+          {promoFromUrl && (
+            <input type="hidden" name="promo" value={promoFromUrl} />
+          )}
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium">
               Имя <span className="text-red-500">*</span>
