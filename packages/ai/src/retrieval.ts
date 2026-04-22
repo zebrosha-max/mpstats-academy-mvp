@@ -55,15 +55,15 @@ export async function searchChunks(
 
   const lessonFilter = lessonId ? `AND c.lesson_id LIKE '${lessonId}%'` : '';
 
-  // Default behavior: join Lesson + Course and exclude hidden rows. This keeps
-  // RAG retrieval consistent with user-facing lesson queries.
+  // Default: exclude individually hidden lessons but include all courses
+  // (hidden courses like skill_* still have valuable content for RAG/diagnostics,
+  // they're just not shown in the course list until videos are uploaded)
   const hiddenJoin = includeHidden
     ? ''
-    : `INNER JOIN "Lesson" l ON l.id = c.lesson_id
-       INNER JOIN "Course" co ON co.id = l."courseId"`;
+    : `INNER JOIN "Lesson" l ON l.id = c.lesson_id`;
   const hiddenFilter = includeHidden
     ? ''
-    : `AND l."isHidden" = false AND co."isHidden" = false`;
+    : `AND l."isHidden" = false`;
 
   const results = await prisma.$queryRawUnsafe<ChunkSearchResult[]>(`
     SELECT
@@ -101,14 +101,14 @@ export async function getChunksForLesson(
   // Use Prisma raw SQL (direct TCP) instead of Supabase PostgREST
   // PostgREST times out on lessons with many chunks (TypeError: terminated)
   // Hidden lesson/course → return no chunks so consumers degrade gracefully.
+  // Only check lesson-level hidden flag (not course — hidden courses like
+  // skill_* still serve content for RAG until videos are uploaded)
   if (!includeHidden) {
     const visible = await prisma.$queryRaw<Array<{ id: string }>>`
       SELECT l.id
       FROM "Lesson" l
-      INNER JOIN "Course" co ON co.id = l."courseId"
       WHERE l.id = ${lessonId}
         AND l."isHidden" = false
-        AND co."isHidden" = false
     `;
     if (visible.length === 0) return [];
   }

@@ -1,0 +1,200 @@
+{
+  "phase": "taxonomy",
+  "model": "openai/gpt-4.1-nano + manual curation",
+  "timestamp": "2026-04-21T19:25:00.000Z",
+  "total_blocks": 32,
+  "blocks": [
+    {
+      "axis": "ANALYTICS",
+      "block": "competitor_analysis",
+      "title": "Анализ конкурентов",
+      "description": "Сравнение карточек, цен, позиций, аудит конкурентных преимуществ, доля рынка"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "market_trends",
+      "title": "Мониторинг трендов и спроса",
+      "description": "Отслеживание сезонности, новых трендов, изменений в потребительском спросе"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "product_metrics",
+      "title": "Аналитика товарных показателей",
+      "description": "Анализ продаж, возвратов, конверсий, оборачиваемости и ABC/XYZ"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "assortment_management",
+      "title": "Управление ассортиментом",
+      "description": "Оптимизация ассортимента, фокусные товары, товары-локомотивы, сезонные товары"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "target_audience",
+      "title": "Анализ целевой аудитории",
+      "description": "Сегментация ЦА, анализ отзывов и вопросов покупателей, портрет клиента"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "product_niche_selection",
+      "title": "Выбор товара и ниши",
+      "description": "Анализ ниш, оценка спроса и конкуренции, выбор прибыльного товара для запуска"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "sales_funnel",
+      "title": "Воронка продаж",
+      "description": "Анализ этапов показ→клик→корзина→заказ→выкуп, CTR/CR, точки просадки"
+    },
+    {
+      "axis": "ANALYTICS",
+      "block": "data_tools",
+      "title": "Инструменты аналитики",
+      "description": "MPSTATS, личный кабинет WB/Ozon, таблицы, экспорт данных, дашборды"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "seo_optimization",
+      "title": "SEO-оптимизация",
+      "description": "Сбор ключей, оптимизация заголовков/описаний, индексация, проверка релевантности"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "ad_campaign_setup",
+      "title": "Настройка рекламных кампаний",
+      "description": "Создание РК на WB/Ozon, выбор типа (авто/поиск/каталог), настройка таргетинга"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "ad_strategy",
+      "title": "Рекламные стратегии",
+      "description": "Стратегии вывода товара, масштабирования, DRR-контроль, распределение бюджета"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "ad_optimization",
+      "title": "Оптимизация и аналитика РК",
+      "description": "Анализ ставок, CTR, CPC, ROI рекламы, корректировка кампаний, A/B тесты"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "autobidder",
+      "title": "Автобиддер",
+      "description": "Настройка автоматических ставок, правила, стратегии автобиддера MPSTATS"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "external_advertising",
+      "title": "Внешняя реклама",
+      "description": "Реклама в Яндекс.Директ, VK, соцсети, трафик с внешних площадок"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "influencer_marketing",
+      "title": "Работа с блогерами",
+      "description": "Выбор блогеров, форматы сотрудничества, оценка эффективности"
+    },
+    {
+      "axis": "MARKETING",
+      "block": "card_conversion",
+      "title": "Конверсия карточки",
+      "description": "Оптимизация визуала, CTR главного фото, A+ контент, рич-контент, отзывы для конверсии"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "product_photography",
+      "title": "Фото и инфографика товаров",
+      "description": "Создание и редактирование фото, инфографика, требования площадок"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "video_content",
+      "title": "Видеоконтент",
+      "description": "Сценарии, съёмка, монтаж видео для карточек и рекламы"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "copywriting",
+      "title": "Тексты и описания",
+      "description": "Написание описаний, УТП, характеристик, rich-контент, A+ страницы"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "neural_content",
+      "title": "Нейросети для контента",
+      "description": "ChatGPT, Midjourney, Stable Diffusion для генерации текстов, изображений, видео"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "neural_analytics",
+      "title": "Нейроаналитика",
+      "description": "Использование нейросетей для анализа данных, отчётов, автоматизации рутины"
+    },
+    {
+      "axis": "CONTENT",
+      "block": "reviews_management",
+      "title": "Работа с отзывами",
+      "description": "Анализ отзывов, ответы на вопросы, управление репутацией, рейтинг"
+    },
+    {
+      "axis": "OPERATIONS",
+      "block": "logistics_fbo_fbs",
+      "title": "Логистика FBO/FBS",
+      "description": "Выбор схемы, оптимизация поставок, работа со складами WB и собственными"
+    },
+    {
+      "axis": "OPERATIONS",
+      "block": "inventory_management",
+      "title": "Управление запасами",
+      "description": "Прогнозирование остатков, планирование закупок, оборачиваемость"
+    },
+    {
+      "axis": "OPERATIONS",
+      "block": "ozon_specifics",
+      "title": "Специфика Ozon",
+      "description": "Настройка кабинета, продвижение, реклама, аналитика — особенности платформы Ozon"
+    },
+    {
+      "axis": "OPERATIONS",
+      "block": "platform_tools",
+      "title": "Инструменты и настройки платформ",
+      "description": "Личный кабинет WB/Ozon, настройки, акции, программы лояльности, документы"
+    },
+    {
+      "axis": "OPERATIONS",
+      "block": "process_automation",
+      "title": "Автоматизация процессов",
+      "description": "Таблицы, скрипты, инструменты для автоматизации рутинных операций"
+    },
+    {
+      "axis": "FINANCE",
+      "block": "unit_economics",
+      "title": "Юнит-экономика",
+      "description": "Расчёт себестоимости, маржи, точки безубыточности, P&L по товару"
+    },
+    {
+      "axis": "FINANCE",
+      "block": "pricing",
+      "title": "Ценообразование",
+      "description": "Стратегия цен, скидки, акции, влияние на маржу и позиции"
+    },
+    {
+      "axis": "FINANCE",
+      "block": "ad_budgeting",
+      "title": "Бюджетирование рекламы",
+      "description": "Расчёт рекламного бюджета, DRR, ROAS, распределение затрат"
+    },
+    {
+      "axis": "FINANCE",
+      "block": "business_planning",
+      "title": "Бизнес-планирование",
+      "description": "Стратегия масштабирования, финмодель, планирование роста, управление рисками"
+    },
+    {
+      "axis": "FINANCE",
+      "block": "cost_management",
+      "title": "Управление затратами",
+      "description": "Оптимизация расходов на логистику, хранение, комиссии, снижение себестоимости"
+    }
+  ]
+}

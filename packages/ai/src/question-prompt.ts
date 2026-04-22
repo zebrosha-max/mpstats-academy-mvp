@@ -11,8 +11,8 @@ type SkillCategory = 'ANALYTICS' | 'MARKETING' | 'CONTENT' | 'OPERATIONS' | 'FIN
  * Maps each SkillCategory to the course prefixes in content_chunk.lesson_id.
  */
 export const CATEGORY_TO_COURSES: Record<SkillCategory, string[]> = {
-  ANALYTICS: ['01_analytics'],
-  MARKETING: ['02_ads', '05_ozon'],
+  ANALYTICS: ['01_analytics', 'skill_analytics'],
+  MARKETING: ['02_ads', '05_ozon', 'skill_marketing'],
   CONTENT: ['03_ai'],
   OPERATIONS: ['04_workshops', '06_express'],
   FINANCE: ['01_analytics', '05_ozon', '04_workshops', '06_express'],
