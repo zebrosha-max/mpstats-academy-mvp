@@ -1,0 +1,162 @@
+{
+  "generated": "2026-04-22T08:21:46.421Z",
+  "matched": [
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/1.1 Ассортимент как система.mp4",
+      "lessonId": "skill_analytics_assortment_001",
+      "title": "Ассортимент как система",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 131,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/1.2 Как принимать решения по ассортименту – ABC_XYZ и матрица.mp4",
+      "lessonId": "skill_analytics_assortment_002",
+      "title": "Как принимать решения по ассортименту — ABC/XYZ и матрица",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 88,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/3.1 Вероятность продажи и ранжирование товара _ Работа с фокусными товарами, 1.mp4",
+      "lessonId": "skill_analytics_focus_products_001",
+      "title": "Вероятность продажи и ранжирование товара",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 364,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/3.2 Воронка продаж _ Работа с фокусными товарами, 2.mp4",
+      "lessonId": "skill_analytics_focus_products_002",
+      "title": "Воронка продаж",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 190,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/3.3 Анализ воронки продаж на примере реального кабинета Wildberries _ Работа с фокусными товарами, 3.mp4",
+      "lessonId": "skill_analytics_focus_products_003",
+      "title": "Анализ воронки продаж на примере реального кабинета Wildberries",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 380,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/3.4 Анализ конкурентов через инструмент «Сравнение карточек» _ Работа с фокусными товарами, 4.mp4",
+      "lessonId": "skill_analytics_focus_products_004",
+      "title": "Анализ конкурентов через инструмент «Сравнение карточек»",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 347,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/10.1 Этапы анализа ЦА _ Анализ ЦА, 1.mp4",
+      "lessonId": "skill_analytics_target_audience_001",
+      "title": "Этапы анализа ЦА",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 77,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/10.2 Скачиваем отзывы из карточек для анализа ЦА _ Анализ ЦА, 2.mp4",
+      "lessonId": "skill_analytics_target_audience_002",
+      "title": "Скачиваем отзывы из карточек для анализа ЦА",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 297,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/10.3 Анализируем отзывы с помощью нейросети _ Анализ ЦА, 3.mp4",
+      "lessonId": "skill_analytics_target_audience_003",
+      "title": "Анализируем отзывы с помощью нейросети",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 178,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Аналитика/10.4 Анализ вопросов в карточках товара _ Анализ ЦА, 4.mp4",
+      "lessonId": "skill_analytics_target_audience_004",
+      "title": "Анализ вопросов в карточках товара",
+      "courseId": "skill_analytics",
+      "fileExists": true,
+      "fileSizeMB": 533,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/1.1 SEO 2026 – как работает выдача на WB и Ozon _ Эффективная SEO-оптимизация, 1.mp4",
+      "lessonId": "skill_marketing_seo_optimization_001",
+      "title": "SEO 2026 — как работает выдача на WB и Ozon",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 207,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/1.2 Сбор SEO-ключей _ Эффективная SEO-оптимизация, 2.mp4",
+      "lessonId": "skill_marketing_seo_optimization_002",
+      "title": "Сбор SEO-ключей",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 1228,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/1.3 Правильное оформление карточки _ Эффективная SEO-оптимизация, 3.mp4",
+      "lessonId": "skill_marketing_seo_optimization_003",
+      "title": "Правильное оформление карточки",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 695,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/1.4 Проверка SEO – индексация, релевантность, ошибки _ Эффективная SEO-оптимизация, 4.mp4",
+      "lessonId": "skill_marketing_seo_optimization_004",
+      "title": "Проверка SEO — индексация, релевантность, ошибки",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 159,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/2.1 Как читать эффективность РК _ Метрики РК, 1.mp4",
+      "lessonId": "skill_marketing_ad_metrics_001",
+      "title": "Как читать эффективность РК",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 439,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/2.2 Стратегии РК _ Метрики РК, 2.mp4",
+      "lessonId": "skill_marketing_ad_metrics_002",
+      "title": "Стратегии РК",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 208,
+      "extension": ".mp4"
+    },
+    {
+      "filePath": "E:/Academy Courses/update 21.04.26/Реклама и продвижение/2.3 Анализ РК – точки просадки и корректировки _ Метрики РК.mp4",
+      "lessonId": "skill_marketing_ad_metrics_003",
+      "title": "Анализ РК — точки просадки и корректировки",
+      "courseId": "skill_marketing",
+      "fileExists": true,
+      "fileSizeMB": 341,
+      "extension": ".mp4"
+    }
+  ],
+  "stats": {
+    "total": 17,
+    "matched": 17
+  }
+}

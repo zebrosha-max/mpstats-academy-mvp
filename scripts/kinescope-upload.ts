@@ -42,12 +42,14 @@ const INIT_URL = 'https://eu-ams-uploader.kinescope.io/v2/init';
 // Kinescope folder IDs inside "MPSTATS ACADEMY" project
 // Created via API: POST /v1/projects/{project_id}/folders
 const COURSE_FOLDER_IDS: Record<string, string> = {
-  '01_analytics': '71777756-e93a-4484-87eb-570c7588640f',
-  '02_ads':       '97d2cadb-4e63-4eb5-9d50-195d71436f20',
-  '03_ai':        '639d0266-4fa8-4e0f-93e1-4128d1ba6283',
-  '04_workshops': '97b9a298-2fd9-4730-b63a-57991dbd2d0d',
-  '05_ozon':      '6d3dbe29-028c-4d13-8554-8367a91c5992',
-  '06_express':   '865be5b0-c6f7-4a44-a4da-6684dd78e695',
+  '01_analytics':    '71777756-e93a-4484-87eb-570c7588640f',
+  '02_ads':          '97d2cadb-4e63-4eb5-9d50-195d71436f20',
+  '03_ai':           '639d0266-4fa8-4e0f-93e1-4128d1ba6283',
+  '04_workshops':    '97b9a298-2fd9-4730-b63a-57991dbd2d0d',
+  '05_ozon':         '6d3dbe29-028c-4d13-8554-8367a91c5992',
+  '06_express':      '865be5b0-c6f7-4a44-a4da-6684dd78e695',
+  'skill_analytics': 'cc2bd243-b8e2-4acc-bd73-5cae517cbc1c',
+  'skill_marketing': '500cc6a8-109b-445d-9a5a-4a2b46a44a5d',
 };
 
 // Retry config
@@ -58,8 +60,11 @@ const RETRY_DELAYS_MS = [3000, 6000, 12000]; // Exponential backoff
 const UPLOAD_TIMEOUT_BASE_MS = 3 * 60 * 1000;
 const UPLOAD_TIMEOUT_PER_100MB_MS = 90 * 1000;
 
-// File paths
-const MAP_PATH = path.resolve(__dirname, 'kinescope-video-map.json');
+// File paths (--map flag overrides default map file)
+const MAP_ARG_INDEX = process.argv.indexOf('--map');
+const MAP_PATH = MAP_ARG_INDEX !== -1
+  ? path.resolve(process.argv[MAP_ARG_INDEX + 1])
+  : path.resolve(__dirname, 'kinescope-video-map.json');
 const PROGRESS_PATH = path.resolve(__dirname, 'kinescope-upload-progress.json');
 
 // CLI flags
