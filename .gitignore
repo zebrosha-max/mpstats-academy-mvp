@@ -45,3 +45,25 @@ scripts/seed/classification-results.json
 
 # Auto Claude data directory
 .auto-claude/
+
+# Design variants (non-production drafts)
+# Only V8 pages go to prod — rest stays local
+apps/web/src/app/design-demo/
+apps/web/src/app/design-uiux/
+apps/web/src/app/design-wdg/
+apps/web/src/app/design-v1/
+apps/web/src/app/design-v2/
+apps/web/src/app/design-v3/
+apps/web/src/app/design-v4/
+apps/web/src/app/design-v4a/
+apps/web/src/app/design-v4b/
+apps/web/src/app/design-new-v1/
+apps/web/src/app/design-new-v2/
+apps/web/src/app/design-new-v2-*/
+apps/web/src/app/design-new-v3/
+apps/web/src/app/design-new-v4/
+apps/web/src/app/design-new-v5/
+apps/web/src/app/design-new-v6/
+apps/web/src/app/design-new-v7/
+docs/design-export/
+scripts/export-html.mjs
