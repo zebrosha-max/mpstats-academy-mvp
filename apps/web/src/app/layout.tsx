@@ -17,10 +17,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'MPSTATS Academy — образовательная платформа для селлеров',
+    default: 'MPSTATS Academy — адаптивная платформа для селлеров WB и Ozon',
     template: '%s | MPSTATS Academy',
   },
-  description: 'Образовательная платформа для селлеров маркетплейсов. AI-диагностика навыков, персонализированный трек обучения, 400+ видеоуроков.',
+  description: 'Первая адаптивная образовательная платформа для селлеров. AI-диагностика за 10 минут, программа под твой уровень, 400+ уроков по 5 осям навыков.',
   metadataBase: new URL('https://platform.mpstats.academy'),
   verification: {
     yandex: 'ca2450fe5fe87a68',
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ru_RU',
     siteName: 'MPSTATS Academy',
-    title: 'MPSTATS Academy — образовательная платформа для селлеров',
-    description: 'AI-диагностика навыков, персонализированный трек обучения, 400+ видеоуроков для селлеров маркетплейсов.',
+    title: 'MPSTATS Academy — адаптивная платформа для селлеров WB и Ozon',
+    description: 'Первая адаптивная образовательная платформа для селлеров. AI-диагностика за 10 минут, программа под твой уровень, 400+ уроков по 5 осям навыков.',
     url: 'https://platform.mpstats.academy',
     images: [
       {
