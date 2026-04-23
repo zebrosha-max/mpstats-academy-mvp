@@ -6,6 +6,7 @@ import { LandingThemeProvider } from '@/components/shared/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { YandexMetrika } from '@koiztech/next-yandex-metrika';
 import { CookieConsent } from '@/components/shared/CookieConsent';
+import { KbdOverlay } from '@/components/shared/KbdOverlay';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -73,6 +74,7 @@ export default function RootLayout({
         </LandingThemeProvider>
         <Toaster />
         <CookieConsent />
+        <KbdOverlay />
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_YANDEX_ID && (
           <YandexMetrika
             yid={Number(process.env.NEXT_PUBLIC_YANDEX_ID)}
