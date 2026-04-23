@@ -663,3 +663,48 @@ Plans:
 - [x] 44-02-PLAN.md — Pricing page (promo input, auth header) + profile promo badge
 - [x] 44-03-PLAN.md — Admin promo page + sidebar nav
 - [ ] 44-04-PLAN.md — End-to-end verification checkpoint
+
+### Phase 48: Staging Environment — тестовый стенд для команды на VPS
+
+**Goal:** Команда видит WIP-фичи на `staging.platform.mpstats.academy` до выхода на прод. Прод не трогается при деплое staging. Shared Supabase DB с prod, изоляция через env flags и feature toggles.
+
+**Мотивация:**
+- Прод лежит 30-60 сек при `docker compose down && build && up` — страдают клиенты
+- Показать команде библиотеку, новые лендинги, AI-фичи до деплоя — негде (локаль только у разработчика)
+- Нужна возможность собрать демо-версию (например, Phase 46 Library Section через `SHOW_LIBRARY=true`)
+
+**Архитектура:**
+- `docker-compose.staging.yml` — копия prod, другой порт (3001), `.env.staging` с `NEXT_PUBLIC_STAGING=true` и фича-флагами
+- Nginx: `staging.platform.mpstats.academy` → `localhost:3001` с basic auth (пароль команде)
+- DNS: A-record `staging.platform.mpstats.academy` → 89.208.106.208
+- SSL: certbot для нового поддомена
+- Shared Supabase DB — тестовые аккаунты с префиксом `staging-*`
+- Deploy workflow: ручной `git checkout <branch> && docker compose -f docker-compose.staging.yml up -d --build` (без CI/CD)
+- Видимость в UI: жёлтая плашка «STAGING — данные реальные, не заказывайте» в header при `NEXT_PUBLIC_STAGING=true`
+- Feature flag pattern: `NEXT_PUBLIC_SHOW_LIBRARY=true` (и похожие) для включения WIP-фич на staging
+
+**Scope:**
+- Infra: docker-compose.staging.yml, nginx config для staging поддомена + basic auth, certbot SSL, DNS
+- Code: компонент `StagingBanner` в layout при `NEXT_PUBLIC_STAGING=true`; пример feature flag `NEXT_PUBLIC_SHOW_LIBRARY` в LibrarySection с учётом текущей Phase 46 работы
+- Docs: раздел «Staging workflow» в `MAAL/CLAUDE.md` + memory entry про staging деплой
+- Robots: `noindex` для staging поддомена (в дополнение к basic auth)
+- Out of scope: отдельная БД/Supabase проект, zero-downtime deploy для prod, автоматический CI/CD деплой
+
+**Риски:**
+- Регистрация на staging создаёт юзера в prod DB — договариваемся про `staging-*@mpstats.academy` префикс
+- Env var drift: STAGING-флаг случайно попадает в prod env → решение: жёстко разделённые compose файлы, разные `.env` файлы
+- `nginx -t` перед `nginx reload`, чтобы не задеть prod-конфиг
+- Фича-флаги не должны менять DB-запись или писать в prod Supabase в отличающемся от prod виде (read-path only для флагов)
+
+**Success Criteria:**
+1. `https://staging.platform.mpstats.academy` открывается с basic auth prompt
+2. После ввода пароля — копия платформы с жёлтой плашкой «STAGING» в header
+3. `NEXT_PUBLIC_SHOW_LIBRARY=true` включает Library section на staging, на prod она скрыта
+4. Деплой ветки `staging` (или любой feature-ветки) через `docker-compose.staging.yml` не трогает prod контейнер
+5. Prod продолжает работать без регрессов, `platform.mpstats.academy` возвращает 200
+6. Staging поддомен имеет валидный SSL и `X-Robots-Tag: noindex`
+7. `MAAL/CLAUDE.md` содержит раздел «Staging workflow» с командами деплоя и списком feature flags
+
+**Demo:** Phase 46 Library Section — задеплоить staging ветку с `NEXT_PUBLIC_SHOW_LIBRARY=true`, команда видит UI без трогания prod.
+
+**Plans:** TBD
