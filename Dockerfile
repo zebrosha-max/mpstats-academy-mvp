@@ -34,6 +34,12 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID=$NEXT_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID
 ENV NEXT_PUBLIC_YANDEX_ID=$NEXT_PUBLIC_YANDEX_ID
 
+# Staging-only flags — пустые на prod, передаются из docker-compose.staging.yml
+ARG NEXT_PUBLIC_STAGING
+ARG NEXT_PUBLIC_SHOW_LIBRARY
+ENV NEXT_PUBLIC_STAGING=$NEXT_PUBLIC_STAGING
+ENV NEXT_PUBLIC_SHOW_LIBRARY=$NEXT_PUBLIC_SHOW_LIBRARY
+
 # Server-side env vars needed at build time for Next.js page data collection
 # (tRPC route handler initializes Supabase/OpenRouter clients during build)
 ARG SUPABASE_SERVICE_ROLE_KEY
