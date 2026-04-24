@@ -880,12 +880,14 @@ function LearnPageInner() {
             );
           })}
 
-          {/* Library: skill-based lessons. Gate на рендер внутри компонента через runtime env-check
-              (SWC агрессивно dead-code-eliminates `=== 'true'` на этапе билда, поэтому
-              здесь рендерим безусловно — компонент сам возвращает null если флаг выключен). */}
-          <LibrarySection />
         </div>
       )}
+
+      {/* Library: skill-based lessons. Видна в обоих view (path и courses). Gate на
+          рендер и данные — внутри LibrarySection (runtime env-check + tRPC query). */}
+      <div className="mt-6">
+        <LibrarySection />
+      </div>
     </div>
   );
 }
