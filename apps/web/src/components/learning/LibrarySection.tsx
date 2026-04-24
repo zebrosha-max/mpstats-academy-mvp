@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -111,8 +111,21 @@ function BlockCard({ block, style }: { block: LibraryBlock; style: typeof AXIS_S
 }
 
 export function LibrarySection() {
-  const { data: library, isLoading } = trpc.learning.getLibrary.useQuery();
+  // Feature-flag gate at runtime (after hydrate) to avoid SWC dead-code-eliminating
+  // the whole component when NEXT_PUBLIC_SHOW_LIBRARY is compared at compile time.
+  // We read via indirect env access so the expression stays dynamic in the bundle.
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    const env = (process as unknown as { env: Record<string, string | undefined> }).env;
+    setEnabled(env.NEXT_PUBLIC_SHOW_LIBRARY === 'true');
+  }, []);
+
+  const { data: library, isLoading } = trpc.learning.getLibrary.useQuery(undefined, {
+    enabled,
+  });
   const [activeAxis, setActiveAxis] = useState<string | null>(null);
+
+  if (!enabled) return null;
 
   if (isLoading) {
     return (

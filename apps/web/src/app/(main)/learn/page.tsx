@@ -872,8 +872,10 @@ function LearnPageInner() {
             );
           })}
 
-          {/* Library: skill-based lessons. Показываем только на staging через NEXT_PUBLIC_SHOW_LIBRARY=true (см. MAAL/CLAUDE.md → Staging Workflow). */}
-          {process.env.NEXT_PUBLIC_SHOW_LIBRARY === 'true' && <LibrarySection />}
+          {/* Library: skill-based lessons. Gate на рендер внутри компонента через runtime env-check
+              (SWC агрессивно dead-code-eliminates `=== 'true'` на этапе билда, поэтому
+              здесь рендерим безусловно — компонент сам возвращает null если флаг выключен). */}
+          <LibrarySection />
         </div>
       )}
     </div>
