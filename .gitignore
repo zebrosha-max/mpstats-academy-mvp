@@ -69,3 +69,6 @@ apps/web/src/app/design-new-v6/
 apps/web/src/app/design-new-v7/
 docs/design-export/
 scripts/export-html.mjs
+
+# Local secrets (never commit)
+.secrets/
