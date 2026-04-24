@@ -6,6 +6,13 @@ const nextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../../'),
   reactStrictMode: true,
+  // Explicit env block forces Next.js to inline these at build time regardless
+  // of turbo v2 strict mode / pnpm env filtering. Read from process.env at
+  // config load time, which is before any tool can strip them.
+  env: {
+    NEXT_PUBLIC_STAGING: process.env.NEXT_PUBLIC_STAGING || '',
+    NEXT_PUBLIC_SHOW_LIBRARY: process.env.NEXT_PUBLIC_SHOW_LIBRARY || '',
+  },
   eslint: {
     // ESLint runs in CI; skip during Docker build to avoid plugin version mismatches
     ignoreDuringBuilds: true,
