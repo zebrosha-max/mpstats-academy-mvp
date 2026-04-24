@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Prisma } from '@mpstats/db';
 import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc';
 import { ensureUserProfile } from '../utils/ensure-user-profile';
@@ -138,12 +139,14 @@ export const learningRouter = router({
         'FINANCE/cost_management': { title: 'Управление затратами', description: 'Оптимизация расходов, снижение себестоимости' },
       };
 
-      // Get lessons from hidden courses (skill_*) that have video
+      // Get all lessons with skillBlocks metadata (Phase 46: moved into regular
+      // courses; skill_* courses exist but are empty holders. Filter by having
+      // skillBlocks + visible video — not by course prefix).
       const lessons = await ctx.prisma.lesson.findMany({
         where: {
           isHidden: false,
           videoId: { not: null },
-          course: { isHidden: true, id: { startsWith: 'skill_' } },
+          skillBlocks: { not: Prisma.JsonNull },
         },
         include: {
           progress: {
@@ -153,7 +156,7 @@ export const learningRouter = router({
         orderBy: { order: 'asc' },
       });
 
-      // Filter to lessons that have skillBlocks (Json field, filter in JS)
+      // Double-check skillBlocks presence (Json field semantics differ per driver)
       const lessonsWithBlocks = lessons.filter((l) => l.skillBlocks != null);
 
       if (lessonsWithBlocks.length === 0) return [];
