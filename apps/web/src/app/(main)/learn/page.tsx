@@ -872,8 +872,8 @@ function LearnPageInner() {
             );
           })}
 
-          {/* Library: skill-based lessons */}
-          <LibrarySection />
+          {/* Library: skill-based lessons. Показываем только на staging через NEXT_PUBLIC_SHOW_LIBRARY=true (см. MAAL/CLAUDE.md → Staging Workflow). */}
+          {process.env.NEXT_PUBLIC_SHOW_LIBRARY === 'true' && <LibrarySection />}
         </div>
       )}
     </div>

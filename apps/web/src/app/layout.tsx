@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { YandexMetrika } from '@koiztech/next-yandex-metrika';
 import { CookieConsent } from '@/components/shared/CookieConsent';
 import { KbdOverlay } from '@/components/shared/KbdOverlay';
+import { StagingBanner } from '@/components/shared/StagingBanner';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
@@ -69,13 +70,16 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <StagingBanner />
         <LandingThemeProvider>
           <TRPCProvider>{children}</TRPCProvider>
         </LandingThemeProvider>
         <Toaster />
         <CookieConsent />
         <KbdOverlay />
-        {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_YANDEX_ID && (
+        {process.env.NODE_ENV === 'production' &&
+          process.env.NEXT_PUBLIC_STAGING !== 'true' &&
+          process.env.NEXT_PUBLIC_YANDEX_ID && (
           <YandexMetrika
             yid={Number(process.env.NEXT_PUBLIC_YANDEX_ID)}
             clickmap={true}
