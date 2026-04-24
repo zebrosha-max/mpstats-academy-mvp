@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-04-22
+**Last updated:** 2026-04-24
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ — в `.claude/memory/`.
 > Используй `Read .claude/memory/MEMORY.md` для индекса.
@@ -17,7 +17,7 @@
 | v1.3 Pre-release | In Progress (Phases 22-36; **remaining: 28**) |
 | v1.4 QA Audit Fixes | Shipped 2026-03-29 (Phases 37-42) |
 | Phase 43 Diagnostic v2 | Shipped 2026-04-02 |
-| v1.5 Growth & Monetization | In Progress (Phase 44+45+46 shipped) |
+| v1.5 Growth & Monetization | In Progress (Phase 44+45+46+48 shipped) |
 
 **Remaining work:**
 1. Phase 28: Боевой CloudPayments (тестовые → боевые ключи)
@@ -51,7 +51,32 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-22, session 2)
+## Last Session (2026-04-23 → 2026-04-24)
+
+**Phase 48 — Staging Environment. SHIPPED + 5-layer debug incident resolved.**
+
+1. **Staging стенд на VPS 89.208.106.208** — `staging.platform.mpstats.academy` (поддомен + DNS A-record)
+   - Второй Docker-контейнер `maal-staging-web` на порту 3001 (prod остаётся 3000, не тронут)
+   - Nginx vhost с basic auth (`team` / пароль в `.secrets/staging-credentials.md` gitignored), SSL через certbot, `X-Robots-Tag: noindex`
+   - Shared Supabase DB с prod, тестовые аккаунты с префиксом `staging-*`
+   - Swap увеличен с 512 MB до 2 GB (подстраховка при parallel-билдах)
+   - Basic auth пароль: `u6M3yy4GELt1aQVOHn5U` (хранится локально в `.secrets/`)
+
+2. **Feature flag pattern** — `NEXT_PUBLIC_STAGING` (жёлтая плашка в header) + `NEXT_PUBLIC_SHOW_LIBRARY` (показывает Phase 46 Library в `/learn`). Хардкодить флаги в `docker-compose.staging.yml` `args` как literal `"true"` — substitution через `${VAR}` не работает с Next.js SWC.
+
+3. **5-layer debug incident** (3 часа, 5 rebuild) — LibrarySection не показывался. Все баги починены:
+   - Layer 1: Turbo v2 strict env mode → `turbo.json` `build.env: ["NEXT_PUBLIC_*"]`
+   - Layer 2: Compose `${VAR}` substitution ненадёжен → хардкод в args
+   - Layer 3: `ReferenceError: process is not defined` в client (мой cast сломал) → `dynamic(ssr:false)` + прямой `process.env.X`
+   - Layer 4: `getLibrary` фильтр `course.id startsWith 'skill_'` возвращал 0 (Phase 46 переместил уроки в regular courses) → фильтр по `skillBlocks != null`
+   - Layer 5: `<LibrarySection />` был только в view='courses' branch → вынес наружу ternary
+   - **Полный post-mortem** + checklist для будущих staging-флагов: `.claude/memory/project_phase48_debug_postmortem.md`
+
+4. **Commits:** `a4a2f2c`, `369a022`, `f4f27aa`, `8e09e43` (plan phase), `c56ac76`, `366ce60`, `0c89d62`, `b54f762` (48-02 code in worktree), `f0b88b7`, `3d75fa4`, `76806d1`, `efffde2` (48-01+03 deploy), `b9ad285`, `0d0d6e9`, `820b699`, `9d37091`, `9728f80`, `01e8f28`, последние — debug loop
+
+5. **Результат:** Staging работает, Library видна в `/learn` в обеих view (Мой трек + Все курсы), prod продолжает возвращать 200 OK с неизменённым container ID, команда может логиниться и смотреть фичи.
+
+### Previous Session (2026-04-22, session 2)
 
 **Phase 46 — Skill Lessons Integration + Library foundation. НЕ задеплоено (ждёт деплой).**
 

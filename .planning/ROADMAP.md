@@ -707,9 +707,11 @@ Plans:
 
 **Demo:** Phase 46 Library Section — задеплоить staging ветку с `NEXT_PUBLIC_SHOW_LIBRARY=true`, команда видит UI без трогания prod.
 
-**Plans:** 3 plans
+**Plans:** 3/3 plans executed
 
 Plans:
-- [ ] 48-01-vps-infra-PLAN.md — DNS A-record, htpasswd, nginx vhost (HTTP→SSL), certbot, basic auth + noindex (Wave 1)
-- [ ] 48-02-code-changes-PLAN.md — Dockerfile ARG/ENV, StagingBanner + unit tests, LibrarySection feature flag, Yandex Metrika guard, docker-compose.staging.yml, CLAUDE.md Staging Workflow, memory entry (Wave 1, parallel with 48-01)
-- [ ] 48-03-deploy-demo-PLAN.md — .env.staging на VPS, docker build & up, 10 smoke-проверок, Phase 46 Library demo, team signoff, VPS checkout master (Wave 2)
+- [x] 48-01-vps-infra-PLAN.md — DNS A-record, htpasswd, nginx vhost (HTTP→SSL), certbot, basic auth + noindex (Wave 1)
+- [x] 48-02-code-changes-PLAN.md — Dockerfile ARG/ENV, StagingBanner + unit tests, LibrarySection feature flag, Yandex Metrika guard, docker-compose.staging.yml, CLAUDE.md Staging Workflow, memory entry (Wave 1, parallel with 48-01)
+- [x] 48-03-deploy-demo-PLAN.md — .env.staging на VPS, docker build & up, 10 smoke-проверок, Phase 46 Library demo, team signoff, VPS checkout master (Wave 2)
+
+**Status:** Shipped 2026-04-24. Staging работает, Library feature-flag подтверждён визуально командой. 5-layer debug incident — см. `.claude/memory/project_phase48_debug_postmortem.md`.
