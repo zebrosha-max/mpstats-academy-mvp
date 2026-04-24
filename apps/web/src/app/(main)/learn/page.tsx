@@ -10,9 +10,17 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { LessonCard } from '@/components/learning/LessonCard';
 import { SearchBar } from '@/components/learning/SearchBar';
 import { FilterPanel, type FilterState } from '@/components/learning/FilterPanel';
+import dynamic from 'next/dynamic';
 import { SearchResultCard } from '@/components/learning/SearchResultCard';
 import { CourseLockBanner } from '@/components/learning/PaywallBanner';
-import { LibrarySection } from '@/components/learning/LibrarySection';
+
+// Client-only + no SSR — избегаем hydration mismatch на staging, где сервер
+// и клиент могут получить разные значения process.env.NEXT_PUBLIC_SHOW_LIBRARY
+// (сервер — runtime env, клиент — build-time inline).
+const LibrarySection = dynamic(
+  () => import('@/components/learning/LibrarySection').then((m) => m.LibrarySection),
+  { ssr: false }
+);
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 import type { LessonWithProgress } from '@mpstats/shared';
