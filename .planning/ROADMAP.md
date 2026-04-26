@@ -754,4 +754,12 @@ Plans:
 
 **Demo:** Методолог создаёт «Шаблон ABC-анализа» (CALCULATION_TABLE, XLSX upload), прикрепляет к 3 урокам. Подписчик открывает один из этих уроков — видит карточку, скачивает шаблон. Без подписки — секция не видна.
 
-**Plans:** TBD (генерируется через `/gsd-plan-phase`)
+**Plans:** 6 plans
+
+Plans:
+- [ ] 49-01-schema-storage-PLAN.md — Prisma schema (Material, LessonMaterial, MaterialType) + Storage bucket lesson-materials + smoke test signed URL
+- [ ] 49-02-trpc-router-PLAN.md — material tRPC router (9 procedures) + extend learning.getLesson + ACL unit tests
+- [ ] 49-03-ingest-PLAN.md — scripts/ingest-materials.ts (Sheet → DB dry-run + apply with dedup and fuzzy match)
+- [ ] 49-04-lesson-ui-PLAN.md — LessonMaterials section on /learn/[id] + MaterialCard + Yandex Metrika events
+- [ ] 49-05-admin-PLAN.md — /admin/content/materials list + create/edit form + multi-attach + drag-n-drop file upload
+- [ ] 49-06-polish-deploy-PLAN.md — E2E Playwright tests + cron orphan cleanup + roadmap entry + memory + production deploy
