@@ -715,3 +715,43 @@ Plans:
 - [x] 48-03-deploy-demo-PLAN.md — .env.staging на VPS, docker build & up, 10 smoke-проверок, Phase 46 Library demo, team signoff, VPS checkout master (Wave 2)
 
 **Status:** Shipped 2026-04-24. Staging работает, Library feature-flag подтверждён визуально командой. 5-layer debug incident — см. `.claude/memory/project_phase48_debug_postmortem.md`.
+
+### Phase 49: Lesson Materials — полезные материалы (презентации, таблицы, чек-листы) к урокам
+
+**Goal:** Дать клиентам доступ к учебным материалам, привязанным к урокам (презентации, таблицы расчётов, чек-листы, памятки, ссылки на доп.сервисы). Дать методологам админку для управления.
+
+**Мотивация:**
+- Клиенты спрашивают про материалы, которые упоминаются в видео и были на прошлой LMS
+- Методологи отдали Google Sheet с 120 материалами на ~65 уроков (далеко не все 422)
+- Без админки методологи зависят от разработки для каждой правки
+
+**Архитектура:**
+- Prisma schema: `Material` + `LessonMaterial` (many-to-many), `MaterialType` enum (5 значений: PRESENTATION, CALCULATION_TABLE, EXTERNAL_SERVICE, CHECKLIST, MEMO)
+- Гибрид storage: `externalUrl` (Google Drive) или `storagePath` (Supabase Storage bucket `lesson-materials`, private, signed URLs TTL 1ч)
+- One-shot ingest: `scripts/ingest-materials.ts` (Sheet → DB с дедупом и fuzzy-match)
+- tRPC router `material` (CRUD + attach/detach + signed URLs)
+- UI секция «Материалы к уроку» на `/learn/[id]` (карточки с иконками по типу)
+- Админка `/admin/content/materials` (список, create/edit, multi-attach, drag-n-drop upload)
+- Доступ: гейтинг материалов = гейтинг урока (залоченный урок → секция не рендерится)
+
+**Scope:**
+- Schema + миграция, Storage bucket setup, ingest скрипт, tRPC router, расширение `learning.getLesson`, UI секция на странице урока, админка, Yandex Metrika events (`MATERIAL_OPEN`, `MATERIAL_SECTION_VIEW`), cron на orphan-файлы
+- Out of scope: RAG-индексация контента материалов (отрезано как overengineering), каталог standalone-материалов в Library, bulk-импорт через CSV в админке, версионность, health-check внешних ссылок, watermark/PDF protection
+
+**Риски:**
+- Имена уроков в Sheet ≠ `Lesson.title` в БД — fuzzy match + dry-run отчёт unmatched
+- Methodologist загружает 50MB-файл — hard limit 25 MB на frontend + serverside
+- External Drive ссылки технически открыты «всем по ссылке» — известный компромисс, контроль через не-отображение залоченным юзерам
+- Migration order: schema migration ПЕРЕД rebuild docker (`feedback_schema_migration_order.md`)
+
+**Success Criteria:**
+1. 120 материалов из Sheet залиты в БД с корректным mapping к урокам (unmatched < 10, согласованы с методологами)
+2. Методолог в админке `/admin/content/materials` создаёт новый материал с загрузкой файла, прикрепляет к нескольким урокам через multi-select
+3. Юзер с подпиской на странице урока видит секцию «Материалы к уроку» с карточками, клик открывает signed URL / external URL
+4. Залоченный урок (без подписки, order > 2) — секция «Материалы» не рендерится, signed URL запрос возвращает FORBIDDEN
+5. Yandex Metrika получает события `MATERIAL_OPEN` и `MATERIAL_SECTION_VIEW`
+6. Запись в `/roadmap` (публичный changelog) от первого лица — клиенты узнают о фиче
+
+**Demo:** Методолог создаёт «Шаблон ABC-анализа» (CALCULATION_TABLE, XLSX upload), прикрепляет к 3 урокам. Подписчик открывает один из этих уроков — видит карточку, скачивает шаблон. Без подписки — секция не видна.
+
+**Plans:** TBD (генерируется через `/gsd-plan-phase`)
