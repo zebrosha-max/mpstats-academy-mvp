@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Users,
   BookOpen,
+  FileText,
   MessageSquare,
   BarChart3,
   Ticket,
@@ -36,6 +37,12 @@ const navItems = [
     title: 'Content',
     href: '/admin/content',
     icon: BookOpen,
+    superadminOnly: false,
+  },
+  {
+    title: 'Materials',
+    href: '/admin/content/materials',
+    icon: FileText,
     superadminOnly: false,
   },
   {
