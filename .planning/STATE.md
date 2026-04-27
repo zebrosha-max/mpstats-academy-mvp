@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
-status: Ready to execute
-stopped_at: Completed 42-01-PLAN.md
-last_updated: "2026-04-26T20:47:28.736Z"
+status: Executing Phase 49
+stopped_at: Completed 49-01-PLAN.md
+last_updated: "2026-04-27T05:59:34Z"
 progress:
   total_phases: 27
   completed_phases: 23
-  total_plans: 49
-  completed_plans: 46
+  total_plans: 50
+  completed_plans: 47
   percent: 94
 ---
 
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 42 — diagnostic-prompt-tuning
+**Current focus:** Phase 49 — lesson-materials
 
 ## Current Position
 
-Phase: 42
-Plan: Not started
+Phase: 49 (lesson-materials) — EXECUTING
+Plan: 2 of 6 (next: 49-02-trpc-router)
 
 ## Performance Metrics
 
@@ -134,6 +134,11 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [Phase 40]: Session-scoped useRef<Set> guard for one-time auto-start effects (tour)
 - [Phase 41]: COURSE_AXIS_MAP hardcoded mapping (no DB query) since course-to-axis relationship is stable
 - [Phase 42]: Prompt-only change, no code logic modifications — 6 rule blocks added to buildSystemPrompt from Mila QA review
+- [49-01]: Гибрид externalUrl/storagePath на одной таблице Material — XOR валидируется в Zod на уровне tRPC, не CHECK constraint
+- [49-01]: order Int на join LessonMaterial, не на Material — один материал может быть «3-м» в одном уроке и «1-м» в другом
+- [49-01]: Bucket lesson-materials private + zero RLS — весь доступ через service_role в material.getSignedUrl (Wave 2)
+- [49-01]: MIME whitelist на bucket-уровне дублирует frontend whitelist (defense in depth, D-12)
+- [49-01]: Phase 49 константы в @mpstats/shared, не в db — UI и tRPC импортируют без затягивания Prisma client
 
 ### Blockers/Concerns
 
@@ -209,11 +214,12 @@ None.
 | Phase 40 P01 | 3min | 2 tasks | 2 files |
 | Phase 41 P01 | 2min | 2 tasks | 3 files |
 | Phase 42 P01 | 3min | 2 tasks | 1 files |
+| 49    | 01   | 31min    | 3     | 3     |
 
 ## Session Continuity
 
-Last session: 2026-03-27T12:35:59.661Z
-Stopped at: Completed 42-01-PLAN.md
+Last session: 2026-04-27T05:59:34Z
+Stopped at: Completed 49-01-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 

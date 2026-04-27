@@ -756,8 +756,10 @@ Plans:
 
 **Plans:** 6 plans
 
+**Plans:** 1/6 plans complete
+
 Plans:
-- [ ] 49-01-schema-storage-PLAN.md — Prisma schema (Material, LessonMaterial, MaterialType) + Storage bucket lesson-materials + smoke test signed URL
+- [x] 49-01-schema-storage-PLAN.md — Prisma schema (Material, LessonMaterial, MaterialType) + Storage bucket lesson-materials + smoke test signed URL
 - [ ] 49-02-trpc-router-PLAN.md — material tRPC router (9 procedures) + extend learning.getLesson + ACL unit tests
 - [ ] 49-03-ingest-PLAN.md — scripts/ingest-materials.ts (Sheet → DB dry-run + apply with dedup and fuzzy match)
 - [ ] 49-04-lesson-ui-PLAN.md — LessonMaterials section on /learn/[id] + MaterialCard + Yandex Metrika events
