@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
 status: Executing Phase 49
-stopped_at: Completed 49-04-PLAN.md
-last_updated: "2026-04-27T08:05:00Z"
+stopped_at: Completed 49-05-PLAN.md
+last_updated: "2026-04-27T08:48:00Z"
 progress:
   total_phases: 27
   completed_phases: 23
   total_plans: 51
-  completed_plans: 50
-  percent: 98
+  completed_plans: 51
+  percent: 100
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 49 (lesson-materials) — EXECUTING
-Plan: 5 of 6 (next: 49-05-admin-panel)
+Plan: 6 of 6 (next: 49-06-polish-deploy)
 
 ## Performance Metrics
 
@@ -150,6 +150,11 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [49-03]: «нет»-marker rows skipped silently (not parse errors) — methodologist convention for "lesson has no material"
 - [49-03]: Multi-variant title indexing (full + before-pipe + after-pipe + base-normalized) — boosts match rate 70%→87%
 - [49-03]: Force-commit ingest-results past .gitignore for one-shot prod write audit trail
+- [49-05]: Native <label> вместо shadcn Label — компонента нет в ui/, паттерн уже виден в admin/promo
+- [49-05]: In-memory lesson filter в LessonMultiAttach (~422 уроков) — отдельный searchLessonsForAttach endpoint избыточен
+- [49-05]: XHR PUT (не fetch) для upload progress events — fetch не имеет upload progress API
+- [49-05]: Один [id]/page.tsx для create+edit (params.id === 'new' as discriminator)
+- [49-05]: Inline confirmation modal без shadcn Dialog — паттерн HideConfirmDialog уже в codebase
 
 ### Blockers/Concerns
 
@@ -228,11 +233,12 @@ None.
 | 49    | 01   | 31min    | 3     | 3     |
 | 49    | 02   | 6min     | 3     | 8     |
 | 49    | 03   | 12min    | 2     | 9     |
+| 49    | 05   | 38min    | 3     | 7     |
 
 ## Session Continuity
 
-Last session: 2026-04-27T07:35:00Z
-Stopped at: Completed 49-03-PLAN.md (62 Material + 97 LessonMaterial in prod, 16 unmatched documented for methodologists in 49-03-NOTES.md)
+Last session: 2026-04-27T08:48:00Z
+Stopped at: Completed 49-05-PLAN.md (admin CRUD UI for materials: list page, create/edit form with XOR source toggle, drag-n-drop file upload via signed PUT URL, multi-attach combobox, sidebar nav entry — methodologists can now manage 62+ materials autonomously)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
