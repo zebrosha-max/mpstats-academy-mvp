@@ -150,6 +150,7 @@ model Lesson {
 
   course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   progress LessonProgress[]
+  materials LessonMaterial[]
   // ContentChunk связь через lessonId (lesson_id) без FK
 
   @@index([isHidden])
@@ -381,6 +382,53 @@ model LessonComment {
 
   @@index([lessonId, createdAt(sort: Desc)])
   @@index([parentId])
+}
+
+// ============== LESSON MATERIALS ==============
+
+enum MaterialType {
+  PRESENTATION
+  CALCULATION_TABLE
+  EXTERNAL_SERVICE
+  CHECKLIST
+  MEMO
+}
+
+model Material {
+  id            String       @id @default(cuid())
+  type          MaterialType
+  title         String
+  description   String?      @db.Text
+  ctaText       String       // Текст кнопки: "Скачать", "Открыть таблицу", "Перейти" и т.п.
+  externalUrl   String?      // Google Drive / Sheets / external service URL
+  storagePath   String?      // Supabase Storage path: "{type}/{id}/{filename}"
+  fileSize      Int?         // bytes (только для storagePath)
+  fileMimeType  String?      // только для storagePath
+  isStandalone  Boolean      @default(false) // D-04: задел под Library, в этой фазе не используется
+  isHidden      Boolean      @default(false) // D-05: soft-delete
+  createdBy     String       // userId автора (методолог/админ)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  lessons       LessonMaterial[]
+
+  @@index([type, isHidden])
+  @@index([isHidden])
+}
+
+model LessonMaterial {
+  id          String    @id @default(cuid())
+  lessonId    String
+  materialId  String
+  order       Int       @default(0) // D-06: order на join, не на Material
+  attachedAt  DateTime  @default(now())
+
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  material    Material  @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, materialId])
+  @@index([lessonId])
+  @@index([materialId])
 }
 
 // ============== AI CACHE ==============
