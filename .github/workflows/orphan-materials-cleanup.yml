@@ -1,0 +1,19 @@
+name: Orphan Materials Cleanup
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 03:00 UTC daily = 06:00 МСК (Phase 49 D-13)
+  workflow_dispatch: {}  # Manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger orphan-materials cron endpoint
+        run: |
+          curl -fsSL --max-time 600 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$SITE_URL/api/cron/orphan-materials" \
+            || echo "Warning: orphan-materials cleanup failed"
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
