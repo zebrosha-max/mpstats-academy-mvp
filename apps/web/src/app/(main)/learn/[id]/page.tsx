@@ -13,6 +13,7 @@ import { DiagnosticHint } from '@/components/diagnostic/DiagnosticHint';
 import { LockOverlay } from '@/components/learning/LockOverlay';
 import { PaywallBanner } from '@/components/learning/PaywallBanner';
 import { CollapsibleSummary } from '@/components/learning/CollapsibleSummary';
+import { LessonMaterials } from '@/components/learning/LessonMaterials';
 import { trpc } from '@/lib/trpc/client';
 import { reachGoal } from '@/lib/analytics/metrika';
 import { METRIKA_GOALS } from '@/lib/analytics/constants';
@@ -674,6 +675,11 @@ export default function LessonPage() {
                 })()}
               </CollapsibleSummary>
             </div>
+          )}
+
+          {/* Phase 49 — Lesson Materials (between summary and lesson-info, per D-26) */}
+          {data?.materials && (
+            <LessonMaterials materials={data.materials} lessonId={lessonId} />
           )}
 
           {/* Lesson info */}
