@@ -51,7 +51,21 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-23 → 2026-04-24)
+## Last Session (2026-04-27)
+
+**Phase 49 — Lesson Materials. SHIPPED.**
+
+1. **Schema + Storage (49-01)** — `Material` / `LessonMaterial` / `MaterialType` enum в Prisma; bucket `lesson-materials` private, 25 MB hard limit, MIME whitelist (PDF / XLSX / DOCX / CSV); `prisma db push` ПЕРЕД docker rebuild (recurring Phase 28 lesson).
+2. **tRPC router (49-02)** — 9 procedures (`list/getById/create/update/delete/attach/detach/requestUploadUrl/getSignedUrl`), 8 admin + 1 protected; ACL: `getSignedUrl` проверяет access к ≥1 прикреплённому уроку; locked lesson → `materials: []` в payload (даже названия не утекают).
+3. **Ingest (49-03)** — `scripts/ingest-materials.ts`, dry-run + apply, ~120 строк Google Sheet → 62 unique Material + 97 LessonMaterial links на ~50 уроках; дедуп по `(title, normalizedUrl)` с trim (D-49); fuzzy match (кавычки, тире, split `|`, ILIKE fallback); идемпотентный; Sentry custom span на блок урока (D-43); 16 unmatched в `49-03-NOTES.md` для ручной привязки.
+4. **Lesson UI (49-04)** — секция «Материалы к уроку» между summary и навигацией (D-26); `MaterialCard` с иконкой по типу + accent-цветом (5 type configs); locked lesson не рендерит секцию (D-29); Yandex Metrika `MATERIAL_OPEN` + `MATERIAL_SECTION_VIEW` (Intersection Observer one-shot).
+5. **Admin (49-05)** — `/admin/content/materials` список с фильтрами + create/edit с XOR (URL XOR upload); drag-n-drop file upload через signed PUT URL прямо в Storage (минует Next.js body limit); Combobox для multi-attach; «Materials» в AdminSidebar между Content и Comments.
+6. **Polish (49-06)** — E2E Playwright тесты (3 сценария, env-var gated), cron `/api/cron/orphan-materials` (раз в сутки 03:00 UTC, удаляет файлы старше 24h без DB ref, Sentry checkin slug `orphan-materials`), запись в публичный `/roadmap` от первого лица, memory entry, **гайд методолога `docs/admin-guides/lesson-materials.md` (D-47)**, deploy на прод.
+
+**Commits:** `a0ea1df` (cron + E2E), плюс серия предыдущих волн (49-01..49-05, см. `.planning/phases/49-lesson-materials/`).
+**Результат:** Методологи получили автономную админку с инструкцией, юзеры с подпиской видят материалы под видео, без подписки — секция вообще не рендерится. Первая UI-фича где Storage используется не для аватаров.
+
+### Previous Session (2026-04-23 → 2026-04-24)
 
 **Phase 48 — Staging Environment. SHIPPED + 5-layer debug incident resolved.**
 
