@@ -754,9 +754,9 @@ Plans:
 
 **Demo:** Методолог создаёт «Шаблон ABC-анализа» (CALCULATION_TABLE, XLSX upload), прикрепляет к 3 урокам. Подписчик открывает один из этих уроков — видит карточку, скачивает шаблон. Без подписки — секция не видна.
 
-**Plans:** 6 plans
+**Plans:** 6/6 plans complete
 
-**Plans:** 5/6 plans complete
+**Status:** Shipped 2026-04-27. На прод — 62 Material + 94 LessonMaterial в курсе «Аналитика для маркетплейсов» (3 spillover-привязки откатили после ingest fuzzy-match). 18 материалов ждут ручной привязки методологом через админку — детали в `.planning/phases/49-lesson-materials/49-03-NOTES.md`.
 
 Plans:
 - [x] 49-01-schema-storage-PLAN.md — Prisma schema (Material, LessonMaterial, MaterialType) + Storage bucket lesson-materials + smoke test signed URL
@@ -764,4 +764,4 @@ Plans:
 - [x] 49-03-ingest-PLAN.md — scripts/ingest-materials.ts (Sheet → DB dry-run + apply with dedup and fuzzy match)
 - [x] 49-04-lesson-ui-PLAN.md — LessonMaterials section on /learn/[id] + MaterialCard + Yandex Metrika events
 - [x] 49-05-admin-PLAN.md — /admin/content/materials list + create/edit form + multi-attach + drag-n-drop file upload
-- [ ] 49-06-polish-deploy-PLAN.md — E2E Playwright tests + cron orphan cleanup + roadmap entry + memory + production deploy
+- [x] 49-06-polish-deploy-PLAN.md — E2E Playwright tests + cron orphan cleanup + roadmap entry + memory + production deploy
