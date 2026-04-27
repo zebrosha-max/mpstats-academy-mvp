@@ -139,7 +139,23 @@
 | Matched | 103 |
 | Materials created (unique) | 62 |
 | LessonMaterial links created | 97 (apply показал 103, но 6 пар свернулись через composite unique key — это норма, разные строки Sheet'а указывали на один и тот же урок через fuzzy match) |
+| LessonMaterial links после rollback | **94** (3 spillover-привязки удалены вручную после ingest, см. ниже) |
 | Unmatched groups | 10 |
 | Unmatched materials | 16 |
 | Idempotency | OK (повторный apply: 0 created, 103 dedup, links unchanged at 97) |
 | Sentry spans | disabled (SENTRY_DSN не задан в локальном .env, на VPS будет ENABLED при следующем запуске) |
+
+## Rollback spillover-привязок (27.04.2026, после ingest)
+
+Контент Насти — только для курса «Аналитика для маркетплейсов». Fuzzy-матч склеил 3 материала с уроками из других курсов по совпадению названий («Юнит-экономика», «Воронка продаж»). Удалили вручную через `prisma.lessonMaterial.deleteMany` по id:
+
+| Линка (id) | Урок | Материал | Причина |
+|---|---|---|---|
+| `cmogvkpdx0012aid4z566sx19` | `02_ads_m04_ads_economics_001` (Юнит-экономика, курс «Реклама») | «Юнит-экономика: погружение в ключевые показатели» | spillover — материал был для аналитики |
+| `cmogvkpyg0015aid4omjqzjnn` | `02_ads_m04_ads_economics_001` | «Глоссарий по теме „Юнит-экономика"» | spillover — материал был для аналитики |
+| `cmogvkmpy000paid4c6v52lns` | `05_ozon_m03_promotion_001` (Воронка продаж, курс «OZON») | «Воронка продаж: CTR, CR и точки отвалов» | spillover — материал есть и в 2 уроках аналитики, OZON-привязка лишняя |
+
+**Состояние после rollback:**
+- LessonMaterial: 94 (было 97)
+- Material: 62 (не изменилось — Material записи остались, только связи разорвали)
+- 2 «Юнит-экономика» материала теперь orphan (не привязаны ни к одному уроку) — методолог при необходимости привяжет к нужному аналитическому уроку через админку.
