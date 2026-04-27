@@ -16,7 +16,10 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Fire pa_registration_completed for first-time email confirmation
+      // Fire pa_registration_completed for first-time email confirmation;
+      // also salvage the promo flow if `?next=/pricing?promo=...` was lost
+      // (PKCE cookie missing in mail-client browser, /resend without redirect_to, etc.)
+      let salvagedNext: string | null = null;
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -32,12 +35,16 @@ export async function GET(request: Request) {
               phone: user.user_metadata?.phone || '',
             }).catch(err => console.error('[Auth] Welcome email failed:', err));
           }
+          const pendingPromo = user.user_metadata?.pending_promo;
+          if (typeof pendingPromo === 'string' && pendingPromo.length > 0 && !next.includes('promo=')) {
+            salvagedNext = `/pricing?promo=${encodeURIComponent(pendingPromo)}`;
+          }
         }
       } catch (err) {
         console.error('[Auth] Registration completed event error:', err);
       }
 
-      return NextResponse.redirect(new URL(next, origin));
+      return NextResponse.redirect(new URL(salvagedNext ?? next, origin));
     }
   }
 

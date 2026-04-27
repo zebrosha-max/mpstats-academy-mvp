@@ -33,6 +33,21 @@ export default async function MainLayout({
     redirect('/login');
   }
 
+  // Salvage net for users whose DOI redirect lost `?next=/pricing?promo=...`
+  // (PKCE cookie missing in mobile mail-client browser, /resend without redirect_to,
+  // etc.). The promo lives in user_metadata.pending_promo from signup time —
+  // bounce them to /pricing?promo= until they activate (or buy a subscription).
+  const pendingPromo = user.user_metadata?.pending_promo;
+  if (typeof pendingPromo === 'string' && pendingPromo.length > 0) {
+    const activeSub = await prisma.subscription.findFirst({
+      where: { userId: user.id, status: { in: ['ACTIVE', 'PAST_DUE'] } },
+      select: { id: true },
+    });
+    if (!activeSub) {
+      redirect(`/pricing?promo=${encodeURIComponent(pendingPromo)}`);
+    }
+  }
+
   // Fetch UserProfile for UserNav (single source of truth per D-04, D-05)
   const profile = await prisma.userProfile.findUnique({
     where: { id: user.id },

@@ -162,6 +162,16 @@ export const promoRouter = router({
         return subscription;
       });
 
+      // Strip pending_promo from auth metadata so the (main) layout salvage net
+      // doesn't loop the user back to /pricing on the next request, and so a
+      // future promo-flow signup wouldn't incorrectly inherit a stale code.
+      // Fire-and-forget — promo activation is the source of truth.
+      ctx.prisma
+        .$executeRaw`UPDATE auth.users SET raw_user_meta_data = raw_user_meta_data - 'pending_promo' WHERE id = ${userId}::uuid`
+        .catch((err: unknown) =>
+          console.error('[promo] failed to clear pending_promo for', userId, err),
+        );
+
       // CQ event pa_promo_activated fired from frontend after successful response
       return {
         success: true,
