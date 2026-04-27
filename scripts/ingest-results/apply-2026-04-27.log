@@ -1,0 +1,25 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+[ingest] Mode: APPLY (write to DB)
+[ingest] Sentry: disabled (no DSN)
+[ingest] Reading sheet 1xs0TkCrvu4IJ2MgLXYIF7oag501Orb4XFco4aIStsp0 tab "Доп материалы к урокам"…
+npm warn Unknown env config "manage-package-manager-versions". This will stop working in the next major version of npm.
+Using keyring backend: keyring
+[ingest] Read 398 data rows from sheet
+[ingest] Parsed 119 material entries (skipped 1 "нет"-marker rows)
+[ingest] Loaded 422 lessons from DB (579 unique title variants)
+[ingest] Applying 103 matched materials…
+[ingest] DONE: {
+  mode: 'apply',
+  sheetId: '1xs0TkCrvu4IJ2MgLXYIF7oag501Orb4XFco4aIStsp0',
+  tab: 'Доп материалы к урокам',
+  totalSheetDataRows: 398,
+  skippedNoMaterialMarkers: 1,
+  parsedMaterials: 119,
+  matchedMaterials: 103,
+  unmatchedLessonGroups: 10,
+  unmatchedMaterials: 16,
+  materialsCreated: 62,
+  duplicatesSkipped: 41,
+  linksCreated: 103,
+  finishedAt: '2026-04-27T07:29:08.920Z'
+}
