@@ -10,6 +10,7 @@ import {
   handleCancellation,
   handleRecurrentEvent,
   handleCheck,
+  enrichPayloadWithDbLookup,
 } from '@/lib/cloudpayments/subscription-service';
 import {
   parseWebhookBody,
@@ -134,9 +135,14 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(OK);
         }
 
+        // CP recurrent attempts arrive without `InvoiceId` (only `SubscriptionId`),
+        // so before the pure normalizer runs we resolve our id via DB lookup on
+        // `cpSubscriptionId`. See subscription-service for full context.
+        const enrichedPayload = await enrichPayloadWithDbLookup(payload);
+
         // --- Check event: pre-payment validation ---
         if (eventType === 'check') {
-          const event = normalizePaymentEvent(payload);
+          const event = normalizePaymentEvent(enrichedPayload);
           if (!event) {
             console.warn(
               '[CloudPayments] check payload missing required fields, declining',
@@ -151,7 +157,7 @@ export async function POST(request: NextRequest) {
         }
 
         // --- Payment events (pay/fail/refund/cancel) ---
-        const event = normalizePaymentEvent(payload);
+        const event = normalizePaymentEvent(enrichedPayload);
         if (!event) {
           console.error(
             `[CloudPayments] ${eventType} payload missing required fields`,

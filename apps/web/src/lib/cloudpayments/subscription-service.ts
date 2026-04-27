@@ -5,7 +5,45 @@ import {
   sendCancellationEmail,
 } from '@/lib/carrotquest/emails';
 import { decideRecurrentUpdate } from './decide-recurrent-update';
-import type { NormalizedRecurrentEvent } from './parse-webhook';
+import type { NormalizedRecurrentEvent, RawWebhookPayload } from './parse-webhook';
+
+/**
+ * On tokenized recurrent charges CP delivers `check`/`pay`/`fail` payloads with
+ * `InvoiceId: null` and only the CP-side `SubscriptionId` (`sc_xxx`) populated.
+ * The pure resolver in parse-webhook.ts has no DB access, so we fall back here
+ * to look up our internal Subscription by its unique `cpSubscriptionId` and
+ * inject the resolved id back into the payload as `InvoiceId` — which lets the
+ * existing pure normalizer succeed without further changes downstream.
+ *
+ * Without this fallback recurrent payments are 100% rejected at `check` →
+ * CP marks the subscription `Rejected` after the very first attempt → our
+ * recurrent webhook flips the row to `CANCELLED`. Discovered 2026-04-27 from
+ * a real failed boevoy charge (CP `Reason: CheckResponseNotAccepted`).
+ */
+export async function enrichPayloadWithDbLookup(
+  payload: RawWebhookPayload,
+): Promise<RawWebhookPayload> {
+  if (payload.InvoiceId || payload.ExternalId) return payload;
+  if (payload.Data) {
+    try {
+      const data = JSON.parse(payload.Data) as { ourSubscriptionId?: unknown };
+      if (typeof data.ourSubscriptionId === 'string' && data.ourSubscriptionId) {
+        return payload;
+      }
+    } catch {
+      // fall through to cpSubscriptionId lookup
+    }
+  }
+  if (!payload.SubscriptionId) return payload;
+
+  const sub = await prisma.subscription.findUnique({
+    where: { cpSubscriptionId: payload.SubscriptionId },
+    select: { id: true },
+  });
+  if (!sub) return payload;
+
+  return { ...payload, InvoiceId: sub.id };
+}
 
 /**
  * Subscription lifecycle state machine for CloudPayments webhook events.
