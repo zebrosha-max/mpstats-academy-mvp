@@ -564,6 +564,23 @@ export const learningRouter = router({
             progress: {
               where: { path: { userId: ctx.user.id } },
             },
+            materials: {
+              where: { material: { isHidden: false } },
+              orderBy: { order: 'asc' },
+              include: {
+                material: {
+                  select: {
+                    id: true,
+                    type: true,
+                    title: true,
+                    description: true,
+                    ctaText: true,
+                    externalUrl: true,
+                    storagePath: true,
+                  },
+                },
+              },
+            },
           },
         });
 
@@ -609,6 +626,17 @@ export const learningRouter = router({
           totalLessonsInCourse: courseLessons.length,
           currentLessonNumber: currentIndex + 1,
           hasPlatformSubscription: access.hasPlatformSubscription,
+          // D-37: locked lesson → empty materials, не утекают даже метаданные
+          materials: locked ? [] : lesson.materials.map((lm) => ({
+            id: lm.material.id,
+            type: lm.material.type,
+            title: lm.material.title,
+            description: lm.material.description,
+            ctaText: lm.material.ctaText,
+            externalUrl: lm.material.externalUrl,
+            hasFile: Boolean(lm.material.storagePath), // не отдаём path клиенту
+            order: lm.order,
+          })),
         };
       } catch (error) {
         handleDatabaseError(error);
