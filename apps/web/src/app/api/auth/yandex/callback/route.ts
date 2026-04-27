@@ -40,18 +40,27 @@ export async function GET(request: Request): Promise<Response> {
     const userInfo = await provider.getUserInfo(accessToken);
 
     // 6. Find or create Supabase user
+    //
+    // Lookup via raw SQL on auth.users — `admin.auth.admin.listUsers()` paginates
+    // (default perPage=50) and silently misses everyone past the first page,
+    // which broke Yandex login for all existing users on prod once the user
+    // count crossed 50 (incident 2026-04-27, 422 email_exists from createUser).
     const admin = getSupabaseAdmin();
 
-    const { data: listData } = await admin.auth.admin.listUsers();
-    const existingUser = listData?.users?.find(
-      (u) => u.email === userInfo.email
-    );
-    const isNewUser = !existingUser;
+    const existingRows = await prisma.$queryRaw<Array<{ id: string; email: string }>>`
+      SELECT id::text AS id, email
+      FROM auth.users
+      WHERE email = ${userInfo.email}
+      LIMIT 1
+    `;
+    const isNewUser = existingRows.length === 0;
 
-    let supabaseUser;
+    let supabaseUserId: string;
+    let supabaseUserEmail: string;
 
-    if (existingUser) {
-      supabaseUser = existingUser;
+    if (existingRows.length > 0) {
+      supabaseUserId = existingRows[0].id;
+      supabaseUserEmail = existingRows[0].email;
     } else {
       const { data: createData, error: createError } =
         await admin.auth.admin.createUser({
@@ -73,14 +82,15 @@ export async function GET(request: Request): Promise<Response> {
         );
       }
 
-      supabaseUser = createData.user;
+      supabaseUserId = createData.user.id;
+      supabaseUserEmail = createData.user.email!;
     }
 
     // 7. Generate Supabase session via magiclink trick
     const { data: linkData, error: linkError } =
       await admin.auth.admin.generateLink({
         type: 'magiclink',
-        email: supabaseUser.email!,
+        email: supabaseUserEmail,
       });
 
     if (linkError || !linkData) {
@@ -113,13 +123,13 @@ export async function GET(request: Request): Promise<Response> {
     let profilePhone: string | null = null;
     try {
       const upserted = await prisma.userProfile.upsert({
-        where: { id: supabaseUser.id },
+        where: { id: supabaseUserId },
         update: {
           yandexId: userInfo.id,
           ...(userInfo.phone ? { phone: userInfo.phone } : {}),
         },
         create: {
-          id: supabaseUser.id,
+          id: supabaseUserId,
           name: userInfo.name,
           yandexId: userInfo.id,
           phone: userInfo.phone,
