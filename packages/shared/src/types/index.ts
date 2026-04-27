@@ -316,3 +316,34 @@ export const formatTimecode = (seconds: number): string => {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
+
+// ============== LESSON MATERIALS (Phase 49) ==============
+
+export const MATERIAL_TYPE_VALUES = [
+  'PRESENTATION',
+  'CALCULATION_TABLE',
+  'EXTERNAL_SERVICE',
+  'CHECKLIST',
+  'MEMO',
+] as const;
+
+export type MaterialTypeValue = (typeof MATERIAL_TYPE_VALUES)[number];
+
+export const MATERIAL_TYPE_LABELS: Record<MaterialTypeValue, string> = {
+  PRESENTATION: 'Презентация',
+  CALCULATION_TABLE: 'Таблица расчётов',
+  EXTERNAL_SERVICE: 'Внешний сервис',
+  CHECKLIST: 'Чек-лист',
+  MEMO: 'Памятка',
+};
+
+export const MATERIAL_ALLOWED_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+  'text/csv',
+] as const;
+
+export const MATERIAL_MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB (D-12)
+export const MATERIAL_SIGNED_URL_TTL = 3600; // 1 hour (D-10)
+export const MATERIAL_STORAGE_BUCKET = 'lesson-materials';
