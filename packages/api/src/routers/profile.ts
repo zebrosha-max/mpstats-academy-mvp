@@ -397,6 +397,32 @@ export const profileRouter = router({
       }
     }),
 
+  // Mark a tour as completed for the current user (idempotent).
+  // Stored per-user so onboarding doesn't restart on a new device.
+  markTourCompleted: protectedProcedure
+    .input(z.object({ page: z.enum(['dashboard', 'learn', 'lesson']) }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ensureUserProfile(ctx.prisma, ctx.user);
+        const profile = await ctx.prisma.userProfile.findUnique({
+          where: { id: ctx.user.id },
+          select: { toursCompleted: true },
+        });
+        const current = profile?.toursCompleted ?? [];
+        if (current.includes(input.page)) {
+          return { toursCompleted: current };
+        }
+        const updated = await ctx.prisma.userProfile.update({
+          where: { id: ctx.user.id },
+          data: { toursCompleted: [...current, input.page] },
+          select: { toursCompleted: true },
+        });
+        return { toursCompleted: updated.toursCompleted };
+      } catch (error) {
+        handleDatabaseError(error);
+      }
+    }),
+
   // Update notification settings (mock — no Settings model in schema)
   updateSettings: protectedProcedure
     .input(

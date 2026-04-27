@@ -12,6 +12,7 @@ import {
   getSteps,
   tourConfig,
 } from '@/lib/tours/definitions';
+import { trpc } from '@/lib/trpc/client';
 
 interface TourContextValue {
   startTour: (page: TourPage) => void;
@@ -31,36 +32,76 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const hasAutoStartedRef = useRef<Set<TourPage>>(new Set());
 
-  const startTour = useCallback((page: TourPage) => {
-    const isMobile = !window.matchMedia('(min-width: 768px)').matches;
-    const key = getLocalStorageKey(page);
-    const steps = getSteps(page, isMobile);
+  // Source of truth: per-user `toursCompleted` from DB.
+  // localStorage is kept as a per-device cache that prevents a tour flash
+  // before the profile query resolves on the very first render.
+  const { data: profile } = trpc.profile.get.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const utils = trpc.useUtils();
+  const markCompleted = trpc.profile.markTourCompleted.useMutation({
+    onSuccess: () => {
+      void utils.profile.get.invalidate();
+    },
+  });
 
-    const driverObj = driver({
-      showProgress: true,
-      steps,
-      progressText: tourConfig.progressText,
-      nextBtnText: tourConfig.nextBtnText,
-      prevBtnText: tourConfig.prevBtnText,
-      doneBtnText: tourConfig.doneBtnText,
-      allowClose: true,
-      onDestroyed: () => {
-        localStorage.setItem(key, 'true');
-      },
-    });
+  const isCompleted = useCallback(
+    (page: TourPage): boolean => {
+      const dbCompleted = profile?.toursCompleted?.includes(page) ?? false;
+      const cacheCompleted =
+        typeof window !== 'undefined' &&
+        localStorage.getItem(getLocalStorageKey(page)) === 'true';
+      return dbCompleted || cacheCompleted;
+    },
+    [profile]
+  );
 
-    driverObj.drive();
-  }, []);
+  const persistCompleted = useCallback(
+    (page: TourPage) => {
+      try {
+        localStorage.setItem(getLocalStorageKey(page), 'true');
+      } catch {
+        // ignore quota/private mode errors
+      }
+      markCompleted.mutate({ page });
+    },
+    [markCompleted]
+  );
+
+  const startTour = useCallback(
+    (page: TourPage) => {
+      const isMobile = !window.matchMedia('(min-width: 768px)').matches;
+      const steps = getSteps(page, isMobile);
+
+      const driverObj = driver({
+        showProgress: true,
+        steps,
+        progressText: tourConfig.progressText,
+        nextBtnText: tourConfig.nextBtnText,
+        prevBtnText: tourConfig.prevBtnText,
+        doneBtnText: tourConfig.doneBtnText,
+        allowClose: true,
+        onDestroyed: () => {
+          persistCompleted(page);
+        },
+      });
+
+      driverObj.drive();
+    },
+    [persistCompleted]
+  );
 
   useEffect(() => {
     const page = getTourForPage(pathname);
     if (!page) return;
 
-    // Guard: already auto-started this page in current session
-    if (hasAutoStartedRef.current.has(page)) return;
+    // Wait for profile query to resolve — without this we may flash a tour
+    // for a user who already completed it on a different device.
+    if (profile === undefined) return;
 
-    const key = getLocalStorageKey(page);
-    if (localStorage.getItem(key) === 'true') return;
+    if (hasAutoStartedRef.current.has(page)) return;
+    if (isCompleted(page)) return;
 
     const isMobile = !window.matchMedia('(min-width: 768px)').matches;
     const steps = getSteps(page, isMobile);
@@ -68,7 +109,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
     const timer = setTimeout(() => {
       // Re-check guards inside callback (state may have changed during 1.5s delay)
       if (hasAutoStartedRef.current.has(page)) return;
-      if (localStorage.getItem(key) === 'true') return;
+      if (isCompleted(page)) return;
 
       // Check if enough tour targets exist in DOM (skip if page hasn't loaded full UI,
       // e.g. diagnostic not completed → learn page shows CTA instead of track sections)
@@ -89,7 +130,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
         doneBtnText: tourConfig.doneBtnText,
         allowClose: true,
         onDestroyed: () => {
-          localStorage.setItem(key, 'true');
+          persistCompleted(page);
         },
       });
 
@@ -97,7 +138,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, [pathname, profile, isCompleted, persistCompleted]);
 
   return (
     <TourContext.Provider value={{ startTour }}>
