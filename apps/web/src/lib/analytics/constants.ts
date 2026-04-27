@@ -7,6 +7,9 @@ export const METRIKA_GOALS = {
   PRICING_VIEW: 'platform_pricing_view',
   PAYMENT: 'platform_payment',
   CTA_CLICK: 'platform_cta_click',
+  // Phase 49 — Lesson Materials (D-41)
+  MATERIAL_OPEN: 'platform_material_open',
+  MATERIAL_SECTION_VIEW: 'platform_material_section_view',
 } as const;
 
 export type MetrikaGoal = (typeof METRIKA_GOALS)[keyof typeof METRIKA_GOALS];
