@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
 status: Executing Phase 49
-stopped_at: Completed 49-01-PLAN.md
-last_updated: "2026-04-27T05:59:34Z"
+stopped_at: Completed 49-02-PLAN.md
+last_updated: "2026-04-27T06:19:05Z"
 progress:
   total_phases: 27
   completed_phases: 23
   total_plans: 50
-  completed_plans: 47
-  percent: 94
+  completed_plans: 48
+  percent: 96
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 49 (lesson-materials) — EXECUTING
-Plan: 2 of 6 (next: 49-02-trpc-router)
+Plan: 3 of 6 (next: 49-03-ingest)
 
 ## Performance Metrics
 
@@ -139,6 +139,12 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [49-01]: Bucket lesson-materials private + zero RLS — весь доступ через service_role в material.getSignedUrl (Wave 2)
 - [49-01]: MIME whitelist на bucket-уровне дублирует frontend whitelist (defense in depth, D-12)
 - [49-01]: Phase 49 константы в @mpstats/shared, не в db — UI и tRPC импортируют без затягивания Prisma client
+- [49-02]: Sentry as soft-optional require (try/catch require '@sentry/nextjs') — @mpstats/api decoupled from Next-only deps, fallback noop in tests
+- [49-02]: z.nativeEnum(MaterialType) over z.enum(string-tuple) — fixes Prisma create input typing
+- [49-02]: requestUploadUrl uses upload-id proxy (Date.now+random), not materialId — avoids two-roundtrip UX, documented vs D-09
+- [49-02]: DB-level isHidden filter on attached lessons in getSignedUrl include (W#1 perf, not JS post-fetch filter)
+- [49-02]: storagePath never sent to client — public payload exposes hasFile boolean only
+- [49-02]: vitest added as devDep to @mpstats/api — minimal runner setup for unit tests on routers
 
 ### Blockers/Concerns
 
@@ -215,11 +221,12 @@ None.
 | Phase 41 P01 | 2min | 2 tasks | 3 files |
 | Phase 42 P01 | 3min | 2 tasks | 1 files |
 | 49    | 01   | 31min    | 3     | 3     |
+| 49    | 02   | 6min     | 3     | 8     |
 
 ## Session Continuity
 
-Last session: 2026-04-27T05:59:34Z
-Stopped at: Completed 49-01-PLAN.md
+Last session: 2026-04-27T06:19:05Z
+Stopped at: Completed 49-02-PLAN.md
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
