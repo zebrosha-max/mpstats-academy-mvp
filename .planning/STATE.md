@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: QA Audit Fixes
 status: Executing Phase 49
-stopped_at: Completed 49-02-PLAN.md
-last_updated: "2026-04-27T06:19:05Z"
+stopped_at: Completed 49-03-PLAN.md
+last_updated: "2026-04-27T07:35:00Z"
 progress:
   total_phases: 27
   completed_phases: 23
   total_plans: 50
-  completed_plans: 48
-  percent: 96
+  completed_plans: 49
+  percent: 98
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 49 (lesson-materials) — EXECUTING
-Plan: 3 of 6 (next: 49-03-ingest)
+Plan: 4 of 6 (next: 49-04-lesson-ui)
 
 ## Performance Metrics
 
@@ -145,6 +145,11 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [49-02]: DB-level isHidden filter on attached lessons in getSignedUrl include (W#1 perf, not JS post-fetch filter)
 - [49-02]: storagePath never sent to client — public payload exposes hasFile boolean only
 - [49-02]: vitest added as devDep to @mpstats/api — minimal runner setup for unit tests on routers
+- [49-03]: Sheet column layout differs from plan (6 cols not 7, no description column) — verified live, parser adjusted
+- [49-03]: URL-based type inference fallback for blank Type cells (docs.google.com/spreadsheets → CALCULATION_TABLE etc.) — saves 30+ rows from unmatched bucket
+- [49-03]: «нет»-marker rows skipped silently (not parse errors) — methodologist convention for "lesson has no material"
+- [49-03]: Multi-variant title indexing (full + before-pipe + after-pipe + base-normalized) — boosts match rate 70%→87%
+- [49-03]: Force-commit ingest-results past .gitignore for one-shot prod write audit trail
 
 ### Blockers/Concerns
 
@@ -222,11 +227,12 @@ None.
 | Phase 42 P01 | 3min | 2 tasks | 1 files |
 | 49    | 01   | 31min    | 3     | 3     |
 | 49    | 02   | 6min     | 3     | 8     |
+| 49    | 03   | 12min    | 2     | 9     |
 
 ## Session Continuity
 
-Last session: 2026-04-27T06:19:05Z
-Stopped at: Completed 49-02-PLAN.md
+Last session: 2026-04-27T07:35:00Z
+Stopped at: Completed 49-03-PLAN.md (62 Material + 97 LessonMaterial in prod, 16 unmatched documented for methodologists in 49-03-NOTES.md)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
