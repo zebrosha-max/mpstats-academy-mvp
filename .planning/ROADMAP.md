@@ -59,6 +59,18 @@ Full details: see Phase Details below
 
 </details>
 
+<details>
+<summary>🚧 v1.6 Engagement (Phases 51-54) — IN PROGRESS</summary>
+
+- [ ] Phase 51: Notification Center Foundation — bell, /notifications, /profile/notifications, COMMENT_REPLY
+- [ ] Phase 52: Content Triggers — ADMIN_COMMENT_REPLY + CONTENT_UPDATE с группировкой
+- [ ] Phase 53: Retention Engine — единый scheduler с priority-resolver (PROGRESS_NUDGE / INACTIVITY_RETURN / WEEKLY_DIGEST)
+- [ ] Phase 54: Marketing Broadcast — админ-форма для массовых уведомлений
+
+Full details: see Phase Details below
+
+</details>
+
 ## Phase Details
 
 ### Phase 16: Billing Data Foundation
@@ -765,3 +777,206 @@ Plans:
 - [x] 49-04-lesson-ui-PLAN.md — LessonMaterials section on /learn/[id] + MaterialCard + Yandex Metrika events
 - [x] 49-05-admin-PLAN.md — /admin/content/materials list + create/edit form + multi-attach + drag-n-drop file upload
 - [x] 49-06-polish-deploy-PLAN.md — E2E Playwright tests + cron orphan cleanup + roadmap entry + memory + production deploy
+
+---
+
+## v1.6 Engagement (Phases 51-54)
+
+**Milestone Goal:** Дать юзерам понять что на платформе что-то происходит — система уведомлений (in-app + опциональный email через CQ), которая поддерживает реактивные триггеры (ответы на комменты, апдейты курсов от админа), retention-циклы (возврат к незавершённым урокам, инактив-возвраты, weekly digest), и маркетинговые рассылки. Email-флаги создаём на старте, но включаем только когда CQ-шаблоны готовы.
+
+### Phase 51: Notification Center Foundation — фундамент in-app уведомлений + COMMENT_REPLY
+
+**Goal:** Юзер получает in-app уведомления через bell-иконку в шапке и страницу `/notifications`. Первый живой триггер — ответы на комменты в уроках. Инфраструктура (Notification + NotificationPreference) рассчитана на 7 типов и расширяемая для фаз 52-54.
+
+**Мотивация:**
+- Сейчас юзер узнаёт об ответе на свой коммент только если случайно вернётся на урок и проскроллит ветку — никакого сигнала
+- Первые юзеры начали активно общаться в комментах, обратной связи нет → отвечающий не знает что его прочли
+- Нужен фундамент под фазы 52-54 (контентные триггеры, retention, broadcast) — строим один раз, переиспользуем
+
+**Архитектура:**
+- DB: `Notification { userId, type, payload Json, ctaUrl, readAt, createdAt, broadcastId? }` + `NotificationPreference { userId, type, inApp, email }`
+- Enum `NotificationType` со всеми 7 значениями (COMMENT_REPLY, ADMIN_COMMENT_REPLY, CONTENT_UPDATE, PROGRESS_NUDGE, INACTIVITY_RETURN, WEEKLY_DIGEST, BROADCAST) — ready для будущих фаз
+- Centralized service `services/notifications.ts` с `notify(userId, type, payload)` + `notifyMany()` — единственная точка создания уведомлений
+- `notify()` всегда триггерит `pa_notif_<type>` event в CQ через `setUserProps` + `trackEvent` (Phase 33 pattern); email-флаг проверяется CQ-правилом, не нашим кодом
+- tRPC router `notifications`: `list`, `unreadCount`, `markRead`, `markAllRead`, `getPreferences`, `updatePreference`
+- Frontend: `<NotificationBell />` в Header (badge с unread count, polling каждые 60с), dropdown с 10 последними, `/notifications` page с фильтром «все/непрочитанные» и пагинацией, `/profile/notifications` для toggle preferences per type
+- COMMENT_REPLY hook: в `comments.create` если `parentId != null` → `notify(parentAuthorId, COMMENT_REPLY, { commentId, lessonId, lessonTitle, replyAuthorName, preview })`
+
+**Scope:**
+- Schema migration (Notification, NotificationPreference, NotificationType enum)
+- Service `services/notifications.ts` (notify, notifyMany, markRead helpers)
+- tRPC router `notifications` (6 procedures) + Zod schemas
+- UI: NotificationBell в Header, страница /notifications, /profile/notifications
+- Триггер: COMMENT_REPLY в comments.create (с parentId !== null)
+- CQ events: `pa_notif_comment_reply` стреляет всегда; email-доставка отключена на старте через CQ-правило (per-type CQ-команда включит когда готов шаблон)
+- Defaults: все email-флаги = `false` на старте; in-app = `true` для всех типов кроме WEEKLY_DIGEST (`false`)
+- Anti-self-notify: не уведомляем юзера об ответе на его собственный коммент
+
+**Out of scope (передаётся в 52-54):**
+- ADMIN_COMMENT_REPLY trigger — Phase 52 (требует доп. логику для admin role detection и accent-стилизации в UI)
+- CONTENT_UPDATE — Phase 52 (галка «уведомить» в админке Lesson/Material publish)
+- Retention crons (PROGRESS_NUDGE, INACTIVITY_RETURN, WEEKLY_DIGEST) — Phase 53
+- BROADCAST UI и сегментация — Phase 54
+- WebSocket / Server-Sent Events — на текущем масштабе polling 60с достаточно
+- Push-уведомления браузера / Telegram — не делаем
+- CQ email-шаблоны — в зоне ответственности CQ-команды/Милы, параллельно
+
+**Риски:**
+- Polling каждые 60с от каждого активного юзера → нагрузка на tRPC. Mitigation: лёгкий unreadCount endpoint (одна COUNT-query по индексу), не загружает список
+- Schema migration на проде с rebuild — recurring Phase 28 lesson; миграция ПЕРЕД rebuild docker
+- COMMENT_REPLY race — если родительский коммент удалён к моменту триггера, fail silently
+- Bell в Header может перекрыть существующие dropdowns на mobile — проверить z-index
+- Notification spam при flood комментов — пока нет throttling, в Phase 52 добавим если понадобится
+
+**Success Criteria:**
+1. Schema applied: `Notification` и `NotificationPreference` таблицы созданы, indexes на `(userId, readAt, createdAt)` присутствуют
+2. Юзер A пишет reply на коммент юзера B → юзер B видит badge «1» в bell-иконке через ≤60с после reply
+3. Клик на уведомление → переход на `/learn/[lessonId]` с anchor `#comment-<id>` (скролл к ответу) и `readAt` ставится
+4. `/notifications` page показывает список всех уведомлений с пагинацией (20 на страницу), фильтр «все/непрочитанные», mark-all-read
+5. `/profile/notifications` показывает таблицу всех 7 типов с toggle in-app/email; смена тоггла сохраняет в БД
+6. Юзер не получает уведомление если отвечает сам себе (`commentAuthorId === parentAuthorId`)
+7. Юзер не получает уведомление если в `NotificationPreference.inApp = false` для COMMENT_REPLY
+8. CQ event `pa_notif_comment_reply` стреляет на каждый reply с props `{ pa_lesson_title, pa_reply_author, pa_preview }` — проверено в CQ dashboard
+9. Email НЕ отправляется (CQ-правило для `pa_notif_*` ещё не настроено — это намеренно)
+10. Unit tests на `services/notifications.ts` (notify, notifyMany, anti-self), tRPC router (preferences toggle, list pagination, markRead permission)
+11. E2E Playwright: юзер A reply → юзер B видит badge → клик → markRead → badge исчезает
+
+**Demo:** Тестер 1 пишет коммент на уроке. Тестер 2 (другой акк) отвечает на коммент. Тестер 1 в течение 60с видит badge «1» в шапке, кликает → dropdown показывает «Тестер 2 ответил на ваш коммент в "Анализ ниши"» → клик → переход на урок с подсветкой ответа.
+
+**Plans:** TBD (генерится после spec → discuss → plan)
+
+### Phase 52: Content Triggers — ADMIN_COMMENT_REPLY + CONTENT_UPDATE с группировкой
+
+**Goal:** Расширить Notification Center контентными триггерами: ответы методологов на комменты пользователей (выше приоритет визуально) и опциональные уведомления о новом контенте (lessons/materials) с авто-группировкой при массовой публикации.
+
+**Мотивация:**
+- Когда методолог отвечает на коммент — это сильный сигнал, юзер должен заметить (отдельный visual treatment)
+- При публикации skill-батча 16 уроков за раз авто-уведомления = спам ленты на годы вперёд
+- Решение: ручная галка «Уведомить подписчиков курса» при публикации + автогруппировка 3+ уроков в 24h в одно уведомление
+- Скорее всего будут материалы которые мы тоже захотим анонсировать вручную через тот же механизм
+
+**Архитектура:**
+- ADMIN_COMMENT_REPLY триггер в `comments.create` если автор имеет `role IN (ADMIN, SUPERADMIN)` И отвечает не другому админу
+- Visual: accent-цвет в UI (синий), иконка 🎓 (методолог), сортировка выше обычных reply в dropdown
+- CONTENT_UPDATE: checkbox «Уведомить подписчиков курса» в админке `Lesson` (publish action) и `LessonMaterial` (attach action)
+- Targeting: уведомление получают юзеры с активной подпиской на курс **И** прогрессом ≥1 завершённый урок в этом курсе (без прогресса не пушим — холодные)
+- Группировка: если за последние 24h уже было CONTENT_UPDATE по тому же курсу для того же юзера и оно не прочитано — апдейтим payload (накопительный счётчик «X новых уроков») вместо создания новой записи. Если прочитано — создаём новую
+- Никаких автоматических CONTENT_UPDATE — только когда админ явно кликнул чекбокс
+
+**Scope:**
+- Триггер ADMIN_COMMENT_REPLY (отдельный от COMMENT_REPLY tip)
+- Чекбоксы в админке Lesson publish и Material attach
+- Bulk targeting service (выбрать получателей по subscription + progress)
+- Группировка CONTENT_UPDATE логика
+- UI accent-styling для ADMIN_COMMENT_REPLY в bell dropdown и /notifications
+- Yandex Metrika events на клик по уведомлениям
+
+**Out of scope:**
+- Email-дубли для CONTENT_UPDATE (in-app достаточно — email спам)
+- Уведомление юзеров без прогресса в курсе (cold targeting)
+- Автоматические уведомления при публикации без галки админа
+
+**Success Criteria:**
+1. Методолог отвечает на коммент юзера → юзер видит accent-уведомление с иконкой 🎓
+2. Админ публикует урок с галкой → юзеры с прогрессом в курсе получают CONTENT_UPDATE через ≤2 минут
+3. Админ публикует 5 уроков за час с галкой → юзер видит **одно** уведомление «Добавлено 5 новых уроков в "Аналитика"»
+4. Юзер БЕЗ прогресса в курсе не получает CONTENT_UPDATE
+5. Если юзер прочитал CONTENT_UPDATE — следующий накопительно создаст новое (не апдейтит прочитанное)
+
+**Plans:** TBD
+
+### Phase 53: Retention Engine — единый scheduler с priority-resolver
+
+**Goal:** Возвращать юзеров на платформу через retention-уведомления. Один cron, который для каждого юзера выбирает наиболее релевантный тип (PROGRESS_NUDGE / INACTIVITY_RETURN / WEEKLY_DIGEST). Архитектура заранее готова к будущему TASK_OVERDUE.
+
+**Мотивация:**
+- In-app уведомления не работают для тех кого нет на платформе → нужен внешний канал (email через CQ)
+- Прогноз: будущий Task Tracker должен вытеснять PROGRESS_NUDGE если есть просроченные задачи
+- Решение: один scheduler с приоритетами вместо N независимых cron'ов
+
+**Архитектура:**
+- Cron `/api/cron/retention-engine` (раз в сутки 09:00 МСК), Sentry checkin slug `retention-engine`
+- Priority registry в `services/retention/index.ts`: `[ { type, priority, applies(user), buildPayload(user) } ]`
+- Scheduler iterate users → для каждого проходит candidates по убыванию priority → первый кто проходит `applies()` И не нарушает hard-cap → `notify()` → break
+- Hard-cap: 1 retention email на юзера в 7 дней (через таблицу `NotificationDelivery { userId, type, channel, sentAt }` или поле в существующей)
+- Predicates изолированы в `services/retention/predicates.ts`
+- PROGRESS_NUDGE: 72h простоя на начатом-незавершённом уроке, отправка вт/чт 10:00, дружелюбный тон, конкретный урок, one-click pause-30d ссылка в email
+- INACTIVITY_RETURN: 14 дней без визита + active subscription, max 1/14d
+- WEEKLY_DIGEST: пятница 10:00, opt-in (default `email = false`), список новых уроков + ответов в моих ветках за неделю
+- Hard preference в `/profile/notifications`: toggle «Напоминания о возврате» — выключает класс целиком (не per-type)
+- Soft anti-spam: 2 nudge'а подряд без открытия → auto-pause на 30 дней
+- Все три типа = email-обязательны для эффекта; in-app тоже создаём как fallback на случай если юзер всё-таки зашёл
+
+**Scope:**
+- Cron retention-engine + Sentry monitoring
+- Priority registry + predicates
+- 3 типа: PROGRESS_NUDGE, INACTIVITY_RETURN, WEEKLY_DIGEST
+- NotificationDelivery (или extension) для hard-cap
+- Pause-30d flow (token-link → API → DB update)
+- CQ events: `pa_notif_progress_nudge`, `pa_notif_inactivity_return`, `pa_notif_weekly_digest`
+- /profile/notifications: блок «Уведомления о возврате» с master-toggle
+
+**Out of scope:**
+- TASK_OVERDUE — будущий Task Tracker (но архитектура готова принять без рефакторинга)
+- Real-time retention (websocket-based)
+- Per-course preferences
+
+**Success Criteria:**
+1. Юзер начал урок 72ч назад без `completedAt` → во вторник/четверг 10:00 МСК получает PROGRESS_NUDGE (in-app + CQ event)
+2. Юзер не заходил 14 дней с активной подпиской → получает INACTIVITY_RETURN
+3. Юзер с обоими условиями выше получает только PROGRESS_NUDGE (приоритет 50 > 30)
+4. Hard-cap: юзер получивший retention в среду НЕ получает в четверг даже если applies другой тип
+5. Pause-link в email → клик → API ставит `pausedUntil = now + 30d` → следующие 30 дней retention skip
+6. Юзер с master-toggle off в profile НЕ получает retention-уведомления вообще
+7. Sentry получает успешные checkins от cron каждый день
+8. WEEKLY_DIGEST в пятницу для opt-in юзеров: список новых уроков + reply в моих ветках за неделю
+
+**Plans:** TBD
+
+### Phase 54: Marketing Broadcast — админ-форма для массовых уведомлений
+
+**Goal:** Админ может отправить in-app уведомление сегменту юзеров (опционально с email-копией) с метриками доставки/прочтения/клика.
+
+**Мотивация:**
+- Запуск нового курса, промо-кампании, вебинары — нужен канал чтобы достучаться до своих платящих
+- Существующая инфраструктура (Notification Center) даёт это почти бесплатно — нужна только админка
+- Альтернатива (только CQ broadcast email) — не показывает уведомление в UI платформы, юзер не возвращается
+
+**Архитектура:**
+- `/admin/notifications/broadcast` — форма: title, body, ctaLabel, ctaUrl, expiresAt, audience selector, optional email toggle
+- Audience сегменты (готовые, не дин. конструктор):
+  - Все юзеры
+  - Активная подписка
+  - Триал / истёкшая подписка
+  - По курсу (мульти-выбор)
+  - Без активности 14+ дней
+- Preview перед отправкой: «Это получит ~N юзеров»
+- Async dispatch: Worker queries audience → bulk insert в Notification (с `broadcastId`) → если `email = true`, отправляем `pa_notif_broadcast` с per-user props
+- BROADCAST в UI визуально отличается: **баннер сверху** notification feed (не строка) с кнопкой dismiss
+- Метрики: `Broadcast { id, title, sentTo, openedCount, clickedCount, sentAt, ... }`, открытие = `readAt`, клик = трекаем по `ctaUrl` + `?b=<broadcastId>`
+- expiresAt: после даты автоматически hidden из feed (но история живёт)
+
+**Scope:**
+- DB: Broadcast model + `Notification.broadcastId` FK
+- Audience selector в админке (5 сегментов готовых)
+- Worker для async dispatch (batch insert по 1000)
+- UI: BroadcastBanner на /notifications + dismissible
+- Метрики UI: `/admin/notifications/broadcast/[id]/stats`
+- CTA tracking через redirect API `/r/<broadcastId>?to=<encodedUrl>`
+
+**Out of scope:**
+- Динамический конструктор сегментов (фильтры по полям) — пока 5 готовых хватит
+- A/B варианты broadcast'а
+- Schedule send time (только «отправить сейчас»)
+- Recurring broadcasts
+
+**Success Criteria:**
+1. Админ заполняет форму, выбирает «Активная подписка» → preview показывает корректное количество юзеров
+2. После send все юзеры в сегменте видят BROADCAST (баннер сверху feed) в течение 5 минут
+3. Email-копия (если `email = true`) уходит через CQ event `pa_notif_broadcast` per-user
+4. `/admin/notifications/broadcast/[id]/stats` показывает: sentTo, openedCount, clickedCount, openRate%, clickRate%
+5. CTA-клик из in-app или email → редирект через `/r/<id>` → инкремент `clickedCount`
+6. expiresAt прошёл → BROADCAST hidden из feed (но в /admin сохраняется для истории)
+7. Dismiss-кнопка → юзер больше не видит конкретный broadcast (`dismissedAt` на Notification)
+
+**Plans:** TBD
