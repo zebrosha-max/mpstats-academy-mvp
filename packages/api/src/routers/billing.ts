@@ -180,11 +180,16 @@ export const billingRouter = router({
         courseTitle,
       });
 
+      const description =
+        input.planType === 'COURSE' && courseTitle
+          ? `MPSTATS Academy — курс «${courseTitle}» (${plan.intervalDays} дней)`
+          : `MPSTATS Academy — полный доступ (${plan.intervalDays} дней)`;
+
       return {
         subscriptionId: subscription.id,
         amount: plan.price,
         planName: plan.name,
-        description: plan.name,
+        description,
         userId: ctx.user.id,
         receipt,
       };
@@ -277,7 +282,7 @@ export const billingRouter = router({
         subscriptionId: subscription.id,
         amount: plan.price,
         planName: plan.name,
-        description: plan.name,
+        description: `MPSTATS Academy — тестовая операция (${plan.price}₽)`,
         userId: ctx.user.id,
         intervalDays: plan.intervalDays,
         receipt,

@@ -36,7 +36,7 @@ export default function AdminBillingTestPage() {
 
       const success = await openPaymentWidget({
         publicId: process.env.NEXT_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID!,
-        description: `[TEST] ${result.description}`,
+        description: result.description,
         amount: result.amount,
         currency: 'RUB',
         accountId: result.userId,
