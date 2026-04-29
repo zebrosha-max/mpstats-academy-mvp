@@ -14,15 +14,14 @@
 | v1.0 MVP | Shipped 2026-02-26 (Phases 1-9) |
 | v1.1 Admin & Polish | Shipped 2026-02-28 (Phases 10-15) |
 | v1.2 Auth Rework + Billing | Shipped 2026-03-12 (Phases 16-21) |
-| v1.3 Pre-release | In Progress (Phases 22-36; **remaining: 28**) |
+| v1.3 Pre-release | Shipped (Phases 22-36, last: Phase 28 boevye CP keys, ранее) |
 | v1.4 QA Audit Fixes | Shipped 2026-03-29 (Phases 37-42) |
 | Phase 43 Diagnostic v2 | Shipped 2026-04-02 |
-| v1.5 Growth & Monetization | In Progress (Phase 44+45+46+48 shipped) |
+| v1.5 Growth & Monetization | In Progress (Phase 44+45+46+48+50 shipped) |
 
 **Remaining work:**
-1. Phase 28: Боевой CloudPayments (тестовые → боевые ключи)
-2. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
-3. Phase 47: /learn Hub-Layout — навигационный хаб (курсы свёрнуты, библиотека, мой трек наверху)
+1. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
+2. Phase 47: /learn Hub-Layout — навигационный хаб (курсы свёрнуты, библиотека, мой трек наверху)
 
 ## Auth — Phone Collection (Phase 45, shipped 2026-04-21)
 
@@ -64,6 +63,21 @@
 
 **Commits:** `a0ea1df` (cron + E2E), плюс серия предыдущих волн (49-01..49-05, см. `.planning/phases/49-lesson-materials/`).
 **Результат:** Методологи получили автономную админку с инструкцией, юзеры с подпиской видят материалы под видео, без подписки — секция вообще не рендерится. Первая UI-фича где Storage используется не для аватаров.
+
+---
+
+**Skill batch 24.04.26 — Integrated (parallel session, 2026-04-27).**
+
+16 ANALYTICS skill-уроков прошли весь pipeline от MP4 до Production-DB. Pipeline-spec для будущих батчей живёт в `E:/Academy Courses/CLAUDE.md` секция «End-to-End Pipeline».
+
+1. **AI-классификация (сквозная, обязательна для плейбуков)** — `skill-mapping/skill-mapper.ts discover --resume` + `classify --resume`, 16 новых записей в `classification.json` (avg 2.7 блоков/урок, 32 заранее зафиксированных skill-блока, taxonomy НЕ перегенерировали).
+2. **Seed** — `seed-skill-lessons.ts` (idempotent upsert) создал 16 Lesson c skillBlocks, durations из транскриптов; pre-existing 17 = no-op. Починен баг финальной статистики: `NOT: { skillBlocks: null }` → `skillBlocks: { not: Prisma.JsonNull }`.
+3. **Перенос courseId** `skill_analytics` → `01_analytics` (consistency с Phase 46) — 01_analytics 92→108 уроков.
+4. **Kinescope** — 16/16 видео (6.77 GB) залиты через TUS в папку skill_analytics; на одном файле упёрлись в HTTP 400 «already exists» (race в их CDN после orphan delete) — workaround: уникализировать title в map (`· v2`), retry прошёл.
+5. **Заполненные skill-блоки** (все ANALYTICS): `internal_analytics` (2), `strategic_planning` (4), `promo_analysis` (2), `category_selection` (3), `sales_forecast` (2), `product_card_improvement` (3).
+6. **Spec обновлён** — `E:/Academy Courses/CLAUDE.md` получил полную секцию «End-to-End Pipeline (Source → Platform)» с 10 шагами (Phase A: Academy Courses repo / Phase B: MAAL repo), verification SQL, checklist для новых батчей.
+
+**Метрики платформы после батча:** 437 Lesson records (404 + 33 skill_*), 5,700 chunks в `content_chunk`, 434 уроков с AI-классификацией.
 
 ### Previous Session (2026-04-23 → 2026-04-24)
 
