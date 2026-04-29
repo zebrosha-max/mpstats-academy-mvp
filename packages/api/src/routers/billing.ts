@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, publicProcedure, protectedProcedure, superadminProcedure } from '../trpc';
 import { isFeatureEnabled } from '../utils/feature-flags';
+import { buildReceipt } from '@mpstats/shared';
 
 /**
  * Billing tRPC router — 6 endpoints for subscription management.
@@ -102,14 +103,17 @@ export const billingRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Plan not found or inactive' });
       }
 
-      // Verify course exists if COURSE plan
+      // Verify course exists if COURSE plan; capture title for receipt label
+      let courseTitle: string | undefined;
       if (input.planType === 'COURSE' && input.courseId) {
         const course = await ctx.prisma.course.findUnique({
           where: { id: input.courseId },
+          select: { title: true },
         });
         if (!course) {
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Course not found' });
         }
+        courseTitle = course.title;
       }
 
       const now = new Date();
@@ -169,12 +173,20 @@ export const billingRouter = router({
         },
       });
 
+      const receipt = buildReceipt({
+        plan: { type: plan.type, intervalDays: plan.intervalDays },
+        user: { email: ctx.user.email },
+        amount: plan.price,
+        courseTitle,
+      });
+
       return {
         subscriptionId: subscription.id,
         amount: plan.price,
         planName: plan.name,
         description: plan.name,
         userId: ctx.user.id,
+        receipt,
       };
     }),
 
@@ -254,6 +266,13 @@ export const billingRouter = router({
         },
       });
 
+      const receipt = buildReceipt({
+        plan: { type: plan.type, intervalDays: plan.intervalDays },
+        user: { email: ctx.user.email },
+        amount: plan.price,
+        labelOverride: `Тестовая операция — доступ к онлайн-платформе MPSTATS Academy, ${plan.intervalDays} дней`,
+      });
+
       return {
         subscriptionId: subscription.id,
         amount: plan.price,
@@ -261,6 +280,7 @@ export const billingRouter = router({
         description: plan.name,
         userId: ctx.user.id,
         intervalDays: plan.intervalDays,
+        receipt,
       };
     }),
 

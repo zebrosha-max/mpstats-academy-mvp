@@ -42,6 +42,7 @@ export default function AdminBillingTestPage() {
         accountId: result.userId,
         invoiceId: result.subscriptionId,
         recurrent: { interval: 'Day', period: 1 },
+        receipt: result.receipt,
       });
 
       if (success) {

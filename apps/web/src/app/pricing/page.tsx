@@ -251,6 +251,7 @@ function PricingContent() {
         accountId: result.userId,
         invoiceId: result.subscriptionId,
         recurrent: { interval: 'Month', period: 1 },
+        receipt: result.receipt,
       });
 
       if (success) {

@@ -60,3 +60,9 @@ export interface CloudPaymentsWebhookPayload {
 export interface CloudPaymentsResponse {
   code: number;
 }
+
+export type {
+  CustomerReceipt,
+  ReceiptItem,
+  ReceiptAmounts,
+} from '@mpstats/shared';

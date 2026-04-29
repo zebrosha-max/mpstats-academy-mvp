@@ -4,6 +4,8 @@
  * Loads via <script src="https://widget.cloudpayments.ru/bundles/cloudpayments">
  */
 
+import type { CustomerReceipt } from './types';
+
 interface WidgetResult {
   type: string;
   status: string;
@@ -41,6 +43,12 @@ export interface CPChargeOptions {
     period: number;
     amount?: number;
   };
+  /**
+   * 54-FZ receipt. Passed both at intent root (first payment) AND inside
+   * `recurrent.receipt` as a template for auto-charges — CP fires recurrents
+   * with CustomerReceipt:null when this template is missing.
+   */
+  receipt?: CustomerReceipt;
 }
 
 /**
@@ -75,11 +83,16 @@ export function openPaymentWidget(options: CPChargeOptions): Promise<boolean> {
       data: { ourSubscriptionId: options.invoiceId },
     };
 
+    if (options.receipt) {
+      intentParams.receipt = options.receipt;
+    }
+
     if (options.recurrent) {
       intentParams.recurrent = {
         interval: options.recurrent.interval,
         period: options.recurrent.period,
         amount: options.recurrent.amount ?? options.amount,
+        ...(options.receipt ? { receipt: options.receipt } : {}),
       };
     }
 
