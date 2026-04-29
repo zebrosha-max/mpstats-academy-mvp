@@ -2,17 +2,22 @@ import type { CustomerReceipt } from './types';
 
 /**
  * Receipt config — the only place where 54-FZ / ФФД values live.
- * Confirmed by the accountant for ООО «МПСТАТС ПРОДВИЖЕНИЕ» / kassa 1992320030103085.
+ * Confirmed live against касса 1992320030103085 (smoke 29.04.2026, op 3481076754).
  *
  *   ОСНО                       → taxationSystem = 0
  *   НДС 22% (включён в цену)   → vat = 22
  *   полный расчёт              → method = 4
- *   ФФД 1.2, предмет «подписка»→ object = 13
+ *   услуга                     → object = 4
+ *
+ * NOTE: object=13 ("подписка") rejected by CP with
+ *   "При использовании СН ОСН, на кассе с ФН 36 месяцев, в товарах
+ *    должны использоваться 'Признак предмета расчета' - Услуга".
+ *   ФФД 1.2 only allows code 13 on FN with shorter validity. Stick to 4.
  */
 const TAXATION_SYSTEM = 0;
 const VAT_CODE: number | null = 22;
 const PAYMENT_METHOD = 4;
-const PAYMENT_OBJECT = 13;
+const PAYMENT_OBJECT = 4;
 
 const MAX_LABEL_LENGTH = 128;
 

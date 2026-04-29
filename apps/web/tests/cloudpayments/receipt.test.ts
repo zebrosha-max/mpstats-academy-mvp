@@ -77,7 +77,7 @@ describe('buildReceipt', () => {
           amount: 2990,
           vat: 22,
           method: 4,
-          object: 13,
+          object: 4,
         },
       ],
       taxationSystem: 0,
