@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPSTATS Academy — Архитектура писем</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0f1117;
+    --surface:  #1a1d27;
+    --surface2: #222531;
+    --border:   rgba(255,255,255,0.08);
+    --border-h: rgba(255,255,255,0.14);
+    --blue:     #3b82f6;
+    --blue-l:   #60a5fa;
+    --blue-xl:  #93bbfd;
+    --green:    #22c55e;
+    --green-l:  #4ade80;
+    --pink:     #ec4899;
+    --pink-l:   #f472b6;
+    --orange:   #f59e0b;
+    --orange-l: #fbbf24;
+    --red:      #ef4444;
+    --red-l:    #f87171;
+    --text:     #e2e8f0;
+    --text-s:   #cbd5e1;
+    --muted:    #64748b;
+    --muted-d:  #475569;
+    --code-bg:  #141620;
+    --r-card:   12px;
+    --r-inner:  8px;
+    --font:     'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono:     'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 800px 600px at 15% 10%, rgba(59,130,246,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 500px at 85% 20%, rgba(34,197,94,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 50% 60%, rgba(239,68,68,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 700px 500px at 20% 80%, rgba(59,130,246,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 80% 90%, rgba(34,197,94,0.04) 0%, transparent 70%);
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.3;
+    background-image: radial-gradient(circle 1px, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  header { padding: 80px 0 48px; text-align: center; }
+
+  .logo {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 24px;
+  }
+  .logo-mp { color: var(--blue-l); }
+  .logo-ac { color: var(--green-l); font-weight: 600; }
+
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--blue-l) 50%, var(--green-l) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  header p { max-width: 720px; margin: 0 auto 32px; color: var(--muted); font-size: 1.1rem; line-height: 1.7; }
+
+  .tech-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .tech-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 600;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-s);
+    transition: all 0.3s ease;
+  }
+  .tech-badge:hover { border-color: var(--border-h); background: rgba(255,255,255,0.06); }
+  .tech-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px; background: var(--border); border-radius: var(--r-card);
+    overflow: hidden; margin-bottom: 80px;
+  }
+  .stat-card { background: var(--surface); padding: 28px 24px; text-align: center; transition: background 0.3s ease; }
+  .stat-card:hover { background: var(--surface2); }
+  .stat-icon {
+    width: 40px; height: 40px; margin: 0 auto 12px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+  }
+  .stat-icon.blue   { background: rgba(59,130,246,0.12); color: var(--blue-l); }
+  .stat-icon.green  { background: rgba(34,197,94,0.12);  color: var(--green-l); }
+  .stat-icon.orange { background: rgba(245,158,11,0.14); color: var(--orange-l); }
+  .stat-icon.red    { background: rgba(239,68,68,0.12);  color: var(--red-l); }
+  .stat-icon.pink   { background: rgba(236,72,153,0.12); color: var(--pink-l); }
+  .stat-value { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); line-height: 1.2; }
+  .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+  .section { margin-bottom: 80px; }
+  .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .section-num {
+    font-family: var(--mono); font-size: 0.8rem; font-weight: 500;
+    color: var(--blue); background: rgba(59,130,246,0.1);
+    padding: 4px 10px; border-radius: 6px; letter-spacing: 0.04em;
+  }
+  .section-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+  .section-lead { color: var(--muted); font-size: 0.98rem; margin-top: -16px; margin-bottom: 28px; max-width: 800px; line-height: 1.7; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  @media (max-width: 800px) { .card-grid { grid-template-columns: 1fr; } }
+  .card-full { grid-column: 1 / -1; }
+
+  .card {
+    position: relative; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--r-card);
+    padding: 32px; transition: border-color 0.4s ease, box-shadow 0.4s ease; overflow: hidden;
+  }
+  .card-warn { border-color: rgba(239,68,68,0.3); background: linear-gradient(180deg, rgba(239,68,68,0.04) 0%, var(--surface) 60%); }
+  .card-success { border-color: rgba(34,197,94,0.3); background: linear-gradient(180deg, rgba(34,197,94,0.04) 0%, var(--surface) 60%); }
+  .card::before {
+    content: ''; position: absolute; inset: 0; border-radius: var(--r-card); padding: 1px;
+    background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(59,130,246,0.2) 60%, rgba(34,197,94,0.15) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+  }
+  .card:hover::before { opacity: 1; }
+  .card:hover { border-color: transparent; box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05); }
+  .card-warn::before, .card-success::before { display: none; }
+  .card-warn:hover { border-color: rgba(239,68,68,0.5); box-shadow: 0 8px 32px rgba(239,68,68,0.08); }
+  .card-success:hover { border-color: rgba(34,197,94,0.5); box-shadow: 0 8px 32px rgba(34,197,94,0.08); }
+
+  .card-title {
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em;
+  }
+  .card-title-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+  .card-title-icon.blue   { background: rgba(59,130,246,0.12); color: var(--blue-l); }
+  .card-title-icon.green  { background: rgba(34,197,94,0.12);  color: var(--green-l); }
+  .card-title-icon.orange { background: rgba(245,158,11,0.14); color: var(--orange-l); }
+  .card-title-icon.red    { background: rgba(239,68,68,0.12);  color: var(--red-l); }
+  .card-title-icon.pink   { background: rgba(236,72,153,0.12); color: var(--pink-l); }
+
+  .card-body { color: var(--text-s); font-size: 0.95rem; line-height: 1.65; }
+  .card-body p + p { margin-top: 12px; }
+  .card-body strong { color: var(--text); font-weight: 600; }
+
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.88rem; }
+  .data-table th {
+    text-align: left; padding: 10px 14px; font-weight: 600;
+    color: var(--muted); font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
+  }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-s); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .table-code {
+    font-family: var(--mono); font-size: 0.82rem; color: var(--blue-l);
+    background: rgba(59,130,246,0.08); padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .table-tag {
+    display: inline-block; font-size: 0.72rem; font-weight: 600;
+    padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em; white-space: nowrap;
+  }
+  .tag-blue   { background: rgba(59,130,246,0.12); color: var(--blue-l); }
+  .tag-green  { background: rgba(34,197,94,0.12);  color: var(--green-l); }
+  .tag-orange { background: rgba(245,158,11,0.14); color: var(--orange-l); }
+  .tag-red    { background: rgba(239,68,68,0.12);  color: var(--red-l); }
+  .tag-pink   { background: rgba(236,72,153,0.12); color: var(--pink-l); }
+  .tag-muted  { background: rgba(100,116,139,0.15); color: var(--muted); }
+
+  .mermaid-wrap {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: var(--r-inner); padding: 24px; margin-bottom: 16px; overflow-x: auto;
+  }
+  .mermaid { display: flex; justify-content: center; }
+
+  .callout { display: flex; gap: 14px; padding: 18px 20px; border-radius: var(--r-inner); font-size: 0.9rem; line-height: 1.6; margin: 16px 0; }
+  .callout.warn    { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); color: var(--text-s); }
+  .callout.info    { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); color: var(--text-s); }
+  .callout.success { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); color: var(--text-s); }
+  .callout.danger  { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); color: var(--text-s); }
+  .callout-icon { flex-shrink: 0; font-size: 1.1rem; line-height: 1.4; }
+  .callout strong { color: var(--text); font-weight: 700; }
+
+  .step-list { counter-reset: step; list-style: none; padding: 0; }
+  .step-list li {
+    counter-increment: step; position: relative;
+    padding: 12px 16px 12px 56px; margin-bottom: 8px;
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--r-inner);
+    color: var(--text-s); font-size: 0.9rem; line-height: 1.6;
+  }
+  .step-list li::before {
+    content: counter(step); position: absolute; left: 16px; top: 12px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(59,130,246,0.12); color: var(--blue-l);
+    font-family: var(--mono); font-size: 0.85rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-list li strong { color: var(--text); font-weight: 600; }
+  .step-list.warn li::before { background: rgba(245,158,11,0.14); color: var(--orange-l); }
+  .step-list.danger li::before { background: rgba(239,68,68,0.12); color: var(--red-l); }
+
+  code { font-family: var(--mono); font-size: 0.85em; background: rgba(59,130,246,0.08); color: var(--blue-l); padding: 2px 6px; border-radius: 4px; }
+
+  footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid var(--border); margin-top: 20px; }
+  footer p { color: var(--muted); font-size: 0.82rem; line-height: 1.8; }
+  footer a { color: var(--blue-l); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .anim { opacity: 0; animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  .d1 { animation-delay: 0.08s; } .d2 { animation-delay: 0.16s; } .d3 { animation-delay: 0.24s; }
+  .d4 { animation-delay: 0.32s; } .d5 { animation-delay: 0.40s; }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anim { animation: none; opacity: 1; }
+    .reveal { transition: none; opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 48px 0 32px; }
+    .section { margin-bottom: 56px; }
+    .card { padding: 24px 20px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo anim d1">
+      <span class="logo-mp">MPSTATS</span>
+      <span class="logo-ac">Academy</span>
+    </div>
+
+    <h1 class="anim d2">Архитектура писем</h1>
+
+    <p class="anim d3">
+      <strong>Версия 2.0 &mdash; пересобрана на основании актуального кода и Supabase-конфига 27.04.2026.</strong>
+      Прошлая версия документа (от&nbsp;утра 27.04) описывала Resend как доставщика DOI&nbsp;&mdash;
+      это&nbsp;было неверно. Здесь правильная картина и&nbsp;объяснение реального инцидента
+      с&nbsp;<code>bakaresh@yandex.ru</code>.
+    </p>
+
+    <div class="tech-badges anim d4">
+      <span class="tech-badge"><span class="dot" style="background:var(--blue-l)"></span>Supabase Auth</span>
+      <span class="tech-badge"><span class="dot" style="background:var(--pink-l)"></span>Send-Email Hook</span>
+      <span class="tech-badge"><span class="dot" style="background:var(--green-l)"></span>CarrotQuest API</span>
+      <span class="tech-badge"><span class="dot" style="background:var(--muted)"></span>Resend (legacy fallback)</span>
+    </div>
+  </header>
+
+  <!-- STATS ROW -->
+  <div class="stats-row anim d5">
+    <div class="stat-card">
+      <div class="stat-icon green">&#x1F4E8;</div>
+      <div class="stat-value">11</div>
+      <div class="stat-label">типов писем — все через CQ</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">&#x1F517;</div>
+      <div class="stat-value">1</div>
+      <div class="stat-label">webhook-перехватчик</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">&#x274C;</div>
+      <div class="stat-value">0</div>
+      <div class="stat-label">писем через Resend (за месяц)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">&#x1F576;</div>
+      <div class="stat-value">~30</div>
+      <div class="stat-label">дней silent-drop'ов до фикса</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">&#x2705;</div>
+      <div class="stat-value">100%</div>
+      <div class="stat-label">CQ ошибок теперь в Sentry</div>
+    </div>
+  </div>
+
+  <!-- 01 — REAL PICTURE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Как реально работает доставка писем</h2>
+    </div>
+
+    <p class="section-lead">
+      Когда юзер регистрируется, сбрасывает пароль или меняет email,
+      Supabase Auth <strong>не&nbsp;идёт в&nbsp;SMTP</strong>. Вместо этого
+      он&nbsp;стреляет HTTPS&#8209;webhook'ом на&nbsp;наш сервер, а&nbsp;мы
+      уже&nbsp;посылаем событие в&nbsp;CarrotQuest, который и&nbsp;отправляет письмо.
+    </p>
+
+    <div class="card card-full">
+      <div class="card-title">
+        <span class="card-title-icon blue">&#x21AA;</span>
+        Полный путь auth-письма
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#1e3a5f','primaryTextColor':'#e2e8f0','primaryBorderColor':'#3b82f6','lineColor':'#475569','background':'#141620','mainBkg':'#1a1d27','nodeBorder':'#3b82f6','nodeTextColor':'#e2e8f0','clusterBkg':'rgba(59,130,246,0.06)','clusterBorder':'rgba(59,130,246,0.2)','edgeLabelBackground':'#141620'}}}%%
+graph LR
+    U["&#128100;<br/><b>Юзер</b><br/>signUp / reset"]
+
+    SUPA["<b>Supabase Auth</b><br/>создаёт user_id<br/>+ token_hash"]
+
+    HOOK["<b>Send-Email Hook</b><br/>HMAC-подписан<br/>(Standard Webhooks)"]
+
+    OUR["<b>/api/webhooks/<br/>supabase-email</b><br/>наш Next.js handler"]
+
+    CQ["<b>CarrotQuest API</b><br/>setUserProps + trackEvent<br/><i>pa_doi / pa_password_reset /<br/>pa_email_change</i>"]
+
+    SMTP["<b>CQ → Mandrill SMTP</b><br/>финальная доставка"]
+
+    RES[("<b>Resend</b><br/>в конфиге как<br/>SMTP fallback<br/>не используется")]
+
+    U --> SUPA
+    SUPA -- "POST webhook" --> HOOK
+    HOOK --> OUR
+    OUR -- "https POST" --> CQ
+    CQ --> SMTP
+    SMTP --> U
+
+    SUPA -. "если webhook 5xx<br/>(никогда не было)" .-> RES
+
+    style U fill:#1e3a5f,stroke:#60a5fa,stroke-width:2px
+    style SUPA fill:#2d1a2d,stroke:#ec4899,stroke-width:1px
+    style HOOK fill:#1a1d27,stroke:#475569,stroke-width:1px
+    style OUR fill:#1e3a5f,stroke:#3b82f6,stroke-width:2px
+    style CQ fill:#1a2e1a,stroke:#22c55e,stroke-width:2px
+    style SMTP fill:#1a2e1a,stroke:#4ade80,stroke-width:1px
+    style RES fill:#1a1d27,stroke:#475569,stroke-width:1px,stroke-dasharray:5 5
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#x1F4A1;</span>
+        <div>
+          <strong>Ключевой момент:</strong> в&nbsp;Supabase auth-конфиге включен
+          <code>hook_send_email_enabled=true</code> с&nbsp;URI на&nbsp;наш
+          <code>/api/webhooks/supabase-email</code>. Это&nbsp;значит Supabase
+          <strong>всегда</strong> идёт сначала в&nbsp;webhook, и&nbsp;если webhook
+          вернул 200 (даже формально, без реальной отправки)&nbsp;&mdash;
+          считает работу выполненной. Resend в&nbsp;этом потоке не&nbsp;участвует
+          и&nbsp;никогда не&nbsp;участвовал в&nbsp;последний месяц
+          (0&nbsp;писем в&nbsp;его&nbsp;dashboard это подтверждает).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 — WEBHOOK -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Send-Email Hook &mdash; перехватчик</h2>
+    </div>
+
+    <p class="section-lead">
+      Один Next.js route принимает все&nbsp;auth-email события от&nbsp;Supabase
+      и&nbsp;маршрутизирует их&nbsp;в&nbsp;CQ. Конфиг хука прописан
+      на&nbsp;стороне Supabase, секрет верифицируется по&nbsp;Standard Webhooks.
+    </p>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon blue">&#x1F4D1;</span>
+          Какие события приходят
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>email_action_type</th><th>В CQ как</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="table-tag tag-pink">signup</span></td>
+              <td>event <code>pa_doi</code> + prop <code>pa_doi=&lt;url&gt;</code></td>
+            </tr>
+            <tr>
+              <td><span class="table-tag tag-orange">recovery</span></td>
+              <td>event <code>pa_password_reset</code> + prop <code>pa_password_link</code></td>
+            </tr>
+            <tr>
+              <td><span class="table-tag tag-blue">email_change</span></td>
+              <td>event <code>pa_email_change</code> + prop <code>pa_confirm_url</code></td>
+            </tr>
+            <tr>
+              <td><span class="table-tag tag-muted">magic_link</span></td>
+              <td>не&nbsp;используется в&nbsp;продукте</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag tag-muted">invite</span></td>
+              <td>не&nbsp;используется</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag tag-muted">reauthentication</span></td>
+              <td>не&nbsp;используется</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon green">&#x21A1;</span>
+          Что делает webhook
+        </div>
+        <ol class="step-list">
+          <li>Принимает POST с&nbsp;HMAC-подписью <code>webhook-id</code>/<code>webhook-timestamp</code>/<code>webhook-signature</code></li>
+          <li>Верифицирует подпись через <code>SUPABASE_HOOK_SECRET</code> (формат <code>v1,whsec_BASE64</code>)</li>
+          <li>Парсит payload &mdash; достаёт <code>user.id</code>, <code>email_action_type</code>, <code>token_hash</code>, <code>redirect_to</code></li>
+          <li>Собирает <code>confirmUrl = supabase.co/auth/v1/verify?token=...&amp;type=...&amp;redirect_to=...</code></li>
+          <li>Кидает <code>cq.setUserProps()</code> с&nbsp;линком и&nbsp;<code>cq.trackEvent()</code> с&nbsp;именем события</li>
+          <li>Возвращает 200 &mdash; <strong>всегда</strong>, даже на&nbsp;ошибке (чтобы не&nbsp;ломать auth flow Supabase)</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 03 — TRANSACTIONAL CHANNEL -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Транзакционный канал &mdash; CQ event API</h2>
+    </div>
+
+    <p class="section-lead">
+      Помимо auth-писем через webhook, есть прямые вызовы CQ из&nbsp;нашего
+      кода&nbsp;&mdash; платежи, истечения, неактивность. Все&nbsp;идут
+      по&nbsp;тому же&nbsp;паттерну: <code>setUserProps</code>+<code>trackEvent</code>,
+      CQ дальше срабатывает по&nbsp;настроенным automation rules.
+    </p>
+
+    <div class="card card-full">
+      <div class="card-title">
+        <span class="card-title-icon green">&#x1F4E9;</span>
+        Все 11 событий, которые мы&nbsp;стреляем
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Источник</th>
+            <th>Event</th>
+            <th>Когда срабатывает</th>
+            <th>Видимое юзеру письмо</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="table-tag tag-pink">webhook</span></td><td><span class="table-code">pa_doi</span></td><td>signUp / resend confirm</td><td>«Подтверди регистрацию»</td></tr>
+          <tr><td><span class="table-tag tag-pink">webhook</span></td><td><span class="table-code">pa_password_reset</span></td><td>«Забыл пароль»</td><td>«Сброс пароля»</td></tr>
+          <tr><td><span class="table-tag tag-pink">webhook</span></td><td><span class="table-code">pa_email_change</span></td><td>Юзер меняет email в&nbsp;ЛК</td><td>«Подтверди новый email»</td></tr>
+          <tr><td><span class="table-tag tag-blue">callback</span></td><td><span class="table-code">pa_registration_completed</span></td><td>Первый успешный DOI</td><td>Welcome email</td></tr>
+          <tr><td><span class="table-tag tag-blue">billing</span></td><td><span class="table-code">pa_payment_success</span></td><td>CP webhook <code>pay</code></td><td>Чек об&nbsp;оплате</td></tr>
+          <tr><td><span class="table-tag tag-blue">billing</span></td><td><span class="table-code">pa_payment_failed</span></td><td>CP webhook <code>fail</code></td><td>«Платёж не&nbsp;прошёл»</td></tr>
+          <tr><td><span class="table-tag tag-blue">billing</span></td><td><span class="table-code">pa_subscription_cancelled</span></td><td>Юзер отменил подписку</td><td>«Подписка отменена»</td></tr>
+          <tr><td><span class="table-tag tag-orange">cron</span></td><td><span class="table-code">pa_subscription_expiring</span></td><td>За&nbsp;3 дня до&nbsp;истечения</td><td>Напоминание</td></tr>
+          <tr><td><span class="table-tag tag-orange">cron</span></td><td><span class="table-code">pa_inactive_7</span></td><td>7&nbsp;дней без&nbsp;логина</td><td>Reactivation drip 1</td></tr>
+          <tr><td><span class="table-tag tag-orange">cron</span></td><td><span class="table-code">pa_inactive_14</span></td><td>14&nbsp;дней без&nbsp;логина</td><td>Reactivation drip 2</td></tr>
+          <tr><td><span class="table-tag tag-orange">cron</span></td><td><span class="table-code">pa_inactive_30</span></td><td>30&nbsp;дней без&nbsp;логина</td><td>Win-back / last chance</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info" style="margin-top:18px;">
+        <span class="callout-icon">&#x1F4CC;</span>
+        <div>
+          <strong>Важно:</strong> само письмо собирается на&nbsp;стороне CQ
+          (HTML-шаблон, текст, кнопка) по&nbsp;automation&nbsp;rule.
+          Наш&nbsp;код только подкладывает данные в&nbsp;props карточки лида
+          и&nbsp;стреляет триггером. Шаблоны живут в&nbsp;дашборде CQ,
+          там же&nbsp;их&nbsp;может править контент-команда без&nbsp;разработчиков.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 — ROOT CAUSE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Что реально пошло не так с&nbsp;<code>bakaresh@yandex.ru</code></h2>
+    </div>
+
+    <p class="section-lead">
+      Изначально я&nbsp;грешил на&nbsp;rate-limit Resend &mdash; неверно.
+      Поднял auth-конфиг Supabase, там <code>hook_send_email_enabled=true</code>,
+      Resend dashboard показывает 0&nbsp;писем за&nbsp;месяц. Реальная причина &mdash;
+      <strong>silent-drop trap</strong> в&nbsp;цепочке webhook&rarr;CQ.
+    </p>
+
+    <div class="card card-full card-warn">
+      <div class="card-title">
+        <span class="card-title-icon red">&#x1F4A3;</span>
+        Silent-drop trap (был до&nbsp;фикса 27.04)
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#3a1a1a','primaryTextColor':'#e2e8f0','primaryBorderColor':'#ef4444','lineColor':'#475569','background':'#141620','mainBkg':'#1a1d27','nodeTextColor':'#e2e8f0','edgeLabelBackground':'#141620'}}}%%
+graph TD
+    SUPA["<b>Supabase Auth</b><br/>POST webhook"]
+    OUR["<b>наш handler</b>"]
+    CQCL["<b>cq.trackEvent()</b><br/>в client.ts"]
+    CQAPI["<b>CQ API</b>"]
+
+    SUPA --> OUR
+    OUR --> CQCL
+    CQCL -->|fetch| CQAPI
+
+    CQAPI -. "&#x274C; 4xx/5xx<br/>или network error" .-> CQCL
+
+    CQCL -- "до фикса:<br/>console.error()<br/>возврат void" --> OUR
+    OUR -- "200 OK<br/>(catch ничего не словил<br/>потому что ничего не throw)" --> SUPA
+
+    SUPA -. "обновляет<br/>confirmation_sent_at" .-> SUPA
+
+    style SUPA fill:#2d1a2d,stroke:#ec4899,stroke-width:1px
+    style OUR fill:#1e3a5f,stroke:#3b82f6,stroke-width:2px
+    style CQCL fill:#3a1a1a,stroke:#ef4444,stroke-width:2px
+    style CQAPI fill:#1a2e1a,stroke:#22c55e,stroke-width:1px
+        </div>
+      </div>
+
+      <div class="card-body" style="margin-top:14px;">
+        <p>
+          <strong>Корень проблемы:</strong> CQ-клиент <code>apps/web/src/lib/carrotquest/client.ts</code>
+          ловил все&nbsp;ошибки <code>fetch</code>'а и&nbsp;<code>!response.ok</code>
+          в&nbsp;<code>console.error</code>, <strong>не&nbsp;пробрасывая&nbsp;их&nbsp;наружу</strong>.
+          Webhook видел успешный return, отдавал Supabase 200, юзер не&nbsp;получал письмо.
+          В&nbsp;логах оставалась только строка в&nbsp;stdout&nbsp;Docker-контейнера &mdash;
+          через рестарт ротировалась и&nbsp;терялась.
+        </p>
+        <ol class="step-list danger">
+          <li>Юзер регистрируется &rarr; Supabase POST'ит webhook'у нашему серверу</li>
+          <li>Handler зовёт <code>cq.trackEvent('pa_doi')</code></li>
+          <li>CQ отдаёт <strong>4xx/5xx</strong> (rate-limit, glitch, suppressed lead, что-угодно)</li>
+          <li>Старый код: <code>console.error('CQ error 500')</code> &mdash; и&nbsp;всё. Никто наверх не&nbsp;узнал</li>
+          <li>Webhook возвращает 200 &mdash; Supabase помечает <code>confirmation_sent_at=now()</code></li>
+          <li>Юзер ничего не&nbsp;получает. В&nbsp;БД всё выглядит нормально</li>
+          <li>Никаких алертов, никакого Sentry &mdash; письмо <strong>тихо умерло</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 — FIX -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Что зафиксили &mdash; делаем silent&#8209;drop невозможным</h2>
+    </div>
+
+    <p class="section-lead">
+      Сегодня (27.04) задеплоили изменения, после которых любая такая ошибка
+      станет видна в&nbsp;Sentry в&nbsp;течение секунд. Не&nbsp;увеличивает
+      нагрузку на&nbsp;CQ, не&nbsp;ломает auth-flow.
+    </p>
+
+    <div class="card card-full card-success">
+      <div class="card-title">
+        <span class="card-title-icon green">&#x1F527;</span>
+        Три точки наблюдения
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Где</th><th>Что меняется</th><th>Эффект</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>lib/carrotquest/client.ts</code></td>
+            <td>request() теперь throw'ит <code>CQApiError</code> на&nbsp;!response.ok и&nbsp;<code>CQNetworkError</code> на&nbsp;fetch&#8209;exception. Добавлены breadcrumbs</td>
+            <td>Любая CQ&#8209;ошибка пробрасывается до&nbsp;Sentry-catch</td>
+          </tr>
+          <tr>
+            <td><code>lib/carrotquest/emails.ts</code></td>
+            <td>Все&nbsp;6 transactional email функций теперь зовут <code>Sentry.captureException</code> с&nbsp;tags <code>area=carrotquest-email</code> и&nbsp;<code>stage=&lt;функция&gt;</code></td>
+            <td>В&nbsp;Sentry видно какой именно email сломался для&nbsp;какого юзера</td>
+          </tr>
+          <tr>
+            <td><code>api/webhooks/supabase-email/route.ts</code></td>
+            <td>Перед обработкой выставляются <code>Sentry.setTags({email_action_type})</code> и&nbsp;<code>Sentry.setUser({id, email})</code>. Catch теперь ловит CQ-ошибки и&nbsp;помечает их&nbsp;<code>area=supabase-email-hook</code></td>
+            <td>В&nbsp;Sentry можно фильтровать по&nbsp;типу события и&nbsp;юзеру</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout success" style="margin-top:14px;">
+        <span class="callout-icon">&#x2705;</span>
+        <div>
+          <strong>Поведение auth-flow не&nbsp;изменилось:</strong> webhook всё&nbsp;ещё
+          возвращает 200 на&nbsp;ошибки, чтобы Supabase не&nbsp;ломал
+          регистрацию. Но&nbsp;теперь Sentry знает что&nbsp;именно сломалось,
+          и&nbsp;через alert rules команда может реагировать в&nbsp;течение минут.
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:6px;">
+        <span class="callout-icon">&#x1F4CB;</span>
+        <div>
+          <strong>Что ещё стоит сделать (не&nbsp;в&nbsp;этом релизе):</strong>
+          retry с&nbsp;backoff в&nbsp;CQ-клиенте (3&nbsp;попытки на&nbsp;5xx),
+          alert rule в&nbsp;Sentry на&nbsp;<code>area=carrotquest-email</code>
+          с&nbsp;уведомлением в&nbsp;Telegram, dashboard в&nbsp;CQ
+          с&nbsp;deliverability-метрикой по&nbsp;<code>pa_doi</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 — WHERE TO LOOK NOW -->
+  <div class="section reveal">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Куда смотреть при следующем тикете</h2>
+    </div>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon pink">&#x1F50D;</span>
+          Sentry (после фикса)
+        </div>
+        <div class="card-body">
+          <p>
+            Org&nbsp;<code>mpstats-academy</code> &middot; project&nbsp;<code>maal-platform</code>.
+          </p>
+          <p>
+            Фильтры:
+          </p>
+          <ul style="margin-left:20px;">
+            <li><code>area:carrotquest-email</code> &mdash; ошибки в&nbsp;email-функциях</li>
+            <li><code>area:supabase-email-hook</code> &mdash; ошибки в&nbsp;auth-webhook'е</li>
+            <li><code>email_action_type:signup</code> &mdash; конкретно&nbsp;DOI</li>
+            <li><code>user.email:&lt;адрес&gt;</code> &mdash; искать по&nbsp;юзеру</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon green">&#x1F50E;</span>
+          CarrotQuest dashboard
+        </div>
+        <div class="card-body">
+          <p>
+            Лиды &rarr; найти по&nbsp;email&nbsp;&rarr; вкладка
+            <strong>«События»</strong> &rarr; искать <code>pa_doi</code>
+            или <code>pa_password_reset</code>.
+          </p>
+          <p>
+            Если события <strong>нет&nbsp;вообще</strong>&nbsp;&mdash; webhook
+            не&nbsp;дошёл до&nbsp;CQ (смотреть Sentry).
+          </p>
+          <p>
+            Если событие <strong>есть, но&nbsp;письма&nbsp;нет</strong>&nbsp;&mdash;
+            проблема в&nbsp;automation&nbsp;rule на&nbsp;стороне CQ
+            (suppression, фильтр сегмента, отвалившийся шаблон).
+            Это уже&nbsp;вотчина&nbsp;CRM-команды.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon orange">&#x1F4DC;</span>
+          Логи Docker (последние ~24&nbsp;ч)
+        </div>
+        <div class="card-body">
+          <p>
+            На&nbsp;VPS:
+          </p>
+          <p style="font-family:var(--mono);font-size:0.78rem;background:var(--code-bg);padding:10px 12px;border-radius:6px;color:var(--text-s);">
+            ssh deploy@89.208.106.208<br>
+            cd /home/deploy/maal<br>
+            docker compose logs --tail=2000 | grep &lt;email&gt;
+          </p>
+          <p>
+            Найдёшь строку <code>[SupabaseEmailHook] DOI event sent for X</code>&nbsp;&mdash;
+            webhook отстрелял корректно. Найдёшь <code>[CarrotQuest] API error</code>&nbsp;&mdash;
+            CQ&nbsp;отбрил.
+          </p>
+          <p style="color:var(--muted);">
+            После rebuild контейнера старые логи <strong>теряются</strong>.
+            Поэтому Sentry &mdash; единственная надёжная история.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon blue">&#x1F5C3;</span>
+          Supabase БД
+        </div>
+        <div class="card-body">
+          <p>
+            <code>auth.users</code>: <code>email_confirmed_at</code>,
+            <code>confirmation_sent_at</code>, <code>last_sign_in_at</code>.
+          </p>
+          <p>
+            <strong>Важно:</strong> <code>confirmation_sent_at</code>
+            обновляется при&nbsp;успешном ответе webhook'а
+            <strong>независимо</strong> от&nbsp;того, дошло ли реально письмо.
+            Это&nbsp;<em>не&nbsp;доказательство доставки</em>.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrapper">
+    <p>
+      <span class="logo-mp" style="font-weight:700;">MPSTATS</span>
+      <span class="logo-ac" style="font-weight:500;">Academy</span>
+      <span style="color:var(--muted);margin:0 6px;">&middot;</span>
+      Email Architecture &mdash; v2.0 (corrected)
+      <span style="color:var(--muted);margin:0 6px;">&middot;</span>
+      <span class="table-tag tag-green" style="font-size:0.72rem;">Sentry instrumented</span>
+    </p>
+    <p style="margin-top:6px;">
+      Production: <a href="https://platform.mpstats.academy" target="_blank" rel="noopener">platform.mpstats.academy</a>
+    </p>
+    <p style="margin-top:10px;font-size:0.75rem;color:var(--muted-d);">обновлено 2026-04-27 вечер</p>
+  </div>
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { curve: 'basis', padding: 18, nodeSpacing: 50, rankSpacing: 60, useMaxWidth: true, htmlLabels: true },
+    themeVariables: {
+      darkMode: true,
+      primaryColor: '#1e3a5f',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#475569',
+      background: '#141620',
+      mainBkg: '#1a1d27',
+      nodeBorder: '#3b82f6',
+      nodeTextColor: '#e2e8f0',
+      clusterBkg: 'rgba(59,130,246,0.06)',
+      clusterBorder: 'rgba(59,130,246,0.2)',
+      titleColor: '#e2e8f0',
+      edgeLabelBackground: '#141620',
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      fontSize: '13px',
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  });
+</script>
+
+</body>
+</html>
