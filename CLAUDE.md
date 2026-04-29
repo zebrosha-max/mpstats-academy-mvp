@@ -304,7 +304,8 @@ MAAL/
 - CQ API: form-encoded, NOT JSON. Props через `setUserProps`, NOT `trackEvent` params
 - **Node fetch к внешним API с VPS**: undici Happy Eyeballs пробует IPv6 (нет маршрута → ENETUNREACH), v4 cold-connect иногда таймаутит. Держим `NODE_OPTIONS=--dns-result-order=ipv4first` в `docker-compose.yml` + retry-обёртку для критичных вызовов (см. `YandexProvider.fetchWithRetry`)
 - **Yandex OAuth — account picker**: только через `force_confirm=yes`. Стандартный `prompt=login` Yandex молча игнорирует
-- Details: `.claude/memory/cq-integration.md`
+- **Email-канал — CQ, не Resend** (важно при дебаге писем): Auth-письма (DOI / recovery / email_change) идут через Supabase webhook hook → `/api/webhooks/supabase-email` → CarrotQuest → CQ SMTP. Resend в Supabase auth-конфиге как fallback, но не активируется (webhook всегда возвращает 200). 0 писем в Resend dashboard — это норма. CQ-ошибки теперь видны в Sentry с tags `area:carrotquest-email` / `area:supabase-email-hook`. Полная схема: `docs/email-architecture.html`. Если в старых memory-заметках читаешь «Resend SMTP» — устарело
+- Details: `.claude/memory/cq-integration.md`, `.claude/memory/feedback_doi_resend_protocol.md`
 
 ## Staging Workflow
 
