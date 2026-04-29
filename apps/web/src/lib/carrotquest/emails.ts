@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { cq } from './client';
 import { prisma } from '@mpstats/db/client';
 
@@ -8,8 +9,18 @@ import { prisma } from '@mpstats/db/client';
  * CQ automation rules read properties from the lead card, not from event params.
  *
  * Each function checks the `email_notifications_enabled` feature flag,
- * then fires a CQ event (fire-and-forget). Errors are logged, never thrown.
+ * then fires a CQ event (fire-and-forget) — but failures bubble up to Sentry
+ * so silent CQ outages don't drop transactional emails unnoticed (the symptom
+ * we hit on bakaresh@yandex.ru on 2026-04-23).
  */
+
+function reportEmailError(stage: string, userId: string, error: unknown): void {
+  console.error(`[Email] ${stage} error for ${userId}:`, error);
+  Sentry.captureException(error, {
+    tags: { area: 'carrotquest-email', stage },
+    extra: { userId },
+  });
+}
 
 /** Format Date as "DD.MM.YYYY HH:MM" in Moscow timezone for user-facing emails */
 function formatDateRu(date: Date): string {
@@ -67,7 +78,7 @@ export async function sendPaymentSuccessEmail(
 
     console.log(`[Email] Payment success event sent for user ${userId}`);
   } catch (error) {
-    console.error('[Email] sendPaymentSuccessEmail error:', error);
+    reportEmailError('sendPaymentSuccessEmail', userId, error);
   }
 }
 
@@ -85,7 +96,7 @@ export async function sendPaymentFailedEmail(
 
     console.log(`[Email] Payment failed event sent for user ${userId}`);
   } catch (error) {
-    console.error('[Email] sendPaymentFailedEmail error:', error);
+    reportEmailError('sendPaymentFailedEmail', userId, error);
   }
 }
 
@@ -105,7 +116,7 @@ export async function sendCancellationEmail(
 
     console.log(`[Email] Cancellation event sent for user ${userId}`);
   } catch (error) {
-    console.error('[Email] sendCancellationEmail error:', error);
+    reportEmailError('sendCancellationEmail', userId, error);
   }
 }
 
@@ -126,7 +137,7 @@ export async function sendWelcomeEmail(
 
     console.log(`[Email] Welcome event + props sent for user ${userId}`);
   } catch (error) {
-    console.error('[Email] sendWelcomeEmail error:', error);
+    reportEmailError('sendWelcomeEmail', userId, error);
   }
 }
 
@@ -146,7 +157,7 @@ export async function sendSubscriptionExpiringEmail(
 
     console.log(`[Email] Subscription expiring event sent for user ${userId}`);
   } catch (error) {
-    console.error('[Email] sendSubscriptionExpiringEmail error:', error);
+    reportEmailError('sendSubscriptionExpiringEmail', userId, error);
   }
 }
 
@@ -162,6 +173,6 @@ export async function sendInactiveEmail(
 
     console.log(`[Email] Inactive ${days}d event sent for user ${userId}`);
   } catch (error) {
-    console.error(`[Email] sendInactiveEmail(${days}d) error:`, error);
+    reportEmailError(`sendInactiveEmail-${days}d`, userId, error);
   }
 }

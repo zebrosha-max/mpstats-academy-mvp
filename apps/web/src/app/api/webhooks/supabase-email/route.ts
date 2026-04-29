@@ -86,6 +86,14 @@ export async function POST(request: NextRequest) {
     const base = site_url || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`;
     const confirmUrl = `${base}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to || '')}`;
 
+    // Tags so Sentry issues are filterable per action type / user when CQ
+    // delivery fails — lets us answer "did bakaresh's DOI throw?" in seconds.
+    Sentry.setTags({
+      email_action_type,
+      'auth.user_id': user.id,
+    });
+    Sentry.setUser({ id: user.id, email: user.email });
+
     await Sentry.startSpan(
       { name: `supabase.email.${email_action_type}`, op: 'webhook.supabase-email' },
       async () => {
@@ -131,8 +139,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({});
   } catch (error) {
-    // Always return 200 to avoid breaking the auth flow
-    Sentry.captureException(error);
+    // Surface to Sentry — but still return 200 so Supabase Auth flow doesn't break.
+    // Without this, CQ outages silently dropped DOI/recovery emails (bakaresh case 2026-04-23).
+    Sentry.captureException(error, { tags: { area: 'supabase-email-hook' } });
     console.error('[SupabaseEmailHook] Error:', error);
     return NextResponse.json({});
   }

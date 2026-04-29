@@ -1,6 +1,25 @@
+import * as Sentry from '@sentry/nextjs';
 import type { CQEventName, CQEventData } from './types';
 
 const CQ_API_BASE = 'https://api.carrotquest.io/v1';
+
+export class CQApiError extends Error {
+  constructor(
+    public readonly path: string,
+    public readonly status: number,
+    public readonly responseText: string,
+  ) {
+    super(`[CarrotQuest] API error ${status} on ${path}: ${responseText.slice(0, 200)}`);
+    this.name = 'CQApiError';
+  }
+}
+
+export class CQNetworkError extends Error {
+  constructor(public readonly path: string, public readonly cause: unknown) {
+    super(`[CarrotQuest] Network error on ${path}: ${String(cause)}`);
+    this.name = 'CQNetworkError';
+  }
+}
 
 /**
  * Carrot Quest API client for server-side event tracking.
@@ -8,7 +27,10 @@ const CQ_API_BASE = 'https://api.carrotquest.io/v1';
  * Uses by_user_id=true so we can pass our Supabase UUIDs directly
  * instead of CQ's internal numeric IDs.
  *
- * Fire-and-forget pattern: errors are logged but never thrown.
+ * Throws CQApiError / CQNetworkError so callers (and Sentry) can see failures —
+ * previously errors were swallowed in console.error and silently dropped DOI emails.
+ * Callers that want fire-and-forget should wrap calls in their own try/catch.
+ *
  * If API key is missing, all methods are no-ops (safe for dev/staging).
  */
 export class CarrotQuestClient {
@@ -35,15 +57,18 @@ export class CarrotQuestClient {
   /**
    * Send form-encoded POST request to CQ API.
    * CQ API expects application/x-www-form-urlencoded, NOT JSON.
+   * Throws on non-2xx and on network errors so the failure is observable.
    */
   private async request(
     path: string,
     formFields: Record<string, string>,
   ): Promise<void> {
+    const url = `${CQ_API_BASE}${path}`;
+    const body = new URLSearchParams(formFields);
+    let response: Response;
+
     try {
-      const url = `${CQ_API_BASE}${path}`;
-      const body = new URLSearchParams(formFields);
-      const response = await fetch(url, {
+      response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -51,15 +76,27 @@ export class CarrotQuestClient {
         },
         body: body.toString(),
       });
-
-      if (!response.ok) {
-        const text = await response.text().catch(() => '');
-        console.error(
-          `[CarrotQuest] API error ${response.status} on ${path}: ${text}`,
-        );
-      }
     } catch (error) {
-      console.error(`[CarrotQuest] Network error on ${path}:`, error);
+      const err = new CQNetworkError(path, error);
+      Sentry.addBreadcrumb({
+        category: 'carrotquest',
+        level: 'error',
+        message: err.message,
+        data: { path },
+      });
+      throw err;
+    }
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      const err = new CQApiError(path, response.status, text);
+      Sentry.addBreadcrumb({
+        category: 'carrotquest',
+        level: 'error',
+        message: err.message,
+        data: { path, status: response.status },
+      });
+      throw err;
     }
   }
 
