@@ -134,13 +134,13 @@ function RegisterForm() {
               id="password"
               name="password"
               type="password"
-              placeholder="Минимум 6 символов"
+              placeholder="Минимум 8 символов"
               required
-              minLength={6}
+              minLength={8}
               disabled={loading}
             />
             <p className="text-xs text-gray-500 leading-tight">
-              Минимум 6 символов. Не используй простые пароли вроде «123456», «qwerty», «password» — мы их не пропустим.
+              Минимум 8 символов. Цифры и спецсимволы по желанию.
             </p>
           </div>
 
@@ -154,7 +154,7 @@ function RegisterForm() {
               type="password"
               placeholder="Повторите пароль"
               required
-              minLength={6}
+              minLength={8}
               disabled={loading}
             />
           </div>
