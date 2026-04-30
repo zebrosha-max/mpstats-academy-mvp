@@ -16,6 +16,9 @@ vi.mock('@mpstats/db/client', () => ({
     lesson: {
       findUnique: vi.fn(),
     },
+    userProfile: {
+      findUnique: vi.fn().mockResolvedValue({ role: 'USER' }),
+    },
   },
 }));
 

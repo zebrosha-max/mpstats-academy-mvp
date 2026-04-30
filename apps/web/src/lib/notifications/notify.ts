@@ -177,6 +177,17 @@ export async function notifyCommentReply(args: NotifyCommentReplyArgs): Promise<
     // Anti-self-notify additional guard (notify() also checks via payload.actorUserId)
     if (parent.userId === args.actorUserId) return;
 
+    // Phase 52 D2: detect reply author's role to choose ADMIN_COMMENT_REPLY
+    // vs COMMENT_REPLY (supersede — only one notification kind, never both).
+    const actor = await prisma.userProfile.findUnique({
+      where: { id: args.actorUserId },
+      select: { role: true },
+    });
+    const isAdminAuthor = actor?.role === 'ADMIN' || actor?.role === 'SUPERADMIN';
+    const notificationType: NotificationTypeName = isAdminAuthor
+      ? 'ADMIN_COMMENT_REPLY'
+      : 'COMMENT_REPLY';
+
     const lesson = await prisma.lesson.findUnique({
       where: { id: reply.lessonId },
       select: { title: true },
@@ -188,9 +199,9 @@ export async function notifyCommentReply(args: NotifyCommentReplyArgs): Promise<
 
     await notify(
       parent.userId,
-      'COMMENT_REPLY',
+      notificationType,
       {
-        type: 'COMMENT_REPLY',
+        type: notificationType,
         commentId: reply.id,
         lessonId: reply.lessonId,
         lessonTitle,
