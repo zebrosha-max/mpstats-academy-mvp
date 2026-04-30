@@ -245,6 +245,9 @@ function CourseAccordion({
     action: 'hide' | 'unhide';
   } | null>(null);
 
+  // Phase 52: notify subscribers on unhide
+  const [notifyOnUnhide, setNotifyOnUnhide] = useState(false);
+
   // --- Lesson order handlers ---
   const handleLessonOrderClick = useCallback((lessonId: string, currentOrder: number) => {
     setEditingLessonOrderId(lessonId);
@@ -335,16 +338,36 @@ function CourseAccordion({
 
   const handleConfirmLessonHide = useCallback(() => {
     if (!lessonHideTarget) return;
+    const target = lessonHideTarget;
+    const shouldNotify = target.action === 'unhide' && notifyOnUnhide;
     toggleLessonHidden.mutate(
       {
-        lessonId: lessonHideTarget.lessonId,
-        hidden: lessonHideTarget.action === 'hide',
+        lessonId: target.lessonId,
+        hidden: target.action === 'hide',
       },
       {
-        onSuccess: () => setLessonHideTarget(null),
+        onSuccess: () => {
+          setLessonHideTarget(null);
+          setNotifyOnUnhide(false);
+          // Phase 52: fan-out content-update notification (fire-and-forget)
+          if (shouldNotify) {
+            void fetch('/api/admin/notify-content-update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                courseId: course.id,
+                items: [
+                  { kind: 'lesson', id: target.lessonId, title: target.title },
+                ],
+              }),
+            }).catch((err) => {
+              console.warn('[admin/lessons] notify-content-update failed:', err);
+            });
+          }
+        },
       },
     );
-  }, [lessonHideTarget, toggleLessonHidden]);
+  }, [lessonHideTarget, toggleLessonHidden, notifyOnUnhide, course.id]);
 
   const courseHiddenBadge = course.isHidden && isSuperadmin ? (
     <Badge variant="default" size="sm" className="bg-mp-gray-200 text-mp-gray-600">
@@ -592,7 +615,10 @@ function CourseAccordion({
         <HideConfirmDialog
           open={true}
           onOpenChange={(open) => {
-            if (!open) setLessonHideTarget(null);
+            if (!open) {
+              setLessonHideTarget(null);
+              setNotifyOnUnhide(false);
+            }
           }}
           kind="lesson"
           title={lessonHideTarget.title}
@@ -600,6 +626,14 @@ function CourseAccordion({
           currentUserRole={currentUserRole}
           onConfirm={handleConfirmLessonHide}
           isPending={toggleLessonHidden.isPending}
+          notifyOption={
+            lessonHideTarget.action === 'unhide'
+              ? {
+                  checked: notifyOnUnhide,
+                  onChange: setNotifyOnUnhide,
+                }
+              : undefined
+          }
         />
       )}
     </div>
