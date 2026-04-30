@@ -10,6 +10,7 @@ import { LogoMark } from '@/components/shared/Logo';
 import { CarrotQuestIdentify } from '@/components/shared/CarrotQuestIdentify';
 import { TourProvider } from '@/components/shared/TourProvider';
 import { HelpCircleButton } from '@/components/shared/HelpCircleButton';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 export const metadata: Metadata = {
   title: 'Личный кабинет',
@@ -79,6 +80,7 @@ export default async function MainLayout({
               <div className="hidden md:block" />
               {/* Help + User nav */}
               <div className="flex items-center gap-2">
+                <NotificationBell />
                 <HelpCircleButton />
                 <UserNav user={{
                   email: user.email,
