@@ -50,7 +50,59 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-27)
+## Last Session (2026-04-30, session 2)
+
+**Phase 52 — Content Triggers. Закодено в master, ждёт staging deploy.**
+
+Перешли с GSD на Superpowers workflow (brainstorming → writing-plans → executing-plans) ради экономии токенов. План: `docs/superpowers/plans/2026-04-30-phase-52-content-triggers.md`. Спека: `docs/superpowers/specs/2026-04-30-phase-52-content-triggers-design.md`.
+
+1. **ADMIN_COMMENT_REPLY supersede** — `notifyCommentReply` (apps/web/src/lib/notifications/notify.ts) теперь резолвит роль автора reply через `userProfile.findUnique` и выбирает `ADMIN_COMMENT_REPLY` для ADMIN/SUPERADMIN, иначе обычный `COMMENT_REPLY`. Один объект на reply, никогда оба. Anti-self-notify сохранён (admin отвечает сам себе → no-op).
+2. **Visual accent ADMIN_COMMENT_REPLY** в `NotificationItem.tsx` — `border-l-4 border-mp-blue-500 pl-3` + кружок иконки `bg-mp-blue-100 text-mp-blue-700`. Эмодзи `👨‍🏫` уже стояло в Phase 51.
+3. **CONTENT_UPDATE schema widening** в `packages/shared/src/notifications.ts` — Phase 51 placeholder `lessonIds: string[]` → discriminated array `items: Array<{kind:'lesson'|'material', ...}>`. Discriminator `kind` (не `type`, чтобы не конфликтовать с payload `type`).
+4. **Rolling 24h grouping** — `apps/web/src/lib/notifications/grouping.ts`. Поиск по `(userId, type='CONTENT_UPDATE', readAt=null, createdAt > now-24h, payload->courseId = X)` через Prisma JSON path. Если найдено → append items с дедупом, обновить ctaUrl. Иначе → новая запись. Read row → новый объект (старый не трогаем).
+5. **Progress-gated targeting** — `targeting.ts` с raw SQL: active subscription AND (`COMPLETED` OR `IN_PROGRESS AND watchedPercent >= 50`). Cold targeting явно исключён.
+6. **Orchestrator** — `content-update.ts` дёргает targeting, batch fetch preferences, per-user merge + CQ event. Failures изолированы через Sentry.
+7. **Route handler** `/api/admin/notify-content-update` — admin auth + Zod validation + дёргает orchestrator.
+8. **Admin UI:**
+   - Lesson unhide — расширил `HideConfirmDialog` опциональным `notifyOption`. В `CourseManager` подключил state, fan-out fetch на confirm.
+   - Material attach — `LessonMultiAttach` принял `materialTitle`, добавил Checkbox + fetch в onSuccess attach.
+9. **Yandex Metrika** — 2 новых goal в `constants.ts` (`NOTIF_ADMIN_REPLY_OPEN`, `NOTIF_CONTENT_UPDATE_OPEN`), `NotificationItem` обёрнут handleClick wrapper'ом (try/catch — metrika не должна ломать навигацию).
+10. **Тесты:** 17 unit (3 targeting + 8 grouping + 6 admin-comment-reply); все 33 в `apps/web/src/lib/notifications/` зелёные. Pre-existing 3 fail в `tests/auth/` (Yandex OAuth) НЕ моя вина — проверил со stash. E2E `phase-52-content-update.spec.ts` env-gated.
+11. **Доки** — `docs/admin-guides/lesson-materials.md` плюс секция «Анонс нового контента»; `/roadmap` запись от 30.04 retention-tone.
+
+**Без миграций БД** — Phase 51 заранее заложила `NotificationType.ADMIN_COMMENT_REPLY` + `CONTENT_UPDATE` в enum и универсальный `payload Json`.
+
+**14 коммитов:** `1c179f8` (schema) → `167a6ca` (targeting) → `d69e06b` (grouping) → `3c6e605` (orchestrator) → `27da24e` (supersede) → `fd2c281` (visual + ym) → `7f40f48` (route) → `96cf2a8` (lesson unhide UI) → `ec2eb7e` (material attach UI) → `0e57257` (e2e) → `2a1334b` (admin guide) → `358fe04` (roadmap).
+
+**Gotchas:**
+- `@prisma/client` import в apps/web падает (vite resolve) — использовать `@mpstats/db` (re-exports).
+- Skill-batch ingest (seed-скрипты) обходит триггер — рекомендованный workflow `isHidden=true` → unhide через UI с галкой. Документировано в admin guide.
+
+### Previous Session (2026-04-30, session 1)
+
+**Hotfix-сессия: DOI-ссылки + UX паролей.**
+
+1. **Auth confirm route — фикс broken DOI links на `*.supabase.co`** (commit `1b619a4`).
+   - Жалобы от двух юзеров: bakha.73@yandex.ru `ERR_CONNECTION_ABORTED` (Yandex Browser режет supabase.co), Sd-vn@mail.ru белый экран.
+   - Корень: webhook `/api/webhooks/supabase-email` строил confirmUrl на `https://saecuecevicwjkpmaoot.supabase.co/auth/v1/verify?token=pkce_...`. ISP/Яндекс.Браузер/AdGuard режут `*.supabase.co`. Плюс PKCE требует `code_verifier` cookie на нашем домене → cross-browser email opens ломались.
+   - **Фикс:** новый `/auth/confirm` route вызывает `supabase.auth.verifyOtp({ token_hash, type })` server-side, ставит cookies на нашем домене, redirect на `next` (или `/reset-password` для recovery). Webhook теперь шлёт ссылки на `https://platform.mpstats.academy/auth/confirm?...`. Repликует welcome email + promo salvage из старого `/auth/callback`.
+   - `/auth/callback` НЕ удалён — продолжает работать для OAuth (Yandex `code` flow) и старых писем.
+   - Hotfix bakha.73 через `update auth.users set email_confirmed_at`. Sd-vn уже был подтверждён (DOI прошёл, белый экран был разовым).
+   - **Подтверждено самим Егором** — перерегистрировался на zebrosha@gmail.com через Я.Браузер, ссылка отработала.
+   - Memory: `project_auth_confirm_route.md`.
+
+2. **Password rules — упрощение** (commit `e7f040c`).
+   - Жалобы: «8 букв + 3 цифры → отказ» без понятной причины. Корень: `password_hibp_enabled: true` в Supabase (HaveIBeenPwned check) — реджектил пароли из утечек, без визуальной обратной связи юзеру.
+   - **Фикс:** Supabase config `password_min_length: 6 → 8`, `password_hibp_enabled: false`. Hint в `/register` и `/reset-password`: «Минимум 8 символов. Цифры и спецсимволы по желанию.» `minLength={8}` на всех password input'ах.
+   - Контракт прозрачный: ≥8 символов проходит, никаких скрытых правил.
+
+3. **Третий случай к концу сессии** — Галина (`galina_30811@mail.ru`, mail.ru) не получила DOI-письмо. Webhook отработал чисто (`DOI event sent for galina_30811@mail.ru` в логах), но письмо не пришло ни во входящие, ни в спам. Hotfix: `email_confirmed_at = now()` через Management API. **Open question:** на mail.ru второй случай за неделю (после bakaresh@yandex.ru 23.04) — паттерн потерь писем при доставке через CarrotQuest SMTP. Требует исследования: SPF/DKIM/DMARC у CQ-отправителя, либо переезд части flow на Resend/собственный прогретый домен.
+
+**Bonus:** научились видеть email юзеров в Supabase — `Authentication → Users` в dashboard, либо `select email from auth.users where ...` через Management API (`UserProfile` намеренно не дублирует email, source of truth = `auth.users`).
+
+---
+
+### Previous Session (2026-04-27)
 
 **Phase 49 — Lesson Materials. SHIPPED.**
 

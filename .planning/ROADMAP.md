@@ -63,7 +63,7 @@ Full details: see Phase Details below
 <summary>🚧 v1.6 Engagement (Phases 51-54) — IN PROGRESS</summary>
 
 - [x] Phase 51: Notification Center Foundation — bell, /notifications, /profile/notifications, COMMENT_REPLY (shipped 2026-04-30)
-- [ ] Phase 52: Content Triggers — ADMIN_COMMENT_REPLY + CONTENT_UPDATE с группировкой
+- [x] Phase 52: Content Triggers — ADMIN_COMMENT_REPLY + CONTENT_UPDATE с группировкой (shipped 2026-04-30, master only, awaiting staging deploy)
 - [ ] Phase 53: Retention Engine — единый scheduler с priority-resolver (PROGRESS_NUDGE / INACTIVITY_RETURN / WEEKLY_DIGEST)
 - [ ] Phase 54: Marketing Broadcast — админ-форма для массовых уведомлений
 
