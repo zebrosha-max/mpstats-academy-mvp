@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Bell } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
@@ -19,26 +20,6 @@ import { NotificationItem } from './NotificationItem';
 
 const POLL_INTERVAL_MS = 60_000;
 const DROPDOWN_LIMIT = 10;
-
-function BellIcon() {
-  return (
-    <svg
-      className="w-5 h-5 text-mp-gray-600"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-      />
-    </svg>
-  );
-}
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,14 +81,14 @@ export function NotificationBell() {
         <button
           type="button"
           aria-label="Уведомления"
-          className="relative p-2 hover:bg-mp-gray-100 rounded-md transition-colors"
+          className="relative w-10 h-10 rounded-lg flex items-center justify-center text-mp-gray-400 hover:text-mp-blue-500 hover:bg-mp-gray-100 transition-colors duration-200"
         >
-          <BellIcon />
+          <Bell className="w-5 h-5" />
           {count > 0 && (
             <span
-              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1
-                         rounded-full bg-mp-red-500 text-white text-[10px] font-bold
-                         flex items-center justify-center"
+              className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1
+                         rounded-full bg-red-500 text-white text-[10px] font-bold
+                         flex items-center justify-center pointer-events-none"
             >
               {badgeText}
             </span>
