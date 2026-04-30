@@ -35,6 +35,7 @@ model UserProfile {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   lastActiveAt DateTime?
+  lastNotificationsSeenAt DateTime? // Phase 51: badge counter clears at this timestamp (D-07)
 
   diagnosticSessions DiagnosticSession[]
   skillProfile       SkillProfile?
@@ -43,6 +44,8 @@ model UserProfile {
   lessonComments     LessonComment[]
   subscriptions      Subscription[]
   promoActivations   PromoActivation[]
+  notifications      Notification[]
+  notificationPrefs  NotificationPreference[]
 }
 
 // ============== DIAGNOSTIC ==============
@@ -450,4 +453,42 @@ model QuestionBank {
   expiresAt     DateTime      // TTL: generatedAt + 7 days
 
   @@unique([skillCategory])
+}
+
+// ============== NOTIFICATIONS (Phase 51) ==============
+
+enum NotificationType {
+  COMMENT_REPLY
+  ADMIN_COMMENT_REPLY
+  CONTENT_UPDATE
+  PROGRESS_NUDGE
+  INACTIVITY_RETURN
+  WEEKLY_DIGEST
+  BROADCAST
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  type        NotificationType
+  payload     Json
+  ctaUrl      String?
+  readAt      DateTime?
+  createdAt   DateTime         @default(now())
+  broadcastId String?
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt(sort: Desc)])
+}
+
+model NotificationPreference {
+  userId String
+  type   NotificationType
+  inApp  Boolean @default(true)
+  email  Boolean @default(false)
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, type])
 }
