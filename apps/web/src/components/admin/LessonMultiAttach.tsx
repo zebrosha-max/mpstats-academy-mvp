@@ -5,6 +5,7 @@ import { trpc } from '@/lib/trpc/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { X, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,11 +22,14 @@ type LinkRow = {
 
 export function LessonMultiAttach({
   materialId,
+  materialTitle,
   currentLinks,
 }: {
   materialId: string;
+  materialTitle: string;
   currentLinks: LinkRow[];
 }) {
+  const [notify, setNotify] = useState(false);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
 
@@ -124,13 +128,43 @@ export function LessonMultiAttach({
               <button
                 key={l.id}
                 type="button"
-                onClick={() =>
-                  attachMut.mutate({
-                    materialId,
-                    lessonId: l.id,
-                    order: currentLinks.length,
-                  })
-                }
+                onClick={() => {
+                  const shouldNotify = notify;
+                  attachMut.mutate(
+                    {
+                      materialId,
+                      lessonId: l.id,
+                      order: currentLinks.length,
+                    },
+                    {
+                      onSuccess: () => {
+                        if (shouldNotify) {
+                          void fetch('/api/admin/notify-content-update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              courseId: l.courseId,
+                              items: [
+                                {
+                                  kind: 'material',
+                                  id: materialId,
+                                  lessonId: l.id,
+                                  lessonTitle: l.title,
+                                  title: materialTitle,
+                                },
+                              ],
+                            }),
+                          }).catch((err) => {
+                            console.warn(
+                              '[admin/materials] notify-content-update failed:',
+                              err,
+                            );
+                          });
+                        }
+                      },
+                    },
+                  );
+                }}
                 disabled={attachMut.isPending}
                 className="w-full text-left p-2 hover:bg-mp-gray-50 rounded flex justify-between items-center gap-2 disabled:opacity-50"
               >
@@ -146,12 +180,26 @@ export function LessonMultiAttach({
               </p>
             )}
           </div>
+          <label className="flex items-start gap-2 text-sm cursor-pointer select-none pt-2 border-t border-mp-gray-100">
+            <Checkbox
+              checked={notify}
+              onCheckedChange={(next) => setNotify(next === true)}
+              className="mt-0.5"
+            />
+            <span>
+              <span className="font-medium">Уведомить подписчиков курса</span>
+              <span className="block text-mp-gray-500 text-xs mt-0.5">
+                Уведомление получат юзеры с активной подпиской и прогрессом в курсе урока.
+              </span>
+            </span>
+          </label>
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
               setOpen(false);
               setSearch('');
+              setNotify(false);
             }}
           >
             Закрыть

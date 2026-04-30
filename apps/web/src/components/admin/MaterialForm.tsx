@@ -308,6 +308,7 @@ export function MaterialForm({
           <CardContent>
             <LessonMultiAttach
               materialId={initial.id}
+              materialTitle={initial.title}
               currentLinks={initial.lessons || []}
             />
           </CardContent>
