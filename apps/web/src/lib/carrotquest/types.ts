@@ -23,7 +23,15 @@ export type CQEventName =
   // Auth hook events (sent via Supabase Send Email Hook)
   | 'pa_doi'
   | 'pa_password_reset'
-  | 'pa_email_change';
+  | 'pa_email_change'
+  // Notifications (Phase 51) — fired by services/notifications.ts notify()
+  | 'pa_notif_comment_reply'
+  | 'pa_notif_admin_comment_reply'
+  | 'pa_notif_content_update'
+  | 'pa_notif_progress_nudge'
+  | 'pa_notif_inactivity_return'
+  | 'pa_notif_weekly_digest'
+  | 'pa_notif_broadcast';
 
 /**
  * Event data payload — flat key-value map sent alongside the event.
