@@ -49,7 +49,10 @@ const CONTENT_UPDATE_PAYLOAD = {
   type: 'CONTENT_UPDATE' as const,
   courseId: 'course-1',
   courseTitle: 'Аналитика',
-  lessonIds: ['l1', 'l2'],
+  items: [
+    { kind: 'lesson' as const, id: 'l1', title: 'Lesson 1' },
+    { kind: 'lesson' as const, id: 'l2', title: 'Lesson 2' },
+  ],
 };
 
 const INACTIVITY_RETURN_PAYLOAD = {

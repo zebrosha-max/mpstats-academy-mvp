@@ -30,7 +30,10 @@ export type NotificationPayload =
       type: 'CONTENT_UPDATE';
       courseId: string;
       courseTitle: string;
-      lessonIds: string[];
+      items: Array<
+        | { kind: 'lesson'; id: string; title: string }
+        | { kind: 'material'; id: string; lessonId: string; lessonTitle: string; title: string }
+      >;
     }
   | {
       type: 'PROGRESS_NUDGE';
