@@ -118,7 +118,23 @@ export function CommentInput({ lessonId, parentId, onCancel, autoFocus, onSucces
     onSettled: () => {
       utils.comments.list.invalidate({ lessonId });
     },
-    onSuccess: () => {
+    onSuccess: (created) => {
+      // Trigger COMMENT_REPLY notification (fire-and-forget) — only for replies.
+      // Route handler resolves parent comment + lesson and calls notifyCommentReply.
+      // Phase 51 plan 04: packages/api cannot import from apps/web, so the trigger
+      // lives in a Next.js route handler invoked from the client after success.
+      if (parentId && created?.id) {
+        fetch('/api/notifications/notify-reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ replyCommentId: created.id }),
+          credentials: 'include',
+        }).catch((err) => {
+          // Sentry capture happens server-side in the route handler.
+          console.warn('[CommentInput] notify-reply failed:', err);
+        });
+      }
+
       setContent('');
       onSuccess?.();
       onCancel?.();
