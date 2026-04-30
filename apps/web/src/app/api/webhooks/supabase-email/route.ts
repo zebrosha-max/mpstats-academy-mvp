@@ -79,12 +79,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({});
     }
 
-    const { email_action_type, token_hash, redirect_to, site_url } = email_data;
+    const { email_action_type, token_hash, redirect_to } = email_data;
 
-    // Build confirmation URL that Supabase expects the user to visit
-    // site_url from Supabase already ends with /auth/v1, so append only /verify
-    const base = site_url || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`;
-    const confirmUrl = `${base}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to || '')}`;
+    // Build confirmation URL on OUR domain (not supabase.co) — same-domain links
+    // bypass ISP/browser blocks of *.supabase.co (Yandex Browser, AdGuard, corp
+    // firewalls) and remove PKCE cookie dependency. /auth/confirm calls
+    // verifyOtp({ token_hash, type }) server-side and sets session cookies.
+    const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://platform.mpstats.academy';
+    let nextPath = '/dashboard';
+    try {
+      if (redirect_to) {
+        const r = new URL(redirect_to);
+        // redirect_to from Supabase points at our /auth/callback?next=... — preserve only the next hint
+        nextPath = r.searchParams.get('next') || (r.pathname === '/auth/callback' ? '/dashboard' : (r.pathname + r.search));
+      }
+    } catch {
+      // fall through with default /dashboard
+    }
+    const confirmUrl = `${appUrl}/auth/confirm?token_hash=${encodeURIComponent(token_hash)}&type=${encodeURIComponent(email_action_type)}&next=${encodeURIComponent(nextPath)}`;
 
     // Tags so Sentry issues are filterable per action type / user when CQ
     // delivery fails — lets us answer "did bakaresh's DOI throw?" in seconds.
