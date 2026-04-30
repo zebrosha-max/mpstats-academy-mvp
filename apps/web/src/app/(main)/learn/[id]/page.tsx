@@ -322,6 +322,33 @@ export default function LessonPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.lesson?.id]);
 
+  // Phase 51 — anchor scroll к комменту с highlight (D-11, D-12)
+  // URL hash #comment-<cuid> → плавный scroll + 1.5s подсветка целевого комментария
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash.slice(1); // 'comment-cuid123'
+    if (!hash.startsWith('comment-')) return;
+
+    // Comments load async via tRPC — retry до 5 раз с интервалом 300ms
+    const tryHighlight = (): boolean => {
+      const el = document.getElementById(hash);
+      if (!el) return false;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('notification-highlight');
+      setTimeout(() => el.classList.remove('notification-highlight'), 1500);
+      return true;
+    };
+
+    if (tryHighlight()) return;
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (tryHighlight() || attempts >= 5) clearInterval(interval);
+    }, 300);
+    return () => clearInterval(interval);
+    // D-13: silent no-op fallback если коммент удалён или недоступен
+  }, [data?.lesson?.id]);
+
   // Extract diagnostic hints for this lesson from the errors section
   const lessonHints = useMemo(() => {
     if (!recommendedPath?.isSectioned || !recommendedPath.sections) return [];

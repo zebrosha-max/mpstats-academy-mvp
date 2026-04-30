@@ -446,3 +446,9 @@ html, body {
   0%, 100% { opacity: 0.2; }
   50%      { opacity: 0.7; }
 }
+
+/* ===== Phase 51 — Notification deep-link highlight (D-11, D-12) ===== */
+.notification-highlight {
+  background-color: rgb(239 246 255 / 1); /* Tailwind blue-50 / mp-blue-50 */
+  transition: background-color 1500ms ease-out;
+}

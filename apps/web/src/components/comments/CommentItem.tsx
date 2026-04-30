@@ -142,7 +142,7 @@ export function CommentItem({ comment, currentUserId, currentUserRole, isReply =
   const timestamp = formatRelativeTime(new Date(comment.createdAt));
 
   return (
-    <div>
+    <div id={`comment-${comment.id}`} className="scroll-mt-20">
       <div className="flex gap-3">
         <Avatar user={comment.user} size={isReply ? 'sm' : 'md'} />
         <div className="flex-1 min-w-0">
