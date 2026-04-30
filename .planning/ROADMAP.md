@@ -843,7 +843,16 @@ Plans:
 
 **Demo:** Тестер 1 пишет коммент на уроке. Тестер 2 (другой акк) отвечает на коммент. Тестер 1 в течение 60с видит badge «1» в шапке, кликает → dropdown показывает «Тестер 2 ответил на ваш коммент в "Анализ ниши"» → клик → переход на урок с подсветкой ответа.
 
-**Plans:** TBD (генерится после spec → discuss → plan)
+**Plans:** 7 plans
+
+Plans:
+- [ ] 51-01-PLAN.md — Schema (Notification + NotificationPreference + enum + UserProfile.lastNotificationsSeenAt) + shared types + CQEventName + db:push
+- [ ] 51-02-PLAN.md — notify() service (apps/web/src/lib/notifications/notify.ts) + notifyMany + notifyCommentReply + Vitest tests
+- [ ] 51-03-PLAN.md — tRPC notifications router (7 procedures) + appRouter registration + permission tests
+- [ ] 51-04-PLAN.md — COMMENT_REPLY trigger via /api/notifications/notify-reply route handler + CommentInput onSuccess hook
+- [ ] 51-05-PLAN.md — NotificationBell в Header + NotificationItem + /notifications page (infinite list)
+- [ ] 51-06-PLAN.md — /profile/notifications preferences + /profile link + CommentItem anchor + /learn/[id] highlight + globals.css
+- [ ] 51-07-PLAN.md — /api/cron/notifications-cleanup + GitHub Actions workflow + Playwright E2E + manual smoke gate
 
 ### Phase 52: Content Triggers — ADMIN_COMMENT_REPLY + CONTENT_UPDATE с группировкой
 
