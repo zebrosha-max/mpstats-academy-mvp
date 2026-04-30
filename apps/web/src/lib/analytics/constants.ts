@@ -10,6 +10,9 @@ export const METRIKA_GOALS = {
   // Phase 49 — Lesson Materials (D-41)
   MATERIAL_OPEN: 'platform_material_open',
   MATERIAL_SECTION_VIEW: 'platform_material_section_view',
+  // Phase 52 — Content Triggers
+  NOTIF_ADMIN_REPLY_OPEN: 'platform_notif_admin_reply_open',
+  NOTIF_CONTENT_UPDATE_OPEN: 'platform_notif_content_update_open',
 } as const;
 
 export type MetrikaGoal = (typeof METRIKA_GOALS)[keyof typeof METRIKA_GOALS];

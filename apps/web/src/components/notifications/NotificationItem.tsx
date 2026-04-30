@@ -4,6 +4,18 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/utils/format-time';
 import type { NotificationPayload } from '@mpstats/shared';
+import { reachGoal } from '@/lib/analytics/metrika';
+import { METRIKA_GOALS } from '@/lib/analytics/constants';
+
+function pluralize(n: number, forms: [string, string, string]): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  let form: string;
+  if (mod10 === 1 && mod100 !== 11) form = forms[0];
+  else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) form = forms[1];
+  else form = forms[2];
+  return `${n} ${form}`;
+}
 
 export interface NotificationItemData {
   id: string;
@@ -21,7 +33,6 @@ interface NotificationItemProps {
 
 /** Маленькая иконка-индикатор по типу уведомления (D-01) */
 function TypeIcon({ type }: { type: string }) {
-  // Простой emoji-style для Phase 51; иконки/цвета можно сделать в Phase 52 при ADMIN_COMMENT_REPLY accent
   const map: Record<string, string> = {
     COMMENT_REPLY: '💬',
     ADMIN_COMMENT_REPLY: '👨‍🏫',
@@ -31,8 +42,14 @@ function TypeIcon({ type }: { type: string }) {
     WEEKLY_DIGEST: '📰',
     BROADCAST: '📣',
   };
+  const isAdminReply = type === 'ADMIN_COMMENT_REPLY';
   return (
-    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-mp-gray-100 flex items-center justify-center text-base">
+    <div
+      className={cn(
+        'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-base',
+        isAdminReply ? 'bg-mp-blue-100 text-mp-blue-700' : 'bg-mp-gray-100',
+      )}
+    >
       {map[type] ?? '🔔'}
     </div>
   );
@@ -47,11 +64,34 @@ function deriveTitleAndPreview(payload: NotificationPayload | any): { title: str
         title: `${payload.replyAuthorName ?? 'Пользователь'} ответил на твой комментарий`,
         preview: payload.preview ?? '',
       };
-    case 'CONTENT_UPDATE':
+    case 'CONTENT_UPDATE': {
+      const items: Array<any> = payload.items ?? [];
+      const lessons = items.filter((i: any) => i.kind === 'lesson');
+      const materials = items.filter((i: any) => i.kind === 'material');
+      const total = items.length;
+      const courseTitle = payload.courseTitle ?? '';
+      if (total === 1) {
+        const it = items[0];
+        if (it.kind === 'lesson') {
+          return {
+            title: `Новый урок: «${it.title}»`,
+            preview: `В курсе «${courseTitle}»`,
+          };
+        }
+        return {
+          title: `Новый материал к уроку «${it.lessonTitle}»`,
+          preview: it.title,
+        };
+      }
+      const parts: string[] = [];
+      if (lessons.length) parts.push(pluralize(lessons.length, ['урок', 'урока', 'уроков']));
+      if (materials.length)
+        parts.push(pluralize(materials.length, ['материал', 'материала', 'материалов']));
       return {
-        title: `Новые уроки в курсе «${payload.courseTitle ?? ''}»`,
-        preview: `Добавлено уроков: ${payload.lessonIds?.length ?? 0}`,
+        title: `Добавлено ${parts.join(' и ')} в курсе «${courseTitle}»`,
+        preview: '',
       };
+    }
     case 'PROGRESS_NUDGE':
       return {
         title: 'Продолжишь?',
@@ -81,12 +121,33 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
   const isUnread = notification.readAt === null;
   const created = new Date(notification.createdAt);
   const { title, preview } = deriveTitleAndPreview(notification.payload);
+  const isAdminReply = notification.type === 'ADMIN_COMMENT_REPLY';
+
+  const handleClick = () => {
+    try {
+      const payload = notification.payload as any;
+      if (notification.type === 'ADMIN_COMMENT_REPLY') {
+        reachGoal(METRIKA_GOALS.NOTIF_ADMIN_REPLY_OPEN, {
+          commentId: payload?.commentId,
+        });
+      } else if (notification.type === 'CONTENT_UPDATE') {
+        reachGoal(METRIKA_GOALS.NOTIF_CONTENT_UPDATE_OPEN, {
+          courseId: payload?.courseId,
+          itemsCount: payload?.items?.length ?? 0,
+        });
+      }
+    } catch {
+      // metrika must never break navigation
+    }
+    onClick?.();
+  };
 
   const inner = (
     <div
       className={cn(
         'flex gap-3 p-3 transition-colors hover:bg-mp-gray-50',
         isUnread && 'bg-mp-blue-50', // D-03 unread accent
+        isAdminReply && 'border-l-4 border-mp-blue-500 pl-3',
       )}
     >
       <TypeIcon type={notification.type} />
@@ -104,13 +165,13 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
 
   if (notification.ctaUrl) {
     return (
-      <Link href={notification.ctaUrl} onClick={onClick} className="block">
+      <Link href={notification.ctaUrl} onClick={handleClick} className="block">
         {inner}
       </Link>
     );
   }
   return (
-    <button onClick={onClick} className="w-full text-left">
+    <button onClick={handleClick} className="w-full text-left">
       {inner}
     </button>
   );
