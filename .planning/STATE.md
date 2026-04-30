@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.4
-milestone_name: QA Audit Fixes
-status: Phase 49 shipped
-stopped_at: Completed 49-06-PLAN.md
-last_updated: "2026-04-27T10:42:00Z"
+milestone: v1.6
+milestone_name: Engagement
+status: Phase 51 shipped (Notification Center Foundation)
+stopped_at: Completed 51-07-PLAN.md
+last_updated: "2026-04-30T14:30:00Z"
 progress:
-  total_phases: 27
-  completed_phases: 24
-  total_plans: 52
-  completed_plans: 52
+  total_phases: 28
+  completed_phases: 25
+  total_plans: 59
+  completed_plans: 59
   percent: 100
 ---
 
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Пользователь проходит AI-диагностику, получает точную карту навыков и персонализированный трек обучения из реальных данных
-**Current focus:** Phase 49 lesson-materials shipped 2026-04-27
+**Current focus:** Phase 51 Notification Center Foundation shipped 2026-04-30 (staging-only; prod deploy pending)
 
 ## Current Position
 
-Phase: 49 (lesson-materials) — COMPLETE
-Plan: 6 of 6 (49-06-polish-deploy shipped)
+Phase: 51 (notification-center-foundation) — COMPLETE
+Plan: 7 of 7 (51-07-polish shipped) + post-deploy hotfix (NotificationBell badge color + style alignment)
 
 ## Performance Metrics
 
