@@ -8,6 +8,7 @@ import { billingRouter } from './routers/billing';
 import { commentsRouter } from './routers/comments';
 import { promoRouter } from './routers/promo';
 import { materialRouter } from './routers/material';
+import { notificationsRouter } from './routers/notifications';
 
 export const appRouter = router({
   profile: profileRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   comments: commentsRouter,
   promo: promoRouter,
   material: materialRouter,
+  notifications: notificationsRouter,
 });
 
 export type AppRouter = typeof appRouter;
