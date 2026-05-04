@@ -723,6 +723,26 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Phase 53A — link to /profile/referral */}
+          <Card className="shadow-mp-card">
+            <CardContent className="py-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-heading text-mp-gray-900">Рефералка</h2>
+                  <p className="text-body-sm text-mp-gray-500 mt-1">
+                    Твоя реф-ссылка и накопленные пакеты.
+                  </p>
+                </div>
+                <Link
+                  href="/profile/referral"
+                  className="text-body-sm text-mp-blue-600 hover:underline whitespace-nowrap"
+                >
+                  Открыть →
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right column */}
