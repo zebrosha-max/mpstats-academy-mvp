@@ -164,13 +164,26 @@ export const profileRouter = router({
 
       // Surface auth-side fields the UI needs (email + how the user signed up).
       // Email isn't duplicated in UserProfile by design — auth.users is the
-      // source of truth (see CLAUDE.md). Provider tells UI whether to show
-      // a password-change form or a "manage via Yandex" hint.
-      const provider =
-        (ctx.user.app_metadata?.provider as string | undefined) ?? 'email';
+      // source of truth (see CLAUDE.md).
+      //
+      // hasPassword is derived from identities, not app_metadata.provider:
+      // provider tracks the *last* sign-in method, so a user who registered
+      // by email and later linked Yandex would falsely look like a Yandex-only
+      // account. identities is the full list of linked auth methods — if any
+      // identity has provider='email', the user has a password.
+      const identities = ctx.user.identities ?? [];
+      const hasPassword = identities.some((i) => i.provider === 'email');
+      const oauthProviders = identities
+        .map((i) => i.provider)
+        .filter((p): p is string => typeof p === 'string' && p !== 'email');
 
       return profile
-        ? { ...profile, email: ctx.user.email ?? null, provider }
+        ? {
+            ...profile,
+            email: ctx.user.email ?? null,
+            hasPassword,
+            oauthProviders,
+          }
         : null;
     } catch (error) {
       handleDatabaseError(error);

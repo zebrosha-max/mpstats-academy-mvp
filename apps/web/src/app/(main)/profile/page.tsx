@@ -76,15 +76,23 @@ const subscriptionStatusMap: Record<string, { label: string; variant: 'success' 
   CANCELLED: { label: 'Отменена', variant: 'destructive' },
 };
 
-function SecurityCard({ provider }: { provider: string }) {
+function SecurityCard({
+  hasPassword,
+  oauthProviders,
+}: {
+  hasPassword: boolean;
+  oauthProviders: string[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // OAuth users (Yandex etc.) — password is managed by the identity provider
-  if (provider !== 'email') {
-    const label = provider === 'yandex' ? 'Yandex ID' : provider;
+  const providerLabel = (p: string) => (p === 'yandex' ? 'Yandex ID' : p);
+
+  // OAuth-only users (no email/password identity) — password is on the provider side
+  if (!hasPassword) {
+    const label = oauthProviders.map(providerLabel).join(', ') || 'провайдера';
     return (
       <Card className="shadow-mp-card">
         <CardHeader>
@@ -92,8 +100,8 @@ function SecurityCard({ provider }: { provider: string }) {
         </CardHeader>
         <CardContent>
           <p className="text-body-sm text-mp-gray-700">
-            Вход через <span className="font-medium">{label}</span>. Пароль управляется на стороне провайдера —
-            смените его в настройках аккаунта {label}.
+            Вы входите через <span className="font-medium">{label}</span>. У этого аккаунта нет отдельного
+            пароля на платформе — управление логином происходит на стороне провайдера.
           </p>
         </CardContent>
       </Card>
@@ -480,7 +488,10 @@ export default function ProfilePage() {
           </Card>
 
           {/* Security — change password (or info for OAuth users) */}
-          <SecurityCard provider={profile?.provider || 'email'} />
+          <SecurityCard
+            hasPassword={profile?.hasPassword ?? false}
+            oauthProviders={profile?.oauthProviders ?? []}
+          />
 
 
           {/* Subscription section — only if billing enabled */}
