@@ -1,9 +1,11 @@
+import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@mpstats/db/client';
 import {
   sendPaymentSuccessEmail,
   sendPaymentFailedEmail,
   sendCancellationEmail,
 } from '@/lib/carrotquest/emails';
+import { processReferralConversion } from '@/lib/referral/conversion';
 import { decideRecurrentUpdate } from './decide-recurrent-update';
 import type { NormalizedRecurrentEvent, RawWebhookPayload } from './parse-webhook';
 
@@ -112,6 +114,16 @@ export async function handlePaymentSuccess(
       periodEnd,
     }).catch((err) =>
       console.error('[Email] Payment success email failed:', err),
+    );
+
+    // i2 referral conversion: mark PENDING referral as CONVERTED and issue bonus package.
+    // Only fires on first successful payment (status filter skips already-CONVERTED rows).
+    // Must not throw — errors are captured but never re-thrown to avoid CP retry storms.
+    await processReferralConversion(subscription.userId).catch((err) =>
+      Sentry.captureException(err, {
+        tags: { area: 'referral', stage: 'cp-pay-conversion' },
+        extra: { userId: subscription.userId, subscriptionId },
+      }),
     );
   } catch (error) {
     console.error(
