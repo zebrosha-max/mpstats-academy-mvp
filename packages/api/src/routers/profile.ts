@@ -166,16 +166,30 @@ export const profileRouter = router({
       // Email isn't duplicated in UserProfile by design — auth.users is the
       // source of truth (see CLAUDE.md).
       //
-      // hasPassword is derived from identities, not app_metadata.provider:
-      // provider tracks the *last* sign-in method, so a user who registered
-      // by email and later linked Yandex would falsely look like a Yandex-only
-      // account. identities is the full list of linked auth methods — if any
-      // identity has provider='email', the user has a password.
+      // OAuth detection is non-trivial here:
+      //   - Our Yandex flow doesn't use Supabase's native OAuth — the callback
+      //     calls admin.createUser({ email, ... }) which writes an `email`
+      //     identity AND a randomly-generated encrypted_password. So neither
+      //     auth.identities[].provider nor encrypted_password tells us OAuth.
+      //   - The actual marker is user_metadata.yandex_id, set by our callback.
+      //   - Native Supabase OAuth (e.g. google) does show up in identities[].
+      //
+      // Rule: a user has a real password they know if they signed up by
+      // email/password AND aren't an OAuth-created shadow account.
+      const yandexId = ctx.user.user_metadata?.yandex_id as
+        | string
+        | undefined;
       const identities = ctx.user.identities ?? [];
-      const hasPassword = identities.some((i) => i.provider === 'email');
-      const oauthProviders = identities
+      const nativeOauthProviders = identities
         .map((i) => i.provider)
-        .filter((p): p is string => typeof p === 'string' && p !== 'email');
+        .filter(
+          (p): p is string => typeof p === 'string' && p !== 'email',
+        );
+      const oauthProviders = [
+        ...(yandexId ? ['yandex'] : []),
+        ...nativeOauthProviders,
+      ];
+      const hasPassword = oauthProviders.length === 0;
 
       return profile
         ? {
