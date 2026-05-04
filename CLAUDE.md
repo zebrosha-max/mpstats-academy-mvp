@@ -50,7 +50,39 @@
 
 **Внимание при переходе на боевой CP (Phase 28):** CP хранит `amount` на своей стороне в момент создания подписки. Существующие ACTIVE подписки с тестового режима при автосписании всё равно спишут **старые** суммы. Перед переключением на боевые ключи отменить все тестовые ACTIVE подписки, чтобы реальные юзеры начали с новых цен.
 
-## Last Session (2026-04-30, session 2)
+## Last Session (2026-05-04)
+
+**Phase 53A — Referral Program (External Flow). Branch `phase-53a-referral`, 19 commits, awaiting Egor's merge to master.**
+
+Subagent-driven execution в 5 батчах. План: `docs/superpowers/plans/2026-05-04-phase-53a-referral-program.md`. Спека: `docs/superpowers/specs/2026-05-04-phase-53a-referral-program-design.md`.
+
+**Что задеплоится при мерже:**
+
+1. **Schema (Task 1)** — `SubscriptionStatus.TRIAL` enum + `Referral` + `ReferralBonusPackage` + `UserProfile.referralCode @unique`. Миграция уже применена к Supabase через `db:push --accept-data-loss` (безопасно — unique index на полностью null колонке).
+2. **REF-* generator + backfill (Tasks 2-3)** — alphabet `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (30 chars, нет I/L/O/0/1), 5 retries. Backfill скрипт нашёл 140 юзеров без кода в проде (dry-run проверен).
+3. **Core primitives (Tasks 4-8)** — TRIAL в subscription queries, `createTrialSubscription`, `activatePackage` pure-func + 7 tests, `checkFraudSignals` (self-ref + cap 5/week → PENDING_REVIEW) + 4 tests, cookie attribution helpers + 10 tests.
+4. **Wiring (Tasks 9-13)** — middleware парсит `?ref=` и ставит httpOnly cookie 30 дней. Orchestrator `issueReferralOnSignup` (resolve → fraud → mode flag → transaction(Referral + i1 Package + Trial sub) → CQ events). Хуки в `/auth/confirm` (после DOI verifyOtp) и Yandex callback (только в `if (isNewUser)`). CP webhook conversion для i2 mode в `handlePaymentSuccess`.
+5. **UI (Tasks 14-16)** — tRPC router `referral.{getMyState, validateCode (public!), activatePackage}` + 7 tests; `/profile/referral` page с copy-кнопкой, статистикой, списком пакетов; баннер «🎁 +14 дней» на `/register?ref=...`.
+6. **Ship (Tasks 17-19)** — публичный roadmap entry (без техники), env-gated e2e Playwright тест.
+
+**Технический долг:** Task 14 переместил `activation.ts` и `attribution.ts` из `apps/web/src/lib/referral/` в `packages/api/src/services/referral/`. В apps/web остались re-export шимы с относительным путём через границу пакетов. Чище — добавить re-exports в `@mpstats/api` index. Если staging build (Edge runtime middleware) упадёт на этом — фиксить там.
+
+**Что работает end-to-end (без UI smoke):**
+- Юзер по `/?ref=REF-XXXXXX` → cookie через middleware
+- Регистрация (email DOI / Yandex OAuth) → orchestrator создаёт Referral + Trial sub другу + (i1) Package рефереру
+- Реферер заходит в `/profile` → видит «Рефералка» → попадает на `/profile/referral` → видит ссылку, статистику, активирует пакет
+- В i2 mode конверсия идёт через CP `pay` webhook
+- На `/register?ref=...` показывается баннер
+
+**Ждёт от Егора:**
+- Решение мержить ли в master или сначала тестить на staging через push ветки
+- Deploy на staging + backfill на проде (140 юзеров)
+- QA на staging
+- Решение по флагу `referral_pay_gated` (i1 default = no payment required)
+
+**19 коммитов:** `6b5ebb4` (schema) → `22ad832` (generator) → `ded8ba2` (backfill) → `a80e01f` (TRIAL queries) → `26b9f36` (trial primitive) → `4757008` (activation) → `4ca82b5` (fraud) → `4baae6c` (attribution) → `2fffd11` (middleware) → `aebb697` (orchestrator) → `6bf1b69` (auth/confirm hook) → `961bfca` (Yandex hook) → `bbca070` (CP conversion) → `150355d` (tRPC router + file move) → `809cb8a` (profile page) → `7126e86` (register banner) → `43c01df` (roadmap) → `102b980` (e2e) → последний коммит этой сессии (memory/CLAUDE.md).
+
+### Previous Session (2026-04-30, session 2)
 
 **Phase 52 — Content Triggers. Закодено в master, ждёт staging deploy.**
 
