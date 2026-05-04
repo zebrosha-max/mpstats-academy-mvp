@@ -162,7 +162,16 @@ export const profileRouter = router({
         }
       }
 
-      return profile;
+      // Surface auth-side fields the UI needs (email + how the user signed up).
+      // Email isn't duplicated in UserProfile by design — auth.users is the
+      // source of truth (see CLAUDE.md). Provider tells UI whether to show
+      // a password-change form or a "manage via Yandex" hint.
+      const provider =
+        (ctx.user.app_metadata?.provider as string | undefined) ?? 'email';
+
+      return profile
+        ? { ...profile, email: ctx.user.email ?? null, provider }
+        : null;
     } catch (error) {
       handleDatabaseError(error);
     }

@@ -76,6 +76,132 @@ const subscriptionStatusMap: Record<string, { label: string; variant: 'success' 
   CANCELLED: { label: 'Отменена', variant: 'destructive' },
 };
 
+function SecurityCard({ provider }: { provider: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // OAuth users (Yandex etc.) — password is managed by the identity provider
+  if (provider !== 'email') {
+    const label = provider === 'yandex' ? 'Yandex ID' : provider;
+    return (
+      <Card className="shadow-mp-card">
+        <CardHeader>
+          <CardTitle className="text-heading">Безопасность</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-body-sm text-mp-gray-700">
+            Вход через <span className="font-medium">{label}</span>. Пароль управляется на стороне провайдера —
+            смените его в настройках аккаунта {label}.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const handleSubmit = async () => {
+    if (password.length < 8) {
+      toast.error('Пароль должен быть минимум 8 символов');
+      return;
+    }
+    if (password !== confirm) {
+      toast.error('Пароли не совпадают');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        const msg = (error.message || '').toLowerCase();
+        if (msg.includes('same') && msg.includes('password')) {
+          toast.error('Новый пароль совпадает с текущим');
+        } else if (msg.includes('weak')) {
+          toast.error('Слишком простой пароль', { description: 'Используйте комбинацию букв и цифр' });
+        } else if (msg.includes('session')) {
+          toast.error('Сессия истекла', { description: 'Войдите заново и повторите попытку' });
+        } else {
+          toast.error('Не удалось сменить пароль', { description: error.message });
+        }
+        return;
+      }
+      toast.success('Пароль обновлён');
+      setPassword('');
+      setConfirm('');
+      setIsOpen(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <Card className="shadow-mp-card">
+      <CardHeader>
+        <CardTitle className="text-heading">Безопасность</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {!isOpen ? (
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="font-medium text-mp-gray-900">Пароль</div>
+              <p className="text-body-sm text-mp-gray-500">Обновите пароль для входа в аккаунт</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
+              Сменить пароль
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
+                Новый пароль
+              </label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Минимум 8 символов"
+                minLength={8}
+                autoComplete="new-password"
+              />
+            </div>
+            <div>
+              <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
+                Повторите пароль
+              </label>
+              <Input
+                type="password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder="Повторите пароль"
+                minLength={8}
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSubmit} disabled={isSaving}>
+                {isSaving ? 'Сохранение...' : 'Сохранить пароль'}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setIsOpen(false);
+                  setPassword('');
+                  setConfirm('');
+                }}
+                disabled={isSaving}
+              >
+                Отмена
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ProfilePage() {
   const [name, setName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -313,6 +439,21 @@ export default function ProfilePage() {
             <CardContent className="space-y-4">
               <div>
                 <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  value={profile?.email || ''}
+                  readOnly
+                  disabled
+                  className="bg-mp-gray-50 text-mp-gray-700"
+                />
+                <p className="text-body-xs text-mp-gray-500 mt-1.5">
+                  Чтобы сменить email, напишите в поддержку.
+                </p>
+              </div>
+              <div>
+                <label className="block text-body-sm font-medium text-mp-gray-700 mb-2">
                   Имя
                 </label>
                 <Input
@@ -337,6 +478,10 @@ export default function ProfilePage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Security — change password (or info for OAuth users) */}
+          <SecurityCard provider={profile?.provider || 'email'} />
+
 
           {/* Subscription section — only if billing enabled */}
           {billingEnabled && (
@@ -622,8 +767,8 @@ export default function ProfilePage() {
                   <div className="font-medium text-mp-gray-900 truncate">
                     {profile?.name || 'Пользователь'}
                   </div>
-                  <div className="text-body-sm text-mp-gray-500 truncate">
-                    ID: {profile?.id?.slice(0, 8)}...
+                  <div className="text-body-sm text-mp-gray-500 truncate" title={profile?.email || ''}>
+                    {profile?.email || `ID: ${profile?.id?.slice(0, 8)}...`}
                   </div>
                 </div>
               </div>
