@@ -61,6 +61,27 @@ export async function GET(request: Request): Promise<Response> {
     if (existingRows.length > 0) {
       supabaseUserId = existingRows[0].id;
       supabaseUserEmail = existingRows[0].email;
+
+      // Backfill yandex_id on user_metadata for accounts that pre-date the
+      // marker (created before this callback existed, or before we started
+      // setting yandex_id). The /profile page uses this field to decide
+      // whether the change-password form makes sense — without it, OAuth
+      // users see a non-functional form. Best-effort: failures are logged
+      // but don't break sign-in.
+      void admin.auth.admin
+        .updateUserById(supabaseUserId, {
+          user_metadata: {
+            yandex_id: userInfo.id,
+            full_name: userInfo.name,
+          },
+        })
+        .then(({ error }) => {
+          if (error) {
+            Sentry.captureException(error, {
+              tags: { route: 'yandex-callback', stage: 'backfill-yandex-id' },
+            });
+          }
+        });
     } else {
       const { data: createData, error: createError } =
         await admin.auth.admin.createUser({
