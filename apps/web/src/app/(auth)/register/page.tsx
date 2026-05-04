@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { trpc } from '@/lib/trpc/client';
 
 function RegisterForm() {
   const router = useRouter();
@@ -27,6 +28,14 @@ function RegisterForm() {
   const loginHref = `/login${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   const promoFromUrl = searchParams.get('promo') || '';
+
+  const refCode = searchParams.get('ref') ? searchParams.get('ref')!.toUpperCase() : null;
+  const refValidation = trpc.referral.validateCode.useQuery(
+    { code: refCode! },
+    { enabled: !!refCode },
+  );
+  const i2Mode = process.env.NEXT_PUBLIC_REFERRAL_PAY_GATED === 'true';
+  const trialDays = i2Mode ? 7 : 14;
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -76,6 +85,19 @@ function RegisterForm() {
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {refValidation.data?.valid && (
+          <div className="rounded-lg border border-mp-blue-300 bg-mp-blue-50 p-4 mb-4 text-sm">
+            <div className="font-semibold text-mp-gray-900">
+              🎁 Тебе подарили {trialDays} дней бесплатного доступа к Платформе
+            </div>
+            {refValidation.data.referrerName && (
+              <div className="text-mp-gray-600 mt-1">
+                От пользователя: <strong>{refValidation.data.referrerName}</strong>
+              </div>
+            )}
+          </div>
+        )}
+
         {error && (
           <div className="p-3 rounded-md bg-red-50 text-red-600 text-sm">
             {error}
