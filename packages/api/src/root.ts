@@ -9,6 +9,7 @@ import { commentsRouter } from './routers/comments';
 import { promoRouter } from './routers/promo';
 import { materialRouter } from './routers/material';
 import { notificationsRouter } from './routers/notifications';
+import { referralRouter } from './routers/referral';
 
 export const appRouter = router({
   profile: profileRouter,
@@ -21,6 +22,7 @@ export const appRouter = router({
   promo: promoRouter,
   material: materialRouter,
   notifications: notificationsRouter,
+  referral: referralRouter,
 });
 
 export type AppRouter = typeof appRouter;
