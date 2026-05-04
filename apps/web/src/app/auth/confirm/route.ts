@@ -4,6 +4,8 @@ import { prisma } from '@mpstats/db/client';
 import { sendWelcomeEmail } from '@/lib/carrotquest/emails';
 import * as Sentry from '@sentry/nextjs';
 import type { EmailOtpType } from '@supabase/supabase-js';
+import { REFERRAL_COOKIE_NAME, isValidRefCodeShape } from '@/lib/referral/attribution';
+import { issueReferralOnSignup } from '@/lib/referral/issue';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,6 +44,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/reset-password', origin));
   }
 
+  // Read referral cookie on success branch only (before recovery check already passed).
+  const rawRefCode = request.cookies.get(REFERRAL_COOKIE_NAME)?.value ?? '';
+  const refCode = isValidRefCodeShape(rawRefCode) ? rawRefCode : null;
+
   // For signup/invite/email_change: replicate /auth/callback side-effects
   // (welcome email on first confirmation, salvaged promo redirect).
   let salvagedNext: string | null = null;
@@ -63,11 +69,19 @@ export async function GET(request: NextRequest) {
       if (typeof pendingPromo === 'string' && pendingPromo.length > 0 && !safeNext.includes('promo=')) {
         salvagedNext = `/pricing?promo=${encodeURIComponent(pendingPromo)}`;
       }
+
+      // Referral hook: fire-and-forget, never blocks redirect.
+      if (refCode) {
+        issueReferralOnSignup({ refCode, friendUserId: user.id })
+          .catch(err => console.error('[AuthConfirm] referral issue failed:', err));
+      }
     }
   } catch (err) {
     Sentry.captureException(err, { tags: { area: 'auth-confirm', stage: 'post-verify' } });
     console.error('[AuthConfirm] Post-verify side-effect error:', err);
   }
 
-  return NextResponse.redirect(new URL(salvagedNext ?? safeNext, origin));
+  const response = NextResponse.redirect(new URL(salvagedNext ?? safeNext, origin));
+  if (refCode) response.cookies.delete(REFERRAL_COOKIE_NAME);
+  return response;
 }
