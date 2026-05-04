@@ -18,6 +18,8 @@ interface KinescopePlayerProps {
   videoId: string | null;
   className?: string;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
+  /** Fires when player emits Ended event — caller can mark lesson 100% completed */
+  onEnded?: () => void;
   initialTime?: number;
   /** Total video duration in seconds — used as fallback when Kinescope events fail */
   durationSeconds?: number;
@@ -89,17 +91,19 @@ function loadKinescopeApi(): Promise<KinescopeIframePlayerFactory> {
 let playerCounter = 0;
 
 export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
-  function VideoPlayer({ videoId, className, onTimeUpdate, initialTime, durationSeconds }, ref) {
+  function VideoPlayer({ videoId, className, onTimeUpdate, onEnded, initialTime, durationSeconds }, ref) {
     const playerRef = useRef<KinescopePlayerInstance | null>(null);
     const pendingSeekRef = useRef<number | null>(null);
     const currentTimeRef = useRef<number | null>(null);
     const onTimeUpdateRef = useRef(onTimeUpdate);
+    const onEndedRef = useRef(onEnded);
     const [error, setError] = useState<string | null>(null);
     const [resumeNotice, setResumeNotice] = useState<string | null>(null);
     const stableId = useRef(`__kinescope_player_${++playerCounter}`);
 
-    // Keep callback ref up-to-date without causing re-renders
+    // Keep callback refs up-to-date without causing re-renders
     onTimeUpdateRef.current = onTimeUpdate;
+    onEndedRef.current = onEnded;
 
     useImperativeHandle(ref, () => ({
       seekTo: (seconds: number) => {
@@ -119,44 +123,76 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
       let destroyed = false;
       let player: KinescopePlayerInstance | null = null;
       let timerCleanup: (() => void) | null = null;
-      let eventsWorking = false;
+      const state = { eventsWorking: false };
 
       // --- Timer-based fallback tracking ---
-      // Kinescope IframePlayer API events are broken (postMessage bridge
-      // from iframe→parent never fires). Timer tracks approximate position.
-      // Works even without known duration — position increments each second
-      // while the tab is visible. Duration is either from DB or estimated
-      // as max(position, knownDuration).
+      // Kinescope postMessage events (TimeUpdate/DurationChange) are unreliable
+      // and don't fire in current player builds. Instead of locally incrementing
+      // by +1s (which double-counted progress at 1.5x/2x — user got 49% after
+      // watching whole video at 2x), we poll player.getCurrentTime() which
+      // correctly reflects playback rate, seeking, and pauses.
+      //
+      // Local increment is kept as last-resort fallback if getCurrentTime()
+      // ever rejects/throws (e.g. iframe not ready, network glitch).
       const startTimerTracking = (startFrom: number) => {
         let position = startFrom;
+        let lastPolledAt = Date.now();
         let isPageVisible = !document.hidden;
         const knownDuration = durationSeconds || 0;
 
         const handleVisibility = () => {
           isPageVisible = !document.hidden;
+          lastPolledAt = Date.now();
         };
         document.addEventListener('visibilitychange', handleVisibility);
 
-        const interval = setInterval(() => {
-          if (!isPageVisible || destroyed) return;
-          position += 1;
-          // Cap at known duration if available; otherwise let it grow
-          if (knownDuration > 0) {
-            position = Math.min(position, knownDuration);
+        const tick = async () => {
+          if (!isPageVisible || destroyed) {
+            lastPolledAt = Date.now();
+            return;
           }
+          // Anti-double-count: if Kinescope events started firing after the
+          // 5s grace window, let them be the source of truth and stop polling.
+          if (state.eventsWorking) {
+            lastPolledAt = Date.now();
+            return;
+          }
+
+          let nextPosition = position;
+          try {
+            const t = await playerRef.current?.getCurrentTime();
+            if (typeof t === 'number' && Number.isFinite(t) && t >= 0) {
+              nextPosition = t;
+            } else {
+              // Fallback to local increment scaled by elapsed wall-clock time
+              const elapsed = (Date.now() - lastPolledAt) / 1000;
+              nextPosition = position + elapsed;
+            }
+          } catch {
+            const elapsed = (Date.now() - lastPolledAt) / 1000;
+            nextPosition = position + elapsed;
+          }
+          lastPolledAt = Date.now();
+
+          if (knownDuration > 0) {
+            nextPosition = Math.min(nextPosition, knownDuration);
+          }
+          position = nextPosition;
           currentTimeRef.current = position;
           // Per D-03: only fire onTimeUpdate when we have a real duration from DB
           if (knownDuration > 0) {
             onTimeUpdateRef.current?.(position, knownDuration);
           }
-        }, 1000);
+        };
+
+        const interval = setInterval(() => { void tick(); }, 1000);
 
         timerCleanup = () => {
           clearInterval(interval);
           document.removeEventListener('visibilitychange', handleVisibility);
         };
 
-        console.log(`[KP] Timer tracking started: position=${startFrom}s, knownDuration=${knownDuration}s`);
+        console.log(`[KP] Timer tracking started (getCurrentTime poll): position=${startFrom}s, knownDuration=${knownDuration}s`);
       };
 
       loadKinescopeApi()
@@ -202,7 +238,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           const handleDurationChange = (data: Record<string, unknown>) => {
             const dur = data?.duration as number;
             if (typeof dur === 'number' && dur > 0) {
-              eventsWorking = true;
+              state.eventsWorking = true;
               knownDuration = dur;
               console.log('[KP] Kinescope event: durationChange', dur);
             }
@@ -211,7 +247,7 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
           const handleTimeUpdate = (data: Record<string, unknown>) => {
             const time = data?.currentTime as number;
             if (typeof time === 'number') {
-              eventsWorking = true;
+              state.eventsWorking = true;
               if (knownDuration > 0) {
                 currentTimeRef.current = time;
                 onTimeUpdateRef.current?.(time, knownDuration);
@@ -219,14 +255,30 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
             }
           };
 
+          const handleEnded = () => {
+            console.log('[KP] Kinescope event: ended → mark 100%');
+            // Force a final 100% sample so saveWatchProgress sees full duration
+            const dur = knownDuration > 0 ? knownDuration : (durationSeconds || 0);
+            if (dur > 0) {
+              currentTimeRef.current = dur;
+              onTimeUpdateRef.current?.(dur, dur);
+            }
+            onEndedRef.current?.();
+          };
+
           // Try multiple event name formats — Events enum may be undefined in latest version
           const eventNames = pl.Events
-            ? { timeUpdate: pl.Events.TimeUpdate, durationChange: pl.Events.DurationChange }
+            ? {
+                timeUpdate: pl.Events.TimeUpdate,
+                durationChange: pl.Events.DurationChange,
+                ended: pl.Events.Ended,
+              }
             : null;
 
           if (eventNames?.durationChange && eventNames?.timeUpdate) {
             pl.on(eventNames.durationChange, handleDurationChange);
             pl.on(eventNames.timeUpdate, handleTimeUpdate);
+            if (eventNames.ended) pl.on(eventNames.ended, handleEnded);
             console.log('[KP] Subscribed via player.Events:', eventNames);
           } else {
             // Fallback: try common string event names
@@ -236,10 +288,13 @@ export const VideoPlayer = forwardRef<PlayerHandle, KinescopePlayerProps>(
             try { pl.on('durationchange', handleDurationChange); } catch { /* ignore */ }
             try { pl.on('timeupdate', handleTimeUpdate); } catch { /* ignore */ }
           }
+          // Ended event — try multiple casings unconditionally
+          try { pl.on('Ended', handleEnded); } catch { /* ignore */ }
+          try { pl.on('ended', handleEnded); } catch { /* ignore */ }
 
           // --- Fallback: start timer if events don't fire within 5s ---
           setTimeout(() => {
-            if (!eventsWorking && !destroyed) {
+            if (!state.eventsWorking && !destroyed) {
               console.warn('[KP] Kinescope events not firing — activating timer fallback');
               startTimerTracking(startPosition);
             }

@@ -410,36 +410,45 @@ export default function LessonPage() {
     }, 15_000);
   }, [lessonId]);
 
-  // Save on page unload (final position capture)
+  // Save on tab hide / page unload (final position capture)
+  // visibilitychange → hidden is the most reliable signal across browsers
+  // (iOS Safari frequently skips beforeunload but always fires visibilitychange).
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (lastPositionRef.current >= 5 && lastDurationRef.current > 0) {
-        // Use sendBeacon for reliable delivery during page unload
-        const payload = JSON.stringify({
-          lessonId,
-          position: lastPositionRef.current,
-          duration: lastDurationRef.current,
-        });
-        // Fall back to sync mutation if beacon not available
-        try {
-          navigator.sendBeacon?.(
-            '/api/trpc/learning.saveWatchProgress',
-            new Blob([JSON.stringify({ json: payload })], { type: 'application/json' })
-          );
-        } catch {
-          // Best effort — mutation might not complete during unload
-          saveWatchProgressRef.current.mutate({
-            lessonId,
-            position: lastPositionRef.current,
-            duration: lastDurationRef.current,
-          });
-        }
+    const flushBeacon = () => {
+      if (lastPositionRef.current < 5 || lastDurationRef.current <= 0) return;
+      const payload = JSON.stringify({
+        lessonId,
+        position: lastPositionRef.current,
+        duration: lastDurationRef.current,
+      });
+      try {
+        const sent = navigator.sendBeacon?.(
+          '/api/trpc/learning.saveWatchProgress',
+          new Blob([JSON.stringify({ json: payload })], { type: 'application/json' })
+        );
+        if (sent) return;
+      } catch {
+        /* fall through to mutation */
       }
+      // Best effort — mutation might not complete during unload
+      saveWatchProgressRef.current.mutate({
+        lessonId,
+        position: lastPositionRef.current,
+        duration: lastDurationRef.current,
+      });
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') flushBeacon();
+    };
+
+    window.addEventListener('beforeunload', flushBeacon);
+    window.addEventListener('pagehide', flushBeacon);
+    document.addEventListener('visibilitychange', handleVisibility);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', flushBeacon);
+      window.removeEventListener('pagehide', flushBeacon);
+      document.removeEventListener('visibilitychange', handleVisibility);
       // Clear pending debounce on unmount and fire final save
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
@@ -641,6 +650,18 @@ export default function LessonPage() {
               ref={playerRef}
               videoId={lesson.videoId}
               onTimeUpdate={handleTimeUpdate}
+              onEnded={() => {
+                // Force-flush a 100% checkpoint when player emits Ended
+                // (handles cases where the last few seconds round to 88-89%)
+                if (lastDurationRef.current > 0) {
+                  lastPositionRef.current = lastDurationRef.current;
+                  saveWatchProgressRef.current.mutate({
+                    lessonId,
+                    position: lastDurationRef.current,
+                    duration: lastDurationRef.current,
+                  });
+                }
+              }}
               initialTime={hasSearchTimecode ? searchTimecode : watchProgress?.lastPosition}
               durationSeconds={lesson.duration ? lesson.duration * 60 : undefined}
             />
