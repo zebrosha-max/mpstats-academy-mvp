@@ -31,7 +31,12 @@ export type CQEventName =
   | 'pa_notif_progress_nudge'
   | 'pa_notif_inactivity_return'
   | 'pa_notif_weekly_digest'
-  | 'pa_notif_broadcast';
+  | 'pa_notif_broadcast'
+  // Referral (Phase 53A)
+  | 'pa_referral_trial_started'
+  | 'pa_referral_friend_registered'
+  | 'pa_referral_friend_paid'
+  | 'pa_referral_package_activated';
 
 /**
  * Event data payload — flat key-value map sent alongside the event.
