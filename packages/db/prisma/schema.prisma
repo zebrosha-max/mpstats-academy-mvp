@@ -32,6 +32,7 @@ model UserProfile {
   yandexId  String?  @unique // For Phase 17 Yandex ID OAuth binding
   phone     String?
   toursCompleted String[] @default([]) // Onboarding tour state (per-user, not per-device): ['dashboard', 'learn', 'lesson']
+  referralCode   String?  @unique // Phase 53A: user's own shareable referral code
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   lastActiveAt DateTime?
@@ -46,6 +47,9 @@ model UserProfile {
   promoActivations   PromoActivation[]
   notifications      Notification[]
   notificationPrefs  NotificationPreference[]
+  referralsMade      Referral[]             @relation("ReferralsAsReferrer")
+  referralAsFriend   Referral?              @relation("ReferralsAsReferred")
+  referralPackages   ReferralBonusPackage[] @relation("ReferralPackagesOwned")
 }
 
 // ============== DIAGNOSTIC ==============
@@ -210,6 +214,7 @@ enum SubscriptionType {
 enum SubscriptionStatus {
   PENDING
   ACTIVE
+  TRIAL
   PAST_DUE
   CANCELLED
   EXPIRED
@@ -498,4 +503,64 @@ model NotificationPreference {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, type])
+}
+
+// ============== REFERRAL (Phase 53A) ==============
+
+enum ReferralCodeType {
+  EXTERNAL_USER
+  INTERNAL_CARE
+  INTERNAL_SALES_SERVICE
+  INTERNAL_CONSULTING
+  INTERNAL_GO
+  INTERNAL_TOCHKA
+  INTERNAL_OTHER
+}
+
+enum ReferralStatus {
+  PENDING
+  CONVERTED
+  EXPIRED
+  BLOCKED_SELF_REF
+  PENDING_REVIEW
+}
+
+enum ReferralBonusPackageStatus {
+  PENDING
+  USED
+  REVOKED
+}
+
+model Referral {
+  id                String           @id @default(cuid())
+  code              String
+  codeType          ReferralCodeType @default(EXTERNAL_USER)
+  referrerUserId    String?
+  referredUserId    String           @unique
+  status            ReferralStatus   @default(PENDING)
+  conversionTrigger String?
+  createdAt         DateTime         @default(now())
+  convertedAt       DateTime?
+
+  referrer     UserProfile?          @relation("ReferralsAsReferrer", fields: [referrerUserId], references: [id], onDelete: SetNull)
+  referred     UserProfile           @relation("ReferralsAsReferred", fields: [referredUserId], references: [id], onDelete: Cascade)
+  bonusPackage ReferralBonusPackage?
+
+  @@index([referrerUserId, createdAt(sort: Desc)])
+  @@index([status])
+}
+
+model ReferralBonusPackage {
+  id               String                     @id @default(cuid())
+  ownerUserId      String
+  sourceReferralId String                     @unique
+  days             Int                        @default(14)
+  status           ReferralBonusPackageStatus @default(PENDING)
+  issuedAt         DateTime                   @default(now())
+  usedAt           DateTime?
+
+  owner          UserProfile @relation("ReferralPackagesOwned", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  sourceReferral Referral    @relation(fields: [sourceReferralId], references: [id], onDelete: Cascade)
+
+  @@index([ownerUserId, status])
 }

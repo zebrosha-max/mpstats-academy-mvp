@@ -166,6 +166,7 @@ export function normalizeRecurrentEvent(
 export type OurSubscriptionStatus =
   | 'PENDING'
   | 'ACTIVE'
+  | 'TRIAL'
   | 'PAST_DUE'
   | 'CANCELLED'
   | 'EXPIRED';
