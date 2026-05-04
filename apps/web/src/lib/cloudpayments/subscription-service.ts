@@ -254,7 +254,7 @@ export async function handleRecurrentEvent(
       subscription = await prisma.subscription.findFirst({
         where: {
           userId: event.accountId,
-          status: { in: ['PENDING', 'ACTIVE', 'PAST_DUE'] },
+          status: { in: ['PENDING', 'ACTIVE', 'TRIAL', 'PAST_DUE'] },
           cpSubscriptionId: null,
         },
         orderBy: { createdAt: 'desc' },

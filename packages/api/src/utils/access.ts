@@ -27,7 +27,7 @@ export async function getUserActiveSubscriptions(
   return prisma.subscription.findMany({
     where: {
       userId,
-      status: { in: ['ACTIVE', 'CANCELLED'] },
+      status: { in: ['ACTIVE', 'TRIAL', 'CANCELLED'] },
       currentPeriodEnd: { gt: now },
     },
     select: {

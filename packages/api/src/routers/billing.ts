@@ -55,7 +55,7 @@ export const billingRouter = router({
     return ctx.prisma.subscription.findFirst({
       where: {
         userId: ctx.user.id,
-        status: { in: ['ACTIVE', 'PAST_DUE', 'CANCELLED', 'PENDING'] },
+        status: { in: ['ACTIVE', 'TRIAL', 'PAST_DUE', 'CANCELLED', 'PENDING'] },
       },
       include: { plan: true, course: true },
       orderBy: { createdAt: 'desc' },
@@ -130,7 +130,7 @@ export const billingRouter = router({
           ...(input.courseId ? { courseId: input.courseId } : { courseId: null }),
           OR: [
             { status: 'PENDING' },
-            { status: { in: ['ACTIVE', 'PAST_DUE'] }, currentPeriodEnd: { gt: now } },
+            { status: { in: ['ACTIVE', 'TRIAL', 'PAST_DUE'] }, currentPeriodEnd: { gt: now } },
           ],
         },
       });
