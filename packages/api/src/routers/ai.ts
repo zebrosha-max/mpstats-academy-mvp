@@ -7,7 +7,8 @@
  * - searchChunks: Debug endpoint for vector search
  */
 
-import { router, protectedProcedure, aiProcedure, chatProcedure } from '../trpc';
+import { router, protectedProcedure, chatProcedure } from '../trpc';
+import { Prisma } from '@mpstats/db';
 import { z } from 'zod';
 import {
   generateLessonSummary,
@@ -19,17 +20,21 @@ import { getUserActiveSubscriptions, getUserAdminBypass, isLessonAccessible } fr
 import { isFeatureEnabled } from '../utils/feature-flags';
 import type { SearchLessonResult, SearchSnippet } from '@mpstats/shared';
 
-// In-memory cache for summaries (will be replaced with DB in Sprint 4)
+type SummarySource = {
+  id: string;
+  lesson_id: string;
+  content: string;
+  timecode_start: number;
+  timecode_end: number;
+  timecodeFormatted: string;
+};
+
+// In-memory hot cache layered on top of the DB cache. DB persists across
+// deploys; memory just shaves off a roundtrip for repeat hits within the
+// same process.
 const summaryCache = new Map<string, {
   content: string;
-  sources: Array<{
-    id: string;
-    lesson_id: string;
-    content: string;
-    timecode_start: number;
-    timecode_end: number;
-    timecodeFormatted: string;
-  }>;
+  sources: SummarySource[];
   generatedAt: Date;
 }>();
 
@@ -44,36 +49,83 @@ export const aiRouter = router({
    * 2. If miss: generate via RAG
    * 3. Cache and return
    */
-  getLessonSummary: aiProcedure
+  getLessonSummary: protectedProcedure
     .input(z.object({
       lessonId: z.string().min(1),
       forceRefresh: z.boolean().optional().default(false),
     }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const { lessonId, forceRefresh } = input;
-      console.log('[AI Router] getLessonSummary called with lessonId:', lessonId);
 
-      // Check cache
-      const cached = summaryCache.get(lessonId);
-      if (cached && !forceRefresh) {
-        const age = Date.now() - cached.generatedAt.getTime();
+      // Layer 1 — in-memory hot cache (skips DB roundtrip for repeat hits)
+      const memCached = summaryCache.get(lessonId);
+      if (memCached && !forceRefresh) {
+        const age = Date.now() - memCached.generatedAt.getTime();
         if (age < CACHE_TTL_MS) {
           return {
-            content: cached.content,
-            sources: cached.sources,
+            content: memCached.content,
+            sources: memCached.sources,
             fromCache: true,
           };
         }
       }
 
-      // Generate new summary
-      const result = await generateLessonSummary(lessonId);
+      // Layer 2 — DB cache (survives deploys; this is what removes the
+      // rate-limit pressure when users browse many lessons)
+      if (!forceRefresh) {
+        const persisted = await ctx.prisma.lesson.findUnique({
+          where: { id: lessonId },
+          select: {
+            summaryContent: true,
+            summarySources: true,
+            summaryGeneratedAt: true,
+          },
+        });
+        if (
+          persisted?.summaryContent &&
+          persisted.summaryGeneratedAt &&
+          Date.now() - persisted.summaryGeneratedAt.getTime() < CACHE_TTL_MS
+        ) {
+          const sources = (persisted.summarySources ?? []) as SummarySource[];
+          // Warm the in-memory cache so subsequent hits skip the DB lookup
+          summaryCache.set(lessonId, {
+            content: persisted.summaryContent,
+            sources,
+            generatedAt: persisted.summaryGeneratedAt,
+          });
+          return {
+            content: persisted.summaryContent,
+            sources,
+            fromCache: true,
+          };
+        }
+      }
 
-      // Cache it
+      // Layer 3 — generate (this is the expensive path that hits OpenRouter)
+      const result = await generateLessonSummary(lessonId);
+      const generatedAt = new Date();
+
+      // Persist to DB so the next user (or this user after a deploy) gets
+      // the cached version without hitting the model.
+      await ctx.prisma.lesson
+        .update({
+          where: { id: lessonId },
+          data: {
+            summaryContent: result.content,
+            summarySources: result.sources as unknown as Prisma.InputJsonValue,
+            summaryGeneratedAt: generatedAt,
+          },
+        })
+        .catch((err) => {
+          // Don't fail the request if persist fails — user still gets the
+          // answer, in-memory cache covers this process at least.
+          console.error('[AI Router] Failed to persist lesson summary:', err);
+        });
+
       summaryCache.set(lessonId, {
         content: result.content,
         sources: result.sources,
-        generatedAt: new Date(),
+        generatedAt,
       });
 
       return {
@@ -307,14 +359,30 @@ export const aiRouter = router({
     .input(z.object({
       lessonId: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       if (input.lessonId) {
-        const deleted = summaryCache.delete(input.lessonId);
-        return { cleared: deleted ? 1 : 0 };
+        summaryCache.delete(input.lessonId);
+        await ctx.prisma.lesson.update({
+          where: { id: input.lessonId },
+          data: {
+            summaryContent: null,
+            summarySources: undefined,
+            summaryGeneratedAt: null,
+          },
+        });
+        return { cleared: 1 };
       } else {
         const count = summaryCache.size;
         summaryCache.clear();
-        return { cleared: count };
+        const updated = await ctx.prisma.lesson.updateMany({
+          where: { summaryContent: { not: null } },
+          data: {
+            summaryContent: null,
+            summarySources: undefined,
+            summaryGeneratedAt: null,
+          },
+        });
+        return { cleared: Math.max(count, updated.count) };
       }
     }),
 });

@@ -56,6 +56,20 @@ export function CollapsibleSummary({
   }
 
   if (error) {
+    // Some errors come back as JSON-stringified payloads from the rate-limit
+    // middleware ({ retryAfterMs, retryAfterMin }). Translate them to a
+    // friendly Russian message instead of leaking raw JSON to the user.
+    let friendlyMessage = error;
+    try {
+      const parsed = JSON.parse(error);
+      if (parsed && typeof parsed === 'object' && 'retryAfterMin' in parsed) {
+        const min = Math.max(1, Number(parsed.retryAfterMin) || 1);
+        friendlyMessage = `Слишком много запросов к ИИ. Попробуйте через ${min} мин.`;
+      }
+    } catch {
+      // Not JSON — show as-is
+    }
+
     return (
       <div className="py-6">
         <div className="flex items-center gap-3 p-4 rounded-lg bg-red-50 border border-red-200">
@@ -65,8 +79,8 @@ export function CollapsibleSummary({
             </svg>
           </div>
           <div>
-            <p className="text-body-sm font-medium text-red-700">Ошибка загрузки резюме</p>
-            <p className="text-xs text-red-500 mt-0.5">{error}</p>
+            <p className="text-body-sm font-medium text-red-700">Не удалось загрузить конспект</p>
+            <p className="text-xs text-red-500 mt-0.5">{friendlyMessage}</p>
           </div>
         </div>
       </div>

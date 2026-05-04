@@ -85,11 +85,14 @@ export const superadminProcedure = protectedProcedure.use(async ({ ctx, next }) 
   return next({ ctx: { ...ctx, userRole: profile.role } });
 });
 
-// AI procedures with rate limiting (built on top of protectedProcedure)
+// AI procedures with rate limiting (built on top of protectedProcedure).
+// getLessonSummary intentionally does NOT use this — it's a query backed by
+// a persistent DB cache, so legitimate browsing of many lessons should never
+// be throttled. aiProcedure stays available for future generative endpoints.
 export const aiProcedure = protectedProcedure.use(
-  createRateLimitMiddleware(50, 3600000, 'ai') // 50 req/hour
+  createRateLimitMiddleware(200, 3600000, 'ai') // 200 req/hour
 );
 
 export const chatProcedure = protectedProcedure.use(
-  createRateLimitMiddleware(20, 3600000, 'chat') // 20 req/hour
+  createRateLimitMiddleware(40, 3600000, 'chat') // 40 req/hour
 );

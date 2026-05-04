@@ -152,6 +152,13 @@ model Lesson {
   hiddenBy        String?
   hiddenAt        DateTime?
 
+  // Persistent cache for AI-generated lesson summary. In-memory cache resets
+  // on deploy and gets blown out by browsing many lessons; persisting means
+  // most lesson visits are DB hits and never reach OpenRouter / rate limits.
+  summaryContent     String?    @db.Text
+  summarySources     Json?
+  summaryGeneratedAt DateTime?
+
   course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   progress LessonProgress[]
   materials LessonMaterial[]

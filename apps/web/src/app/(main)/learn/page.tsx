@@ -530,9 +530,38 @@ function LearnPageInner() {
                 <p className="text-body text-mp-gray-500 mb-6 max-w-md mx-auto">
                   Пройди диагностику, чтобы получить персональный трек обучения на основе твоих навыков
                 </p>
-                <Link href="/diagnostic">
-                  <Button size="lg">Начать диагностику</Button>
-                </Link>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Link href="/diagnostic">
+                    <Button size="lg">Начать диагностику</Button>
+                  </Link>
+                  <Button variant="outline" size="lg" onClick={() => setViewMode('courses')}>
+                    Собрать вручную из каталога
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Case A2: Diagnostic done but track ended up empty (user removed all lessons) */}
+          {hasDiagnostic && recommendedPath && recommendedPath.totalLessons === 0 && (
+            <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
+              <CardContent className="py-10 text-center">
+                <h2 className="text-heading text-mp-gray-900 mb-2">Трек пуст</h2>
+                <p className="text-body text-mp-gray-500 mb-6 max-w-md mx-auto">
+                  Ты убрал все уроки из трека. Можно пересобрать его автоматически или добавить нужные уроки из каталога.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={() => rebuildTrackMutation.mutate()}
+                    disabled={rebuildTrackMutation.isPending}
+                  >
+                    {rebuildTrackMutation.isPending ? 'Пересобираем...' : 'Перестроить по диагностике'}
+                  </Button>
+                  <Button variant="outline" size="lg" onClick={() => setViewMode('courses')}>
+                    Собрать вручную из каталога
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -564,34 +593,47 @@ function LearnPageInner() {
                 /* Sectioned accordion view */
                 <>
                   {/* Track management header */}
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <span className="text-body-sm text-mp-gray-500">
                       {recommendedPath.totalLessons} уроков в треке
                     </span>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm" disabled={rebuildTrackMutation.isPending}>
-                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                          Перестроить трек
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Перестроить AI-трек?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Удалённые вручную уроки могут вернуться. Секция «Мои уроки» сохранится.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Отмена</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => rebuildTrackMutation.mutate()}>
-                            Перестроить
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => setViewMode('courses')}
+                        title="Открыть каталог курсов и добавить нужные уроки в трек"
+                      >
+                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Добавить уроки
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" disabled={rebuildTrackMutation.isPending}>
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Перестроить трек
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Перестроить AI-трек?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Удалённые вручную уроки могут вернуться. Секция «Мои уроки» сохранится.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Отмена</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => rebuildTrackMutation.mutate()}>
+                              Перестроить
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
                   {recommendedPath.sections!
                     .map(section => ({

@@ -26,8 +26,30 @@ describe('fixBrandNames', () => {
     expect(fixBrandNames('Вайлдберис')).toBe('Wildberries');
   });
 
-  it('replaces brand in context but keeps Озон', () => {
-    expect(fixBrandNames('работа на Валберес и Озон')).toBe('работа на Wildberries и Озон');
+  it('normalizes both Wildberries and Ozon transliterations in same sentence', () => {
+    expect(fixBrandNames('работа на Валберес и Озон')).toBe('работа на Wildberries и Ozon');
+  });
+
+  it('normalizes Kandinsky misheard from transcripts (Канцински)', () => {
+    expect(fixBrandNames('используем Канцински для генерации')).toBe('используем Kandinsky для генерации');
+    expect(fixBrandNames('Кандинский генерирует')).toBe('Kandinsky генерирует');
+  });
+
+  it('normalizes ChatGPT and Midjourney variants', () => {
+    expect(fixBrandNames('Чат гпт и Миджорни')).toBe('ChatGPT и Midjourney');
+    expect(fixBrandNames('чатжпт')).toBe('ChatGPT');
+  });
+
+  it('normalizes MPSTATS variants', () => {
+    expect(fixBrandNames('Ампостат — это сервис')).toBe('MPSTATS — это сервис');
+    expect(fixBrandNames('мп статс')).toBe('MPSTATS');
+  });
+
+  it('does not touch Russian words that just start with Озон-prefix', () => {
+    // Озон regex uses negative lookahead for Cyrillic continuation,
+    // so genuine Russian words like Озонатор/Озонирование are preserved.
+    expect(fixBrandNames('Озонатор воздуха')).toBe('Озонатор воздуха');
+    expect(fixBrandNames('Озонирование')).toBe('Озонирование');
   });
 
   it('returns unchanged text without brands', () => {

@@ -11,13 +11,51 @@ import { searchChunks, getChunksForLesson, formatTimecode } from './retrieval';
 
 /**
  * Fix transliterated brand names in AI-generated text.
- * LLMs sometimes output Russian transliterations instead of original brand names.
+ *
+ * Two sources of garbage:
+ *  1) Whisper transcripts mishear foreign brand names (Канцински = Kandinsky,
+ *     Чат жпт = ChatGPT, ВиШоп/WeShop variations) — that garbage flows into
+ *     RAG context and then into summaries.
+ *  2) LLMs sometimes transliterate brand names back to Cyrillic.
+ *
+ * We can't fully fix the upstream transcripts (would require re-Whisper'ing
+ * all videos with a brand-name biasing prompt), but we can normalize known
+ * mishearings on the way out so the user never sees "Канцински".
  */
 export function fixBrandNames(text: string): string {
   return text
+    // Marketplaces
     .replace(/Валбер[иеё]с(?:а|у|ом|е)?/gi, 'Wildberries')
+    .replace(/Вайлдберр?ис(?:а|у|ом|е)?/gi, 'Wildberries')
     .replace(/Вайлдберриз/gi, 'Wildberries')
-    .replace(/Вайлдберис/gi, 'Wildberries');
+    // Note: JS \b doesn't recognize Cyrillic as word chars, so we use a
+    // negative lookahead instead — match Озон unless it's continuing into a
+    // longer Russian word (Озонатор, Озонирование).
+    .replace(/Озон(?![а-яА-Я])/g, 'Ozon')
+    // AI image models
+    .replace(/Канд?ински(?:й|м|х|е)?/gi, 'Kandinsky')
+    .replace(/Канцински(?:й|м|х|е)?/gi, 'Kandinsky')
+    .replace(/Миджорн(?:и|ей|ея|ею|и)/gi, 'Midjourney')
+    .replace(/Мидж(?:о|у)рни/gi, 'Midjourney')
+    .replace(/Стейбл\s*Диффуж[еэ]н/gi, 'Stable Diffusion')
+    .replace(/Дал[еи]\s*-?\s*[ИИие]/gi, 'DALL-E')
+    .replace(/Креа[йи]/gi, 'Krea')
+    .replace(/Криэи/gi, 'Krea AI')
+    // AI text models
+    .replace(/Чат\s*-?\s*[ГгJj]?[ПпPp][ТтTt]/gi, 'ChatGPT')
+    .replace(/Чатжпт/gi, 'ChatGPT')
+    .replace(/Чатгпт/gi, 'ChatGPT')
+    .replace(/Гига\s*-?\s*[Чч]ат/gi, 'GigaChat')
+    .replace(/Янд[еи]кс\s*-?\s*[ГгJj][ПпPp][ТтTt]/gi, 'YandexGPT')
+    .replace(/Кл[ао]уд(?:а|е|у|ом)?/g, 'Claude')
+    .replace(/Перпл[еи]кс[иы]/gi, 'Perplexity')
+    .replace(/[Дд]ипс[ии]к/g, 'DeepSeek')
+    .replace(/Квен(?![а-яА-Я])/g, 'Qwen')
+    // Tools
+    .replace(/[МмMm][ПпPp][\s\-]?[Сс]татс/g, 'MPSTATS')
+    .replace(/Ампостат/gi, 'MPSTATS')
+    .replace(/Capcut|Кэпкат|Кап\s*кат/gi, 'CapCut')
+    .replace(/Фигма(?![а-яА-Я])/g, 'Figma');
 }
 
 // Types
@@ -94,7 +132,16 @@ export async function generateLessonSummary(
 - Пиши на русском языке
 - Будь конкретным и практичным
 - Фокусируйся на actionable инсайтах для селлеров
-- Названия маркетплейсов пиши ТОЛЬКО по-английски: Wildberries (не "Валберес"), Ozon (не "Озон"), MPSTATS`;
+
+Глоссарий брендов и продуктов (транскрипт может содержать опечатки/мисхиры с микрофона — пиши ВСЕГДА правильно):
+- Маркетплейсы: Wildberries (не "Валберес/Вайлдберриз"), Ozon (не "Озон"), Яндекс Маркет
+- MPSTATS (не "ампостат", "MPStats")
+- AI-инструменты текста: ChatGPT (не "Чат жпт/гпт"), Claude (не "Клауд"), GigaChat, YandexGPT, Perplexity, DeepSeek, Qwen
+- AI-инструменты картинок: Midjourney (не "Миджорни"), Kandinsky (не "Канцински/Кандински"), Stable Diffusion, DALL-E, Krea (не "Криэй/КриАй")
+- Видео/дизайн: CapCut, Figma, Canva
+- Английские аббревиатуры — латиницей: SKU, FBO, FBS, CTR, ROI, DRR, CPC, AOV, LTV, A/B-тест, ABC-анализ (не "АБЦ-анализ")
+
+Если в транскрипте бренд написан с ошибкой — исправь его в резюме. Никогда не цитируй опечатки.`;
 
   const response = await openrouter.chat.completions.create({
     model: MODELS.chat,
@@ -174,7 +221,14 @@ ${context ? `Контекст из урока:\n${context}` : 'Контекст 
 - Пиши на русском языке
 - Будь конкретным и полезным
 - Если вопрос не связан с уроком, вежливо перенаправь к теме урока
-- Названия маркетплейсов пиши ТОЛЬКО по-английски: Wildberries (не "Валберес"), Ozon (не "Озон"), MPSTATS`;
+
+Глоссарий — пиши бренды правильно даже если в транскрипте опечатки/мисхиры с микрофона:
+- Маркетплейсы: Wildberries, Ozon, Яндекс Маркет (не "Валберес/Вайлдберриз/Озон")
+- MPSTATS (не "ампостат/MPStats")
+- AI-текст: ChatGPT, Claude, GigaChat, YandexGPT, Perplexity, DeepSeek, Qwen
+- AI-картинки: Midjourney, Kandinsky (не "Канцински"), Stable Diffusion, DALL-E, Krea
+- Дизайн/видео: Figma, Canva, CapCut
+- Английские аббревиатуры — латиницей: SKU, FBO, FBS, CTR, ROI, DRR, ABC-анализ (не "АБЦ")`;
 
   // 4. Build messages array
   const messages: ChatMessage[] = [

@@ -156,7 +156,7 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
               )}
             </div>
 
-            {/* Track toggle button */}
+            {/* Track toggle button — labeled so users actually find it */}
             {onToggleTrack && (
               <button
                 onClick={(e) => {
@@ -165,21 +165,27 @@ export function LessonCard({ lesson, showCourse, courseName, isRecommended, lock
                   onToggleTrack();
                 }}
                 className={cn(
-                  'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all',
+                  'flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 h-8 rounded-full text-xs font-medium transition-all',
                   inTrack
-                    ? 'bg-mp-green-100 text-mp-green-600 hover:bg-mp-green-200'
-                    : 'bg-mp-gray-100 text-mp-gray-400 hover:bg-mp-gray-200 hover:text-mp-gray-600'
+                    ? 'bg-mp-green-100 text-mp-green-700 hover:bg-mp-green-200 cursor-default'
+                    : 'bg-mp-blue-50 text-mp-blue-700 border border-mp-blue-200 hover:bg-mp-blue-100'
                 )}
-                title={inTrack ? 'В треке' : 'Добавить в трек'}
+                title={inTrack ? 'Уже в твоём треке' : 'Добавить в твой трек обучения'}
               >
                 {inTrack ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="hidden sm:inline">В треке</span>
+                  </>
                 ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="hidden sm:inline">В трек</span>
+                  </>
                 )}
               </button>
             )}
