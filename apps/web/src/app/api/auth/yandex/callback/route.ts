@@ -5,6 +5,8 @@ import * as Sentry from '@sentry/nextjs';
 import { prisma } from '@mpstats/db/client';
 import { YandexProvider } from '@/lib/auth/oauth-providers';
 import { getSupabaseAdmin } from '@/lib/auth/supabase-admin';
+import { REFERRAL_COOKIE_NAME, isValidRefCodeShape } from '@/lib/referral/attribution';
+import { issueReferralOnSignup } from '@/lib/referral/issue';
 
 export const dynamic = 'force-dynamic';
 
@@ -194,6 +196,22 @@ export async function GET(request: Request): Promise<Response> {
       access_token: otpData.session.access_token,
       refresh_token: otpData.session.refresh_token,
     });
+
+    // 11. Fire referral hook — new users only
+    // isNewUser is explicitly computed above (existingRows.length === 0),
+    // so we only issue for brand-new Yandex accounts. Returning users with a
+    // stale ref cookie are safely skipped. The orchestrator is also idempotent
+    // (unique constraint on referredUserId), so a duplicate attempt would no-op.
+    if (isNewUser) {
+      const refCookie = (await cookies()).get(REFERRAL_COOKIE_NAME)?.value;
+      const refCode = refCookie && isValidRefCodeShape(refCookie) ? refCookie : null;
+      if (refCode) {
+        issueReferralOnSignup({ refCode, friendUserId: supabaseUserId }).catch((err) => {
+          console.error('[YandexCallback] referral issue failed:', err);
+        });
+        response.cookies.delete(REFERRAL_COOKIE_NAME);
+      }
+    }
 
     return response;
   } catch (error) {
