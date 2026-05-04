@@ -1,0 +1,62 @@
+/**
+ * Trial subscription helpers (Phase 53A).
+ *
+ * createTrialSubscription — creates a TRIAL Subscription on PLATFORM tier
+ * with periodEnd = now + N days. Used by:
+ *  - Friend registration with ?ref= cookie (Phase 53A — initial trial)
+ *  - Package activation when no current sub exists (Phase 53A — packages.ts)
+ */
+
+import { prisma as defaultPrisma, type PrismaClient } from '@mpstats/db';
+
+export interface CreateTrialOpts {
+  userId: string;
+  durationDays: number;
+  prismaClient?: PrismaClient | any; // accepts transaction client
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export async function createTrialSubscription(opts: CreateTrialOpts) {
+  const tx = opts.prismaClient ?? defaultPrisma;
+
+  // Find PLATFORM plan id
+  const platformPlan = await tx.subscriptionPlan.findFirst({
+    where: { type: 'PLATFORM', isActive: true },
+    select: { id: true },
+  });
+  if (!platformPlan) {
+    throw new Error('No active PLATFORM SubscriptionPlan found');
+  }
+
+  const now = new Date();
+  return tx.subscription.create({
+    data: {
+      userId: opts.userId,
+      planId: platformPlan.id,
+      courseId: null,
+      status: 'TRIAL',
+      currentPeriodStart: now,
+      currentPeriodEnd: new Date(now.getTime() + opts.durationDays * DAY_MS),
+    },
+  });
+}
+
+export async function extendSubscriptionByDays(opts: {
+  subscriptionId: string;
+  days: number;
+  prismaClient?: PrismaClient | any;
+}) {
+  const tx = opts.prismaClient ?? defaultPrisma;
+  const sub = await tx.subscription.findUnique({
+    where: { id: opts.subscriptionId },
+    select: { currentPeriodEnd: true },
+  });
+  if (!sub) throw new Error('Subscription not found');
+  return tx.subscription.update({
+    where: { id: opts.subscriptionId },
+    data: {
+      currentPeriodEnd: new Date(sub.currentPeriodEnd.getTime() + opts.days * DAY_MS),
+    },
+  });
+}
