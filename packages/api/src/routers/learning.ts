@@ -1112,6 +1112,107 @@ export const learningRouter = router({
       }
     }),
 
+  // Bulk add lessons to the user's custom section (e.g., add whole course)
+  addLessonsToTrack: protectedProcedure
+    .input(z.object({ lessonIds: z.array(z.string()).min(1).max(500) }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Verify lessons exist and are visible
+        const lessons = await ctx.prisma.lesson.findMany({
+          where: { id: { in: input.lessonIds } },
+          include: { course: { select: { isHidden: true } } },
+        });
+        const validIds = lessons
+          .filter(l => !l.isHidden && !l.course.isHidden)
+          .map(l => l.id);
+        if (validIds.length === 0) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'No valid lessons found' });
+        }
+
+        const existingPath = await ctx.prisma.learningPath.findUnique({ where: { userId: ctx.user.id } });
+
+        const nowIso = new Date().toISOString();
+        const initialAddedAt: Record<string, string> = {};
+        for (const id of validIds) initialAddedAt[id] = nowIso;
+
+        const makeCustomSectionBulk = (): LearningPathSection => ({
+          id: 'custom',
+          title: 'Мои уроки',
+          description: pluralLessons(validIds.length),
+          lessonIds: [...validIds],
+          addedAt: { ...initialAddedAt },
+        });
+
+        if (!existingPath) {
+          const pathData: SectionedLearningPath = {
+            version: 2,
+            sections: [makeCustomSectionBulk()],
+            generatedFromSessionId: '',
+          };
+          await ctx.prisma.learningPath.create({
+            data: { userId: ctx.user.id, lessons: pathData as any },
+          });
+          return { added: validIds.length };
+        }
+
+        const parsed = parseLearningPath(existingPath.lessons);
+
+        if (Array.isArray(parsed)) {
+          const pathData: SectionedLearningPath = {
+            version: 2,
+            sections: [makeCustomSectionBulk()],
+            generatedFromSessionId: '',
+          };
+          await ctx.prisma.learningPath.update({
+            where: { userId: ctx.user.id },
+            data: { lessons: pathData as any },
+          });
+          return { added: validIds.length };
+        }
+
+        // Sectioned format — pull lessons out of AI sections, push into custom
+        const validIdSet = new Set(validIds);
+        const sections = parsed.sections.map(s => {
+          if (s.id === 'custom') return s;
+          return { ...s, lessonIds: s.lessonIds.filter(id => !validIdSet.has(id)) };
+        });
+
+        let customSection = sections.find(s => s.id === 'custom');
+        if (!customSection) {
+          customSection = makeCustomSectionBulk();
+          sections.unshift(customSection);
+        } else {
+          const existingIds = new Set(customSection.lessonIds);
+          if (!customSection.addedAt) customSection.addedAt = {};
+          for (const id of validIds) {
+            if (!existingIds.has(id)) {
+              customSection.lessonIds.push(id);
+              customSection.addedAt[id] = nowIso;
+            }
+          }
+        }
+
+        customSection.description = pluralLessons(customSection.lessonIds.length);
+
+        const filteredSections = sections.filter(s => s.id === 'custom' || s.lessonIds.length > 0);
+
+        const updatedPath: SectionedLearningPath = {
+          ...parsed,
+          sections: filteredSections,
+        };
+
+        await ctx.prisma.learningPath.update({
+          where: { userId: ctx.user.id },
+          data: { lessons: updatedPath as any },
+        });
+
+        return { added: validIds.length };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        handleDatabaseError(error);
+      }
+    }),
+
   // Rebuild AI sections from last diagnostic, preserving custom section
   rebuildTrack: protectedProcedure
     .mutation(async ({ ctx }) => {

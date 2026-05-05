@@ -210,6 +210,14 @@ function LearnPageInner() {
     onError: () => toast.error('Не удалось перестроить трек'),
   });
 
+  const addLessonsToTrackMutation = trpc.learning.addLessonsToTrack.useMutation({
+    onSuccess: ({ added }) => {
+      toast.success(`Добавлено в трек: ${pluralLessons(added)}`);
+      utils.learning.getRecommendedPath.invalidate();
+    },
+    onError: () => toast.error('Не удалось добавить курс в трек'),
+  });
+
   // Extract available topics from courses data
   const availableTopics = useMemo(() => {
     if (!courses) return [];
@@ -593,7 +601,7 @@ function LearnPageInner() {
                 /* Sectioned accordion view */
                 <>
                   {/* Track management header */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                     <span className="text-body-sm text-mp-gray-500">
                       {recommendedPath.totalLessons} уроков в треке
                     </span>
@@ -615,26 +623,31 @@ function LearnPageInner() {
                             <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            Перестроить трек
+                            Перестроить по диагностике
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Перестроить AI-трек?</AlertDialogTitle>
+                            <AlertDialogTitle>Перестроить трек по диагностике?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Удалённые вручную уроки могут вернуться. Секция «Мои уроки» сохранится.
+                              Соберём трек заново на основе твоей последней диагностики. Удалённые вручную уроки могут вернуться, секция «Мои уроки» сохранится.
+                              <br /><br />
+                              <strong>Важно:</strong> эта кнопка не учитывает фильтры выше — она пересобирает рекомендации по твоим слабым навыкам. Чтобы добавить уроки конкретного курса в трек — закрой это окно, открой «Все курсы» и нажимай «+ В трек» на нужных уроках или весь курс целиком.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Отмена</AlertDialogCancel>
                             <AlertDialogAction onClick={() => rebuildTrackMutation.mutate()}>
-                              Перестроить
+                              Перестроить по диагностике
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
                   </div>
+                  <p className="text-caption text-mp-gray-400 mb-3">
+                    Фильтры скрывают уроки в текущем треке. Чтобы добавить новые — открой «Все курсы» и нажимай «+ В трек».
+                  </p>
                   {recommendedPath.sections!
                     .map(section => ({
                       ...section,
@@ -866,6 +879,31 @@ function LearnPageInner() {
                         ) : (
                           <span className="text-caption text-mp-gray-500">{course.progressPercent}% завершено</span>
                         )}
+                        {(() => {
+                          const addable = course.lessons.filter(
+                            (l) => !l.locked && !trackLessonIds.has(l.id),
+                          );
+                          if (addable.length === 0) return null;
+                          return (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-caption text-mp-blue-600 hover:text-mp-blue-700 h-auto py-0.5 px-2"
+                              disabled={addLessonsToTrackMutation.isPending}
+                              onClick={() =>
+                                addLessonsToTrackMutation.mutate({
+                                  lessonIds: addable.map((l) => l.id),
+                                })
+                              }
+                              title={`Добавить ${pluralLessons(addable.length)} этого курса в твой персональный трек`}
+                            >
+                              <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                              </svg>
+                              + В трек ({addable.length})
+                            </Button>
+                          );
+                        })()}
                         {continueLesson && course.progressPercent < 100 && (
                           <Link href={`/learn/${continueLesson.id}`}>
                             <Button variant="ghost" size="sm" className="text-caption text-mp-blue-600 hover:text-mp-blue-700 h-auto py-0.5 px-2">
