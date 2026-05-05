@@ -71,6 +71,13 @@ Full details: see Phase Details below
 
 </details>
 
+<details>
+<summary>📋 v1.7 RAG Quality (Phase 55+) — PLANNED</summary>
+
+- [ ] Phase 55: Vision Chunking RAG — ассистент «видит» экран урока (таблицы, ссылки, скриншоты), отвечает на вопросы про визуальный контент
+
+</details>
+
 ## Phase Details
 
 ### Phase 16: Billing Data Foundation
@@ -989,3 +996,65 @@ Plans:
 7. Dismiss-кнопка → юзер больше не видит конкретный broadcast (`dismissedAt` на Notification)
 
 **Plans:** TBD
+
+---
+
+## v1.7 RAG Quality (Phases 55+)
+
+### Phase 55: Vision Chunking RAG — ассистент «видит» экран урока
+
+**Goal:** Юзер задаёт вопрос ассистенту про то, что показано в видео — таблицы, ссылки, интерфейсы, формулы, скриншоты — и получает корректный ответ с тайм-кодом и превью кадра.
+
+**Мотивация (от тестера Милы, 2026-05-05):**
+- Текущий RAG ищет только по аудио-транскриптам через `content_chunk`. Если спикер молча тыкает в ячейку D6 или показывает сайт без озвучки URL — этого нет в индексе.
+- Тестеры спрашивают «дай мне текст из ячейки D6», «какая ссылка на сайте», «что за инструмент показан» — ассистент молчит. Это снижает воспринимаемое качество продукта (по мнению тестера — главная боль).
+- Доп. материалы (Phase 49) часть закрывают, но не всё на экране будет в материалах. Vision-индекс закрывает 80% паттерна «спрашиваю про то, что вижу прямо сейчас».
+- Дисклеймер в чате (добавлен 2026-05-05) — это honest expectation, временный пластырь до запуска этой фазы.
+
+**Архитектура:**
+1. Frame extraction: ffmpeg scene-detection (`select='gt(scene,0.3)'`) на каждом видео → ~30-60 кадров на 30-мин урок (вместо 1800 при fixed interval) → upload в Supabase Storage bucket `lesson-frames` (private)
+2. Vision pass: GPT-4o-mini / Gemini Flash / Claude Haiku VL (выбор по итогам PoC) с промптом «опиши кадр + extract URL/числа/имена; не выдумывай конкретных значений если не уверен»
+3. OCR pass (tesseract local, бесплатно) на тех же кадрах → точный текст с экрана как complement к VLM (числа, URL, код)
+4. Объединение: `[FRAME @ MM:SS] описание VLM. Текст с экрана: <OCR>` → embedding (text-embedding-3-small, как сейчас) → `content_chunk` с `source_type='frame'` + `frame_url` + `timecode`
+5. Retrieval update: `searchChunks` возвращает mix (5 transcript + 3 frame), context builder в `generation.ts` форматирует кадры явно с тайм-кодом
+6. UI: при клике на источник-кадр в чате → seek видео на тайм-код + превью кадра в `SourceTooltip`
+7. Pipeline integrated: новый урок при ingest проходит через vision-pass автоматически
+
+**Scope:**
+- DB: миграция `content_chunk` — добавить `source_type` enum (`'transcript' | 'frame'`), `frame_url String?`, `metadata Json?`
+- Скрипт `scripts/extract-frames.ts` (ffmpeg subprocess + Storage upload)
+- Скрипт `scripts/vision-index.ts` (VLM + OCR + embedding + insert)
+- Обновление `packages/ai/src/retrieval.ts` (mixed search, optional `source_type` filter)
+- Обновление `packages/ai/src/generation.ts` (context builder для кадров)
+- UI обновление `SourceTooltip` (превью кадра)
+- Документация в `E:/Academy Courses/CLAUDE.md` секция «End-to-End Pipeline» — добавить vision-step
+- Pilot прогон на одном курсе (AI-инструменты, 87 уроков) с контрольным датасетом 20 «визуальных» вопросов от Милы/Кати
+
+**Out of scope (для v1):**
+- Multi-modal embedding (CLIP-style без extraction) — оставляем на v2 если recall окажется низким
+- Видео-понимание целиком (Gemini 2.5 video input) — слишком дорого и не кэшируется per-question
+- Переиндексация при изменении видео (assume immutable после публикации)
+- Hybrid search (BM25 + vector) — добавим в Sprint 2 если понадобится по итогам Pilot
+
+**Success Criteria:**
+1. PoC: на 1 уроке VLM описание кадров не галлюцинирует таблицы (контроль на 10 кадрах вручную)
+2. Pilot: ассистент отвечает корректно на ≥70% контрольных «визуальных» вопросов от Милы (датасет ~20 вопросов на курсе AI-инструменты)
+3. Цитирование работает: при клике на frame-источник видео скакнуло на нужный тайм-код, миниатюра кадра видна в tooltip
+4. Production: все ~440 уроков проиндексированы, новый урок при ingest автоматически проходит vision-pass без ручных шагов
+5. Стоимость: <$10 на единоразовый прогон всей платформы, <$0.05 на каждый новый урок
+6. Дисклеймер в чате обновлён (убрать «не могу про то, что показано на экране», заменить на «могу ответить и про экран»)
+
+**Sprints (gates между ними):**
+- **Sprint 1 (1-2 дня): PoC.** 3 VLM на 1 уроке, замер качества + цены. Решение: какая модель и идём ли дальше.
+- **Sprint 2 (2 дня): Pilot.** Полный pipeline на курсе AI-инструменты (87 уроков). Контрольные вопросы от Милы. Решение: качество достаточно или переосмысление.
+- **Sprint 3 (1 день): Production.** Прогон на всех уроках + интеграция в ingest pipeline + UI updates + документация.
+
+**Открытые вопросы (резолвить перед стартом):**
+- Где исходники видео для extraction — Kinescope download или локальная копия `E:/Academy Courses`?
+- Какой VLM API использовать — общий OpenRouter аккаунт или отдельный?
+- Кто составляет контрольный датасет «визуальных» вопросов — Мила, Катя, обе?
+- Privacy: VLM-промпт должен пропускать персональные данные продавцов в скриншотах кабинета (артикулы/email/имена)
+
+**Зависимости:** нет блокеров. Может стартовать в любой момент после согласования бюджета и приоритета.
+
+**Plans:** TBD (создаются после PoC по итогам выбора VLM)
