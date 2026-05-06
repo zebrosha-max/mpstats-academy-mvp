@@ -72,6 +72,7 @@ const paymentStatusMap: Record<string, { label: string; variant: 'success' | 'de
 
 const subscriptionStatusMap: Record<string, { label: string; variant: 'success' | 'warning' | 'destructive' }> = {
   ACTIVE: { label: 'Активна', variant: 'success' },
+  TRIAL: { label: 'Триал', variant: 'success' },
   PAST_DUE: { label: 'Просрочена', variant: 'warning' },
   CANCELLED: { label: 'Отменена', variant: 'destructive' },
 };
@@ -357,7 +358,7 @@ export default function ProfilePage() {
   };
 
   const hasActiveSubscription =
-    subscription && ['ACTIVE', 'PAST_DUE', 'CANCELLED'].includes(subscription.status);
+    subscription && ['ACTIVE', 'TRIAL', 'PAST_DUE', 'CANCELLED'].includes(subscription.status);
 
   const isPromoSubscription = subscription?.promoCodeId != null;
 
@@ -535,7 +536,7 @@ export default function ProfilePage() {
                       )}
                       <div className="flex justify-between gap-4 text-body-sm">
                         <span className="text-mp-gray-500 shrink-0">
-                          {subscription.status === 'CANCELLED' || isPromoSubscription ? 'Доступ до' : 'Следующее списание'}
+                          {subscription.status === 'CANCELLED' || subscription.status === 'TRIAL' || isPromoSubscription ? 'Доступ до' : 'Следующее списание'}
                         </span>
                         <span className="font-medium text-mp-gray-900">
                           {formatDate(subscription.currentPeriodEnd)}
