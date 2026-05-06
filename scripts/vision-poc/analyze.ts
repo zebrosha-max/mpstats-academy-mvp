@@ -24,17 +24,23 @@ interface OcrResult {
   extractedNumbers: string[];
 }
 
+function escapeMd(s: string): string {
+  return String(s).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
+}
+function joinList(items: any[]): string {
+  return items.map((x) => escapeMd(x)).join(' / ');
+}
 function summary(r: VlmResult): string {
-  if (r.error) return `❌ ERROR: ${r.error.slice(0, 100)}`;
-  if (!r.response) return `⚠ Не парсится JSON: ${r.rawContent.slice(0, 100)}`;
+  if (r.error) return `❌ ERROR: ${escapeMd(r.error.slice(0, 100))}`;
+  if (!r.response) return `⚠ Не парсится JSON: ${escapeMd(r.rawContent.slice(0, 100))}`;
   const ext = r.response.extracted ?? {};
   const parts = [
-    `**type:** ${r.response.type ?? '?'}`,
-    `**summary:** ${r.response.summary ?? ''}`,
+    `**type:** ${escapeMd(r.response.type ?? '?')}`,
+    `**summary:** ${escapeMd(r.response.summary ?? '')}`,
   ];
-  if (ext.urls?.length) parts.push(`**urls:** ${ext.urls.join(' | ')}`);
-  if (ext.numbers?.length) parts.push(`**numbers:** ${ext.numbers.join(' | ')}`);
-  if (ext.tools?.length) parts.push(`**tools:** ${ext.tools.join(' | ')}`);
+  if (ext.urls?.length) parts.push(`**urls:** ${joinList(ext.urls)}`);
+  if (ext.numbers?.length) parts.push(`**numbers:** ${joinList(ext.numbers)}`);
+  if (ext.tools?.length) parts.push(`**tools:** ${joinList(ext.tools)}`);
   return parts.join('<br>');
 }
 
