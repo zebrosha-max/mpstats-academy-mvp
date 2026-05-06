@@ -119,19 +119,28 @@ async function main() {
   }
   console.log(`Распределение: short=${buckets.short.length} / medium=${buckets.medium.length} / long=${buckets.long.length}`);
 
-  console.log('[2/4] Выбираю по одному из каждого бакета (приоритет курсов)...');
+  console.log('[2/4] Выбираю по одному из каждого бакета (приоритет курсов, разные курсы)...');
   const selected: SelectedVideo[] = [];
+  const usedCourses = new Set<string>();
   for (const bucket of ['short', 'medium', 'long'] as const) {
     let pick: VideoFile | undefined;
+    // First try priority courses that haven't been used
     for (const courseDir of POC_CONFIG.course_priority) {
+      if (usedCourses.has(courseDir)) continue;
       pick = buckets[bucket].find((v) => v.courseDir === courseDir);
       if (pick) break;
     }
+    // Fallback: any unused course in this bucket
+    if (!pick) {
+      pick = buckets[bucket].find((v) => !usedCourses.has(v.courseDir));
+    }
+    // Last resort: anything in this bucket (will violate diversity, but better than nothing)
     if (!pick) pick = buckets[bucket][0];
     if (!pick) {
       console.warn(`Нет видео в бакете ${bucket} — пропускаю.`);
       continue;
     }
+    usedCourses.add(pick.courseDir);
     console.log(`[${bucket}] ${pick.courseDir}/${pick.filename} (${pick.durationFormatted})`);
 
     console.log(`  Резолвлю lessonId...`);
