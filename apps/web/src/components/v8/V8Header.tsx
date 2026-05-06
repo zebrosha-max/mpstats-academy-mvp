@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/Logo';
+import { createClient } from '@/lib/supabase/client';
 
 const BLUE = '#2C4FF8';
 const BLUE_HOVER = '#1D39C1';
@@ -24,12 +26,30 @@ interface V8HeaderProps {
 export function V8Header({ onDarkHero = true }: V8HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setIsAuthed(!!session?.user)
+    );
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const ctaHref =
+    isAuthed === true
+      ? '/diagnostic'
+      : pathname === '/skill-test'
+        ? '/register'
+        : '/skill-test';
 
   const isLight = onDarkHero && !scrolled;
   const logoVariant = isLight ? 'white' : 'default';
@@ -71,7 +91,7 @@ export function V8Header({ onDarkHero = true }: V8HeaderProps) {
             Войти
           </Link>
           <Link
-            href="/skill-test"
+            href={ctaHref}
             className="inline-flex items-center justify-center rounded-full h-[44px] px-6 text-[14px] font-medium text-white transition-colors"
             style={{ backgroundColor: BLUE }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLUE_HOVER)}
@@ -128,7 +148,7 @@ export function V8Header({ onDarkHero = true }: V8HeaderProps) {
             Войти
           </Link>
           <Link
-            href="/skill-test"
+            href={ctaHref}
             className="mt-2 inline-flex items-center justify-center rounded-full h-[48px] w-full text-[15px] font-medium text-white"
             style={{ backgroundColor: BLUE }}
             onClick={() => setMobileMenu(false)}

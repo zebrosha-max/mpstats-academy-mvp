@@ -3,8 +3,9 @@
 import { Onest } from 'next/font/google';
 import { V8Header } from '@/components/v8/V8Header';
 import { V8Footer } from '@/components/v8/V8Footer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Reveal } from '@/components/v8/Reveal';
+import { createClient } from '@/lib/supabase/client';
 
 const onest = Onest({
   subsets: ['latin', 'cyrillic'],
@@ -134,6 +135,14 @@ function CheckIcon() {
 
 export default function DesignNewV8Diagnostic() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data.user));
+  }, []);
+
+  const ctaHref = isAuthed === true ? '/diagnostic' : '/register';
 
   return (
     <div className={onest.className} style={{ color: TEXT }}>
@@ -167,7 +176,7 @@ export default function DesignNewV8Diagnostic() {
             </p>
             <div className="mt-8 sm:mt-10 flex justify-center lg:justify-start">
               <a
-                href="#cta"
+                href={ctaHref}
                 className="inline-flex items-center justify-center rounded-full h-[52px] sm:h-[62px] px-8 sm:px-10 text-[15px] sm:text-[16px] font-medium text-white transition-colors"
                 style={{ backgroundColor: BLUE }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLUE_HOVER)}
@@ -334,7 +343,7 @@ export default function DesignNewV8Diagnostic() {
             Узнай свой уровень и получи программу под твои точки роста
           </p>
           <a
-            href="/diagnostic"
+            href={ctaHref}
             className="mt-8 sm:mt-10 inline-flex items-center justify-center rounded-full h-[52px] sm:h-[62px] px-10 sm:px-12 text-[15px] sm:text-[16px] font-medium transition-colors"
             style={{ backgroundColor: 'white', color: BLUE }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
