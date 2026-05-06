@@ -19,6 +19,8 @@ export const POC_CONFIG = {
   rate_limit_rps: 5,
   ocr_languages: 'rus+eng',
   ocr_psm: 6,
+  tesseract_binary: 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe',
+  tessdata_dir: 'scripts/vision-poc/tessdata',
   results_dir: 'scripts/vision-poc/results',
   frames_dir: 'scripts/vision-poc/results/frames',
 } as const;
