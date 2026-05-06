@@ -729,7 +729,7 @@ export default function ProfilePage() {
             <CardContent className="py-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-heading text-mp-gray-900">Рефералка</h2>
+                  <h2 className="text-heading text-mp-gray-900">Реферальная программа</h2>
                   <p className="text-body-sm text-mp-gray-500 mt-1">
                     Твоя реф-ссылка и накопленные пакеты.
                   </p>

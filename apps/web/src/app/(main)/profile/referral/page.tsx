@@ -28,7 +28,7 @@ export default function ReferralPage() {
       </Link>
 
       <div>
-        <h1 className="text-heading-lg font-semibold mb-1">Рефералка</h1>
+        <h1 className="text-heading-lg font-semibold mb-1">Реферальная программа</h1>
         <p className="text-mp-gray-600 text-sm">
           Приглашай друзей в Платформу — оба получаете доступ.
         </p>
