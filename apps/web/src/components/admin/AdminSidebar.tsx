@@ -82,6 +82,9 @@ function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathna
   const newComments = trpc.admin.getNewCommentsCount.useQuery(undefined, {
     refetchInterval: 60_000,
   });
+  const referralCounts = trpc.referral.adminStatusCounts.useQuery(undefined, {
+    refetchInterval: 60_000,
+  });
 
   return (
     <>
@@ -92,9 +95,12 @@ function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathna
             pathname === item.href ||
             (item.href !== '/admin' && pathname.startsWith(item.href + '/'));
 
-          const badgeCount = item.href === '/admin/comments'
-            ? (newComments.data?.count ?? 0)
-            : 0;
+          const badgeCount =
+            item.href === '/admin/comments'
+              ? (newComments.data?.count ?? 0)
+              : item.href === '/admin/referrals'
+                ? (referralCounts.data?.PENDING_REVIEW ?? 0)
+                : 0;
 
           return (
             <Link
