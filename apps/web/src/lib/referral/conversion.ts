@@ -47,6 +47,14 @@ export async function processReferralConversion(payingUserId: string): Promise<v
   });
 
   try {
+    const friend = await prisma.userProfile.findUnique({
+      where: { id: referral.referredUserId },
+      select: { name: true },
+    });
+    await cq.setUserProps(referral.referrerUserId, {
+      pa_referral_friend_name: friend?.name ?? '',
+      pa_referral_package_days: PACKAGE_DAYS,
+    });
     await cq.trackEvent(referral.referrerUserId, 'pa_referral_friend_paid');
   } catch (err) {
     Sentry.captureException(err, {

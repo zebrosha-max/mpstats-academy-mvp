@@ -38,6 +38,81 @@ function eventNameFor(type: NotificationTypeName): CQEventName {
   return `pa_notif_${type.toLowerCase()}` as CQEventName;
 }
 
+/**
+ * Build flat `pa_notif_*` props for CQ lead before trackEvent.
+ * CQ email templates render placeholders from lead-level props (Phase 33 gotcha).
+ *
+ * Common props:
+ *   pa_notif_type, pa_notif_preview, pa_notif_cta_url
+ * Per-type extras allow templates to render lesson title, course title, item lists, etc.
+ */
+export function buildCqProps(
+  type: NotificationTypeName,
+  payload: NotificationPayload,
+  ctaUrl: string | null,
+): Record<string, string | number | null> {
+  const base: Record<string, string | number | null> = {
+    pa_notif_type: type,
+    pa_notif_cta_url: ctaUrl ?? null,
+  };
+  if ('preview' in payload && typeof payload.preview === 'string') {
+    base.pa_notif_preview = payload.preview;
+  }
+
+  switch (payload.type) {
+    case 'COMMENT_REPLY':
+    case 'ADMIN_COMMENT_REPLY':
+      return {
+        ...base,
+        pa_notif_lesson_title: payload.lessonTitle,
+        pa_notif_author_name: payload.replyAuthorName,
+      };
+    case 'CONTENT_UPDATE': {
+      const lessons = payload.items.filter((i) => i.kind === 'lesson').length;
+      const materials = payload.items.length - lessons;
+      const itemsText =
+        lessons > 0 && materials > 0
+          ? `${lessons} ${pluralize(lessons, ['урок', 'урока', 'уроков'])} и ${materials} ${pluralize(materials, ['материал', 'материала', 'материалов'])}`
+          : lessons > 0
+            ? `${lessons} ${pluralize(lessons, ['урок', 'урока', 'уроков'])}`
+            : `${materials} ${pluralize(materials, ['материал', 'материала', 'материалов'])}`;
+      return {
+        ...base,
+        pa_notif_course_title: payload.courseTitle,
+        pa_notif_items_count: payload.items.length,
+        pa_notif_items_text: itemsText,
+      };
+    }
+    case 'PROGRESS_NUDGE':
+      return { ...base, pa_notif_lesson_title: payload.lessonTitle };
+    case 'INACTIVITY_RETURN':
+      return { ...base, pa_notif_days_inactive: payload.daysSinceLastActive };
+    case 'WEEKLY_DIGEST':
+      return {
+        ...base,
+        pa_notif_new_lessons_count: payload.newLessonsCount,
+        pa_notif_activity_count: payload.activityCount,
+      };
+    case 'BROADCAST':
+      return {
+        ...base,
+        pa_notif_title: payload.title,
+        pa_notif_body: payload.body,
+        pa_notif_cta_text: payload.ctaText ?? null,
+      };
+    default:
+      return base;
+  }
+}
+
+function pluralize(n: number, forms: [string, string, string]): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return forms[1];
+  return forms[2];
+}
+
 export interface NotifyOpts {
   ctaUrl?: string;
   broadcastId?: string;
@@ -80,14 +155,9 @@ export async function notify(
     // 4) Always fire CQ event (CQ rule decides email delivery).
     // Wrapped в inner try/catch: если CQ упал, DB row уже создан — не ронять caller.
     try {
-      // setUserProps for preview/lead-level fields
+      // setUserProps for lead-level fields used by CQ email templates
       // (CQ rules read from lead, NOT event params — Phase 33 gotcha).
-      if ('preview' in payload && typeof payload.preview === 'string') {
-        await cq.setUserProps(userId, {
-          pa_notif_preview: payload.preview,
-          pa_notif_type: type,
-        });
-      }
+      await cq.setUserProps(userId, buildCqProps(type, payload, opts.ctaUrl ?? null));
       await cq.trackEvent(userId, eventNameFor(type));
     } catch (cqError) {
       reportNotifyError('cq', userId, cqError);
@@ -131,6 +201,8 @@ export async function notifyMany(
   // Каждый wrapped в свой try/catch — один failure не ломает остальные.
   for (const userId of userIds) {
     try {
+      const payload = buildPayload(userId);
+      await cq.setUserProps(userId, buildCqProps(type, payload, opts.ctaUrl ?? null));
       await cq.trackEvent(userId, eventNameFor(type));
     } catch (error) {
       reportNotifyError('notifyMany.cq', userId, error);

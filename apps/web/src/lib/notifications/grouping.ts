@@ -46,8 +46,8 @@ export async function mergeOrCreateContentUpdate(
   userId: string,
   courseId: string,
   newItems: ContentUpdateItem[],
-): Promise<void> {
-  if (newItems.length === 0) return;
+): Promise<ContentUpdatePayload | null> {
+  if (newItems.length === 0) return null;
 
   const cutoff = new Date(Date.now() - ROLLING_WINDOW_MS);
 
@@ -69,14 +69,15 @@ export async function mergeOrCreateContentUpdate(
     const prevPayload = existing.payload as unknown as ContentUpdatePayload;
     const merged = dedupItems([...(prevPayload.items ?? []), ...newItems]);
     const ctaUrl = resolveCtaUrl(courseId, merged);
+    const nextPayload: ContentUpdatePayload = { ...prevPayload, items: merged };
     await prisma.notification.update({
       where: { id: existing.id },
       data: {
-        payload: { ...prevPayload, items: merged } as unknown as object,
+        payload: nextPayload as unknown as object,
         ctaUrl,
       },
     });
-    return;
+    return nextPayload;
   }
 
   const course = await prisma.course.findUnique({
@@ -99,4 +100,5 @@ export async function mergeOrCreateContentUpdate(
       ctaUrl: resolveCtaUrl(courseId, items),
     },
   });
+  return payload;
 }

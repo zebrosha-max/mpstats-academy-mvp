@@ -15,7 +15,8 @@ import { prisma } from '@mpstats/db/client';
 import { DEFAULT_IN_APP_PREFS } from '@mpstats/shared';
 import { cq } from '@/lib/carrotquest/client';
 import { findUsersForCourseUpdate } from './targeting';
-import { mergeOrCreateContentUpdate, type ContentUpdateItem } from './grouping';
+import { mergeOrCreateContentUpdate, resolveCtaUrl, type ContentUpdateItem } from './grouping';
+import { buildCqProps } from './notify';
 
 export interface NotifyContentUpdateArgs {
   courseId: string;
@@ -41,8 +42,9 @@ export async function notifyContentUpdate(
         ? prefByUser.get(userId)!
         : DEFAULT_IN_APP_PREFS.CONTENT_UPDATE;
       if (!inApp) continue;
+      let finalPayload: Awaited<ReturnType<typeof mergeOrCreateContentUpdate>> = null;
       try {
-        await mergeOrCreateContentUpdate(userId, args.courseId, args.items);
+        finalPayload = await mergeOrCreateContentUpdate(userId, args.courseId, args.items);
         delivered += 1;
       } catch (err) {
         Sentry.captureException(err, {
@@ -51,6 +53,12 @@ export async function notifyContentUpdate(
         });
       }
       try {
+        if (finalPayload) {
+          await cq.setUserProps(
+            userId,
+            buildCqProps('CONTENT_UPDATE', finalPayload, resolveCtaUrl(args.courseId, finalPayload.items)),
+          );
+        }
         await cq.trackEvent(userId, 'pa_notif_content_update');
       } catch (err) {
         Sentry.captureException(err, {

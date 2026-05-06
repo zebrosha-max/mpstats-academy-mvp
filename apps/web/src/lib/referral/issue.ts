@@ -23,6 +23,18 @@ const I1_TRIAL_DAYS = 14;
 const I2_TRIAL_DAYS = 7;
 const PACKAGE_DAYS = 14;
 
+/** "DD.MM.YYYY HH:MM" в МСК — формат Phase 33 для CQ-шаблонов. */
+function formatDateRu(date: Date): string {
+  return date.toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Moscow',
+  });
+}
+
 export interface IssueArgs {
   refCode: string;
   friendUserId: string;
@@ -33,7 +45,7 @@ export async function issueReferralOnSignup(args: IssueArgs): Promise<void> {
     // 1) Resolve referrer
     const referrer = await prisma.userProfile.findUnique({
       where: { referralCode: args.refCode },
-      select: { id: true },
+      select: { id: true, name: true },
     });
     if (!referrer) {
       Sentry.captureMessage('referral.unknown_code', {
@@ -108,10 +120,28 @@ export async function issueReferralOnSignup(args: IssueArgs): Promise<void> {
       });
     });
 
-    // 5) CQ events (best-effort)
+    // 5) CQ events (best-effort) — setUserProps before trackEvent so email
+    // templates can render trial duration / friend name (Phase 33 pattern).
     try {
+      const friend = await prisma.userProfile.findUnique({
+        where: { id: args.friendUserId },
+        select: { name: true },
+      });
+      const trialUntil = new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000);
+
+      await cq.setUserProps(args.friendUserId, {
+        pa_referral_trial_days: trialDays,
+        pa_referral_trial_until: formatDateRu(trialUntil),
+        pa_referral_trial_until_tech: trialUntil.toISOString(),
+        pa_referral_referrer_name: referrer.name ?? '',
+      });
       await cq.trackEvent(args.friendUserId, 'pa_referral_trial_started');
+
       if (issuePackage) {
+        await cq.setUserProps(referrer.id, {
+          pa_referral_friend_name: friend?.name ?? '',
+          pa_referral_package_days: PACKAGE_DAYS,
+        });
         await cq.trackEvent(referrer.id, 'pa_referral_friend_registered');
       }
     } catch (cqError) {
