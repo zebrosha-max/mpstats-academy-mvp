@@ -13,6 +13,7 @@ import {
   MessageSquare,
   BarChart3,
   Ticket,
+  Gift,
   Settings,
   ArrowLeft,
   Menu,
@@ -61,6 +62,12 @@ const navItems = [
     title: 'Promo',
     href: '/admin/promo',
     icon: Ticket,
+    superadminOnly: false,
+  },
+  {
+    title: 'Referrals',
+    href: '/admin/referrals',
+    icon: Gift,
     superadminOnly: false,
   },
   {
