@@ -3,12 +3,13 @@
 Entries referenced by CLAUDE.md and Phase plans.
 
 ## Session & Sprint
-- [Session History](session-history.md) — Detailed notes for all dev sessions (phases 1-43)
+- [Session History](session-history.md) — Detailed notes for all dev sessions (phases 1-53)
 - [Sprint Progress](sprint-progress.md) — Completed sprints 0-5 with task IDs (all done)
 
 ## Infra & Platform
 - [Supabase Details](supabase-details.md) — RLS strategy, keep-alive, test users, auth gotchas
 - [Deploy Details](deploy-details.md) — VPS 89.208.106.208, Docker, Nginx, domain migration
+- [Staging Workflow](staging-workflow.md) — Полный staging deploy + добавление feature flags + known limitations (quick-ref в CLAUDE.md)
 - [CQ Integration](cq-integration.md) — CarrotQuest API gotchas, events, email automation
 - [Design Backups](design-backups.md) — Figma sources, v1 backup location, architecture HTML
 
