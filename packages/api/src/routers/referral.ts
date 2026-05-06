@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure, adminProcedure } from '../trpc';
 import { prisma } from '@mpstats/db/client';
+import { Prisma } from '@mpstats/db';
+import { ReferralStatus } from '@mpstats/db';
 import {
   activatePackage,
   PackageActivationError,
@@ -60,6 +62,66 @@ export const referralRouter = router({
       }
       return { valid: true, referrerName: referrer.name };
     }),
+
+  /**
+   * Phase 53B: list referrals for admin moderation UI.
+   * Default sort: createdAt DESC. Default filter: PENDING_REVIEW.
+   * Search matches referrer or referred user name/email (case-insensitive contains).
+   */
+  adminList: adminProcedure
+    .input(
+      z.object({
+        status: z.nativeEnum(ReferralStatus).nullable().optional(),
+        search: z.string().trim().min(1).max(100).optional(),
+        take: z.number().int().min(1).max(100).default(50),
+        cursor: z.string().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const where: Prisma.ReferralWhereInput = {};
+      if (input.status !== null && input.status !== undefined) {
+        where.status = input.status;
+      }
+      if (input.search) {
+        const q = input.search;
+        where.OR = [
+          { referrer: { name: { contains: q, mode: 'insensitive' } } },
+          { referred: { name: { contains: q, mode: 'insensitive' } } },
+        ];
+      }
+      const rows = await prisma.referral.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: input.take + 1,
+        ...(input.cursor ? { cursor: { id: input.cursor }, skip: 1 } : {}),
+        include: {
+          referrer: { select: { id: true, name: true } },
+          referred: { select: { id: true, name: true } },
+          bonusPackage: { select: { id: true, status: true, days: true } },
+          reviewedBy: { select: { id: true, name: true } },
+        },
+      });
+      const hasMore = rows.length > input.take;
+      const items = hasMore ? rows.slice(0, -1) : rows;
+      return {
+        items,
+        nextCursor: hasMore ? items[items.length - 1]?.id ?? null : null,
+      };
+    }),
+
+  /**
+   * Aggregate count by status — for filter chip badges.
+   */
+  adminStatusCounts: adminProcedure.query(async () => {
+    const groups = await prisma.referral.groupBy({
+      by: ['status'],
+      _count: { _all: true },
+    });
+    return Object.fromEntries(groups.map((g) => [g.status, g._count._all])) as Record<
+      ReferralStatus,
+      number
+    >;
+  }),
 
   activatePackage: protectedProcedure
     .input(z.object({ packageId: z.string() }))

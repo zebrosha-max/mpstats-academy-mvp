@@ -13,6 +13,7 @@ import {
   MessageSquare,
   BarChart3,
   Ticket,
+  Gift,
   Settings,
   ArrowLeft,
   Menu,
@@ -64,6 +65,12 @@ const navItems = [
     superadminOnly: false,
   },
   {
+    title: 'Referrals',
+    href: '/admin/referrals',
+    icon: Gift,
+    superadminOnly: false,
+  },
+  {
     title: 'Settings',
     href: '/admin/settings',
     icon: Settings,
@@ -73,6 +80,9 @@ const navItems = [
 
 function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathname: string; onNavigate?: () => void }) {
   const newComments = trpc.admin.getNewCommentsCount.useQuery(undefined, {
+    refetchInterval: 60_000,
+  });
+  const referralCounts = trpc.referral.adminStatusCounts.useQuery(undefined, {
     refetchInterval: 60_000,
   });
 
@@ -85,9 +95,12 @@ function NavLinks({ userRole, pathname, onNavigate }: { userRole: string; pathna
             pathname === item.href ||
             (item.href !== '/admin' && pathname.startsWith(item.href + '/'));
 
-          const badgeCount = item.href === '/admin/comments'
-            ? (newComments.data?.count ?? 0)
-            : 0;
+          const badgeCount =
+            item.href === '/admin/comments'
+              ? (newComments.data?.count ?? 0)
+              : item.href === '/admin/referrals'
+                ? (referralCounts.data?.PENDING_REVIEW ?? 0)
+                : 0;
 
           return (
             <Link

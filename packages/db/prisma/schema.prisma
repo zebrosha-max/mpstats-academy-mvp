@@ -50,6 +50,7 @@ model UserProfile {
   referralsMade      Referral[]             @relation("ReferralsAsReferrer")
   referralAsFriend   Referral?              @relation("ReferralsAsReferred")
   referralPackages   ReferralBonusPackage[] @relation("ReferralPackagesOwned")
+  referralsReviewed  Referral[]             @relation("ReferralsReviewedByAdmin")
 }
 
 // ============== DIAGNOSTIC ==============
@@ -522,6 +523,7 @@ enum ReferralStatus {
   CONVERTED
   EXPIRED
   BLOCKED_SELF_REF
+  BLOCKED_FRAUD // Phase 53B: admin rejected via /admin/referrals
   PENDING_REVIEW
 }
 
@@ -542,8 +544,14 @@ model Referral {
   createdAt         DateTime         @default(now())
   convertedAt       DateTime?
 
+  // Phase 53B audit trail (admin moderation of PENDING_REVIEW)
+  rejectReason       String?
+  reviewedAt         DateTime?
+  reviewedByUserId   String?
+
   referrer     UserProfile?          @relation("ReferralsAsReferrer", fields: [referrerUserId], references: [id], onDelete: SetNull)
   referred     UserProfile           @relation("ReferralsAsReferred", fields: [referredUserId], references: [id], onDelete: Cascade)
+  reviewedBy   UserProfile?          @relation("ReferralsReviewedByAdmin", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
   bonusPackage ReferralBonusPackage?
 
   @@index([referrerUserId, createdAt(sort: Desc)])

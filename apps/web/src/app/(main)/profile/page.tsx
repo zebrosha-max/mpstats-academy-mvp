@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc/client';
+import { cn } from '@/lib/utils';
 import { SkillRadarChart } from '@/components/charts/RadarChart';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
@@ -222,6 +223,7 @@ export default function ProfilePage() {
 
   const { data: profile, refetch } = trpc.profile.get.useQuery();
   const { data: skillProfile } = trpc.profile.getSkillProfile.useQuery();
+  const { data: referralState } = trpc.referral.getMyState.useQuery();
 
   // Billing queries
   const { data: billingEnabled } = trpc.billing.isEnabled.useQuery(undefined, {
@@ -726,20 +728,37 @@ export default function ProfilePage() {
           </Card>
 
           {/* Phase 53A — link to /profile/referral */}
-          <Card className="shadow-mp-card">
+          <Card className={cn(
+            'shadow-mp-card',
+            (referralState?.pendingPackages.length ?? 0) > 0 && 'ring-2 ring-mp-blue-200',
+          )}>
             <CardContent className="py-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-heading text-mp-gray-900">Реферальная программа</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-heading text-mp-gray-900">Реферальная программа</h2>
+                    {(referralState?.pendingPackages.length ?? 0) > 0 && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-mp-blue-50 text-mp-blue-700 text-xs font-semibold">
+                        🎁 +{referralState!.pendingPackages.reduce((s, p) => s + p.days, 0)} дн
+                      </span>
+                    )}
+                  </div>
                   <p className="text-body-sm text-mp-gray-500 mt-1">
-                    Твоя реф-ссылка и накопленные пакеты.
+                    {(referralState?.pendingPackages.length ?? 0) > 0
+                      ? `У тебя ${referralState!.pendingPackages.length} ${referralState!.pendingPackages.length === 1 ? 'пакет' : 'пакета'} — активируй и продли подписку.`
+                      : 'Твоя реф-ссылка и накопленные пакеты.'}
                   </p>
                 </div>
                 <Link
                   href="/profile/referral"
-                  className="text-body-sm text-mp-blue-600 hover:underline whitespace-nowrap"
+                  className={cn(
+                    'text-body-sm hover:underline whitespace-nowrap',
+                    (referralState?.pendingPackages.length ?? 0) > 0
+                      ? 'text-mp-blue-600 font-semibold'
+                      : 'text-mp-blue-600',
+                  )}
                 >
-                  Открыть →
+                  {(referralState?.pendingPackages.length ?? 0) > 0 ? 'Активировать →' : 'Открыть →'}
                 </Link>
               </div>
             </CardContent>
