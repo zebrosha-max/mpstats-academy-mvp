@@ -58,11 +58,12 @@ interface CourseHeroCTAProps {
 
 /**
  * Top hero CTA: "Начать обучение" → scroll to bottom CTA section.
- * For authed users with access — "Открыть курс" → /learn?courseId=...
+ * For authed users with access — "Открыть курс" → /learn#<courseId>
+ * (hash triggers auto-expand + scroll to that course card on /learn)
  */
 export function CourseHeroCTA({ courseId }: CourseHeroCTAProps) {
   const hasAccess = useCourseAccess(courseId) === 'has_access';
-  const href = hasAccess ? `/learn?courseId=${courseId}` : '#cta';
+  const href = hasAccess ? `/learn#${courseId}` : '#cta';
   const label = hasAccess ? 'Открыть курс' : 'Начать обучение';
 
   return (
@@ -96,7 +97,7 @@ export function CoursePricingSection({ courseId }: CoursePricingSectionProps) {
   const subtext = hasAccess
     ? 'Откройте каталог курса и продолжите обучение с того места, где остановились.'
     : 'Этот курс входит в подписку PLATFORM. Полный доступ к каталогу по 5 осям навыков, AI-диагностика за 10 минут, персональный план обучения.';
-  const buttonHref = hasAccess ? `/learn?courseId=${courseId}` : '/pricing';
+  const buttonHref = hasAccess ? `/learn#${courseId}` : '/pricing';
   const buttonLabel = hasAccess ? 'Открыть курс' : 'Оформить подписку';
 
   return (
