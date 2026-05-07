@@ -7,7 +7,7 @@
  */
 
 import { openrouter, MODELS, MODEL_CONFIG } from './openrouter';
-import { getChunksForLesson, formatTimecode } from './retrieval';
+import { getChunksForLesson, formatTimecode, type ChunkSearchResult } from './retrieval';
 import { retrieve } from './profiles';
 
 /**
@@ -73,6 +73,24 @@ export interface SourceCitation {
   timecode_start: number;
   timecode_end: number;
   timecodeFormatted: string;
+  sourceType?: string;
+}
+
+/**
+ * Build context string for LLM prompt, distinguishing audio (transcript) vs
+ * frame (visual) chunks.
+ */
+export function buildContextWithSources(chunks: ChunkSearchResult[]): string {
+  return chunks
+    .map((chunk, i) => {
+      const idx = i + 1;
+      const rel = `${(chunk.similarity * 100).toFixed(0)}%`;
+      if (chunk.source_type === 'academy_video_frame') {
+        return `[${idx}] (ЭКРАН @ ${formatTimecode(chunk.timecode_start)}, relevance: ${rel})\n${chunk.content}`;
+      }
+      return `[${idx}] (АУДИО ${formatTimecode(chunk.timecode_start)}-${formatTimecode(chunk.timecode_end)}, relevance: ${rel})\n${chunk.content}`;
+    })
+    .join('\n\n');
 }
 
 export interface ChatMessage {
@@ -167,6 +185,7 @@ export async function generateLessonSummary(
     timecode_start: chunk.timecode_start,
     timecode_end: chunk.timecode_end,
     timecodeFormatted: `${formatTimecode(chunk.timecode_start)} - ${formatTimecode(chunk.timecode_end)}`,
+    sourceType: chunk.source_type,
   }));
 
   return {
@@ -196,27 +215,21 @@ export async function generateChatResponse(
   });
 
   // 2. Build context with citations
-  let context = '';
-  if (relevantChunks.length > 0) {
-    context = relevantChunks
-      .map(
-        (chunk, i) =>
-          `[${i + 1}] (${formatTimecode(chunk.timecode_start)} - ${formatTimecode(chunk.timecode_end)}, relevance: ${(chunk.similarity * 100).toFixed(0)}%)\n${chunk.content}`
-      )
-      .join('\n\n');
-  }
+  const context = relevantChunks.length > 0 ? buildContextWithSources(relevantChunks) : '';
 
   // 3. Build system prompt
   const systemPrompt = `Ты — AI-ассистент образовательной платформы MPSTATS Academy для селлеров маркетплейсов.
 
 Твоя задача: отвечать на вопросы по уроку, используя предоставленный контекст.
 
-${context ? `Контекст из урока:\n${context}` : 'Контекст не найден.'}
+${context ? `Контекст из урока (два типа источников):\n- АУДИО — то что говорил спикер в озвучке\n- ЭКРАН — то что показано визуально на тайм-коде\n\n${context}` : 'Контекст не найден.'}
 
 Правила:
 - Отвечай ТОЛЬКО на основе предоставленного контекста
 - Если ответа нет в контексте, честно скажи об этом
 - Используй ссылки [1], [2] и т.д. для цитирования источников
+- Если вопрос про визуальный контент (URL, числа на экране, интерфейс) — приоритет ЭКРАН-источников
+- Если вопрос про идеи/советы спикера — приоритет АУДИО-источников
 - Пиши на русском языке
 - Будь конкретным и полезным
 - Если вопрос не связан с уроком, вежливо перенаправь к теме урока
@@ -257,6 +270,7 @@ ${context ? `Контекст из урока:\n${context}` : 'Контекст 
     timecode_start: chunk.timecode_start,
     timecode_end: chunk.timecode_end,
     timecodeFormatted: `${formatTimecode(chunk.timecode_start)} - ${formatTimecode(chunk.timecode_end)}`,
+    sourceType: chunk.source_type,
   }));
 
   return {
