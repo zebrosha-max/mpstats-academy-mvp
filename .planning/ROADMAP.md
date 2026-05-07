@@ -72,9 +72,12 @@ Full details: see Phase Details below
 </details>
 
 <details>
-<summary>📋 v1.7 RAG Quality (Phase 55+) — PLANNED</summary>
+<summary>📋 v1.7 RAG Quality (Phase 55+) — IN PROGRESS</summary>
 
-- [ ] Phase 55: Vision Chunking RAG — ассистент «видит» экран урока (таблицы, ссылки, скриншоты), отвечает на вопросы про визуальный контент
+- [~] Phase 55: Vision Chunking RAG — ассистент «видит» экран урока (таблицы, ссылки, скриншоты), отвечает на вопросы про визуальный контент
+  - [x] Sprint 1 (PoC, shipped 2026-05-06) — gpt-4.1-mini selected, 87.5% accuracy, OCR dropped. PR #1 awaiting merge.
+  - [ ] Sprint 2 (Foundation + Pilot, spec+plan ready 2026-05-07) — schema migration source_type/trust_tier + retrieval profiles + 10-lesson 03_ai pilot. Awaiting execution.
+  - [ ] Sprint 2C / 3 — full 03_ai (87) или full platform (~440) + UI tooltip + auto-ingest. Зависит от Sprint 2B gate.
 
 </details>
 
