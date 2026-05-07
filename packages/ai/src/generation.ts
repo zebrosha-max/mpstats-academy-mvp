@@ -7,7 +7,8 @@
  */
 
 import { openrouter, MODELS, MODEL_CONFIG } from './openrouter';
-import { searchChunks, getChunksForLesson, formatTimecode } from './retrieval';
+import { getChunksForLesson, formatTimecode } from './retrieval';
+import { retrieve } from './profiles';
 
 /**
  * Fix transliterated brand names in AI-generated text.
@@ -189,11 +190,9 @@ export async function generateChatResponse(
   history: ChatMessage[] = []
 ): Promise<GenerationResult> {
   // 1. Search for relevant chunks (threshold 0.5 — lower values cause Supabase free tier to timeout on large result sets)
-  const relevantChunks = await searchChunks({
+  const relevantChunks = await retrieve('academy-lesson', {
     query: message,
     lessonId,
-    limit: 5,
-    threshold: 0.5,
   });
 
   // 2. Build context with citations
