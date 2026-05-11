@@ -109,18 +109,36 @@ function listVideos(courseRoot: string): VideoCandidate[] {
   return out;
 }
 
-async function supabaseQuery(sql: string): Promise<any[]> {
+async function supabaseQuery(sql: string, attempt = 1): Promise<any[]> {
   const token = process.env.SUPABASE_MGMT_TOKEN;
   const ref = process.env.SUPABASE_PROJECT_REF || 'saecuecevicwjkpmaoot';
   if (!token) throw new Error('SUPABASE_MGMT_TOKEN required');
-  const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/database/query`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: sql }),
-  });
-  if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
-  return res.json();
+  try {
+    const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/database/query`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: sql }),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      if ((res.status === 429 || res.status >= 500) && attempt < 5) {
+        await new Promise((r) => setTimeout(r, 500 * 2 ** (attempt - 1)));
+        return supabaseQuery(sql, attempt + 1);
+      }
+      throw new Error(`Supabase ${res.status}: ${body}`);
+    }
+    return res.json();
+  } catch (e: any) {
+    const transient = /fetch failed|socket|ECONN|UND_ERR/i.test(String(e?.message) + String(e?.cause?.code));
+    if (transient && attempt < 5) {
+      await new Promise((r) => setTimeout(r, 500 * 2 ** (attempt - 1)));
+      return supabaseQuery(sql, attempt + 1);
+    }
+    throw e;
+  }
 }
+
+const SUPABASE_QUERY_DELAY_MS = 120;
 
 async function resolveLessonId(
   filename: string,
@@ -155,6 +173,7 @@ async function resolveLessonId(
       LIMIT 2;
     `;
     const rows = await supabaseQuery(sql);
+    await new Promise((r) => setTimeout(r, SUPABASE_QUERY_DELAY_MS));
     if (rows.length === 1) return { id: rows[0].id, title: rows[0].title };
   }
   return null;
