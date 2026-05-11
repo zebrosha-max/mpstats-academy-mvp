@@ -16,8 +16,8 @@ export function ReferralCodeBlock({ code }: { code: string | null }) {
 
   const link =
     typeof window !== 'undefined'
-      ? `${window.location.origin}/?ref=${code}`
-      : `https://platform.mpstats.academy/?ref=${code}`;
+      ? `${window.location.origin}/register?ref=${code}`
+      : `https://platform.mpstats.academy/register?ref=${code}`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link);
