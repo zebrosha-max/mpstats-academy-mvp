@@ -157,6 +157,12 @@ model Lesson {
   hiddenBy        String?
   hiddenAt        DateTime?
 
+  // Multi-purpose metadata bag. Current keys:
+  //   videoSource: { filename, module, localPath?, source: 'manual'|'positional'|'llm-judge' }
+  //     — Phase 55 Sprint 3+: persistent local-video↔lesson mapping for vision-RAG ingest.
+  // Add new keys carefully; this column is JSONB so structure is application-enforced.
+  metadata        Json?
+
   // Persistent cache for AI-generated lesson summary. In-memory cache resets
   // on deploy and gets blown out by browsing many lessons; persisting means
   // most lesson visits are DB hits and never reach OpenRouter / rate limits.
