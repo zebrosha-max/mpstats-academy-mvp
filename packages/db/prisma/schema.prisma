@@ -354,11 +354,15 @@ model ContentChunk {
   tokenCount    Int?                         @map("token_count")
   metadata      Json?
   skillCategory SkillCategory?               @map("skill_category")
+  sourceType    String                       @default("academy_audio") @map("source_type")
+  trustTier     Int                          @default(1) @map("trust_tier") @db.SmallInt
   createdAt     DateTime                     @default(now()) @map("created_at")
 
   @@map("content_chunk")
   @@index([lessonId])
   @@index([skillCategory])
+  @@index([sourceType])
+  @@index([trustTier])
 }
 
 // ============== CHAT ==============

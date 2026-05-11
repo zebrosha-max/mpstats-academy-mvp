@@ -72,3 +72,9 @@ scripts/export-html.mjs
 
 # Local secrets (never commit)
 .secrets/
+
+# Phase 55 Sprint 2B vision-ingest artifacts
+scripts/vision-ingest/results/frames/
+scripts/vision-ingest/results/frames-manifest.json
+scripts/vision-ingest/results/vlm-runs.json
+scripts/vision-ingest/results/embed-runs.json
