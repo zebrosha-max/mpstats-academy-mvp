@@ -1,17 +1,5 @@
 [
   {
-    "localPath": "E:/Academy Courses/03_ai/m01_intro/001_1_vvedenie_20_chasov_v_nedelyu_vasha_novaya_norma.mp4",
-    "filename": "001_1_vvedenie_20_chasov_v_nedelyu_vasha_novaya_norma.mp4",
-    "durationSeconds": 936,
-    "durationFormatted": "15:36",
-    "bucketSize": "medium",
-    "module": "m01_intro",
-    "category": "ui_demo",
-    "lessonId": "03_ai_m01_intro_001",
-    "lessonTitle": "Введение 20+ часов в неделю — ваша новая норма",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m01_intro_001"
-  },
-  {
     "localPath": "E:/Academy Courses/03_ai/m02_neuroanalytics/003_1_metod_bol_motivatsiya_i_barer_kak_izvlech_smysly.mp4",
     "filename": "003_1_metod_bol_motivatsiya_i_barer_kak_izvlech_smysly.mp4",
     "durationSeconds": 1047,
@@ -21,7 +9,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m02_neuroanalytics_007",
     "lessonTitle": "Метод «Боль, мотивация и барьер»: как извлечь смыслы ЦА из отзывов",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m02_neuroanalytics_007"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m02_neuroanalytics_007"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m03_visual/006_2_chatgpt_bannery_i_vizualnye_bloki_dlya_kartochek.mp4",
@@ -33,7 +21,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m03_visual_014",
     "lessonTitle": "Как создавать баннеры и визуальные блоки для карточек в ChatGPT | Инфографика и рич-контент, 2",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m03_visual_014"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m03_visual_014"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m04_neurovideo/007_animatsiya_stsen_v_klingai.mp4",
@@ -45,7 +33,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m04_neurovideo_009",
     "lessonTitle": "Анимация сцен в KlingAI",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m04_neurovideo_009"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m04_neurovideo_009"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m05_neurotexts/007_1_generiruem_otvety_na_otzyvy_s_gpt_sozdaem_promty.mp4",
@@ -57,7 +45,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m05_neurotexts_008",
     "lessonTitle": "Генерируем ответы на отзывы с GPT — создаём промты, стили и форматы ответов",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m05_neurotexts_008"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m05_neurotexts_008"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m06_neuro_ads/007_kontrol_kachestva_proveryaem_analiz_gpt_ustranyaem.mp4",
@@ -69,7 +57,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m06_neuro_ads_008",
     "lessonTitle": "Контроль качества: проверяем анализ GPT, устраняем ошибки и дорабатываем промт",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m06_neuro_ads_008"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m06_neuro_ads_008"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m07_neuroscout/002_3_detalnaya_proverka_podnishi_dostovernost_i_fakti.mp4",
@@ -81,7 +69,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m07_neuroscout_004",
     "lessonTitle": "Детальная проверка подниши: данные и достоверность с ИИ | Анализ ниши через ИИ, 3",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m07_neuroscout_004"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m07_neuroscout_004"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m08_neurointegrator/001_neyroassistent_sozdaem_svoego_pomoschnika.mp4",
@@ -93,7 +81,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m08_neurointegrator_001",
     "lessonTitle": "Нейроассистент: создаём своего помощника в ChatGPT",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m08_neurointegrator_001"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m08_neurointegrator_001"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m09_neuroassistant/002_avtootvety_loyalnost_klientov_na_avtopilote.mp4",
@@ -105,7 +93,7 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m09_neuroassistant_002",
     "lessonTitle": "Автоответы: Лояльность клиентов на автопилоте",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m09_neuroassistant_002"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m09_neuroassistant_002"
   },
   {
     "localPath": "E:/Academy Courses/03_ai/m01_intro/008_kontentnaya_voronka_chto_zachem_kak.mp4",
@@ -117,6 +105,6 @@
     "category": "ui_demo",
     "lessonId": "03_ai_m01_intro_016",
     "lessonTitle": "Контентная воронка: Что → Зачем → Как",
-    "platformUrl": "https://platform.mpstats.academy/learn/03_ai/03_ai_m01_intro_016"
+    "platformUrl": "https://platform.mpstats.academy/learn/03_ai_m01_intro_016"
   }
 ]

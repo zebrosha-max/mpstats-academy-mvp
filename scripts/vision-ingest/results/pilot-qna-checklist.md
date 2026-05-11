@@ -10,20 +10,19 @@
 
 ---
 
-## Пилотные уроки (10)
+## Пилотные уроки (9)
 
 | # | LessonId | Название | Длительность | URL |
 |---|----------|----------|--------------|-----|
-| L1 | 03_ai_m01_intro_001 | Введение 20+ часов в неделю — ваша новая норма | 15:36 | https://platform.mpstats.academy/learn/03_ai/03_ai_m01_intro_001 |
-| L2 | 03_ai_m02_neuroanalytics_007 | Метод «Боль, мотивация и барьер»: как извлечь смыслы ЦА из отзывов | 17:27 | https://platform.mpstats.academy/learn/03_ai/03_ai_m02_neuroanalytics_007 |
-| L3 | 03_ai_m03_visual_014 | Как создавать баннеры и визуальные блоки для карточек в ChatGPT | 16:34 | https://platform.mpstats.academy/learn/03_ai/03_ai_m03_visual_014 |
-| L4 | 03_ai_m04_neurovideo_009 | Анимация сцен в KlingAI | 19:34 | https://platform.mpstats.academy/learn/03_ai/03_ai_m04_neurovideo_009 |
-| L5 | 03_ai_m05_neurotexts_008 | Генерируем ответы на отзывы с GPT — создаём промты, стили и форматы | 18:26 | https://platform.mpstats.academy/learn/03_ai/03_ai_m05_neurotexts_008 |
-| L6 | 03_ai_m06_neuro_ads_008 | Контроль качества: проверяем анализ GPT, устраняем ошибки | 17:36 | https://platform.mpstats.academy/learn/03_ai/03_ai_m06_neuro_ads_008 |
-| L7 | 03_ai_m07_neuroscout_004 | Детальная проверка подниши: данные и достоверность с ИИ | 15:54 | https://platform.mpstats.academy/learn/03_ai/03_ai_m07_neuroscout_004 |
-| L8 | 03_ai_m08_neurointegrator_001 | Нейроассистент: создаём своего помощника в ChatGPT | 16:50 | https://platform.mpstats.academy/learn/03_ai/03_ai_m08_neurointegrator_001 |
-| L9 | 03_ai_m09_neuroassistant_002 | Автоответы: Лояльность клиентов на автопилоте | 26:13 | https://platform.mpstats.academy/learn/03_ai/03_ai_m09_neuroassistant_002 |
-| L10 | 03_ai_m01_intro_016 | Контентная воронка: Что → Зачем → Как | 19:30 | https://platform.mpstats.academy/learn/03_ai/03_ai_m01_intro_016 |
+| L1 | 03_ai_m02_neuroanalytics_007 | Метод «Боль, мотивация и барьер»: как извлечь смыслы ЦА из отзывов | 17:27 | https://platform.mpstats.academy/learn/03_ai_m02_neuroanalytics_007 |
+| L2 | 03_ai_m03_visual_014 | Как создавать баннеры и визуальные блоки для карточек в ChatGPT | 16:34 | https://platform.mpstats.academy/learn/03_ai_m03_visual_014 |
+| L3 | 03_ai_m04_neurovideo_009 | Анимация сцен в KlingAI | 19:34 | https://platform.mpstats.academy/learn/03_ai_m04_neurovideo_009 |
+| L4 | 03_ai_m05_neurotexts_008 | Генерируем ответы на отзывы с GPT — создаём промты, стили и форматы | 18:26 | https://platform.mpstats.academy/learn/03_ai_m05_neurotexts_008 |
+| L5 | 03_ai_m06_neuro_ads_008 | Контроль качества: проверяем анализ GPT, устраняем ошибки | 17:36 | https://platform.mpstats.academy/learn/03_ai_m06_neuro_ads_008 |
+| L6 | 03_ai_m07_neuroscout_004 | Детальная проверка подниши: данные и достоверность с ИИ | 15:54 | https://platform.mpstats.academy/learn/03_ai_m07_neuroscout_004 |
+| L7 | 03_ai_m08_neurointegrator_001 | Нейроассистент: создаём своего помощника в ChatGPT | 16:50 | https://platform.mpstats.academy/learn/03_ai_m08_neurointegrator_001 |
+| L8 | 03_ai_m09_neuroassistant_002 | Автоответы: Лояльность клиентов на автопилоте | 26:13 | https://platform.mpstats.academy/learn/03_ai_m09_neuroassistant_002 |
+| L9 | 03_ai_m01_intro_016 | Контентная воронка: Что → Зачем → Как | 19:30 | https://platform.mpstats.academy/learn/03_ai_m01_intro_016 |
 
 ---
 

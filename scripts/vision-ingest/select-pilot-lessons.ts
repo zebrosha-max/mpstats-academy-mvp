@@ -151,7 +151,7 @@ async function resolveLessonId(
     const ilikeClauses = escaped.map((w) => `title ILIKE '%${w}%'`).join(' AND ');
     const sql = `
       SELECT id, title FROM "Lesson"
-      WHERE id LIKE '${modulePrefix}' AND ${ilikeClauses}
+      WHERE id LIKE '${modulePrefix}' AND "isHidden" = false AND ${ilikeClauses}
       ORDER BY "order"
       LIMIT 2;
     `;
@@ -217,7 +217,7 @@ async function main() {
           category,
           lessonId: lesson.id,
           lessonTitle: lesson.title,
-          platformUrl: `https://platform.mpstats.academy/learn/03_ai/${lesson.id}`,
+          platformUrl: `https://platform.mpstats.academy/learn/${lesson.id}`,
         };
       }
 
