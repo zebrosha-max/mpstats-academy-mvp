@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-05-06
+**Last updated:** 2026-05-11
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ, staging — в `.claude/memory/`.
 > Индекс: `.claude/memory/MEMORY.md`. История сессий: `.claude/memory/session-history.md`.
@@ -52,16 +52,31 @@
 
 **Внимание (исторический lesson):** CP хранит `amount` на своей стороне на момент создания подписки. При смене цен отменять старые ACTIVE подписки чтобы автосписания пошли по новым тарифам.
 
-## Last Session (2026-05-05)
+## Last Session (2026-05-11) — CRITICAL billing fix
+
+**Закрыт прод-баг: UI «Отменить подписку» НЕ отменяла CP-рекуррент.** Деплои `7ded455` и `df368b3` на проде.
+
+**Что было:** `billing.cancelSubscription` (`packages/api/src/routers/billing.ts`) делал только локальный `UPDATE status='CANCELLED'`, в CloudPayments API не звонил. Юзер видел «Подписка отменена», но карта продолжала списываться каждый период. `handleCheck` принимал любой charge независимо от статуса. Это жило с Phase 19 (helper `cancelCloudPaymentsSubscription` написан, но никогда не подключён, хотя `cpSubscriptionId` хранится с Phase 28).
+
+**Что задеплоено:**
+1. `cancelSubscription` → теперь дёргает `cancelCloudPaymentsSubscription(cpSubscriptionId)` для каждой ACTIVE подписки юзера. CP-ошибка → 500, локальный CANCELLED не ставится (state синхронизирован).
+2. `cancelSubscription` отменяет **ВСЕ** ACTIVE-подписки юзера (`findMany` вместо `findFirst`) — защита от случая когда у юзера 2+ ACTIVE одновременно (admin billing-test, double-charge races).
+3. `handleCheck` (subscription-service.ts) отбивает любой charge на CANCELLED/EXPIRED — defense in depth.
+4. Mёртвый helper `apps/web/src/lib/cloudpayments/cancel-api.ts` (Phase 19, не импортировался) удалён, новый helper в `packages/api/src/utils/cloudpayments.ts` с discriminated result type, treats "already cancelled" as success.
+
+**Боевая проверка:** 4 активные 10₽ тестовые подписки отменены — две через новый UI (yandex + evasilev), одна добита вручную через CP API (всплыла именно из-за edge case с multi-ACTIVE). NextTransaction следующего рекуррента стоял через 7 минут после UI-отмены — успели в притык.
+
+Полный лог: `.claude/memory/project_cancel_flow_fix.md`.
+
+## Previous Session (2026-05-05)
 
 **Tester Mila feedback batch — track UX + chat disclaimer. Задеплоено (`ade7768`). Phase 55 vision chunking записана в roadmap (`7c15dc2`).**
 
-**Что задеплоено:**
 - Бэк: `learning.addLessonsToTrack({ lessonIds[] })` — bulk до 500 уроков.
 - `/learn`: кнопка `Перестроить трек` → `Перестроить по диагностике`, расширенный диалог. Hint под шапкой про фильтры. Кнопка `+ В трек (N)` на карточке курса в каталоге.
 - Чат урока (desktop+mobile): дисклеймер про границы RAG (отвечает по аудио-транскрипту, не «видит» экран → дисклеймер уберём после Phase 55).
 
-**Phase 55 Vision Chunking RAG (v1.7):** записано в `.planning/ROADMAP.md`. Архитектура: ffmpeg scene-detection → VLM (GPT-4o-mini / Gemini Flash / Claude Haiku VL) + tesseract OCR → embedding в `content_chunk` с `source_type='frame'`. 3 спринта с gates: PoC → Pilot на курсе AI-инструменты → Production. Стоимость ~$3-5 единоразово на 440 уроков. Открытые вопросы: исходники видео, VLM аккаунт, контрольный датасет от Милы, privacy-промпт.
+Phase 55 Vision Chunking RAG (v1.7) записано в `.planning/ROADMAP.md`.
 
 ## Previous Session (2026-05-04)
 
