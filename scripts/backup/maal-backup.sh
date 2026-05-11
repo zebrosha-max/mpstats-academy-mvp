@@ -75,16 +75,22 @@ trap cleanup_local EXIT
 
 log "=== Backup start: ${TIMESTAMP} ==="
 
-# 1. pg_dump (custom format, max compression). Excludes vector embedding column?
-#    NO — we want full fidelity. content_chunk vector adds ~70MB but compresses well.
-log "Step 1/4: pg_dump"
-if ! pg_dump "${DATABASE_URL}" \
-    --format=custom \
-    --compress=9 \
-    --no-owner \
-    --no-acl \
-    --no-comments \
-    --file="${DUMP_FILE}" 2>>"${LOG_FILE}"; then
+# 1. pg_dump via Docker (postgres:17-alpine matches Supabase server version).
+#    Avoids apt-installed client version drift; works on minimal VPS without sudo.
+#    --no-comments OFF — we keep comments for fidelity.
+log "Step 1/4: pg_dump (via docker postgres:17-alpine)"
+DUMP_BASENAME="$(basename "${DUMP_FILE}")"
+WORK_DIR_HOST="$(dirname "${DUMP_FILE}")"
+if ! docker run --rm \
+    -v "${WORK_DIR_HOST}:/work" \
+    -e PGCONNECT_TIMEOUT=30 \
+    postgres:17-alpine \
+    pg_dump "${DATABASE_URL}" \
+      --format=custom \
+      --compress=9 \
+      --no-owner \
+      --no-acl \
+      --file="/work/${DUMP_BASENAME}" 2>>"${LOG_FILE}"; then
   notify_failure "pg_dump" "$(tail -5 "${LOG_FILE}" | tr '\n' ' ')"
   exit 1
 fi
