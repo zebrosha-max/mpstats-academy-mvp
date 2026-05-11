@@ -1,8 +1,8 @@
 # Phase 55 Sprint 2B — Vision Pilot Decision
 
-**Дата:** 2026-05-07
+**Дата:** 2026-05-07 (pipeline) / 2026-05-11 (smoke + verdict)
 **Ветка:** `phase-55-sprint-2`
-**Verdict:** TBD (pending owner Q&A — see SC6, SC8)
+**Verdict:** **RETRY** — frame retrieval работает физически, но visual-queries без явных keyword-якорей часто пропускают frame-источники; accuracy 41% (порог 70%). Нужны фиксы retrieval перед Sprint 2C.
 
 ---
 
@@ -15,9 +15,9 @@
 | SC3 | Frames pipeline ran on 10 lessons w/o errors | ✅ | 10/10 lessons processed; 185 frames extracted; 0 ffmpeg failures |
 | SC4 | Phash dedup active | ✅ | 185 → 148 frames (20.0% reduction) |
 | SC5 | Frame chunks stored in DB alongside audio | ✅ | 148 frame chunks + 5710 audio chunks = 5858 total |
-| SC6 | Mixed retrieval surfaces frame chunks | ⏳ TBD | Pending owner Q&A on staging/prod |
+| SC6 | Mixed retrieval surfaces frame chunks | ⚠ Partial | Frame chunks ловятся (mpstats.io URL ✓, KlingAI 5сек ✓, кастомный GPT редактор ✓), но vague visual queries без keyword-якорей пропускают frames (см. Q1 m04: "какие сервисы показаны" → галл MPSTATS+ChatGPT) |
 | SC7 | Generation context distinguishes sources | ✅ | `buildContextWithSources` labels `[АУДИО]` vs `[ЭКРАН]`; 24/24 unit tests passing |
-| SC8 | Q&A accuracy ≥70% on pilot checklist | ⏳ TBD | Pending owner manual Q&A run (`pilot-qna-checklist.md`) |
+| SC8 | Q&A accuracy ≥70% on pilot checklist | ❌ 41% | Smoke на 3 уроках, 11 вопросов: 4 Y + 1 Partial + 6 N. Урок 4 (m01_intro_001) не прошёл — `lesson_hidden=true` (изменено 08-11.05) |
 | SC9 | Total cost ≤$3 | ✅ | $0.2256 (VLM $0.2254 + embedding ~$0.0002) — **92% under budget** |
 
 ---
@@ -42,36 +42,51 @@
 
 ---
 
-## Per-Category Accuracy (TBD)
+## Per-Category Accuracy (Smoke 2026-05-11)
 
-Заполняется после прогона `pilot-qna-checklist.md`.
+Smoke на 3 из 4 запланированных уроков (урок 4 hidden). 11 вопросов из 25 чеклиста.
 
-| Категория | Кол-во | Accuracy | Notes |
-|-----------|--------|----------|-------|
-| Cat 1 — URL/визуальное на экране | 6 | — | — |
-| Cat 2 — Числа в таблицах/графиках | 6 | — | — |
-| Cat 3 — Названия инструментов/UI | 4 | — | — |
-| Cat 4 — Audio-only концепции | 6 | — | — |
-| Cat 5 — Mixed (audio + visual) | 3 | — | — |
-| **Total** | **25** | — | — |
+| Категория | Y / Partial / N | Accuracy | Notes |
+|-----------|-----------------|----------|-------|
+| Cat 1 — URL/визуальное на экране | 1 / 0 / 2 | 33% | Точная mpstats.io ссылка с d1/d2 ✓; "какие сервисы показаны" в KlingAI-уроке → галл MPSTATS+ChatGPT ❌; "тайм-код переключения" → нет ответа ❌ |
+| Cat 2 — Числа в таблицах/графиках | 1 / 0 / 1 | 50% | KlingAI длительность 5 сек ✓; выручка ниши Держателей (121 016 906 ₽ есть в frame @ 04:00) → "не указана" ❌ |
+| Cat 3 — Названия инструментов/UI | 1 / 1 / 0 | 75% | Кастомный GPT редактор + DALL·E ✓; "3 инструмента помимо MPSTATS" → Wordstat правильно, Google Trends галлюцинация (в frames Google Sheets) |
+| Cat 4 — Audio-only | — / — / — | n/a | Skipped — урок 4 hidden |
+| Cat 5 — Mixed | 1 / 0 / 0 | 100% | Проект vs агент в ChatGPT — детальный правильный ответ, источники mixed (audio range + frame instant) ✓ |
+| **Total (3 урока)** | **4 / 1 / 6** | **41%** | Ниже порога 70% |
 
 ---
 
-## Architecture Observations
+## Architecture Observations (Smoke 2026-05-11)
 
-Открытые вопросы для заполнения owner'ом после Q&A:
+**Что подтверждено работает:**
+- Frame chunks физически в DB и retrieval их находит (источники с `MM:00 - MM:00` инстантовыми timecodes)
+- Точные factual cites: URL-ы с query-параметрами (`mpstats.io/wb/item/463891248?d1=02.07.2025&d2=29.09.2025`), числа (5 секунд KlingAI), tools (DALL·E)
+- Mixed контекст качественно синтезируется (проект vs агент — детальный ответ из audio range + frame instant)
 
-- Достаточно ли частоты семплирования 1 кадр / 60 сек для UI-демо такой динамики?
-- Нужен ли OCR-слой поверх VLM (был исключён в Sprint 2A) для коротких URL/чисел, которые VLM может пропускать?
-- Корректно ли retrieval ранжирует frame-чанки против audio-чанков, или нужна доменная балансировка?
-- Достаточен ли префикс `[ЭКРАН]/[АУДИО]` для генератора, или стоит явно выводить тайм-код в контекст?
-- Какие категории вопросов проседают сильнее всего (проблема извлечения, retrieval, генерации)?
+**Что выявлено как баг:**
+- **Vague visual queries без keyword-якорей пропускают frame chunks.** Q «какие сервисы показаны» в уроке про KlingAI → галлюцинация «MPSTATS и ChatGPT» вместо retrieval frame-чанков с RunwayML/KlingAI. Embedding модель видимо хуже мэтчит `[ЭКРАН @ MM:SS] описание...` чем audio chunks с теми же ключевиками
+- **Visual hint в query игнорируется.** Добавление «на экране» в Q1b дало «нет информации» вместо буста frame source
+- **Numbers retrieval слабый.** Выручка ниши есть в frame @ 04:00 (121 016 906 ₽), но retrieval не подтянул. Embedding не дружит с числовыми query
+- **Hidden lesson в пилоте.** `m01_intro_001.isHidden` стал `true` между Task 8 (07.05) и smoke (11.05). Task 8's `resolveLessonId` SQL не фильтровал `isHidden=false`
 
 ---
 
 ## Decision Rationale
 
-[TBD — fill after owner Q&A test]
+Pipeline mechanics работают (extract → dedup → VLM → embed → INSERT, 0 ошибок, $0.23). Foundation (Sprint 2A) и storage layer (Sprint 2B) подтверждены. Bottleneck — **retrieval ранжирование**: frame chunks теряют конкуренцию embeddingу audio когда query не содержит явных visual-якорей. Это блокирует core value proposition (вопросы про экран → ответы из экрана), поэтому **Sprint 2C на full 03_ai (87 уроков) преждевременен** — мы умножим текущую проблему на 8.7×.
+
+Идём в **RETRY** с целевыми фиксами retrieval, потом повторный smoke на тех же 4 уроках по тем же 11 вопросам. Если ≥70% — GO Sprint 2C. Если <70% — пересматривать архитектуру (hybrid keyword+vector, OCR layer, separate frames index).
+
+## RETRY Action Plan
+
+| # | Фикс | Файл | Стоимость |
+|---|------|------|-----------|
+| A1 | Embed по `summary + extracted` без `[ЭКРАН @ MM:SS]` префикса. Content для генерации остаётся с префиксом. UPDATE 148 row embeddings. | `scripts/vision-ingest/embed-and-insert.ts` + повторный run | ~$0.0002 (повторный embed) |
+| A2 | Hybrid retrieval: keyword detector (экран/ссылк/число/url/интерфейс/показ/выручк/инструмент) → lower threshold для frame chunks при match | `packages/ai/src/profiles.ts` или новый helper | 0 |
+| A3 | System prompt усилить: «ОБЯЗАТЕЛЬНО цитируй ЭКРАН-источник если он в контексте и вопрос визуальный» | `packages/ai/src/generation.ts` | 0 |
+| A4 | Task 8 `resolveLessonId` SQL: добавить `AND "isHidden" = false` в фильтр; перевыбрать пилотный урок взамен `m01_intro_001` | `scripts/vision-ingest/select-pilot-lessons.ts` + JSON refresh | 0 |
+| A5 | `platformUrl` шаблон в JSON: `/learn/${id}` (single-segment) вместо `/learn/03_ai/${id}` | `select-pilot-lessons.ts` + JSON | 0 |
 
 ---
 
