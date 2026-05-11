@@ -46,3 +46,46 @@ describe('retrieve()', () => {
     ).rejects.toThrow(/Unknown profile/);
   });
 });
+
+describe('retrieve() — visual keyword boost', () => {
+  it('isVisualQuery detects визуальные ключевые слова', async () => {
+    const { isVisualQuery } = await import('../profiles');
+    expect(isVisualQuery('какая ссылка на экране?')).toBe(true);
+    expect(isVisualQuery('число товаров в таблице')).toBe(true);
+    expect(isVisualQuery('какие инструменты упоминаются')).toBe(true);
+    expect(isVisualQuery('расскажи про методику бол-мотивация')).toBe(false);
+    expect(isVisualQuery('что такое юнит-экономика')).toBe(false);
+  });
+
+  it('does single pass for non-visual queries', async () => {
+    searchChunksMock.mockClear();
+    searchChunksMock.mockResolvedValue([]);
+    await retrieve('academy-lesson', { query: 'что такое юнит-экономика' });
+    expect(searchChunksMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does two passes for visual queries (mixed + frame-only at lower threshold)', async () => {
+    searchChunksMock.mockClear();
+    searchChunksMock.mockResolvedValue([]);
+    await retrieve('academy-lesson', { query: 'какая ссылка показана на экране' });
+    expect(searchChunksMock).toHaveBeenCalledTimes(2);
+    const secondCall = searchChunksMock.mock.calls[1][0];
+    expect(secondCall.sourceTypes).toEqual(['academy_video_frame']);
+    expect(secondCall.threshold).toBe(0.3);
+  });
+
+  it('merges and dedupes by id, sorted by similarity desc', async () => {
+    searchChunksMock.mockClear();
+    searchChunksMock
+      .mockResolvedValueOnce([
+        { id: 'a', similarity: 0.6, source_type: 'academy_audio', lesson_id: 'l', content: 'a', timecode_start: 0, timecode_end: 10, trust_tier: 1 },
+        { id: 'shared', similarity: 0.5, source_type: 'academy_video_frame', lesson_id: 'l', content: 's', timecode_start: 30, timecode_end: 30, trust_tier: 1 },
+      ])
+      .mockResolvedValueOnce([
+        { id: 'shared', similarity: 0.5, source_type: 'academy_video_frame', lesson_id: 'l', content: 's', timecode_start: 30, timecode_end: 30, trust_tier: 1 },
+        { id: 'f', similarity: 0.4, source_type: 'academy_video_frame', lesson_id: 'l', content: 'f', timecode_start: 60, timecode_end: 60, trust_tier: 1 },
+      ]);
+    const result = await retrieve('academy-lesson', { query: 'какая ссылка' });
+    expect(result.map(r => r.id)).toEqual(['a', 'shared', 'f']);
+  });
+});
