@@ -29,9 +29,10 @@ const REQUIRED_KEYS: Array<keyof Selected> = [
   'module', 'category', 'lessonId', 'lessonTitle', 'platformUrl',
 ];
 
-// LessonId format: <course>_<module>_<NNN>, e.g. 03_ai_m01_intro_003.
-// Course prefix can contain digits+underscore (e.g. "03_ai"). Module is `m\d+_<slug>`.
-const LESSON_ID_RE = /^(.+?)_(m\d+_[a-z0-9_]+?)_\d+$/;
+// LessonId format: <course>_<module>_<NNN>, e.g. 03_ai_m01_intro_003 or 04_workshops_w01_feb_ads_001.
+// Course prefix can contain digits+underscore (e.g. "03_ai"). Module is `<letter>\d+_<slug>`
+// where letter ∈ {m, w, c, ...} — m=module, w=workshop, c=express-course-block.
+const LESSON_ID_RE = /^(.+?)_([a-z]\d+_[a-z0-9_]+?)_\d+$/;
 
 const issues: Issue[] = [];
 function add(check: number, severity: 'FAIL' | 'WARN', message: string, details?: string[]) {
