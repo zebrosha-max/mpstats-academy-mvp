@@ -1,6 +1,6 @@
 # CLAUDE.md — MPSTATS Academy MVP
 
-**Last updated:** 2026-05-12
+**Last updated:** 2026-05-14
 
 > Детали по сессиям, спринтам, Supabase, деплою, CQ, staging — в `.claude/memory/`.
 > Индекс: `.claude/memory/MEMORY.md`. История сессий: `.claude/memory/session-history.md`.
@@ -47,22 +47,23 @@ Sibling project `D:/GpT_docs/Ai_MP_manager/` запустил `prisma db push --
 | v1.4 QA Audit Fixes | Shipped 2026-03-29 (Phases 37-42) |
 | v1.5 Growth & Monetization | In Progress (Phase 44+45+46+48+49+50 shipped) |
 | v1.6 Engagement | In Progress (Phases 51-52 shipped, 53A awaiting merge, 53-54 planned) |
-| v1.7 RAG Quality | In Progress (Phase 55 Sprint 2 + 2C shipped — 89/440 lessons; Sprint 3 prep on branch `phase-55-sprint-3-prep`) |
+| v1.7 RAG Quality | In Progress (Phase 55 Sprint 2 + 2C + Sprint 3 prep shipped — 89/440 lessons; Sprint 3 actual pending) |
 
 **Remaining work:**
 1. Phase 53A — referral, awaiting Egor's merge to master
 2. Phase 33-03: CQ Dashboard Setup (на стороне CQ команды)
 3. Phase 47: /learn Hub-Layout — навигационный хаб
-4. **Phase 55 Sprint 3** — full platform vision-RAG ingest (~351 lessons across 4 courses). Prep in progress: selector v4 + safety infra + docs. See `scripts/vision-ingest/PLAYBOOK.md`.
+4. **Phase 55 Sprint 3** — full-platform vision-RAG ingest (~301 unmapped lessons across 04_workshops, 01_analytics, 02_ads, 05_ozon, 06_express). All tooling ready. Procedure: `scripts/vision-ingest/PLAYBOOK.md`. Safety rules: `.claude/memory/vision-ingest-safety.md`.
 
 ## Active Branches
 
 | Branch | Worktree | PR | Status |
 |--------|----------|----|----|
-| `phase-55-sprint-2c` | `MAAL-phase55/` | [#4](https://github.com/zebrosha-max/mpstats-academy-mvp/pull/4) | Vision RAG 10→89 lessons of 03_ai, smoke 89%. Awaiting merge. |
-| `phase-55-sprint-3-prep` | `MAAL-phase55/` | (no PR yet) | Foundation work for full-platform vision ingest: docs (ARCHITECTURE.md, PLAYBOOK.md), safety infra, selector v4 with DB-persisted mappings. Based on `phase-55-sprint-2c`. |
-| `phase-53a-referral` | (in main worktree, not active) | (none) | Referral program, awaiting Egor's merge decision. Switch flag i1→i2 scheduled 2026-06-01. |
-| `phase-53b-referral-admin` | (in main worktree, not active) | (none) | Admin moderation UI, QA passed 2026-05-06. Awaits merge after 53A. |
+| `phase-53a-referral` | (not active) | (none) | Referral program, awaiting Egor's merge decision. Switch flag i1→i2 scheduled 2026-06-01. |
+| `phase-53b-referral-admin` | (not active) | (none) | Admin moderation UI, QA passed 2026-05-06. Awaits merge after 53A. |
+
+Phase 55 vision-RAG branches (sprint-2c + sprint-3-prep) merged to master 2026-05-12 — see Last Session.
+Archive directory `D:/GpT_docs/MPSTATS ACADEMY ADAPTIVE LEARNING/MAAL-phase55/` (orphan, not a worktree) holds Sprint 2C VLM dumps (`results/vlm-runs-sprint2c.json` 1.7MB, 644 frame jpgs in `results/frames/`) — useful if a re-ingest is needed without re-running LLM. Safe to delete to free ~300MB when no longer needed.
 
 **Cross-AI sync policy (read before editing this file):**
 - `MAAL/CLAUDE.md` (master) — only **shipped** state + 1-line pointers to in-flight branches above.
@@ -97,25 +98,19 @@ Sibling project `D:/GpT_docs/Ai_MP_manager/` запустил `prisma db push --
 
 **Внимание (исторический lesson):** CP хранит `amount` на своей стороне на момент создания подписки. При смене цен отменять старые ACTIVE подписки чтобы автосписания пошли по новым тарифам.
 
-## Last Session (2026-05-11 evening) — Phase 55 Sprint 2C shipped + Sprint 3 prep
+## Last Session (2026-05-12) — Phase 55 Sprint 2C + Sprint 3 prep shipped to master + PITR recovery + L2 backup
 
-**Phase 55 Sprint 2C — Vision RAG expansion.** PR #4 на `phase-55-sprint-2c` (3 commits: `fee68bb` → `a664716` → `91636a5`). 79 lessons of `03_ai` ingested → DB теперь содержит 89 lessons с vision-чанками (792 frame chunks total). Стоимость $0.94 (бюджет $2). Smoke test: **16/18 = 88.9%** (pilot baseline 84%, threshold 80%) → GO Sprint 3.
+**Two PRs merged to master:**
+- `a3967ce` — Sprint 2C: 79 lessons of `03_ai` ingested (DB: 89 lessons / 792 frame chunks). Smoke 16/18 = 88.9% with `gpt-4.1-mini`. Cost $0.94.
+- `0e20628` — Sprint 3 prep: docs (ARCHITECTURE + PLAYBOOK + safety memory) + safety infra (validate-selection + smoke-baseline) + selector v4 with DB-persisted mappings (`Lesson.metadata.videoSource` column added via R1 manual ALTER pattern) + backup L2 (daily pg_dump → nikear via Tailscale, activated on VPS).
 
-Пайплайн hardened:
-- Selector эволюция v1 (word-overlap, 67% recall) → v2 (greedy bipartite) → v3 (positional) + manual override для m01_intro / m08 = 100% coverage.
-- `vlm-describe.ts` переписан: concurrency=5, AbortController 60s timeout, JSONL incremental save + resume. Пережил mid-run kill в этом спринте.
-- `INGEST_SUFFIX` env var параметризует 5 pipeline-скриптов под изолированные артефакты.
+**PITR incident 2026-05-12 — recovered.** Sibling `D:/GpT_docs/Ai_MP_manager/` ran `prisma db push --accept-data-loss` against shared MAAL Supabase, dropped 24 prod tables. Restored via Supabase PITR (12hr loss window). R1: Lesson.order migration re-applied (manual ALTER + manual INSERT into `_prisma_migrations`). R2: Sprint 2C 644 frame chunks re-ingested from local VLM dumps (~$0.001 — embedding-only). R3: LagerPro re-ingest handed back to `E:/LagerPro` pipeline owner (2299 chunks lost, out of MAAL scope). New `🚨 PROD DATABASE SAFETY` section at top of this file codifies zero-exception rules. See `scripts/vision-ingest/results/RECOVERY_2026-05-12.md`.
 
-**Sprint 3 prep — на ветке `phase-55-sprint-3-prep` (5 фаз):**
-- P1: `scripts/vision-ingest/ARCHITECTURE.md` + `PLAYBOOK.md` + README + MAAL/CLAUDE.md updates
-- P2: `validate-selection.ts` (pre-flight gate), `smoke-baseline.ts` (auto LLM-judge), safety memory
-- P3: Selector v4 с DB-persisted mappings (`Lesson.metadata.videoSource`) + LLM judge confidence + CSV review flow
-- P4: Regression на 03_ai (ожидаем 89/89 точное соответствие)
-- P5: Dry-run на 1 небольшом курсе перед full Sprint 3
+**Backup L2 active.** Cron @ 03:00 UTC daily on VPS deploy@89.208.106.208: docker `postgres:17-alpine` pg_dump → GPG → scp via Tailscale to nikear `/home/zebrosha/backups/maal/`. 30-day rolling. First backup 52MB on nikear. Setup guide: `scripts/backup/README.md`.
 
-Полные правила (7) — в `.claude/memory/vision-ingest-safety.md`. Cross-AI.
+**Sprint 3 (full-platform ingest) ready.** Selector v4 + validator + smoke-baseline + DB-persisted mappings via `Lesson.metadata.videoSource` (88 already backfilled). Remaining courses: 04_workshops (24 lessons), 01_analytics (66), 02_ads (71), 05_ozon (76), 06_express (64). Total ~301 unmapped visible lessons. Est cost ~$4-5. Procedure: `scripts/vision-ingest/PLAYBOOK.md`. Safety rules: `.claude/memory/vision-ingest-safety.md`.
 
-Полный verdict + метрики Sprint 2C — `scripts/vision-ingest/results/decision-sprint2c.md`.
+**CI test fixes (`9fde3ea`)** — pre-existing master failures from Phase 45 (login:default_phone scope), Phase 53A (register/page split), 2026-04-27 (prisma.$queryRaw on auth.users). 6 tests fixed, 148/148 passing.
 
 ## Previous Session (2026-05-11 daytime) — Cancel flow + Lesson.order tech debt + referral link tweak
 
