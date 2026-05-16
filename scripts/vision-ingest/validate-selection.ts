@@ -116,8 +116,16 @@ function inferCoursePrefix(lessonId: string): string | null {
   return m ? m[1] : null;
 }
 function inferModuleSlug(lessonId: string): string | null {
-  const m = lessonId.match(LESSON_ID_RE);
-  return m ? m[2] : null;
+  // Return the INNERMOST module — matches selector's `module` field convention.
+  // Nested ids (06_express_c01_ai_content_m01_content_001) have an outer
+  // c-block + inner m-block; selector writes only the inner one.
+  const m = lessonId.match(/^(.+)_\d+$/);
+  if (!m) return null;
+  const body = m[1];
+  const tokens = [...body.matchAll(/[a-z]\d+_/g)];
+  if (tokens.length === 0) return null;
+  const last = tokens[tokens.length - 1];
+  return body.slice(last.index);
 }
 
 // ---------- Checks ----------
@@ -268,9 +276,11 @@ async function check8PerModule(sel: Selected[]) {
     }
     const safeCourse = course.replace(/'/g, "''");
     const safeMod = mod.replace(/'/g, "''");
+    // `%` between course and module absorbs any outer block (nested ids like
+    // 06_express_c01_ai_content_m01_content_*); matches empty for flat ids.
     const sql = `
       SELECT COUNT(*)::int AS n FROM "Lesson" l
-      WHERE id LIKE '${safeCourse}_${safeMod}_%' AND l."isHidden" = false
+      WHERE id LIKE '${safeCourse}_%${safeMod}_%' AND l."isHidden" = false
       AND NOT EXISTS (
         SELECT 1 FROM content_chunk c
         WHERE c.lesson_id = l.id AND c.source_type='academy_video_frame'
