@@ -473,20 +473,74 @@ export default function TrackPage() {
           ) : (
             /* Fallback: flat list for old-format paths */
             <div className="space-y-3">
-              {recommendedPath.lessons.map((lesson: any, idx: number) => (
-                <LessonCard
-                  key={lesson.id}
-                  lesson={
-                    { ...lesson, title: `${idx + 1}. ${lesson.title}` } as LessonWithProgress
-                  }
-                  showCourse
-                  courseName={
-                    ((lesson as unknown) as Record<string, unknown>).courseName as string
-                  }
-                  isRecommended
-                  locked={lesson.locked}
-                />
-              ))}
+              {(() => {
+                const showGating =
+                  recommendedPath.hasPlatformSubscription === false &&
+                  recommendedPath.lessons.some((l: any) => l.locked);
+                const visibleCount = showGating ? 3 : recommendedPath.lessons.length;
+                const visibleLessons = recommendedPath.lessons.slice(0, visibleCount);
+                const hiddenLessons = showGating
+                  ? recommendedPath.lessons.slice(visibleCount)
+                  : [];
+
+                return (
+                  <>
+                    {visibleLessons.map((lesson: any, idx: number) => (
+                      <LessonCard
+                        key={lesson.id}
+                        lesson={
+                          {
+                            ...lesson,
+                            title: `${idx + 1}. ${lesson.title}`,
+                          } as LessonWithProgress
+                        }
+                        showCourse
+                        courseName={
+                          ((lesson as unknown) as Record<string, unknown>).courseName as string
+                        }
+                        isRecommended
+                        locked={lesson.locked}
+                      />
+                    ))}
+                    {hiddenLessons.length > 0 && (
+                      <>
+                        <div className="blur-sm pointer-events-none select-none space-y-3">
+                          {hiddenLessons.map((lesson: any, idx: number) => (
+                            <LessonCard
+                              key={lesson.id}
+                              lesson={
+                                {
+                                  ...lesson,
+                                  title: `${visibleCount + idx + 1}. ${lesson.title}`,
+                                } as LessonWithProgress
+                              }
+                              showCourse
+                              courseName={
+                                ((lesson as unknown) as Record<string, unknown>)
+                                  .courseName as string
+                              }
+                              locked
+                            />
+                          ))}
+                        </div>
+                        <Card className="shadow-mp-card border-mp-blue-200 bg-gradient-to-br from-mp-blue-50 to-white">
+                          <CardContent className="py-8 text-center">
+                            <h3 className="text-heading text-mp-gray-900 mb-2">
+                              Получите полный персональный трек
+                            </h3>
+                            <p className="text-body text-mp-gray-500 mb-4">
+                              Ещё {hiddenLessons.length} уроков доступны с полной подпиской
+                            </p>
+                            <Link href="/pricing">
+                              <Button size="lg">Оформить полный доступ</Button>
+                            </Link>
+                          </CardContent>
+                        </Card>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>
