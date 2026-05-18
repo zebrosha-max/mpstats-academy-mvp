@@ -244,9 +244,54 @@ async function phaseCluster() {
   log(`Кросс-курсовых джоб: ${cross}/${jobs.length}`);
 }
 
-// --- Stub (Task 6 will implement) ---
+// --- Phase: proposal ---
 
-async function phaseProposal() { throw new Error('Task 6'); }
+function slugify(title: string): string {
+  const map: Record<string, string> = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',
+    з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',
+    х:'h',ц:'c',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' };
+  return title.toLowerCase().split('').map((c) => map[c] ?? c).join('')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+}
+
+async function phaseProposal() {
+  if (!fs.existsSync(CLUSTER_FILE)) throw new Error('Сначала фаза cluster');
+  const cluster = loadJSON<any>(CLUSTER_FILE);
+  const discovery = loadJSON<DiscoveryResult>(DISCOVERY_FILE);
+  const titleById = new Map(discovery.lessons.map((d) => [d.lesson_id, d]));
+
+  // JSON для seed-скрипта
+  const proposal = {
+    phase: 'proposal', timestamp: new Date().toISOString(),
+    jobs: cluster.jobs.map((j: any, i: number) => ({
+      slug: slugify(j.title) || `job-${i + 1}`,
+      title: j.title, description: j.description, outcomes: j.outcomes,
+      axes: j.axes, skillBlocks: j.skill_blocks, marketplace: j.marketplace,
+      displayOrder: i,
+      lessonIds: j.lesson_ids.filter((id: string) => titleById.has(id)),
+    })),
+  };
+  saveJSON(path.join(RESULTS_DIR, 'JOB-PROPOSAL.json'), proposal);
+
+  // Markdown для контент-команды
+  const md: string[] = ['# JOB-PROPOSAL — на валидацию контент-команде\n',
+    `Сгенерировано ${proposal.timestamp} · джоб: ${proposal.jobs.length}\n`,
+    'Проверьте: название, состав уроков, порядок, направления. Правки — прямо в этом файле.\n'];
+  for (const [i, j] of proposal.jobs.entries()) {
+    md.push(`## ${i + 1}. ${j.title}`);
+    md.push(`${j.description}`);
+    md.push(`Направления: ${j.axes.join(', ')} · маркетплейс: ${j.marketplace} · slug: \`${j.slug}\``);
+    md.push(`Уроков: ${j.lessonIds.length}`);
+    for (const id of j.lessonIds) md.push(`- [${courseOf(id)}] ${titleById.get(id)?.title ?? id}`);
+    md.push('');
+  }
+  if (cluster.orphans?.length) {
+    md.push(`## Уроки вне джоб (${cluster.orphans.length})\n`);
+    for (const id of cluster.orphans) md.push(`- [${courseOf(id)}] ${titleById.get(id)?.title ?? id}`);
+  }
+  fs.writeFileSync(path.join(RESULTS_DIR, 'JOB-PROPOSAL.md'), md.join('\n'), 'utf-8');
+  log(`JOB-PROPOSAL готов: results/JOB-PROPOSAL.md (+ .json для seed)`);
+}
 
 // --- CLI router ---
 
