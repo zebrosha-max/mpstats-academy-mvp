@@ -1252,7 +1252,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 56-03-PLAN.md — /welcome route + fullscreen layout + визард (3 шага + развилка) + гард (main)
+- [x] 56-03-PLAN.md — /welcome route + fullscreen layout + визард (3 шага + развилка) + гард (main)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

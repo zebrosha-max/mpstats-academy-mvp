@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Engagement
 status: Phase 51 shipped (Notification Center Foundation)
-stopped_at: Phase 56 Plan 02 complete
-last_updated: "2026-05-18T10:36:00.000Z"
+stopped_at: Phase 56 Plan 03 complete
+last_updated: "2026-05-18T11:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 25
 ---
 
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: 56 (entry-flow-redesign) — EXECUTING
-Plan: 3 of 4 (56-01, 56-02 complete)
+Plan: 4 of 4 (56-01, 56-02, 56-03 complete)
 
 ## Performance Metrics
 
@@ -160,6 +160,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [56-02]: onboarding tRPC-роутер — копия паттерна profile.ts (protectedProcedure + ensureUserProfile + handleDatabaseError); z.enum whitelist на marketplaces/goals/experienceLevel отклоняет tampered-ключи до DB-записи
 - [56-02]: Гард (main)/layout читает onboardingCompletedAt напрямую через prisma — getState оставлен для /profile; один лишний select-field, ноль новых round-trip'ов
 - [56-02]: Unit-тест onboarding: ctx prisma stub дискриминирует middleware-findUnique (lastActiveAt debounce) по select-аргументу, возвращая свежий lastActiveAt → debounce пропускает side-effect update
+- [56-03]: /welcome — standalone top-level роут вне (main), свой fullscreen layout + server-side auth-guard; гард (main)/layout читает onboardingCompletedAt прямым prisma.findUnique (один select-field, ноль новых round-trip'ов)
+- [56-03]: Визард — клиентский useState-степпер (1|2|3|'fork'), одна финальная мутация onboarding.complete на развилке; router.push строго в onSuccess — защита от redirect-loop при сбое мутации
+- [56-03]: /welcome добавлен и в middleware protectedRoutes, и в welcome/layout getUser-проверку — defense in depth (middleware быстрее, layout надёжнее)
 
 ### Blockers/Concerns
 
@@ -241,11 +244,12 @@ None.
 | 49    | 05   | 38min    | 3     | 7     |
 | 56    | 01   | 10min    | 2     | 2     |
 | 56    | 02   | 6min     | 2     | 3     |
+| 56    | 03   | 9min     | 3     | 11    |
 
 ## Session Continuity
 
-Last session: 2026-05-18T10:36:00.000Z
-Stopped at: Phase 56 Plan 02 complete (onboarding tRPC-роутер getState + complete, зарегистрирован в appRouter, 4 unit-теста зелёные)
+Last session: 2026-05-18T11:00:00.000Z
+Stopped at: Phase 56 Plan 03 complete (онбординг-визард /welcome — standalone роут + fullscreen layout + 5 компонентов + гард в (main)/layout + E2E-спека)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
