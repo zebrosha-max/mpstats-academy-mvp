@@ -1,10 +1,11 @@
 ---
 phase: 56
 slug: entry-flow-redesign
-status: draft
+status: approved
 shadcn_initialized: true
 preset: existing-mpstats-design-system
 created: 2026-05-18
+reviewed_at: 2026-05-18
 ---
 
 # Phase 56 — UI Design Contract
@@ -74,7 +75,9 @@ created: 2026-05-18
 | Caption | `text-caption` | 12px (0.75rem) | 400 | 1.4 | Privacy-нота под полем шага 1, степпер-подписи |
 
 Мобильная адаптация заголовков: на `<sm` заголовок развилки понижается до `text-heading-xl` (30px),
-заголовок шага — до `text-heading-lg` (24px). Веса не меняются.
+заголовок шага — до `text-heading-lg` (24px). Веса не меняются. `text-heading-xl` и `text-heading-lg`
+здесь — адаптивные варианты тех же ролей Display/Heading, а не дополнительные роли; число ролей
+остаётся 6.
 
 **Правило:** ровно 2 веса (`font-normal` 400 для body/caption, `font-semibold` 600 для всех заголовков
 и меток-кнопок). `font-bold` (700) допустим ТОЛЬКО внутри токена `display-sm` (он несёт 700 встроенно).
@@ -282,11 +285,11 @@ shadcn-обёрток `apps/web/src/components/ui/` и кастомных ком
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS (FLAG — 6 ролей из locked-токенов, не новая шкала; non-blocking)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved (gsd-ui-checker, 2026-05-18)
