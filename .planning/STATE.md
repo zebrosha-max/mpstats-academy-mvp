@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Engagement
-status: Phase 51 shipped (Notification Center Foundation)
-stopped_at: Phase 56 Plan 03 complete
-last_updated: "2026-05-18T11:00:00.000Z"
+status: Phase 56 complete (Entry Flow Redesign)
+stopped_at: Phase 56 Plan 04 complete — phase 56 complete
+last_updated: "2026-05-18T12:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 9
+  completed_plans: 9
   percent: 25
 ---
 
@@ -24,8 +24,8 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 ## Current Position
 
-Phase: 56 (entry-flow-redesign) — EXECUTING
-Plan: 4 of 4 (56-01, 56-02, 56-03 complete)
+Phase: 56 (entry-flow-redesign) — COMPLETE
+Plan: 4 of 4 (56-01, 56-02, 56-03, 56-04 complete)
 
 ## Performance Metrics
 
@@ -163,6 +163,9 @@ Full v1.1 decision history: `milestones/v1.1-ROADMAP.md`
 - [56-03]: /welcome — standalone top-level роут вне (main), свой fullscreen layout + server-side auth-guard; гард (main)/layout читает onboardingCompletedAt прямым prisma.findUnique (один select-field, ноль новых round-trip'ов)
 - [56-03]: Визард — клиентский useState-степпер (1|2|3|'fork'), одна финальная мутация onboarding.complete на развилке; router.push строго в onSuccess — защита от redirect-loop при сбое мутации
 - [56-03]: /welcome добавлен и в middleware protectedRoutes, и в welcome/layout getUser-проверку — defense in depth (middleware быстрее, layout надёжнее)
+- [56-04]: Жёсткий гейт диагностики на уроке снят — урок доступен на подписке без теста; удалена ТОЛЬКО ветка hasDiagnostic === false, подписочный LockOverlay нетронут
+- [56-04]: DiagnosticGateBanner — закрываемый хинт; dismissed инициализируется true (не false), чтобы карточка не мелькала у юзеров с установленным localStorage-флагом до useEffect-проверки
+- [56-04]: QualificationSection вынесена в отдельный компонент (паттерн SecurityCard) — profile/page.tsx уже 838 строк; переиспользует welcome-options без хардкода списков
 
 ### Blockers/Concerns
 
@@ -245,11 +248,12 @@ None.
 | 56    | 01   | 10min    | 2     | 2     |
 | 56    | 02   | 6min     | 2     | 3     |
 | 56    | 03   | 9min     | 3     | 11    |
+| 56    | 04   | 6min     | 2     | 4     |
 
 ## Session Continuity
 
-Last session: 2026-05-18T11:00:00.000Z
-Stopped at: Phase 56 Plan 03 complete (онбординг-визард /welcome — standalone роут + fullscreen layout + 5 компонентов + гард в (main)/layout + E2E-спека)
+Last session: 2026-05-18T12:00:00.000Z
+Stopped at: Phase 56 Plan 04 complete — Phase 56 (Entry Flow Redesign) завершена (де-гейтинг урока + DiagnosticGateBanner → закрываемый хинт + редактирование квалификации в /profile)
 
 ### Session 2026-03-12 — Billing Payment Flow Testing & Fixes
 
