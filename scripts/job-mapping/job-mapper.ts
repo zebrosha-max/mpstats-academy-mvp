@@ -185,9 +185,67 @@ async function phaseDiscover(concurrency: number, resume: boolean) {
   } finally { await prisma.$disconnect(); }
 }
 
-// --- Stubs (Tasks 5 and 6 will implement) ---
+// --- Phase: cluster ---
 
-async function phaseCluster() { throw new Error('Task 5'); }
+const CLUSTER_FILE = path.join(RESULTS_DIR, 'jobs-cluster.json');
+
+const CLUSTER_SYSTEM = `Ты проектируешь каталог онлайн-академии для селлеров маркетплейсов.
+Дан список уроков с задачами селлера (jobs-to-be-done), которые они закрывают.
+
+Сгруппируй уроки в УКРУПНЁННЫЕ ДЖОБЫ — крупные цели селлера. Целевое число джоб: 30-40.
+
+ЖЁСТКИЕ ПРАВИЛА:
+1. Каждый урок входит хотя бы в одну джобу; может входить в несколько.
+2. Джоба содержательна при >= 2 уроках.
+3. Название джобы — глагол + результат, понятно селлеру.
+4. axes — ТОЛЬКО из пяти: ANALYTICS, MARKETING, CONTENT, OPERATIONS, FINANCE. Других значений быть НЕ может.
+5. marketplace: "WB" если все уроки джобы WB-специфичны; "OZON" если все Ozon-специфичны
+   (курс 05_ozon); "BOTH" если джоба кросс-платформенная (юнит-экономика, P&L и т.п.).
+   WB-специфичные и Ozon-специфичные уроки НЕ смешивать в одну джобу.
+6. Уроки в джобе — в логичном порядке прохождения.
+
+Ответ JSON: {"jobs":[{"title":"...","description":"...","outcomes":["..."],
+"axes":["FINANCE"],"skill_blocks":["FINANCE/unit_economics"],"marketplace":"BOTH",
+"lesson_ids":["id1","id2"]}],"orphans":["lesson_id"]}`;
+
+const VALID_AXES = ['ANALYTICS', 'MARKETING', 'CONTENT', 'OPERATIONS', 'FINANCE'];
+
+async function phaseCluster() {
+  const client = createClient();
+  if (!fs.existsSync(DISCOVERY_FILE)) throw new Error('Сначала фаза discover');
+  const discovery = loadJSON<DiscoveryResult>(DISCOVERY_FILE);
+
+  // 05_ozon — единственный Ozon-курс; пометка платформы урока для подсказки LLM
+  const input = discovery.lessons.map((d, i) => {
+    const mp = d.course === '05_ozon' ? 'Ozon' : 'WB';
+    return `${i + 1}. [${d.lesson_id}] (${mp}) "${d.title ?? ''}"\n   задачи: ${d.jobs.join(' | ') || '—'}`;
+  }).join('\n');
+
+  const resp = JSON.parse(await callLLM(client, CLUSTER_SYSTEM,
+    `Уроков: ${discovery.lessons.length}\n\n${input}`, 16384));
+  const rawJobs: any[] = Array.isArray(resp.jobs) ? resp.jobs : [];
+
+  // Валидация: оси строго из 5, marketplace из 3
+  const jobs = rawJobs.map((j) => ({
+    title: String(j.title || ''),
+    description: String(j.description || ''),
+    outcomes: Array.isArray(j.outcomes) ? j.outcomes : [],
+    axes: (Array.isArray(j.axes) ? j.axes : []).filter((a: string) => VALID_AXES.includes(a)),
+    skill_blocks: Array.isArray(j.skill_blocks) ? j.skill_blocks : [],
+    marketplace: ['WB', 'OZON', 'BOTH'].includes(j.marketplace) ? j.marketplace : 'WB',
+    lesson_ids: Array.isArray(j.lesson_ids) ? j.lesson_ids : [],
+  }));
+  const orphans: string[] = Array.isArray(resp.orphans) ? resp.orphans : [];
+
+  saveJSON(CLUSTER_FILE, { phase: 'cluster', model: MODEL,
+    timestamp: new Date().toISOString(), total_jobs: jobs.length, jobs, orphans });
+  log(`Кластеризация: ${jobs.length} джоб, ${orphans.length} сирот → ${CLUSTER_FILE}`);
+  const cross = jobs.filter((j) => new Set(j.lesson_ids.map(courseOf)).size > 1).length;
+  log(`Кросс-курсовых джоб: ${cross}/${jobs.length}`);
+}
+
+// --- Stub (Task 6 will implement) ---
+
 async function phaseProposal() { throw new Error('Task 6'); }
 
 // --- CLI router ---
