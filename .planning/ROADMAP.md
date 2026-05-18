@@ -1239,12 +1239,12 @@ Plans:
 
 **Зависимости:** нет блокеров.
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 56-01-PLAN.md — Schema +5 полей UserProfile + [BLOCKING] additive-миграция на prod
+- [x] 56-01-PLAN.md — Schema +5 полей UserProfile + [BLOCKING] additive-миграция на prod
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
