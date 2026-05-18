@@ -7,7 +7,7 @@ import {
 } from '@/lib/referral/attribution';
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard', '/diagnostic', '/learn', '/profile', '/admin', '/complete-profile'];
+const protectedRoutes = ['/dashboard', '/diagnostic', '/learn', '/profile', '/admin', '/complete-profile', '/welcome'];
 
 function decorateWithReferral(response: NextResponse, refCode: string | null): NextResponse {
   if (refCode) {
